@@ -222,7 +222,7 @@ export default function ReportsPage() {
                     <CartesianGrid strokeDasharray="3 3" stroke={COLORS.dim} strokeOpacity={0.3} />
                     <XAxis dataKey="date" stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} />
                     <YAxis stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} tickFormatter={axisFmt} />
-                    <Tooltip content={<ChartTooltip formatter={ghc} />} />
+                    <Tooltip content={<ChartTooltip formatter={format} />} />
                     <Area type="monotone" dataKey="revenue" name="Revenue" stroke={COLORS.gold} strokeWidth={2} fill="url(#revGrad)" />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -371,7 +371,7 @@ export default function ReportsPage() {
                     <CartesianGrid strokeDasharray="3 3" stroke={COLORS.dim} strokeOpacity={0.3} />
                     <XAxis dataKey="date" stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} />
                     <YAxis stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} />
-                    <Tooltip content={<ChartTooltip formatter={ghc} />} />
+                    <Tooltip content={<ChartTooltip formatter={format} />} />
                     <Line type="monotone" dataKey="sales" name="Sales" stroke={COLORS.gold} strokeWidth={2} dot={{ fill: COLORS.gold, r: 3 }} activeDot={{ r: 5 }} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -398,7 +398,7 @@ export default function ReportsPage() {
                     <CartesianGrid strokeDasharray="3 3" stroke={COLORS.dim} strokeOpacity={0.3} />
                     <XAxis dataKey="date" stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} />
                     <YAxis stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} tickFormatter={axisFmt} />
-                    <Tooltip content={<ChartTooltip formatter={ghc} />} />
+                    <Tooltip content={<ChartTooltip formatter={format} />} />
                     <Line type="monotone" dataKey="amount" name="Refunds" stroke={COLORS.red} strokeWidth={2} dot={{ fill: COLORS.red, r: 3 }} />
                   </LineChart>
                 </ResponsiveContainer>

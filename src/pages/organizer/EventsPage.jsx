@@ -185,7 +185,7 @@ export default function EventsPage() {
       ) : view === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {events.map((e) => (
-            <EventCard key={e.id} event={e} onEdit={() => navigate(`/organizer/events/${e.id}/edit`)} onView={() => navigate(`/organizer/events/${e.id}`)} onTogglePublish={() => togglePublish(e)} onDelete={() => setDeleteTarget(e)} />
+            <EventCard key={e.id} event={e} onEdit={() => navigate(`/organizer/events/${e.id}/edit`)} onView={() => navigate(`/events/${e.id}`)} onTogglePublish={() => togglePublish(e)} onDelete={() => setDeleteTarget(e)} />
           ))}
         </div>
       ) : (
@@ -224,7 +224,7 @@ export default function EventsPage() {
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-1" onClick={(ev) => ev.stopPropagation()}>
                         <button onClick={() => navigate(`/organizer/events/${e.id}/edit`)} className="p-1.5 rounded-md text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition" title="Edit"><Edit2 className="w-4 h-4" /></button>
-                        <button onClick={() => navigate(`/organizer/events/${e.id}`)} className="p-1.5 rounded-md text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition" title="View"><Eye className="w-4 h-4" /></button>
+                        <button onClick={() => navigate(`/events/${e.id}`)} className="p-1.5 rounded-md text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition" title="View"><Eye className="w-4 h-4" /></button>
                         <button onClick={() => togglePublish(e)} className="p-1.5 rounded-md text-[#8A9196] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title={e.status === 'published' ? 'Unpublish' : 'Submit for Review'}>
                           {e.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Send className="w-4 h-4" />}
                         </button>

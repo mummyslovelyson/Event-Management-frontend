@@ -255,7 +255,7 @@ export default function OrganizerDashboard() {
                 return (
                   <Link
                     key={e.id}
-                    to={`/organizer/events/${e.id}`}
+                    to={`/events/${e.id}`}
                     className="flex items-center gap-4 p-3 rounded-lg bg-[#1D2124] hover:bg-[#23272A] border border-[#262B2F] transition-colors"
                   >
                     <Calendar className="w-5 h-5 text-[#494F55] shrink-0" />
