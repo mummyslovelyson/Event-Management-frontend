@@ -30,15 +30,15 @@ const EVENT_STATUS = {
   pending: { label: 'Pending', cls: 'bg-amber-500/15 text-amber-400' },
   published: { label: 'Published', cls: 'bg-emerald-500/15 text-emerald-400' },
   cancelled: { label: 'Cancelled', cls: 'bg-red-500/15 text-red-400' },
-  completed: { label: 'Completed', cls: 'bg-[#D4AF37]/15 text-[#D4AF37]' },
+  completed: { label: 'Completed', cls: 'bg-white/ text-white' },
   rejected: { label: 'Rejected', cls: 'bg-red-500/15 text-red-400' },
 };
 
 const ROLE_LABEL = { attendee: 'Attendee', organizer: 'Organizer', admin: 'Admin' };
 const ROLE_CLS = {
-  attendee: 'text-[#D4AF37]',
-  organizer: 'text-[#D4AF37]',
-  admin: 'text-[#D4AF37]',
+  attendee: 'text-white',
+  organizer: 'text-white',
+  admin: 'text-white',
 };
 
 const initials = (name = '') =>
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
         <p className="text-sm text-[#949599]">Couldn't load the dashboard.</p>
         <button
           onClick={fetchDashboard}
-          className="mt-3 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
+          className="mt-3 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
         >
           Try again
         </button>
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3">
           <div>
-            <p className="text-xs font-medium text-[#D4AF37]">{fmtFullDate()}</p>
+            <p className="text-xs font-medium text-white">{fmtFullDate()}</p>
             <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[#EFEFF1]">{greeting}{firstName ? `, ${firstName}` : ''}</h1>
             <p className="mt-1 text-sm text-[#949599]">Revenue, orders, and signups at a glance.</p>
           </div>
@@ -224,14 +224,14 @@ export default function AdminDashboard() {
             </span>
             <button
               onClick={() => fetchDashboard(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#EFEFF1] hover:border-[#D4AF37]/40 transition"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#EFEFF1] hover:border-white/ transition"
               title="Refresh dashboard"
             >
               <RefreshCw className="w-4 h-4" /> Refresh
             </button>
             <button
               onClick={() => navigate('/admin/reports')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
             >
               <FileBarChart className="w-4 h-4" /> Full reports
             </button>
@@ -245,7 +245,7 @@ export default function AdminDashboard() {
           icon={CircleDollarSign}
           label="Gross Revenue"
           value={format(o.totalRevenue)}
-          accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
+          accent={{ bg: 'bg-white/', text: 'text-white' }}
           sub={
             <div className="mt-1.5 flex items-center gap-2 flex-wrap">
               <DeltaPill value={o.revenueTrend} />
@@ -257,10 +257,10 @@ export default function AdminDashboard() {
           icon={TicketIcon}
           label="Tickets Sold"
           value={(o.ticketsSold ?? 0).toLocaleString()}
-          accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
+          accent={{ bg: 'bg-white/', text: 'text-white' }}
           sub={
             <p className="mt-1.5 text-[11px] text-[#949599]">
-              <span className="text-[#D4AF37] font-semibold">{(o.ticketsSoldToday ?? 0).toLocaleString()}</span> sold today
+              <span className="text-white font-semibold">{(o.ticketsSoldToday ?? 0).toLocaleString()}</span> sold today
             </p>
           }
         />
@@ -268,10 +268,10 @@ export default function AdminDashboard() {
           icon={Users}
           label="Total Users"
           value={(o.totalUsers ?? 0).toLocaleString()}
-          accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
+          accent={{ bg: 'bg-white/', text: 'text-white' }}
           sub={
             <p className="mt-1.5 text-[11px] text-[#949599]">
-              <span className="text-[#D4AF37] font-semibold">{(o.totalOrganizers ?? 0).toLocaleString()}</span> organizers
+              <span className="text-white font-semibold">{(o.totalOrganizers ?? 0).toLocaleString()}</span> organizers
             </p>
           }
         />
@@ -279,7 +279,7 @@ export default function AdminDashboard() {
           icon={CalendarDays}
           label="Total Events"
           value={(o.totalEvents ?? 0).toLocaleString()}
-          accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
+          accent={{ bg: 'bg-white/', text: 'text-white' }}
           sub={
             <p className="mt-1.5 text-[11px] text-[#949599]">
               <span className="text-amber-400 font-semibold">{(o.pendingEvents ?? 0).toLocaleString()}</span> pending approval
@@ -312,7 +312,7 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <p className="text-xs text-[#949599]">7-day revenue</p>
-                  <p className="mt-1 text-lg font-semibold text-[#D4AF37] tabular-nums break-words">{format(o.last7Revenue)}</p>
+                  <p className="mt-1 text-lg font-semibold text-white tabular-nums break-words">{format(o.last7Revenue)}</p>
                 </div>
               </div>
             </div>
@@ -323,15 +323,15 @@ export default function AdminDashboard() {
                 <AreaChart data={revenueSeries} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.35} />
-                      <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
+                      <stop offset="0%" stopColor="#EFEFF1" stopOpacity={0.35} />
+                      <stop offset="100%" stopColor="#EFEFF1" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.18} vertical={false} />
                   <XAxis dataKey="date" stroke="#494F55" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmtDay} minTickGap={28} />
                   <YAxis stroke="#494F55" fontSize={10} tickLine={false} axisLine={false} tickFormatter={shortFmt} width={42} />
                   <Tooltip content={<ChartTip formatter={shortFmt} />} cursor={{ stroke: '#494F55', strokeOpacity: 0.4 }} />
-                  <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2} fill="url(#revGrad)" name="Revenue" />
+                  <Area type="monotone" dataKey="revenue" stroke="#EFEFF1" strokeWidth={2} fill="url(#revGrad)" name="Revenue" />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
@@ -383,7 +383,7 @@ export default function AdminDashboard() {
             hint="New signups · last 14 days"
             action={
               <div className="flex items-center gap-3 pr-5 text-xs">
-                <span className="flex items-center gap-1.5 text-[#949599]"><span className="w-2 h-2 rounded-full bg-[#D4AF37]" /> Attendees</span>
+                <span className="flex items-center gap-1.5 text-[#949599]"><span className="w-2 h-2 rounded-full bg-white" /> Attendees</span>
                 <span className="flex items-center gap-1.5 text-[#949599]"><span className="w-2 h-2 rounded-full bg-[#60A5FA]" /> Organizers</span>
               </div>
             }
@@ -396,7 +396,7 @@ export default function AdminDashboard() {
                   <XAxis dataKey="date" stroke="#494F55" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmtDay} minTickGap={24} />
                   <YAxis stroke="#494F55" fontSize={10} tickLine={false} axisLine={false} width={30} allowDecimals={false} />
                   <Tooltip content={<ChartTip />} cursor={{ stroke: '#494F55', strokeOpacity: 0.4 }} />
-                  <Line type="monotone" dataKey="attendees" stroke="#D4AF37" strokeWidth={2} dot={false} activeDot={{ r: 3, fill: '#D4AF37' }} name="Attendees" />
+                  <Line type="monotone" dataKey="attendees" stroke="#EFEFF1" strokeWidth={2} dot={false} activeDot={{ r: 3, fill: '#EFEFF1' }} name="Attendees" />
                   <Line type="monotone" dataKey="organizers" stroke="#60A5FA" strokeWidth={2} dot={false} activeDot={{ r: 3, fill: '#60A5FA' }} name="Organizers" />
                 </LineChart>
               </ResponsiveContainer>
@@ -410,16 +410,16 @@ export default function AdminDashboard() {
         <CardShell className="p-5">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-[#EFEFF1]">Platform snapshot</h2>
-            <Link to="/admin/payments" className="text-xs font-medium text-[#D4AF37] hover:underline flex items-center gap-1">
+            <Link to="/admin/payments" className="text-xs font-medium text-white hover:underline flex items-center gap-1">
               Payments <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
           <p className="text-xs text-[#949599] mt-0.5">Orders and payouts at a glance.</p>
           <div className="mt-4 grid grid-cols-2 gap-3">
-            <SnapshotTile icon={ShoppingCart} label="Total Orders" value={(o.totalOrders ?? 0).toLocaleString()} tone="text-[#D4AF37]" />
-            <SnapshotTile icon={CircleDollarSign} label="7-day Revenue" value={shortFmt(o.last7Revenue)} tone="text-[#D4AF37]" />
+            <SnapshotTile icon={ShoppingCart} label="Total Orders" value={(o.totalOrders ?? 0).toLocaleString()} tone="text-white" />
+            <SnapshotTile icon={CircleDollarSign} label="7-day Revenue" value={shortFmt(o.last7Revenue)} tone="text-white" />
             <SnapshotTile icon={Wallet} label="Withdrawals Pending" value={(o.pendingWithdrawals ?? 0).toLocaleString()} tone="text-amber-400" />
-            <SnapshotTile icon={UserCheck} label="Organizer Apps" value={(o.pendingOrganizers ?? 0).toLocaleString()} tone="text-[#D4AF37]" />
+            <SnapshotTile icon={UserCheck} label="Organizer Apps" value={(o.pendingOrganizers ?? 0).toLocaleString()} tone="text-white" />
           </div>
           <div className="mt-5 pt-4 border-t border-[#494F55]/30">
             <Link to="/admin/reports" className="flex items-center justify-between text-xs text-[#949599] hover:text-[#EFEFF1] transition">
@@ -436,7 +436,7 @@ export default function AdminDashboard() {
             title="Latest events"
             hint="The newest events on the platform"
             action={
-              <Link to="/admin/events" className="pr-5 text-xs font-medium text-[#D4AF37] hover:underline flex items-center gap-1">
+              <Link to="/admin/events" className="pr-5 text-xs font-medium text-white hover:underline flex items-center gap-1">
                 All events <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             }
@@ -460,7 +460,7 @@ export default function AdminDashboard() {
                           {e.start_date ? fmtDay(e.start_date) : '—'}
                         </td>
                         <td className="px-5 py-3 text-right">
-                          <Link to={`/admin/events`} className="text-xs text-[#949599] hover:text-[#D4AF37] transition">View</Link>
+                          <Link to={`/admin/events`} className="text-xs text-[#949599] hover:text-white transition">View</Link>
                         </td>
                       </tr>
                     );
@@ -505,7 +505,7 @@ export default function AdminDashboard() {
             title="Pending event approvals"
             hint="Quick approve or reject"
             action={
-              <Link to="/admin/events" className="pr-5 text-xs font-medium text-[#D4AF37] hover:underline flex items-center gap-1">
+              <Link to="/admin/events" className="pr-5 text-xs font-medium text-white hover:underline flex items-center gap-1">
                 All events <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             }

@@ -168,7 +168,7 @@ export default function MyBookingsPage() {
               onClick={() => setTab(t.value)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 tab === t.value
-                  ? 'bg-[#D4AF37] text-[#1C232B]'
+                  ? 'bg-white text-[#1C232B]'
                   : 'bg-[#171A1D] border border-[#262B2F] text-[#949599] hover:text-[#EFEFF1] hover:border-[#494F55]/50'
               }`}
             >
@@ -183,7 +183,7 @@ export default function MyBookingsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search bookings..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
           />
         </div>
       </motion.div>
@@ -265,7 +265,7 @@ export default function MyBookingsPage() {
                     <div className="mt-3 flex items-center justify-between flex-wrap gap-2">
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-[#494F55]">Total Paid:</span>
-                        <span className="text-lg font-bold text-[#D4AF37]">
+                        <span className="text-lg font-bold text-white">
                           {format(order.totalAmount || order.total || 0)}
                         </span>
                       </div>
@@ -278,13 +278,13 @@ export default function MyBookingsPage() {
                     <div className="mt-4 flex flex-wrap gap-2">
                       <Link
                         to="/attendee/tickets"
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/ transition"
                       >
                         <TicketIcon className="w-3.5 h-3.5" /> View Tickets
                       </Link>
                       <button
                         onClick={() => setExpanded(expanded === order.id ? null : order.id)}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/ transition"
                       >
                         <Receipt className="w-3.5 h-3.5" /> Details
                         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expanded === order.id ? 'rotate-180' : ''}`} />
@@ -292,7 +292,7 @@ export default function MyBookingsPage() {
                       <button
                         onClick={() => handleExport(order)}
                         disabled={exporting === order.id}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 disabled:opacity-50 transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/ disabled:opacity-50 transition"
                       >
                         <FileDown className="w-3.5 h-3.5" /> {exporting === order.id ? 'Exporting...' : 'Export PDF'}
                       </button>
@@ -352,7 +352,7 @@ export default function MyBookingsPage() {
                         )}
                         <div className="mt-3 pt-3 border-t border-[#262B2F] flex items-center justify-between">
                           <span className="text-sm font-semibold text-[#EFEFF1]">Total</span>
-                          <span className="text-base font-bold text-[#D4AF37]">
+                          <span className="text-base font-bold text-white">
                             {format(order.totalAmount || order.total || 0)}
                           </span>
                         </div>
@@ -398,7 +398,7 @@ export default function MyBookingsPage() {
                 onChange={(e) => setCancelReason(e.target.value)}
                 rows={3}
                 placeholder="Tell us why you're cancelling..."
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition resize-none"
               />
             </div>
           </div>
@@ -437,7 +437,7 @@ export default function MyBookingsPage() {
                 onChange={(e) => setRefundReason(e.target.value)}
                 rows={3}
                 placeholder="Explain why you're requesting a refund..."
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition resize-none"
               />
             </div>
           </div>

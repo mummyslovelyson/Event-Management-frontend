@@ -4,7 +4,7 @@
 // to gold).
 import { motion } from 'framer-motion';
 
-const GOLD = '#D4AF37';
+const GOLD = '#EFEFF1';
 
 const ACCENTS = {
   gold: GOLD,

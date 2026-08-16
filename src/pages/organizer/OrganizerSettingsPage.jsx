@@ -16,7 +16,7 @@ import Badge from '@/components/common/Badge';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
 
 const labelCls = 'block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider';
 
@@ -49,7 +49,7 @@ export default function OrganizerSettingsPage() {
   const [changingPw, setChangingPw] = useState(false);
 
   // Branding
-  const [branding, setBranding] = useState({ primaryColor: '#D4AF37', tagline: '', about: '' });
+  const [branding, setBranding] = useState({ primaryColor: '#EFEFF1', tagline: '', about: '' });
 
   const fetchTabData = useCallback(async (activeTab) => {
     setLoading(true);
@@ -77,7 +77,7 @@ export default function OrganizerSettingsPage() {
       } else if (activeTab === 'branding') {
         const res = await getBranding();
         const d = res.data?.branding || res.data || {};
-        setBranding({ primaryColor: d.primaryColor || '#D4AF37', tagline: d.tagline || '', about: d.about || '' });
+        setBranding({ primaryColor: d.primaryColor || '#EFEFF1', tagline: d.tagline || '', about: d.about || '' });
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to load settings');
@@ -182,11 +182,11 @@ export default function OrganizerSettingsPage() {
           <button
             key={key}
             onClick={() => setTab(key)}
-            className={`relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === key ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+            className={`relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === key ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             <Icon className="w-4 h-4" />
             <span className="hidden sm:inline">{label}</span>
-            {tab === key && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#D4AF37]" />}
+            {tab === key && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-white" />}
           </button>
         ))}
       </div>
@@ -212,12 +212,12 @@ export default function OrganizerSettingsPage() {
                     <button
                       type="button"
                       onClick={() => logoInput.current?.click()}
-                      className="w-full aspect-square rounded-xl bg-[#171A1D] border border-dashed border-[#494F55]/50 hover:border-[#D4AF37]/50 flex items-center justify-center overflow-hidden transition group"
+                      className="w-full aspect-square rounded-xl bg-[#171A1D] border border-dashed border-[#494F55]/50 hover:border-white/ flex items-center justify-center overflow-hidden transition group"
                     >
                       {logoPreview ? (
                         <img src={logoPreview} alt="logo" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="flex flex-col items-center gap-2 text-[#949599] group-hover:text-[#D4AF37] transition">
+                        <div className="flex flex-col items-center gap-2 text-[#949599] group-hover:text-white transition">
                           <Upload className="w-6 h-6" />
                           <span className="text-xs">Upload logo</span>
                         </div>
@@ -230,12 +230,12 @@ export default function OrganizerSettingsPage() {
                     <button
                       type="button"
                       onClick={() => bannerInput.current?.click()}
-                      className="w-full h-40 sm:h-44 rounded-xl bg-[#171A1D] border border-dashed border-[#494F55]/50 hover:border-[#D4AF37]/50 flex items-center justify-center overflow-hidden transition group"
+                      className="w-full h-40 sm:h-44 rounded-xl bg-[#171A1D] border border-dashed border-[#494F55]/50 hover:border-white/ flex items-center justify-center overflow-hidden transition group"
                     >
                       {bannerPreview ? (
                         <img src={bannerPreview} alt="banner" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="flex flex-col items-center gap-2 text-[#949599] group-hover:text-[#D4AF37] transition">
+                        <div className="flex flex-col items-center gap-2 text-[#949599] group-hover:text-white transition">
                           <Upload className="w-6 h-6" />
                           <span className="text-xs">Upload banner (1200×400 recommended)</span>
                         </div>
@@ -293,7 +293,7 @@ export default function OrganizerSettingsPage() {
                           onClick={() => setPayment((p) => ({ ...p, payoutMethod: opt.value }))}
                           className={`flex items-center gap-2.5 px-4 py-3 rounded-lg border text-sm font-medium transition ${
                             payment.payoutMethod === opt.value
-                              ? 'bg-[#D4AF37]/10 border-[#D4AF37]/50 text-[#D4AF37]'
+                              ? 'bg-white/ border-white/ text-white'
                               : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599] hover:border-[#494F55]/60'
                           }`}
                         >
@@ -336,7 +336,7 @@ export default function OrganizerSettingsPage() {
                 {/* Change password */}
                 <form onSubmit={handleChangePw} className="space-y-4">
                   <h2 className="text-base font-semibold text-[#EFEFF1] flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-[#D4AF37]" /> Change Password
+                    <Lock className="w-4 h-4 text-white" /> Change Password
                   </h2>
                   {[
                     { key: 'current', label: 'Current Password' },
@@ -420,7 +420,7 @@ export default function OrganizerSettingsPage() {
                     <input
                       value={branding.primaryColor}
                       onChange={(e) => setBranding((b) => ({ ...b, primaryColor: e.target.value }))}
-                      placeholder="#D4AF37"
+                      placeholder="#EFEFF1"
                       className={`${inputCls} max-w-[160px] font-mono`}
                     />
                     <div className="flex items-center gap-1.5 text-xs text-[#949599]">
@@ -479,7 +479,7 @@ function SaveButton({ onClick, saving, label = 'Save Changes' }) {
       <button
         onClick={onClick}
         disabled={saving}
-        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-60 transition-colors"
+        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-60 transition-colors"
       >
         {saving ? <LoadingSpinner size="sm" /> : <Save className="w-4 h-4" />}
         {saving ? 'Saving...' : label}

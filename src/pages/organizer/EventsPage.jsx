@@ -112,7 +112,7 @@ export default function EventsPage() {
         actions={
           <Link
             to="/organizer/events/create"
-            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors shrink-0"
+            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" /> Create Event
           </Link>
@@ -127,13 +127,13 @@ export default function EventsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search events..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition"
           />
         </div>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer"
+          className="px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition cursor-pointer"
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
@@ -143,13 +143,13 @@ export default function EventsPage() {
         <div className="flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#494F55]/40">
           <button
             onClick={() => setView('table')}
-            className={`p-2 rounded-md transition-colors ${view === 'table' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+            className={`p-2 rounded-md transition-colors ${view === 'table' ? 'bg-white/ text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             <List className="w-4 h-4" />
           </button>
           <button
             onClick={() => setView('grid')}
-            className={`p-2 rounded-md transition-colors ${view === 'grid' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+            className={`p-2 rounded-md transition-colors ${view === 'grid' ? 'bg-white/ text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             <LayoutGrid className="w-4 h-4" />
           </button>
@@ -162,10 +162,10 @@ export default function EventsPage() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`relative px-4 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${tab === t ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+            className={`relative px-4 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${tab === t ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             {t}
-            {tab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#D4AF37]" />}
+            {tab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-white" />}
           </button>
         ))}
       </div>
@@ -225,7 +225,7 @@ export default function EventsPage() {
                       <div className="flex items-center justify-end gap-1" onClick={(ev) => ev.stopPropagation()}>
                         <button onClick={() => navigate(`/organizer/events/${e.id}/edit`)} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit"><Edit2 className="w-4 h-4" /></button>
                         <button onClick={() => navigate(`/events/${e.id}`)} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View"><Eye className="w-4 h-4" /></button>
-                        <button onClick={() => togglePublish(e)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title={e.status === 'published' ? 'Unpublish' : 'Submit for Review'}>
+                        <button onClick={() => togglePublish(e)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title={e.status === 'published' ? 'Unpublish' : 'Submit for Review'}>
                           {e.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Send className="w-4 h-4" />}
                         </button>
                         <button onClick={() => setDeleteTarget(e)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete"><Trash2 className="w-4 h-4" /></button>
@@ -303,12 +303,12 @@ function EventCard({ event, onEdit, onView, onTogglePublish, onDelete }) {
         </div>
         <div className="mt-3 flex items-center gap-2">
           <div className="flex-1 h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
-            <div className="h-full bg-[#D4AF37] rounded-full" style={{ width: `${pct}%` }} />
+            <div className="h-full bg-white rounded-full" style={{ width: `${pct}%` }} />
           </div>
           <span className="text-[10px] font-medium text-[#949599] tabular-nums">{sold}/{cap}</span>
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <span className="flex items-center gap-1 text-xs text-[#D4AF37] font-medium"><DollarSign className="w-3.5 h-3.5" /> {format(event.revenue)}</span>
+          <span className="flex items-center gap-1 text-xs text-white font-medium"><DollarSign className="w-3.5 h-3.5" /> {format(event.revenue)}</span>
           <span className="flex items-center gap-1 text-xs text-[#949599]"><TicketIcon className="w-3.5 h-3.5" /> {event.category?.name || event.category || '—'}</span>
         </div>
       </div>

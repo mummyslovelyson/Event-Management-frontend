@@ -57,18 +57,18 @@ export default function StatCard({ icon: Icon, label, value, trend, trendLabel, 
       whileHover={{ y: -2 }}
       className={`relative rounded-xl p-5 border ${
         accent
-          ? 'bg-gradient-to-br from-[#1A1D20] to-[#15181A] border-[#D4AF37]/25'
+          ? 'bg-gradient-to-br from-[#1A1D20] to-[#15181A] border-white/'
           : 'bg-[#171A1D] border-[#262B2F] hover:border-[#3A4045] transition-colors'
       }`}
     >
       <div className="flex items-center justify-between gap-2">
         <p className="text-[13px] text-[#949599] leading-snug">{label}</p>
-        {Icon && <Icon className={`shrink-0 w-4 h-4 ${accent ? 'text-[#D4AF37]' : 'text-[#5A6166]'}`} />}
+        {Icon && <Icon className={`shrink-0 w-4 h-4 ${accent ? 'text-white' : 'text-[#5A6166]'}`} />}
       </div>
       <p
         ref={valueRef}
         className={`mt-2 text-[30px] font-semibold tracking-tight leading-none tabular-nums ${
-          accent ? 'text-[#D4AF37]' : 'text-[#EFEFF1]'
+          accent ? 'text-white' : 'text-[#EFEFF1]'
         }`}
       >
         {value}

@@ -472,7 +472,7 @@ export default function EventDetailPage() {
 
         <div className="absolute bottom-0 left-0 right-0">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-            <Link to="/explore" className="group inline-flex items-center gap-1 text-sm text-[#949599] hover:text-[#D4AF37] mb-3 transition-colors">
+            <Link to="/explore" className="group inline-flex items-center gap-1 text-sm text-[#949599] hover:text-white mb-3 transition-colors">
               <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Explore
             </Link>
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -524,7 +524,7 @@ export default function EventDetailPage() {
                           <button
                             key={s.id}
                             onClick={() => handleShare(s.id)}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/20 transition"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#949599] hover:text-white hover:bg-[#494F55]/20 transition"
                           >
                             <s.icon className="w-4 h-4" /> {s.label}
                           </button>
@@ -547,7 +547,7 @@ export default function EventDetailPage() {
                     transition={{ type: 'spring', stiffness: 400, damping: 14 }}
                     className="flex"
                   >
-                    <Heart className={`w-4 h-4 ${isFav ? 'fill-[#D4AF37] text-[#D4AF37]' : ''}`} />
+                    <Heart className={`w-4 h-4 ${isFav ? 'fill-[#EFEFF1] text-white' : ''}`} />
                   </motion.span>
                 </motion.button>
               </div>
@@ -562,7 +562,7 @@ export default function EventDetailPage() {
           <div className="lg:col-span-2">
             {/* Organizer card */}
             {event.organizer && (
-              <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 mb-6 flex items-center justify-between gap-4 hover:border-[#D4AF37]/25 transition-colors">
+              <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 mb-6 flex items-center justify-between gap-4 hover:border-white/ transition-colors">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-12 h-12 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] flex items-center justify-center shrink-0 overflow-hidden">
                     {event.organizer.avatar ? (
@@ -585,8 +585,8 @@ export default function EventDetailPage() {
                     disabled={followLoading}
                     className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${
                       isFollowing
-                        ? 'bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/40 hover:bg-[#D4AF37]/20'
-                        : 'bg-[#D4AF37] text-[#1C232B] hover:bg-[#c4a030]'
+                        ? 'bg-white/ text-white border border-white/ hover:bg-white/'
+                        : 'bg-white text-[#1C232B] hover:bg-[#CBD5E1]'
                     }`}
                   >
                     {followLoading ? (
@@ -695,7 +695,7 @@ export default function EventDetailPage() {
                             <motion.div
                               key={ticket.id}
                               whileHover={{ y: -2 }}
-                              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-[#D4AF37]/25 transition-colors"
+                              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/ transition-colors"
                             >
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="min-w-0">
@@ -705,7 +705,7 @@ export default function EventDetailPage() {
                                   </div>
                                   <p className="mt-1 text-sm text-[#949599] line-clamp-2">{ticket.description || ticket.name}</p>
                                   <div className="mt-2 flex items-center gap-3 text-xs">
-                                    <span className="text-2xl font-bold text-[#D4AF37]">
+                                    <span className="text-2xl font-bold text-white">
                                       {ticket.price === 0 ? 'Free' : format(ticket.price)}
                                     </span>
                                     {available !== null && (
@@ -738,7 +738,7 @@ export default function EventDetailPage() {
                                   <button
                                     onClick={() => openPurchase(ticket)}
                                     disabled={available !== null && available <= 0}
-                                    className="px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-40 disabled:cursor-not-allowed"
                                   >
                                     Buy Now
                                   </button>
@@ -773,7 +773,7 @@ export default function EventDetailPage() {
                             <motion.div
                               key={listing.id}
                               whileHover={{ y: -2 }}
-                              className="rounded-xl bg-[#14171A] border border-[#262B2F] p-4 sm:p-5 hover:border-[#D4AF37]/25 transition-colors"
+                              className="rounded-xl bg-[#14171A] border border-[#262B2F] p-4 sm:p-5 hover:border-white/ transition-colors"
                             >
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="min-w-0">
@@ -787,12 +787,12 @@ export default function EventDetailPage() {
                                 </div>
                                 <div className="flex items-center gap-3 shrink-0">
                                   <div className="text-right">
-                                    <span className="text-2xl font-bold text-[#D4AF37]">{format(listing.price)}</span>
+                                    <span className="text-2xl font-bold text-white">{format(listing.price)}</span>
                                   </div>
                                   <button
                                     onClick={() => handleBuyResale(listing)}
                                     disabled={buyingResaleId === listing.id}
-                                    className="px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+                                    className="px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
                                   >
                                     {buyingResaleId === listing.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Ticket className="w-4 h-4" />}
                                     {buyingResaleId === listing.id ? 'Buying...' : 'Buy'}
@@ -817,7 +817,7 @@ export default function EventDetailPage() {
                       </div>
                       <button
                         onClick={() => setCreateMeetupOpen(true)}
-                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition w-fit"
+                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition w-fit"
                       >
                         <Plus className="w-4 h-4" /> Create Meet-up
                       </button>
@@ -843,7 +843,7 @@ export default function EventDetailPage() {
                             <motion.div
                               key={m.id}
                               whileHover={{ y: -2 }}
-                              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-[#D4AF37]/25 transition-colors"
+                              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/ transition-colors"
                             >
                               <div className="flex items-start justify-between gap-4">
                                 <div className="min-w-0">
@@ -892,8 +892,8 @@ export default function EventDetailPage() {
                                     disabled={meetupBusy || (full && !m.joined)}
                                     className={`px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed ${
                                       m.joined
-                                        ? 'bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/40 hover:bg-[#D4AF37]/20'
-                                        : 'bg-[#D4AF37] text-[#1C232B] hover:bg-[#c4a030]'
+                                        ? 'bg-white/ text-white border border-white/ hover:bg-white/'
+                                        : 'bg-white text-[#1C232B] hover:bg-[#CBD5E1]'
                                     }`}
                                   >
                                     {m.joined ? 'Joined' : full ? 'Full' : 'Join'}
@@ -920,7 +920,7 @@ export default function EventDetailPage() {
                     ) : (
                       <div className="space-y-3">
                         {faqs.map((faq, i) => (
-                          <div key={i} className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden hover:border-[#D4AF37]/25 transition-colors">
+                          <div key={i} className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden hover:border-white/ transition-colors">
                             <button
                               onClick={() => setOpenFaq(openFaq === i ? null : i)}
                               className="w-full flex items-center justify-between px-5 py-4 text-left"
@@ -984,7 +984,7 @@ export default function EventDetailPage() {
                 </div>
                 <button
                   onClick={() => setActiveTab('Tickets')}
-                  className="mt-5 w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition flex items-center justify-center gap-2"
+                  className="mt-5 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition flex items-center justify-center gap-2"
                 >
                   <Ticket className="w-4 h-4" /> Get Tickets
                 </button>
@@ -998,7 +998,7 @@ export default function EventDetailPage() {
           <div className="mt-16">
             <div className="flex items-end justify-between mb-6">
               <h2 className="text-xl sm:text-2xl font-bold text-[#EFEFF1]">You might also like</h2>
-              <Link to="/explore" className="group flex items-center gap-1 text-sm text-[#949599] hover:text-[#D4AF37] transition">
+              <Link to="/explore" className="group flex items-center gap-1 text-sm text-[#949599] hover:text-white transition">
                 More events <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>
@@ -1022,7 +1022,7 @@ export default function EventDetailPage() {
             <button
               onClick={handleCreateMeetup}
               disabled={meetupBusy}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50"
             >
               {meetupBusy ? 'Creating...' : 'Create Meet-up'}
             </button>
@@ -1037,7 +1037,7 @@ export default function EventDetailPage() {
               value={meetupForm.title}
               onChange={(e) => setMeetupForm((f) => ({ ...f, title: e.target.value }))}
               placeholder="e.g. Pre-show dinner at the Grand Arena"
-              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
             />
           </div>
           <div>
@@ -1047,7 +1047,7 @@ export default function EventDetailPage() {
               onChange={(e) => setMeetupForm((f) => ({ ...f, description: e.target.value }))}
               rows={3}
               placeholder="What's the plan? Where should people look out for you?"
-              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
+              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition resize-none"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1058,7 +1058,7 @@ export default function EventDetailPage() {
                 value={meetupForm.meetingSpot}
                 onChange={(e) => setMeetupForm((f) => ({ ...f, meetingSpot: e.target.value }))}
                 placeholder="e.g. Main entrance, VIP lounge"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
               />
             </div>
             <div>
@@ -1067,7 +1067,7 @@ export default function EventDetailPage() {
                 type="datetime-local"
                 value={meetupForm.meetAt}
                 onChange={(e) => setMeetupForm((f) => ({ ...f, meetAt: e.target.value }))}
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition"
               />
             </div>
           </div>
@@ -1079,7 +1079,7 @@ export default function EventDetailPage() {
               value={meetupForm.maxMembers}
               onChange={(e) => setMeetupForm((f) => ({ ...f, maxMembers: e.target.value }))}
               placeholder="e.g. 12"
-              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
             />
           </div>
         </div>
@@ -1102,7 +1102,7 @@ export default function EventDetailPage() {
                   <p className="text-xs text-[#949599]">{event.title}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold text-[#D4AF37]">
+                  <p className="text-lg font-bold text-white">
                     {purchaseModal.price === 0 ? 'Free' : format(purchaseModal.price)}
                   </p>
                   <p className="text-xs text-[#494F55]">per ticket</p>
@@ -1140,13 +1140,13 @@ export default function EventDetailPage() {
                     placeholder="Enter code"
                     value={coupon}
                     onChange={(e) => setCoupon(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-[#D4AF37]/50"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/"
                   />
                 </div>
                 <button
                   onClick={handleApplyCoupon}
                   disabled={couponLoading || !coupon.trim()}
-                  className="px-4 py-2.5 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition disabled:opacity-50"
+                  className="px-4 py-2.5 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:border-white/ hover:text-white transition disabled:opacity-50"
                 >
                   {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
                 </button>
@@ -1165,7 +1165,7 @@ export default function EventDetailPage() {
                     transition={{ duration: 0.25 }}
                     className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                       paymentMethod === m.id
-                        ? 'border-[#D4AF37]/50 bg-[#D4AF37]/5'
+                        ? 'border-white/ bg-white/'
                         : 'border-[#494F55]/40 hover:border-[#494F55]'
                     }`}
                   >
@@ -1175,7 +1175,7 @@ export default function EventDetailPage() {
                       value={m.id}
                       checked={paymentMethod === m.id}
                       onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="w-4 h-4 text-[#D4AF37] focus:ring-[#D4AF37]/40 focus:ring-offset-0"
+                      className="w-4 h-4 text-white focus:ring-white/ focus:ring-offset-0"
                     />
                     <m.icon className="w-5 h-5 text-[#494F55]" />
                     <span className="text-sm text-[#EFEFF1]">{m.label}</span>
@@ -1198,14 +1198,14 @@ export default function EventDetailPage() {
               )}
               <div className="pt-2 border-t border-[#262B2F] flex items-center justify-between">
                 <span className="text-sm font-semibold text-[#EFEFF1]">Total</span>
-                <span className="text-xl font-bold text-[#D4AF37]">{format(total)}</span>
+                <span className="text-xl font-bold text-white">{format(total)}</span>
               </div>
             </div>
 
             <button
               onClick={handleProceedPayment}
               disabled={placingOrder}
-              className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {placingOrder ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
@@ -1227,7 +1227,7 @@ function InfoRow({ icon: Icon, label, value }) {
   return (
     <motion.div
       whileHover={{ y: -2 }}
-      className="flex items-start gap-3 rounded-lg bg-[#171A1D] border border-[#262B2F] p-4 hover:border-[#D4AF37]/25 transition-colors"
+      className="flex items-start gap-3 rounded-lg bg-[#171A1D] border border-[#262B2F] p-4 hover:border-white/ transition-colors"
     >
       <Icon className="w-5 h-5 text-[#494F55] mt-0.5 shrink-0" />
       <div className="min-w-0">

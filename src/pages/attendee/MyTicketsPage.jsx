@@ -209,7 +209,7 @@ export default function MyTicketsPage() {
         </div>
         <Link
           to="/attendee/explore"
-          className="group inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-[0_0_0_0_rgba(212,175,55,0)] hover:shadow-[0_6px_20px_-6px_rgba(212,175,55,0.45)] w-fit"
+          className="group inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] hover:-translate-y-0.5 transition-all shadow-[0_0_0_0_rgba(212,175,55,0)] hover:shadow-[0_6px_20px_-6px_rgba(212,175,55,0.45)] w-fit"
         >
           <TicketIcon className="w-4 h-4 transition-transform group-hover:-rotate-6" /> Browse Events
           <span className="transition-transform group-hover:translate-x-0.5">→</span>
@@ -230,7 +230,7 @@ export default function MyTicketsPage() {
               {tab === t.value && (
                 <motion.span
                   layoutId="ticket-tab-pill"
-                  className="absolute inset-0 rounded-lg bg-[#D4AF37] shadow-[0_2px_10px_-2px_rgba(212,175,55,0.5)]"
+                  className="absolute inset-0 rounded-lg bg-white shadow-[0_2px_10px_-2px_rgba(212,175,55,0.5)]"
                   transition={{ type: 'spring', stiffness: 500, damping: 34 }}
                 />
               )}
@@ -245,7 +245,7 @@ export default function MyTicketsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tickets..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
           />
         </div>
       </motion.div>
@@ -282,8 +282,8 @@ export default function MyTicketsPage() {
           className="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-[#1C232B]/60 transition-colors"
         >
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
-              <Store className="w-4.5 h-4.5 text-[#D4AF37]" />
+            <div className="w-9 h-9 rounded-lg bg-white/ border border-white/ flex items-center justify-center">
+              <Store className="w-4.5 h-4.5 text-white" />
             </div>
             <div className="text-left">
               <h2 className="text-sm font-semibold text-[#EFEFF1]">My Resale Listings</h2>
@@ -327,7 +327,7 @@ export default function MyTicketsPage() {
                         <p className="mt-0.5 text-xs text-[#949599]">{listing.ticketTypeName || 'Ticket'} • Listed {new Date(listing.createdAt).toLocaleDateString()}</p>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
-                        <span className="text-lg font-bold text-[#D4AF37]">{format(listing.price)}</span>
+                        <span className="text-lg font-bold text-white">{format(listing.price)}</span>
                         <Badge variant={s.variant} size="sm">{s.label}</Badge>
                         {st === 'active' && (
                           <button
@@ -365,7 +365,7 @@ export default function MyTicketsPage() {
             <button
               onClick={handleSell}
               disabled={selling}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
             >
               <Tag className="w-4 h-4" />
               {selling ? 'Listing...' : 'List for Sale'}
@@ -392,7 +392,7 @@ export default function MyTicketsPage() {
                 value={sellPrice}
                 onChange={(e) => setSellPrice(e.target.value)}
                 placeholder="e.g. 45"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
               />
               <p className="text-xs text-[#494F55] mt-2">
                 Your ticket will appear in the event's Resale section. When someone buys it, the ticket transfers to them and you're notified.
@@ -418,7 +418,7 @@ export default function MyTicketsPage() {
             <button
               onClick={handleTransfer}
               disabled={transferring}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
             >
               <Send className="w-4 h-4" />
               {transferring ? 'Sending...' : 'Transfer Ticket'}
@@ -443,7 +443,7 @@ export default function MyTicketsPage() {
                 value={transferEmail}
                 onChange={(e) => setTransferEmail(e.target.value)}
                 placeholder="friend@example.com"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
               />
               <p className="text-xs text-[#494F55] mt-2">
                 The recipient will receive an email to accept this ticket transfer.
@@ -469,7 +469,7 @@ export default function MyTicketsPage() {
             </button>
             <button
               onClick={() => window.print()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
             >
               <Printer className="w-4 h-4" /> Print
             </button>
@@ -521,7 +521,7 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
     <motion.div
       whileHover={{ y: -4 }}
       transition={{ type: 'spring', stiffness: 380, damping: 26 }}
-      className={`group relative rounded-2xl overflow-hidden bg-[#171A1D] border shadow-[0_0_0_0_rgba(212,175,55,0)] hover:shadow-[0_14px_36px_-16px_rgba(0,0,0,0.7),0_0_0_1px_rgba(212,175,55,0.15)] ${isCancelled ? 'border-red-500/30 opacity-70' : 'border-[#262B2F] hover:border-[#D4AF37]/40'} transition-[border-color,box-shadow,opacity]`}
+      className={`group relative rounded-2xl overflow-hidden bg-[#171A1D] border shadow-[0_0_0_0_rgba(212,175,55,0)] hover:shadow-[0_14px_36px_-16px_rgba(0,0,0,0.7),0_0_0_1px_rgba(212,175,55,0.15)] ${isCancelled ? 'border-red-500/30 opacity-70' : 'border-[#262B2F] hover:border-white/'} transition-[border-color,box-shadow,opacity]`}
     >
       {/* Banner */}
       <div className="relative h-24 overflow-hidden bg-[#242B32]">
@@ -553,7 +553,7 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
           {/* Left: details */}
           <div className="flex-1 min-w-0 space-y-2.5">
             <div>
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-[#D4AF37]">
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-white">
                 {ticket.ticketType || ticket.type || 'General'}
               </span>
               <h3 className="text-base font-bold text-[#EFEFF1] line-clamp-2">{event.title || ticket.eventName || 'Event'}</h3>
@@ -587,7 +587,7 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
             <motion.div
               whileHover={{ scale: 1.08 }}
               transition={{ type: 'spring', stiffness: 400, damping: 18 }}
-              className="w-28 h-28 rounded-xl bg-white p-2 flex items-center justify-center ring-1 ring-transparent hover:ring-[#D4AF37]/40 transition-shadow"
+              className="w-28 h-28 rounded-xl bg-white p-2 flex items-center justify-center ring-1 ring-transparent hover:ring-white/ transition-shadow"
             >
               <QRCodeSVG value={qrValue} size={96} level="M" includeMargin={false} />
             </motion.div>
@@ -601,27 +601,27 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
         <div className="flex gap-2 p-5 pt-0">
           <button
             onClick={onDownload}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/ hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
           >
             <Download className="w-3.5 h-3.5" /> Download
           </button>
           <button
             onClick={onPrint}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/ hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
           >
             <Printer className="w-3.5 h-3.5" /> Print
           </button>
           <button
             onClick={onTransfer}
             disabled={isCancelled}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 hover:bg-[#242B32] disabled:opacity-40 disabled:cursor-not-allowed transition-colors group-hover:border-[#494F55]/60"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/ hover:bg-[#242B32] disabled:opacity-40 disabled:cursor-not-allowed transition-colors group-hover:border-[#494F55]/60"
           >
             <Send className="w-3.5 h-3.5" /> Transfer
           </button>
           <button
             onClick={onSell}
             disabled={isCancelled}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-semibold hover:bg-[#D4AF37] hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white/ border border-white/ text-white text-xs font-semibold hover:bg-white hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Tag className="w-3.5 h-3.5" /> Sell
           </button>
@@ -641,7 +641,7 @@ function PrintableTicket({ ticket }) {
   return (
     <div className="rounded-xl border border-[#494F55]/40 overflow-hidden">
       <div className="bg-[#1C232B] p-5 text-center">
-        <p className="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold">Tribes & Cliqs</p>
+        <p className="text-xs uppercase tracking-widest text-white font-semibold">Tribes & Cliqs</p>
         <h3 className="text-lg font-bold text-[#EFEFF1] mt-1">{event.title || ticket.eventName}</h3>
       </div>
       <div className="bg-white p-6 flex flex-col items-center gap-4">

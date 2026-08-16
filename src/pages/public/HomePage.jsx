@@ -70,8 +70,8 @@ function StatCounter({ stat }) {
   };
 
   return (
-    <div ref={ref} className="group rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 text-center hover:border-[#D4AF37]/25 hover:-translate-y-0.5 transition-all duration-300">
-      <stat.icon className="w-6 h-6 text-[#494F55] mx-auto mb-3 group-hover:text-[#D4AF37] group-hover:scale-110 transition-all duration-300" />
+    <div ref={ref} className="group rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 text-center hover:border-white/ hover:-translate-y-0.5 transition-all duration-300">
+      <stat.icon className="w-6 h-6 text-[#494F55] mx-auto mb-3 group-hover:text-white group-hover:scale-110 transition-all duration-300" />
       <p className="text-3xl font-bold text-[#EFEFF1]">
         {format(count)}{stat.suffix}
       </p>
@@ -193,7 +193,7 @@ export default function HomePage() {
               <Sparkles className="w-3.5 h-3.5" /> Africa's Premier Event Platform
             </span>
             <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold text-[#EFEFF1] leading-[1.1] tracking-tight">
-              Where Every Event <br />Is a <span className="text-[#D4AF37]">Success</span>
+              Where Every Event <br />Is a <span className="text-white">Success</span>
             </h1>
             <p className="mt-5 text-lg text-[#949599] max-w-xl leading-relaxed">
               Tribes & Cliqs is an online self-ticketing platform that allows you to curate events seamlessly
@@ -241,7 +241,7 @@ export default function HomePage() {
               </div>
               <button
                 type="submit"
-                className="mt-2 w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors"
+                className="mt-2 w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors"
               >
                 <Search className="w-4 h-4" /> Search Events
               </button>
@@ -251,13 +251,13 @@ export default function HomePage() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/explore"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-lg"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] hover:-translate-y-0.5 transition-all shadow-lg"
               >
                 Explore Events <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <Link
                 to="/register"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-[#D4AF37]/50 hover:text-[#D4AF37] hover:-translate-y-0.5 transition-all"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-white/ hover:text-white hover:-translate-y-0.5 transition-all"
               >
                 Create Event
               </Link>
@@ -274,7 +274,7 @@ export default function HomePage() {
               <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Handpicked</span>
               <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Featured Events</h2>
             </div>
-            <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm text-[#949599] hover:text-[#D4AF37] transition-colors">
+            <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm text-[#949599] hover:text-white transition-colors">
               View all <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
@@ -307,7 +307,7 @@ export default function HomePage() {
               </span>
               <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Trending Events</h2>
             </div>
-            <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm text-[#949599] hover:text-[#D4AF37] transition-colors">
+            <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm text-[#949599] hover:text-white transition-colors">
               View all <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
@@ -360,10 +360,10 @@ export default function HomePage() {
                   >
                     <Link
                       to={`/explore?category=${encodeURIComponent(name)}`}
-                      className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-[#D4AF37]/30 hover:-translate-y-1 transition-all duration-300"
+                      className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/ hover:-translate-y-1 transition-all duration-300"
                     >
                       <div className="w-12 h-12 rounded-lg bg-[#242B32] flex items-center justify-center group-hover:bg-[#1C232B] transition-colors">
-                        <Icon className="w-6 h-6 text-[#9AA1A6] group-hover:text-[#D4AF37] group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
+                        <Icon className="w-6 h-6 text-[#9AA1A6] group-hover:text-white group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
                       </div>
                       <span className="text-sm font-semibold text-[#EFEFF1]">{name}</span>
                     </Link>
@@ -391,12 +391,12 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.12 }}
                 whileHover={{ y: -4 }}
-                className="group relative rounded-2xl bg-[#1C232B] border border-[#262B2F] p-6 text-center hover:border-[#D4AF37]/25 transition-colors"
+                className="group relative rounded-2xl bg-[#1C232B] border border-[#262B2F] p-6 text-center hover:border-white/ transition-colors"
               >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] text-sm font-bold flex items-center justify-center transition group-hover:border-[#D4AF37]/50 group-hover:text-[#D4AF37]">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] text-sm font-bold flex items-center justify-center transition group-hover:border-white/ group-hover:text-white">
                   {i + 1}
                 </div>
-                <step.icon className="w-7 h-7 text-[#494F55] mx-auto mb-4 mt-2 group-hover:text-[#D4AF37] group-hover:scale-110 transition-all duration-300" />
+                <step.icon className="w-7 h-7 text-[#494F55] mx-auto mb-4 mt-2 group-hover:text-white group-hover:scale-110 transition-all duration-300" />
                 <h3 className="text-lg font-semibold text-[#EFEFF1]">{step.title}</h3>
                 <p className="mt-2 text-sm text-[#949599] leading-relaxed">{step.desc}</p>
               </motion.div>
@@ -440,10 +440,10 @@ export default function HomePage() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.3, delay: i * 0.06 }}
                     whileHover={{ y: -3 }}
-                    className="group rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-[#D4AF37]/25 transition-colors"
+                    className="group rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/ transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] font-bold flex items-center justify-center shrink-0 overflow-hidden group-hover:ring-2 group-hover:ring-[#D4AF37]/40 transition-all">
+                      <div className="w-12 h-12 rounded-xl bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] font-bold flex items-center justify-center shrink-0 overflow-hidden group-hover:ring-2 group-hover:ring-white/ transition-all">
                         {org.avatar ? (
                           <img src={org.avatar} alt={org.name} className="w-full h-full object-cover" />
                         ) : initials}
@@ -455,7 +455,7 @@ export default function HomePage() {
                     </div>
                     <div className="mt-4 pt-4 border-t border-[#262B2F] flex items-center justify-between">
                       <span className="text-xs text-[#494F55]">Events hosted</span>
-                      <span className="text-sm font-bold text-[#D4AF37]">{org.events_count || 0}</span>
+                      <span className="text-sm font-bold text-white">{org.events_count || 0}</span>
                     </div>
                   </motion.div>
                 );
@@ -527,7 +527,7 @@ function NewsletterSection() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                className="px-6 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
               >
                 {submitting ? <LoadingSpinner size="sm" /> : <><Star className="w-4 h-4" /> Subscribe</>}
               </button>

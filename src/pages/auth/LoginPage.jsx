@@ -37,7 +37,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       {/* Background accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/ blur-3xl" />
       </div>
 
       <motion.div
@@ -71,7 +71,7 @@ export default function LoginPage() {
                     pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },
                   })}
                   className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-                    errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
+                    errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
                   }`}
                 />
               </div>
@@ -81,7 +81,7 @@ export default function LoginPage() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Password</label>
-                <Link to="/forgot-password" className="text-xs text-[#D4AF37] hover:underline">Forgot Password?</Link>
+                <Link to="/forgot-password" className="text-xs text-white hover:underline">Forgot Password?</Link>
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
@@ -90,7 +90,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 characters' } })}
                   className={`w-full pl-10 pr-10 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-                    errors.password ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
+                    errors.password ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
                   }`}
                 />
                 <button
@@ -107,7 +107,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Signing in...</> : <><LogIn className="w-4 h-4" /> Sign In</>}
             </button>
@@ -141,13 +141,13 @@ export default function LoginPage() {
           {/* Register link */}
           <p className="mt-6 text-center text-sm text-[#949599]">
             Don't have an account?{' '}
-            <Link to="/register" className="text-[#D4AF37] font-semibold hover:underline">Sign up</Link>
+            <Link to="/register" className="text-white font-semibold hover:underline">Sign up</Link>
           </p>
         </div>
 
         <p className="mt-4 text-center text-xs text-[#494F55] flex items-center justify-center gap-1">
           <Info className="w-3.5 h-3.5 shrink-0" /> Admin?{' '}
-          <Link to="/admin-login" className="text-[#D4AF37] font-semibold hover:underline">Use the separate admin portal</Link>
+          <Link to="/admin-login" className="text-white font-semibold hover:underline">Use the separate admin portal</Link>
         </p>
       </motion.div>
     </div>

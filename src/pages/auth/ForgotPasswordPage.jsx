@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/ blur-3xl" />
       </div>
 
       <motion.div
@@ -63,13 +63,13 @@ export default function ForgotPasswordPage() {
               </div>
               <h3 className="text-lg font-semibold text-[#EFEFF1]">Email Sent!</h3>
               <p className="mt-2 text-sm text-[#949599]">
-                We've sent a password reset link to <span className="text-[#D4AF37] font-medium">{email}</span>.
+                We've sent a password reset link to <span className="text-white font-medium">{email}</span>.
                 The link will expire in 1 hour.
               </p>
               <p className="mt-3 text-xs text-[#494F55]">Didn't receive it? Check your spam folder.</p>
               <button
                 onClick={() => { setSent(false); setEmail(''); }}
-                className="mt-6 inline-flex items-center gap-1.5 text-sm text-[#D4AF37] hover:underline"
+                className="mt-6 inline-flex items-center gap-1.5 text-sm text-white hover:underline"
               >
                 <ArrowLeft className="w-4 h-4" /> Try a different email
               </button>
@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
                       pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },
                     })}
                     className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-                      errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
+                      errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
                     }`}
                   />
                 </div>
@@ -99,7 +99,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</> : <><Send className="w-4 h-4" /> Send Reset Link</>}
               </button>
@@ -107,7 +107,7 @@ export default function ForgotPasswordPage() {
           )}
 
           <div className="mt-6 text-center">
-            <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-[#949599] hover:text-[#D4AF37] transition">
+            <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-[#949599] hover:text-white transition">
               <ArrowLeft className="w-4 h-4" /> Back to Login
             </Link>
           </div>

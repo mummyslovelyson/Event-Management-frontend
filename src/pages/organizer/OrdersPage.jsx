@@ -101,11 +101,11 @@ export default function OrdersPage() {
         actions={
           <>
             {selected.size > 0 && (
-              <button onClick={() => exportCSV(orders.filter((o) => selected.has(o.id)))} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-[#D4AF37] border border-[#D4AF37]/40 hover:bg-[#D4AF37]/10 transition">
+              <button onClick={() => exportCSV(orders.filter((o) => selected.has(o.id)))} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/ hover:bg-white/ transition">
                 <Download className="w-4 h-4" /> Export Selected ({selected.size})
               </button>
             )}
-            <button onClick={() => exportCSV()} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition">
+            <button onClick={() => exportCSV()} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition">
               <Download className="w-4 h-4" /> Export All
             </button>
           </>
@@ -124,16 +124,16 @@ export default function OrdersPage() {
       <div className="flex flex-col lg:flex-row lg:items-center gap-3">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by order ID, customer, email..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by order ID, customer, email..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition" />
         </div>
       </div>
 
       {/* Status Tabs */}
       <div className="flex items-center gap-1 overflow-x-auto border-b border-[#262B2F]">
         {STATUS_TABS.map((t) => (
-          <button key={t} onClick={() => setStatusTab(t)} className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${statusTab === t ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
+          <button key={t} onClick={() => setStatusTab(t)} className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${statusTab === t ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
             {t}
-            {statusTab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#D4AF37]" />}
+            {statusTab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-white" />}
           </button>
         ))}
       </div>
@@ -149,7 +149,7 @@ export default function OrdersPage() {
             <thead>
               <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
                 <th className="px-4 py-3 w-10">
-                  <input type="checkbox" checked={selected.size === orders.length && orders.length > 0} onChange={toggleAll} className="w-4 h-4 rounded accent-[#D4AF37] cursor-pointer" />
+                  <input type="checkbox" checked={selected.size === orders.length && orders.length > 0} onChange={toggleAll} className="w-4 h-4 rounded accent-[#EFEFF1] cursor-pointer" />
                 </th>
                 <th className="px-4 py-3 font-medium">Order ID</th>
                 <th className="px-4 py-3 font-medium">Customer</th>
@@ -169,7 +169,7 @@ export default function OrdersPage() {
                   <>
                     <tr key={o.id} className="hover:bg-[#1D2124] transition-colors cursor-pointer" onClick={() => setDetailOrder(o)}>
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                        <input type="checkbox" checked={selected.has(o.id)} onChange={() => toggleSelect(o.id)} className="w-4 h-4 rounded accent-[#D4AF37] cursor-pointer" />
+                        <input type="checkbox" checked={selected.has(o.id)} onChange={() => toggleSelect(o.id)} className="w-4 h-4 rounded accent-[#EFEFF1] cursor-pointer" />
                       </td>
                       <td className="px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{o.reference || o.id?.slice(-6)}</td>
                       <td className="px-4 py-3">
@@ -227,7 +227,7 @@ export default function OrdersPage() {
               </div>
               <div className="mt-3 pt-3 border-t border-[#262B2F] flex items-center justify-between">
                 <span className="text-sm font-semibold text-[#EFEFF1]">Total</span>
-                <span className="text-lg font-bold text-[#D4AF37]">{format(detailOrder.amount || detailOrder.total)}</span>
+                <span className="text-lg font-bold text-white">{format(detailOrder.amount || detailOrder.total)}</span>
               </div>
             </div>
           </div>

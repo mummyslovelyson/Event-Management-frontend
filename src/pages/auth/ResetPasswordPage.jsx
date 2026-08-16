@@ -38,13 +38,13 @@ export default function ResetPasswordPage() {
 
   const inputClass = (field) =>
     `w-full pl-10 pr-10 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-      errors[field] ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
+      errors[field] ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
     }`;
 
   return (
     <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/ blur-3xl" />
       </div>
 
       <motion.div
@@ -144,7 +144,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={submitting || !token}
-                className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Resetting...</> : 'Reset Password'}
               </button>
@@ -153,7 +153,7 @@ export default function ResetPasswordPage() {
 
           {!success && (
             <div className="mt-6 text-center">
-              <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-[#949599] hover:text-[#D4AF37] transition">
+              <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-[#949599] hover:text-white transition">
                 <ArrowLeft className="w-4 h-4" /> Back to Login
               </Link>
             </div>

@@ -42,19 +42,19 @@ export default function AboutPage() {
     <>
       {/* Hero */}
       <section className="relative py-20 sm:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#D4AF37]/5 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/ to-transparent" />
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-semibold uppercase tracking-wider">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/ border border-white/ text-white text-xs font-semibold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" /> Our Story
             </span>
             <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EFEFF1] leading-tight">
               Bringing People Together, <br className="hidden sm:block" />
-              <span className="text-[#D4AF37]">One Event at a Time</span>
+              <span className="text-white">One Event at a Time</span>
             </h1>
             <p className="mt-5 text-lg text-[#949599] leading-relaxed">
               Tribes & Cliqs is an online self-ticketing platform that allows you to curate events seamlessly
@@ -82,7 +82,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.4, delay: i * 0.12 }}
                 className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-8"
               >
-                <div className="w-14 h-14 rounded-xl bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center mb-5">
+                <div className="w-14 h-14 rounded-xl bg-white/ text-white flex items-center justify-center mb-5">
                   <item.icon className="w-7 h-7" />
                 </div>
                 <h2 className="text-xl font-bold text-[#EFEFF1]">{item.title}</h2>
@@ -97,7 +97,7 @@ export default function AboutPage() {
       <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">What drives us</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-white">What drives us</span>
             <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Our Core Values</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -108,9 +108,9 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: i * 0.06 }}
-                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-6 hover:border-[#D4AF37]/40 transition-colors"
+                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-6 hover:border-white/ transition-colors"
               >
-                <div className="w-12 h-12 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-lg bg-white/ text-white flex items-center justify-center mb-4">
                   <v.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-sm font-semibold text-[#EFEFF1]">{v.title}</h3>
@@ -138,7 +138,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.3, delay: i * 0.08 }}
                 className="rounded-xl bg-[#1C232B] border border-[#262B2F] p-5 text-center"
               >
-                <div className="w-12 h-12 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 rounded-lg bg-white/ text-white flex items-center justify-center mx-auto mb-3">
                   <s.icon className="w-6 h-6" />
                 </div>
                 <p className="text-3xl font-bold text-[#EFEFF1]">{s.value}</p>
@@ -153,7 +153,7 @@ export default function AboutPage() {
       <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">The people behind it</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-white">The people behind it</span>
             <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Meet Our Team</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -164,17 +164,17 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: i * 0.08 }}
-                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-6 text-center hover:border-[#D4AF37]/40 transition-colors"
+                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-6 text-center hover:border-white/ transition-colors"
               >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/5 text-[#D4AF37] text-xl font-bold flex items-center justify-center mx-auto mb-4">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-white/ to-white/ text-white text-xl font-bold flex items-center justify-center mx-auto mb-4">
                   {member.initials}
                 </div>
                 <h3 className="text-sm font-semibold text-[#EFEFF1]">{member.name}</h3>
-                <p className="text-xs text-[#D4AF37] mt-0.5">{member.role}</p>
+                <p className="text-xs text-white mt-0.5">{member.role}</p>
                 <p className="mt-3 text-xs text-[#949599] leading-relaxed">{member.bio}</p>
                 <div className="mt-4 flex items-center justify-center gap-3">
                   {[Linkedin, Twitter, Github].map((Icon, idx) => (
-                    <button key={idx} className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#262B2F] flex items-center justify-center text-[#949599] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition">
+                    <button key={idx} className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#262B2F] flex items-center justify-center text-[#949599] hover:text-white hover:border-white/ transition">
                       <Icon className="w-4 h-4" />
                     </button>
                   ))}
@@ -193,10 +193,10 @@ export default function AboutPage() {
             Whether you're looking to attend events or host your own, we'd love to have you.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <a href="/explore" className="px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition">
+            <a href="/explore" className="px-6 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition">
               Explore Events
             </a>
-            <a href="/register" className="px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition">
+            <a href="/register" className="px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-white/ hover:text-white transition">
               Become an Organizer
             </a>
           </div>

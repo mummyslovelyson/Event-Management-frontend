@@ -46,7 +46,7 @@ export default function Logo({
       <img
         src="/assets/images/Logo.jpeg"
         alt="Tribes & Cliqs"
-        className={`${sizeClasses.img} object-cover ring-1 ring-[#494F55]/40 group-hover:ring-[#D4AF37]/60 group-hover:scale-105 transition-all duration-300 shadow-md`}
+        className={`${sizeClasses.img} object-cover ring-1 ring-[#494F55]/40 group-hover:ring-white/ group-hover:scale-105 transition-all duration-300 shadow-md`}
       />
       {showText && (
         <div className="flex flex-col leading-tight text-left">

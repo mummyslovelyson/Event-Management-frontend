@@ -44,14 +44,14 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
     return (
       <Link
         to={`/events/${event.id}`}
-        className="flex gap-3 p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-[#D4AF37]/40 transition group"
+        className="flex gap-3 p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/ transition group"
       >
         <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-[#1C232B]">
           {img && <img src={img} alt={event.title} className="w-full h-full object-cover" />}
         </div>
         <div className="min-w-0 flex-1">
-          <span className="text-[10px] font-semibold uppercase tracking-wide text-[#D4AF37]">{event.category}</span>
-          <h4 className="text-sm font-semibold text-[#EFEFF1] truncate group-hover:text-[#D4AF37] transition">{event.title}</h4>
+          <span className="text-[10px] font-semibold uppercase tracking-wide text-white">{event.category}</span>
+          <h4 className="text-sm font-semibold text-[#EFEFF1] truncate group-hover:text-white transition">{event.title}</h4>
           <p className="text-xs text-[#949599] flex items-center gap-1 mt-1">
             <Calendar className="w-3 h-3" /> {formattedDate}
           </p>
@@ -64,7 +64,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
     <motion.div
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
-      className="group rounded-xl overflow-hidden bg-[#171A1D] border border-[#262B2F] hover:border-[#D4AF37]/40 hover:shadow-xl hover:shadow-black/25 transition-all"
+      className="group rounded-xl overflow-hidden bg-[#171A1D] border border-[#262B2F] hover:border-white/ hover:shadow-xl hover:shadow-black/25 transition-all"
     >
       <Link to={`/events/${event.id}`} className="block">
         <div className="relative aspect-[16/10] overflow-hidden bg-[#1C232B]">
@@ -80,7 +80,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
             </div>
           )}
           {event.category && (
-            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wide bg-[#1C232B]/90 text-[#D4AF37] backdrop-blur-sm">
+            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wide bg-[#1C232B]/90 text-white backdrop-blur-sm">
               {event.category}
             </span>
           )}
@@ -98,13 +98,13 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
               transition={{ type: 'spring', stiffness: 450, damping: 14 }}
               className="flex"
             >
-              <Heart className={`w-4 h-4 ${fav ? 'fill-[#D4AF37] text-[#D4AF37]' : ''}`} />
+              <Heart className={`w-4 h-4 ${fav ? 'fill-[#EFEFF1] text-white' : ''}`} />
             </motion.span>
           </motion.button>
         </div>
 
         <div className="p-4">
-          <h3 className="text-base font-semibold text-[#EFEFF1] line-clamp-1 group-hover:text-[#D4AF37] transition">
+          <h3 className="text-base font-semibold text-[#EFEFF1] line-clamp-1 group-hover:text-white transition">
             {event.title}
           </h3>
           <div className="mt-3 space-y-1.5">
@@ -120,9 +120,9 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
           <div className="mt-4 pt-3 border-t border-[#262B2F] flex items-center justify-between">
             <div className="flex items-center gap-1">
               <span className="text-xs text-[#494F55]">From</span>
-              <span className="text-lg font-bold text-[#D4AF37]">{priceLabel}</span>
+              <span className="text-lg font-bold text-white">{priceLabel}</span>
             </div>
-            <span className="px-3 py-1.5 rounded-lg bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-semibold group-hover:bg-[#D4AF37] group-hover:text-[#1C232B] transition">
+            <span className="px-3 py-1.5 rounded-lg bg-white/ text-white text-xs font-semibold group-hover:bg-white group-hover:text-[#1C232B] transition">
               View Details
             </span>
           </div>

@@ -17,7 +17,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const pieColors = ['#D4AF37', '#60A5FA', '#34D399', '#F472B6', '#A78BFA', '#FB923C', '#22D3EE', '#FBBF24'];
+const pieColors = ['#EFEFF1', '#60A5FA', '#34D399', '#F472B6', '#A78BFA', '#FB923C', '#22D3EE', '#FBBF24'];
 
 const exportCSV = (rows, filename) => {
   if (!rows.length) return toast.error('Nothing to export');
@@ -85,16 +85,16 @@ export default function PlatformReportsPage() {
                 <button
                   key={r}
                   onClick={() => { setRange(r); setFromDate(''); setToDate(''); }}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${range === r ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${range === r ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
                 >
                   {r === '1y' ? '1 Year' : r.toUpperCase()}
                 </button>
               ))}
             </div>
             <div className="flex items-center gap-2">
-              <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60" />
+              <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-white/" />
               <span className="text-[#494F55]">—</span>
-              <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60" />
+              <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-white/" />
             </div>
             <button
               onClick={() => exportCSV([{ section: 'Revenue', ...revenue }, { section: 'Users', ...users }, { section: 'Events', ...events }], 'platform-report.csv')}
@@ -118,7 +118,7 @@ export default function PlatformReportsPage() {
         <>
           {/* Revenue section */}
           <div className="space-y-4">
-            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EFEFF1]"><span className="w-1 h-4 rounded-full bg-[#D4AF37]" /> Revenue</h2>
+            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EFEFF1]"><span className="w-1 h-4 rounded-full bg-white" /> Revenue</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <StatCard icon={DollarSign} label="Total Revenue" value={format(revenue.total)} trend={revenue.growth} trendLabel="vs last period" accent />
               <StatCard icon={TrendingUp} label="Growth" value={`${revenue.growth ?? 0}%`} />
@@ -132,15 +132,15 @@ export default function PlatformReportsPage() {
                     <AreaChart data={revenueSeries} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="reportRev" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.4} />
-                          <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
+                          <stop offset="0%" stopColor="#EFEFF1" stopOpacity={0.4} />
+                          <stop offset="100%" stopColor="#EFEFF1" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} vertical={false} />
                       <XAxis dataKey="date" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
                       <YAxis stroke="#949599" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => format(v, { compact: true })} />
                       <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#EFEFF1', fontSize: 12 }} formatter={(v) => [format(v), 'Revenue']} />
-                      <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2} fill="url(#reportRev)" />
+                      <Area type="monotone" dataKey="revenue" stroke="#EFEFF1" strokeWidth={2} fill="url(#reportRev)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 ) : <EmptyState icon={BarChart3} title="No revenue in this period" className="py-10" />}
@@ -260,9 +260,9 @@ export default function PlatformReportsPage() {
                   <div className="space-y-3">
                     {topEvents.slice(0, 5).map((e, i) => (
                       <div key={i} className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+                        <span className="w-6 h-6 rounded-full bg-white/ text-white flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
                         <span className="text-sm text-[#EFEFF1] flex-1 truncate">{e.title || e.name}</span>
-                        <span className="text-sm font-medium text-[#D4AF37]">{e.tickets ?? e.value ?? 0}</span>
+                        <span className="text-sm font-medium text-white">{e.tickets ?? e.value ?? 0}</span>
                       </div>
                     ))}
                   </div>

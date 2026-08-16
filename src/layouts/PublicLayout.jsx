@@ -73,7 +73,7 @@ export default function PublicLayout() {
                     <span className="relative">
                       {label}
                       <span
-                        className={`absolute -bottom-1 left-0 right-0 h-px bg-[#D4AF37] origin-left transition-transform duration-300 ease-out ${
+                        className={`absolute -bottom-1 left-0 right-0 h-px bg-white origin-left transition-transform duration-300 ease-out ${
                           isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                         }`}
                       />
@@ -89,7 +89,7 @@ export default function PublicLayout() {
               {isAuthenticated ? (
                 <Link
                   to={dashHref}
-                  className="px-5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-[13px] font-bold tracking-wide hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-sm"
+                  className="px-5 py-2 rounded-lg bg-white text-[#1C232B] text-[13px] font-bold tracking-wide hover:bg-[#CBD5E1] hover:-translate-y-0.5 transition-all shadow-sm"
                 >
                   My Dashboard
                 </Link>
@@ -104,7 +104,7 @@ export default function PublicLayout() {
                 </Link>
                 <Link
                   to="/register"
-                  className="flex items-center gap-1.5 px-5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-[13px] font-bold tracking-wide hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-sm"
+                  className="flex items-center gap-1.5 px-5 py-2 rounded-lg bg-white text-[#1C232B] text-[13px] font-bold tracking-wide hover:bg-[#CBD5E1] hover:-translate-y-0.5 transition-all shadow-sm"
                 >
                   <UserPlus className="w-4 h-4" />
                   Get Started
@@ -146,15 +146,15 @@ export default function PublicLayout() {
             <div className="pt-3 border-t border-[#262B2F] space-y-2">
               <CurrencyToggle className="w-full justify-center" />
               {isAuthenticated ? (
-                <Link to={dashHref} className="block w-full text-center px-4 py-3 rounded-xl bg-[#D4AF37] text-[#1C232B] text-sm font-bold">
+                <Link to={dashHref} className="block w-full text-center px-4 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold">
                   My Dashboard
                 </Link>
               ) : (
                 <>
-                  <Link to="/login" className="block w-full text-center px-4 py-3 rounded-xl border border-[#494F55]/50 text-[#EFEFF1] text-sm font-medium hover:border-[#D4AF37]/50 transition">
+                  <Link to="/login" className="block w-full text-center px-4 py-3 rounded-xl border border-[#494F55]/50 text-[#EFEFF1] text-sm font-medium hover:border-white/ transition">
                     Sign In
                   </Link>
-                  <Link to="/register" className="block w-full text-center px-4 py-3 rounded-xl bg-[#D4AF37] text-[#1C232B] text-sm font-bold">
+                  <Link to="/register" className="block w-full text-center px-4 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold">
                     Get Started Free
                   </Link>
                 </>
@@ -183,7 +183,7 @@ export default function PublicLayout() {
               </p>
               <div className="flex items-center gap-3 mt-5">
                 {['Twitter', 'Instagram', 'Facebook', 'LinkedIn'].map((s) => (
-                  <a key={s} href="#" className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-[#949599] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition text-[10px] font-bold">
+                  <a key={s} href="#" className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-[#949599] hover:text-white hover:border-white/ transition text-[10px] font-bold">
                     {s[0]}
                   </a>
                 ))}
@@ -201,7 +201,7 @@ export default function PublicLayout() {
                 <ul className="space-y-2.5">
                   {links.map(([label, href]) => (
                     <li key={label}>
-              <Link to={href} className="text-sm text-[#949599] hover:text-[#D4AF37] hover:underline underline-offset-4 decoration-[#D4AF37]/50 transition">
+              <Link to={href} className="text-sm text-[#949599] hover:text-white hover:underline underline-offset-4 decoration-white/ transition">
                 {label}
               </Link>
                     </li>

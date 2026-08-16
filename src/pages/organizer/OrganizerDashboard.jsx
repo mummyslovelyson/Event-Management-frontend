@@ -125,11 +125,11 @@ export default function OrganizerDashboard() {
           <Link
             key={label}
             to={to}
-            className="flex items-center gap-3 p-4 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-[#D4AF37]/30 transition-colors group"
+            className="flex items-center gap-3 p-4 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/ transition-colors group"
           >
-            <Icon className="w-5 h-5 text-[#5A6166] shrink-0 group-hover:text-[#D4AF37] transition-colors" />
+            <Icon className="w-5 h-5 text-[#5A6166] shrink-0 group-hover:text-white transition-colors" />
             <span className="text-sm font-medium text-[#EFEFF1] transition-colors">{label}</span>
-            <ArrowRight className="w-4 h-4 text-[#5A6166] ml-auto group-hover:text-[#D4AF37] transition-colors" />
+            <ArrowRight className="w-4 h-4 text-[#5A6166] ml-auto group-hover:text-white transition-colors" />
           </Link>
         ))}
       </div>
@@ -149,8 +149,8 @@ export default function OrganizerDashboard() {
               <AreaChart data={revenueData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#EFEFF1" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#EFEFF1" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} vertical={false} />
@@ -161,7 +161,7 @@ export default function OrganizerDashboard() {
                   labelStyle={{ color: '#949599' }}
                   formatter={(v) => [format(v), 'Revenue']}
                 />
-                <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2} fill="url(#revGrad)" />
+                <Area type="monotone" dataKey="revenue" stroke="#EFEFF1" strokeWidth={2} fill="url(#revGrad)" />
               </AreaChart>
             </ResponsiveContainer>
           ) : (
@@ -187,7 +187,7 @@ export default function OrganizerDashboard() {
                   cursor={{ fill: '#494F55', fillOpacity: 0.1 }}
                   formatter={(v) => [`${v} tickets`, 'Sold']}
                 />
-                <Bar dataKey="ticketsSold" fill="#D4AF37" radius={[0, 4, 4, 0]} barSize={18} />
+                <Bar dataKey="ticketsSold" fill="#EFEFF1" radius={[0, 4, 4, 0]} barSize={18} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
@@ -201,7 +201,7 @@ export default function OrganizerDashboard() {
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#262B2F]">
             <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Recent Orders</h2>
-            <Link to="/organizer/orders" className="text-xs font-medium text-[#D4AF37] hover:underline flex items-center gap-1">
+            <Link to="/organizer/orders" className="text-xs font-medium text-white hover:underline flex items-center gap-1">
               View all <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -242,7 +242,7 @@ export default function OrganizerDashboard() {
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#262B2F]">
             <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Upcoming Events</h2>
-            <Link to="/organizer/events" className="text-xs font-medium text-[#D4AF37] hover:underline flex items-center gap-1">
+            <Link to="/organizer/events" className="text-xs font-medium text-white hover:underline flex items-center gap-1">
               View all <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -264,7 +264,7 @@ export default function OrganizerDashboard() {
                       <p className="text-xs text-[#949599]">{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'} · {e.venue || e.city || '—'}</p>
                       <div className="mt-2 flex items-center gap-2">
                         <div className="flex-1 h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
-                          <div className="h-full bg-[#D4AF37] rounded-full transition-all" style={{ width: `${pct}%` }} />
+                          <div className="h-full bg-white rounded-full transition-all" style={{ width: `${pct}%` }} />
                         </div>
                         <span className="text-[10px] font-medium text-[#949599] tabular-nums">{sold}/{cap}</span>
                       </div>

@@ -165,7 +165,7 @@ export default function ExplorePage() {
             placeholder="Search events..."
             value={filters.search}
             onChange={(e) => updateFilter('search', e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-[#D4AF37]/50"
+            className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/"
           />
         </div>
       </div>
@@ -186,9 +186,9 @@ export default function ExplorePage() {
                 type="checkbox"
                 checked={filters.categories.includes(cat)}
                 onChange={() => toggleCategory(cat)}
-                className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] text-[#D4AF37] focus:ring-[#D4AF37]/40 focus:ring-offset-0"
+                className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] text-white focus:ring-white/ focus:ring-offset-0"
               />
-              <span className={`text-sm transition-colors ${filters.categories.includes(cat) ? 'text-[#D4AF37]' : 'text-[#949599] group-hover:text-[#EFEFF1]'}`}>
+              <span className={`text-sm transition-colors ${filters.categories.includes(cat) ? 'text-white' : 'text-[#949599] group-hover:text-[#EFEFF1]'}`}>
                 {cat}
               </span>
             </motion.label>
@@ -212,7 +212,7 @@ export default function ExplorePage() {
           step="10"
           value={filters.priceMax}
           onChange={(e) => updateFilter('priceMax', Number(e.target.value))}
-          className="w-full accent-[#D4AF37] cursor-pointer"
+          className="w-full accent-[#EFEFF1] cursor-pointer"
         />
         <input
           type="range"
@@ -221,7 +221,7 @@ export default function ExplorePage() {
           step="10"
           value={filters.priceMin}
           onChange={(e) => updateFilter('priceMin', Number(e.target.value))}
-          className="w-full accent-[#D4AF37] cursor-pointer mt-2"
+          className="w-full accent-[#EFEFF1] cursor-pointer mt-2"
         />
       </div>
 
@@ -236,14 +236,14 @@ export default function ExplorePage() {
             placeholder="From"
             value={filters.dateFrom}
             onChange={(e) => updateFilter('dateFrom', e.target.value)}
-            className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/50 [color-scheme:dark]"
+            className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ [color-scheme:dark]"
           />
           <input
             type="date"
             placeholder="To"
             value={filters.dateTo}
             onChange={(e) => updateFilter('dateTo', e.target.value)}
-            className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/50 [color-scheme:dark]"
+            className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ [color-scheme:dark]"
           />
         </div>
       </div>
@@ -258,7 +258,7 @@ export default function ExplorePage() {
           placeholder="Enter city"
           value={filters.city}
           onChange={(e) => updateFilter('city', e.target.value)}
-          className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-[#D4AF37]/50"
+          className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/"
         />
       </div>
 
@@ -298,7 +298,7 @@ export default function ExplorePage() {
               placeholder="Search by event name, artist, or keyword..."
               value={filters.search}
               onChange={(e) => updateFilter('search', e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-[#D4AF37]/50"
+              className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/"
             />
           </div>
           <button
@@ -306,7 +306,7 @@ export default function ExplorePage() {
             className="lg:hidden flex items-center gap-2 px-4 py-3 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1]"
           >
             <SlidersHorizontal className="w-4 h-4" />
-            Filters{activeFilterCount > 0 && <span className="ml-1 px-1.5 py-0.5 rounded bg-[#D4AF37] text-[#1C232B] text-xs font-bold">{activeFilterCount}</span>}
+            Filters{activeFilterCount > 0 && <span className="ml-1 px-1.5 py-0.5 rounded bg-white text-[#1C232B] text-xs font-bold">{activeFilterCount}</span>}
           </button>
         </div>
 
@@ -344,7 +344,7 @@ export default function ExplorePage() {
             <select
               value={filters.sort}
               onChange={(e) => updateFilter('sort', e.target.value)}
-              className="pl-9 pr-8 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/50 appearance-none cursor-pointer"
+              className="pl-9 pr-8 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ appearance-none cursor-pointer"
             >
               {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
@@ -355,9 +355,9 @@ export default function ExplorePage() {
         <div className="flex gap-6">
           {/* Desktop sidebar */}
           <aside className="hidden lg:block w-64 shrink-0">
-            <div className={`sticky top-20 rounded-xl bg-[#171A1D] border p-5 transition-colors duration-300 ${activeFilterCount > 0 ? 'border-[#D4AF37]/30' : 'border-[#262B2F]'}`}>
+            <div className={`sticky top-20 rounded-xl bg-[#171A1D] border p-5 transition-colors duration-300 ${activeFilterCount > 0 ? 'border-white/' : 'border-[#262B2F]'}`}>
               <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4 flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-[#D4AF37]" /> Filters
+                <SlidersHorizontal className="w-4 h-4 text-white" /> Filters
               </h3>
               <FilterPanel />
             </div>
@@ -426,7 +426,7 @@ export default function ExplorePage() {
               <FilterPanel />
               <button
                 onClick={() => setShowFiltersMobile(false)}
-                className="mt-6 w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors"
+                className="mt-6 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors"
               >
                 Show Results
               </button>
@@ -445,7 +445,7 @@ function FilterChip({ icon: Icon, label, onRemove }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.85 }}
       transition={{ type: 'spring', stiffness: 420, damping: 24 }}
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-medium"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/ border border-white/ text-white text-xs font-medium"
     >
       {Icon && <Icon className="w-3 h-3" />}
       {label}

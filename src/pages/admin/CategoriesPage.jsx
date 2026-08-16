@@ -120,7 +120,7 @@ export default function CategoriesPage() {
         actions={
           <button
             onClick={openAdd}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
           >
             <Plus className="w-4 h-4" /> Add Category
           </button>
@@ -153,14 +153,14 @@ export default function CategoriesPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
-                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-[#D4AF37]/40 transition-all group"
+                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/ transition-all group"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/12 text-[#D4AF37] flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-white/ text-white flex items-center justify-center">
                     <Icon className="w-6 h-6" />
                   </div>
                   <div className="flex items-center gap-1">
-                    <button onClick={() => openEdit(cat)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title="Edit">
+                    <button onClick={() => openEdit(cat)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title="Edit">
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button onClick={() => setDeleteTarget(cat)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition" title="Delete">
@@ -176,7 +176,7 @@ export default function CategoriesPage() {
                     <span className="text-xs text-[#949599]">{cat.isActive === false ? 'Inactive' : 'Active'}</span>
                     <button
                       onClick={() => toggleActive(cat)}
-                      className={`relative w-10 h-5 rounded-full transition-colors ${cat.isActive === false ? 'bg-[#494F55]/40' : 'bg-[#D4AF37]'}`}
+                      className={`relative w-10 h-5 rounded-full transition-colors ${cat.isActive === false ? 'bg-[#494F55]/40' : 'bg-white'}`}
                     >
                       <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${cat.isActive === false ? 'translate-x-0' : 'translate-x-5'}`} />
                     </button>
@@ -199,7 +199,7 @@ export default function CategoriesPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50"
             >
               {saving ? 'Saving...' : 'Save'}
             </button>
@@ -214,7 +214,7 @@ export default function CategoriesPage() {
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value, slug: slugify(e.target.value) }))}
               placeholder="e.g. Music & Concerts"
-              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
             />
           </div>
           <div>
@@ -224,7 +224,7 @@ export default function CategoriesPage() {
               value={form.slug}
               onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
               placeholder="auto-generated"
-              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] font-mono focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] font-mono focus:outline-none focus:border-white/ transition"
             />
           </div>
           <div>
@@ -236,7 +236,7 @@ export default function CategoriesPage() {
                   onClick={() => setForm((f) => ({ ...f, icon: key }))}
                   className={`aspect-square rounded-lg flex items-center justify-center border transition ${
                     form.icon === key
-                      ? 'bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/50'
+                      ? 'bg-white/ text-white border-white/'
                       : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-[#494F55]/60'
                   }`}
                 >
@@ -248,7 +248,7 @@ export default function CategoriesPage() {
           <label className="flex items-center gap-3 cursor-pointer">
             <button
               onClick={() => setForm((f) => ({ ...f, active: !f.active }))}
-              className={`relative w-10 h-5 rounded-full transition-colors ${form.active ? 'bg-[#D4AF37]' : 'bg-[#494F55]/40'}`}
+              className={`relative w-10 h-5 rounded-full transition-colors ${form.active ? 'bg-white' : 'bg-[#494F55]/40'}`}
             >
               <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${form.active ? 'translate-x-5' : 'translate-x-0'}`} />
             </button>

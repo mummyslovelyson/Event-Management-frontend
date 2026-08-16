@@ -23,7 +23,7 @@ const STEPS = [
 ];
 
 const inputCls =
-  'w-full px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+  'w-full px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
 const labelCls = 'block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider';
 const errCls = 'mt-1 text-xs text-red-400';
 
@@ -136,11 +136,11 @@ const StepMedia = () => {
         <label className={labelCls}>Banner Image</label>
         <div
           onClick={() => { if (!uploading) fileRef.current?.click(); }}
-          className="relative border-2 border-dashed border-[#494F55]/50 rounded-xl p-6 text-center cursor-pointer hover:border-[#D4AF37]/50 transition-colors bg-[#171A1D]"
+          className="relative border-2 border-dashed border-[#494F55]/50 rounded-xl p-6 text-center cursor-pointer hover:border-white/ transition-colors bg-[#171A1D]"
         >
           {uploading === 'banner' ? (
             <div className="flex flex-col items-center gap-2 py-6">
-              <Upload className="w-8 h-8 text-[#D4AF37] mx-auto animate-pulse" />
+              <Upload className="w-8 h-8 text-white mx-auto animate-pulse" />
               <p className="text-sm text-[#949599]">Uploading banner...</p>
             </div>
           ) : bannerUrl ? (
@@ -151,7 +151,7 @@ const StepMedia = () => {
           ) : (
             <>
               <Upload className="w-8 h-8 text-[#494F55] mx-auto mb-2" />
-              <p className="text-sm text-[#949599]">Drag & drop or <span className="text-[#D4AF37]">browse</span></p>
+              <p className="text-sm text-[#949599]">Drag & drop or <span className="text-white">browse</span></p>
               <p className="text-xs text-[#494F55] mt-1">Recommended 1600x900px, max 5MB</p>
             </>
           )}
@@ -171,7 +171,7 @@ const StepMedia = () => {
           {additional.length < 5 && (
             <button
               onClick={() => { if (!uploading) extraRef.current?.click(); }}
-              className="aspect-square rounded-lg border-2 border-dashed border-[#494F55]/50 flex items-center justify-center text-[#494F55] hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition-colors disabled:opacity-50"
+              className="aspect-square rounded-lg border-2 border-dashed border-[#494F55]/50 flex items-center justify-center text-[#494F55] hover:border-white/ hover:text-white transition-colors disabled:opacity-50"
               disabled={!!uploading}
             >
               {uploading === 'extra'
@@ -204,8 +204,8 @@ const StepCapacity = () => {
             <p className="text-xs text-[#949599]">Public events are searchable, private are invite-only</p>
           </div>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setValue('visibility', 'public')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${visibility === 'public' ? 'bg-[#D4AF37] text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>Public</button>
-            <button type="button" onClick={() => setValue('visibility', 'private')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${visibility === 'private' ? 'bg-[#D4AF37] text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>Private</button>
+            <button type="button" onClick={() => setValue('visibility', 'public')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${visibility === 'public' ? 'bg-white text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>Public</button>
+            <button type="button" onClick={() => setValue('visibility', 'private')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${visibility === 'private' ? 'bg-white text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>Private</button>
           </div>
         </label>
       </div>
@@ -235,7 +235,7 @@ const StepTickets = () => {
             className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4 space-y-4"
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-[#D4AF37]">Ticket Type {i + 1}</span>
+              <span className="text-sm font-semibold text-white">Ticket Type {i + 1}</span>
               {fields.length > 1 && (
                 <button type="button" onClick={() => remove(i)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition"><Trash2 className="w-4 h-4" /></button>
               )}
@@ -271,7 +271,7 @@ const StepTickets = () => {
           </motion.div>
         ))}
       </AnimatePresence>
-      <button type="button" onClick={addTicket} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-[#494F55]/40 text-sm font-medium text-[#949599] hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition-colors">
+      <button type="button" onClick={addTicket} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-[#494F55]/40 text-sm font-medium text-[#949599] hover:border-white/ hover:text-white transition-colors">
         <Plus className="w-4 h-4" /> Add Another Ticket Type
       </button>
     </div>
@@ -285,7 +285,7 @@ const StepReview = () => {
   return (
     <div className="space-y-5">
       <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
-        <h3 className="text-sm font-semibold text-[#D4AF37] mb-3">Basic Info</h3>
+        <h3 className="text-sm font-semibold text-white mb-3">Basic Info</h3>
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <div><dt className="text-xs text-[#949599]">Title</dt><dd className="text-[#EFEFF1]">{d.title || '—'}</dd></div>
           <div><dt className="text-xs text-[#949599]">Category</dt><dd className="text-[#EFEFF1]">{d.category || '—'}</dd></div>
@@ -293,7 +293,7 @@ const StepReview = () => {
         </dl>
       </div>
       <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
-        <h3 className="text-sm font-semibold text-[#D4AF37] mb-3">Location & Time</h3>
+        <h3 className="text-sm font-semibold text-white mb-3">Location & Time</h3>
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <div><dt className="text-xs text-[#949599]">Venue</dt><dd className="text-[#EFEFF1]">{d.venue || '—'}</dd></div>
           <div><dt className="text-xs text-[#949599]">Location</dt><dd className="text-[#EFEFF1]">{[d.city, d.country].filter(Boolean).join(', ') || '—'}</dd></div>
@@ -302,14 +302,14 @@ const StepReview = () => {
         </dl>
       </div>
       <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
-        <h3 className="text-sm font-semibold text-[#D4AF37] mb-3">Capacity & Settings</h3>
+        <h3 className="text-sm font-semibold text-white mb-3">Capacity & Settings</h3>
         <dl className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
           <div><dt className="text-xs text-[#949599]">Total Capacity</dt><dd className="text-[#EFEFF1]">{d.totalCapacity || '—'}</dd></div>
           <div><dt className="text-xs text-[#949599]">Visibility</dt><dd className="text-[#EFEFF1] capitalize">{d.visibility || '—'}</dd></div>
         </dl>
       </div>
       <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
-        <h3 className="text-sm font-semibold text-[#D4AF37] mb-3">Ticket Types ({(d.ticketTypes || []).length})</h3>
+        <h3 className="text-sm font-semibold text-white mb-3">Ticket Types ({(d.ticketTypes || []).length})</h3>
         <div className="space-y-2">
           {(d.ticketTypes || []).map((t, i) => (
             <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-[#171A1D]">
@@ -317,7 +317,7 @@ const StepReview = () => {
                 <p className="text-sm font-medium text-[#EFEFF1]">{t.name || `Ticket ${i + 1}`}</p>
                 <p className="text-xs text-[#949599]">{t.quantity} available</p>
               </div>
-                <span className="text-sm font-semibold text-[#D4AF37]">{format(t.price)}</span>
+                <span className="text-sm font-semibold text-white">{format(t.price)}</span>
             </div>
           ))}
         </div>
@@ -434,17 +434,17 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
             {STEPS.map((s) => (
               <div key={s.id} className="flex items-center flex-1 last:flex-none">
                 <div className="flex flex-col items-center gap-1.5">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${step >= s.id ? 'bg-[#D4AF37] text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${step >= s.id ? 'bg-white text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>
                     {step > s.id ? <CheckCircle2 className="w-5 h-5" /> : <s.icon className="w-4 h-4" />}
                   </div>
                   <span className={`text-[10px] font-medium hidden sm:block ${step >= s.id ? 'text-[#EFEFF1]' : 'text-[#949599]'}`}>{s.title}</span>
                 </div>
-                {s.id < STEPS.length && <div className={`flex-1 h-0.5 mx-2 ${step > s.id ? 'bg-[#D4AF37]' : 'bg-[#494F55]/30'}`} />}
+                {s.id < STEPS.length && <div className={`flex-1 h-0.5 mx-2 ${step > s.id ? 'bg-white' : 'bg-[#494F55]/30'}`} />}
               </div>
             ))}
           </div>
           <div className="h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
-            <div className="h-full bg-[#D4AF37] transition-all duration-300" style={{ width: `${progress}%` }} />
+            <div className="h-full bg-white transition-all duration-300" style={{ width: `${progress}%` }} />
           </div>
         </div>
 
@@ -469,7 +469,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
             <ChevronLeft className="w-4 h-4" /> Back
           </button>
           {step < 6 ? (
-            <button type="button" onClick={next} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold bg-[#D4AF37] text-[#1C232B] hover:bg-[#c4a030] disabled:opacity-60 transition">
+            <button type="button" onClick={next} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold bg-white text-[#1C232B] hover:bg-[#CBD5E1] disabled:opacity-60 transition">
               Next <ChevronRight className="w-4 h-4" />
             </button>
           ) : (
@@ -477,7 +477,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
               <button type="submit" disabled={submitting} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] border border-[#494F55]/40 hover:bg-[#494F55]/20 disabled:opacity-60 transition">
                 <Save className="w-4 h-4" /> {submitting ? 'Saving...' : 'Save as Draft'}
               </button>
-              <button type="button" onClick={handleSubmit((d) => submit(d, 'published'))} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold bg-[#D4AF37] text-[#1C232B] hover:bg-[#c4a030] disabled:opacity-60 transition">
+              <button type="button" onClick={handleSubmit((d) => submit(d, 'published'))} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold bg-white text-[#1C232B] hover:bg-[#CBD5E1] disabled:opacity-60 transition">
                 <Send className="w-4 h-4" /> {submitting ? 'Submitting...' : 'Submit for Review'}
               </button>
             </div>

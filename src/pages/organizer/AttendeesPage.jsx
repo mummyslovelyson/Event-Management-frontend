@@ -137,14 +137,14 @@ export default function AttendeesPage() {
             <button
               onClick={handleExportCSV}
               disabled={!selectedEvent}
-              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-[#D4AF37] border border-[#D4AF37]/40 hover:bg-[#D4AF37]/10 disabled:opacity-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/ hover:bg-white/ disabled:opacity-50 transition-colors"
             >
               <Download className="w-4 h-4" /> Export CSV
             </button>
             <button
               onClick={handleExportPDF}
               disabled={!selectedEvent}
-              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors"
             >
               <FileText className="w-4 h-4" /> Export PDF
             </button>
@@ -160,7 +160,7 @@ export default function AttendeesPage() {
         <button
           onClick={() => setEventOpen((v) => !v)}
           disabled={loadingEvents}
-          className="flex items-center justify-between gap-2 w-full sm:w-80 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition disabled:opacity-50"
+          className="flex items-center justify-between gap-2 w-full sm:w-80 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition disabled:opacity-50"
         >
           <span className="truncate">
             {loadingEvents ? 'Loading events...' : selectedEventObj ? selectedEventObj.title : 'Choose an event...'}
@@ -183,7 +183,7 @@ export default function AttendeesPage() {
                   <button
                     key={e.id}
                     onClick={() => { setSelectedEvent(e.id); setEventOpen(false); }}
-                    className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm hover:bg-[#494F55]/20 transition ${selectedEvent === e.id ? 'text-[#D4AF37]' : 'text-[#EFEFF1]'}`}
+                    className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm hover:bg-[#494F55]/20 transition ${selectedEvent === e.id ? 'text-white' : 'text-[#EFEFF1]'}`}
                   >
                     <Calendar className="w-4 h-4 text-[#949599] shrink-0" />
                     <span className="truncate">{e.title}</span>
@@ -209,9 +209,9 @@ export default function AttendeesPage() {
           </div>
           <p className="mt-2 text-2xl font-bold text-emerald-400">{checkedInCount}</p>
         </div>
-        <div className="rounded-xl bg-gradient-to-br from-[#D4AF37]/15 to-[#171A1D] border border-[#D4AF37]/30 p-5">
+        <div className="rounded-xl bg-gradient-to-br from-white/ to-[#171A1D] border border-white/ p-5">
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-2 text-xs uppercase tracking-wider text-[#D4AF37]">
+            <span className="flex items-center gap-2 text-xs uppercase tracking-wider text-white">
               <Clock className="w-4 h-4" /> Check-in Rate
             </span>
             <span className="text-2xl font-bold text-[#EFEFF1]">{checkInPct}%</span>
@@ -220,7 +220,7 @@ export default function AttendeesPage() {
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${checkInPct}%` }}
-              className="h-full bg-gradient-to-r from-[#D4AF37] to-[#c4a030] rounded-full"
+              className="h-full bg-gradient-to-r from-white to-[#c4a030] rounded-full"
             />
           </div>
           <div className="mt-2 flex justify-between text-xs text-[#949599]">
@@ -237,7 +237,7 @@ export default function AttendeesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name, email, or phone..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition"
+          className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition"
         />
       </div>
 
@@ -249,10 +249,10 @@ export default function AttendeesPage() {
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === t ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+              className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === t ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
             >
               {t} <span className="ml-1 text-xs text-[#494F55]">({count})</span>
-              {tab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#D4AF37]" />}
+              {tab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-white" />}
             </button>
           );
         })}
@@ -296,7 +296,7 @@ export default function AttendeesPage() {
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center text-xs font-semibold shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-white/ text-white flex items-center justify-center text-xs font-semibold shrink-0">
                           {fullName.split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
                         </div>
                         <span className="font-medium text-[#EFEFF1]">{fullName}</span>
@@ -333,7 +333,7 @@ export default function AttendeesPage() {
         {detail && (
           <div className="space-y-5">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center text-xl font-semibold shrink-0">
+              <div className="w-16 h-16 rounded-full bg-white/ text-white flex items-center justify-center text-xl font-semibold shrink-0">
                 {`${detail.firstName || ''} ${detail.lastName || ''}`.trim().split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               <div className="min-w-0">
@@ -370,9 +370,9 @@ export default function AttendeesPage() {
             )}
 
             {(detail.amountPaid != null || detail.price != null) && (
-              <div className="flex items-center justify-between rounded-lg bg-gradient-to-br from-[#D4AF37]/10 to-[#1D2124] border border-[#D4AF37]/30 p-4">
+              <div className="flex items-center justify-between rounded-lg bg-gradient-to-br from-white/ to-[#1D2124] border border-white/ p-4">
                 <span className="text-sm font-medium text-[#949599]">Amount Paid</span>
-                <span className="text-lg font-bold text-[#D4AF37]">{format(detail.amountPaid ?? detail.price)}</span>
+                <span className="text-lg font-bold text-white">{format(detail.amountPaid ?? detail.price)}</span>
               </div>
             )}
           </div>

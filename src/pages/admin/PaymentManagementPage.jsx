@@ -141,7 +141,7 @@ export default function PaymentManagementPage() {
             key={t.key}
             onClick={() => { setTab(t.key); setPage(1); }}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === t.key ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
+              tab === t.key ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
             {t.label}
@@ -274,7 +274,7 @@ export default function PaymentManagementPage() {
                         {rf.status === 'pending' && (
                           <button
                             onClick={() => { setRefundTarget(rf); setRefundReason(''); }}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-semibold hover:bg-[#D4AF37]/25 transition"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-white/ text-white border border-white/ text-xs font-semibold hover:bg-white/ transition"
                           >
                             <RotateCcw className="w-3.5 h-3.5" /> Process
                           </button>
@@ -300,7 +300,7 @@ export default function PaymentManagementPage() {
             <button
               onClick={handleRefund}
               disabled={actionLoading === `refund-${refundTarget?.id}`}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50"
             >
               {actionLoading ? 'Processing...' : 'Process Refund'}
             </button>
@@ -312,7 +312,7 @@ export default function PaymentManagementPage() {
           value={refundReason}
           onChange={(e) => setRefundReason(e.target.value)}
           placeholder="Reason for refund..."
-          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
+          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ resize-none"
           rows={3}
         />
       </Modal>

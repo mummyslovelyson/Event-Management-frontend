@@ -84,7 +84,7 @@ export default function App() {
               borderRadius: '10px',
               fontSize: '14px',
             },
-            success: { iconTheme: { primary: '#D4AF37', secondary: '#1E252B' } },
+            success: { iconTheme: { primary: '#EFEFF1', secondary: '#1E252B' } },
             error: { iconTheme: { primary: '#EF4444', secondary: '#1E252B' } },
           }}
         />

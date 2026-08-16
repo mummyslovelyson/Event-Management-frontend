@@ -105,7 +105,7 @@ export default function AttendeeLayout() {
 
               <Link to="/attendee/notifications" className="relative p-2 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#D4AF37] rounded-full ring-2 ring-[#111417]" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-white rounded-full ring-2 ring-[#111417]" />
               </Link>
 
               <div className="relative" ref={profileRef}>
@@ -120,7 +120,7 @@ export default function AttendeeLayout() {
                       <div className="px-4 py-3 border-b border-[#262B2F]">
                         <p className="text-sm font-medium text-[#EFEFF1] truncate">{user?.name || 'User'}</p>
                         <p className="text-xs text-[#949599] truncate">{user?.email}</p>
-                        <span className="inline-block mt-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium text-[#D4AF37] bg-[#D4AF37]/10">Attendee</span>
+                        <span className="inline-block mt-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium text-white bg-white/">Attendee</span>
                       </div>
                       <Link to="/attendee/profile" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
                         <User className="w-4 h-4" /> My Profile
@@ -154,7 +154,7 @@ function SidebarContent({ user, initials, onNavigate }) {
     <>
       <div className="flex items-center justify-between h-14 px-4 border-b border-[#262B2F] shrink-0">
         <Link to="/attendee/dashboard" className="flex items-center gap-2.5 group">
-          <img src="/assets/images/Logo.jpeg" alt="Tribes & Cliqs" className="w-8 h-8 rounded-lg object-cover ring-1 ring-[#3A4045] group-hover:ring-[#D4AF37]/60 transition" />
+          <img src="/assets/images/Logo.jpeg" alt="Tribes & Cliqs" className="w-8 h-8 rounded-lg object-cover ring-1 ring-[#3A4045] group-hover:ring-white/ transition" />
           <div className="flex flex-col leading-tight">
             <span className="text-[13px] font-semibold tracking-tight text-[#EFEFF1]">Attendee</span>
             <span className="text-[10px] text-[#6B7278]">Tribes &amp; Cliqs</span>
@@ -184,7 +184,7 @@ function SidebarContent({ user, initials, onNavigate }) {
                 >
                   {({ isActive }) => (
                     <>
-                      <Icon className={`w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-[1.5px] ${isActive ? 'text-[#D4AF37]' : 'text-[#6B7278] group-hover:text-[#949599]'}`} />
+                      <Icon className={`w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-[1.5px] ${isActive ? 'text-white' : 'text-[#6B7278] group-hover:text-[#949599]'}`} />
                       {label}
                     </>
                   )}

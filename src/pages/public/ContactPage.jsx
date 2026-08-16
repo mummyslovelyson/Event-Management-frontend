@@ -44,7 +44,7 @@ export default function ContactPage() {
 
   const inputClass = (field) =>
     `w-full px-4 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-      errors[field] ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
+      errors[field] ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
     }`;
 
   return (
@@ -53,7 +53,7 @@ export default function ContactPage() {
       <section className="py-16 sm:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-semibold uppercase tracking-wider">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/ border border-white/ text-white text-xs font-semibold uppercase tracking-wider">
               <MessageSquare className="w-3.5 h-3.5" /> Get in Touch
             </span>
             <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EFEFF1]">Contact Us</h1>
@@ -76,12 +76,12 @@ export default function ContactPage() {
                 transition={{ duration: 0.3, delay: i * 0.06 }}
                 className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 text-center"
               >
-                <div className="w-12 h-12 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 rounded-lg bg-white/ text-white flex items-center justify-center mx-auto mb-3">
                   <info.icon className="w-6 h-6" />
                 </div>
                 <p className="text-xs font-medium uppercase tracking-wider text-[#949599]">{info.label}</p>
                 {info.href ? (
-                  <a href={info.href} className="mt-1 block text-sm font-semibold text-[#EFEFF1] hover:text-[#D4AF37] transition">
+                  <a href={info.href} className="mt-1 block text-sm font-semibold text-[#EFEFF1] hover:text-white transition">
                     {info.value}
                   </a>
                 ) : (
@@ -165,7 +165,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-60"
                   >
                     {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</> : <><Send className="w-4 h-4" /> Send Message</>}
                   </button>
@@ -188,7 +188,7 @@ export default function ContactPage() {
                     <a
                       key={s.label}
                       href={s.href}
-                      className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#262B2F] text-sm text-[#949599] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition"
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#262B2F] text-sm text-[#949599] hover:text-white hover:border-white/ transition"
                     >
                       <s.icon className="w-4 h-4" /> {s.label}
                     </a>
@@ -196,10 +196,10 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-gradient-to-br from-[#D4AF37]/15 to-[#171A1D] border border-[#D4AF37]/30 p-6">
+              <div className="rounded-2xl bg-gradient-to-br from-white/ to-[#171A1D] border border-white/ p-6">
                 <h3 className="text-sm font-semibold text-[#EFEFF1]">Need faster help?</h3>
                 <p className="mt-2 text-sm text-[#949599]">Check out our Help Center for instant answers to common questions.</p>
-                <a href="/faq" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#D4AF37] hover:underline">
+                <a href="/faq" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-white hover:underline">
                   Visit FAQ →
                 </a>
               </div>

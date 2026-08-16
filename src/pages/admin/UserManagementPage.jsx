@@ -43,9 +43,9 @@ const userStatus = (u) => {
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 const fmtDateTime = (d) => (d ? new Date(d).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
 
-const avatarColors = ['bg-[#D4AF37]/20 text-[#D4AF37]', 'bg-[#D4AF37]/30 text-[#D4AF37]', 'bg-[#EFEFF1]/10 text-[#EFEFF1]', 'bg-[#494F55]/40 text-[#9AA1A6]', 'bg-[#D4AF37]/40 text-[#E8C75E]'];
+const avatarColors = ['bg-white/ text-white', 'bg-white/ text-white', 'bg-[#EFEFF1]/10 text-[#EFEFF1]', 'bg-[#494F55]/40 text-[#9AA1A6]', 'bg-white/ text-[#E8C75E]'];
 
-const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition';
+const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition';
 
 export default function UserManagementPage() {
   const [tab, setTab] = useState('all');
@@ -301,7 +301,7 @@ export default function UserManagementPage() {
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
               tab === t.key
-                ? 'bg-[#D4AF37] text-[#1C232B]'
+                ? 'bg-white text-[#1C232B]'
                 : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
@@ -320,13 +320,13 @@ export default function UserManagementPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name or email..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -336,7 +336,7 @@ export default function UserManagementPage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition"
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -351,7 +351,7 @@ export default function UserManagementPage() {
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center gap-3 mt-3 pt-3 border-t border-[#494F55]/20"
           >
-            <span className="text-sm text-[#D4AF37]">{selected.size} selected</span>
+            <span className="text-sm text-white">{selected.size} selected</span>
             {selectedNonAdmins && (
               <button
                 onClick={bulkSuspend}
@@ -396,7 +396,7 @@ export default function UserManagementPage() {
                       type="checkbox"
                       checked={selected.size === users.length && users.length > 0}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#D4AF37]"
+                      className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#EFEFF1]"
                     />
                   </th>
                   <th className="px-4 py-3 font-medium">User</th>
@@ -414,13 +414,13 @@ export default function UserManagementPage() {
                   const isAdmin = u.role === 'admin';
                   const isPendingOrg = u.role === 'organizer' && u.is_approved !== 1 && u.status !== 'rejected';
                   return (
-                    <tr key={u.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(u.id) ? 'bg-[#D4AF37]/5' : ''}`}>
+                    <tr key={u.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(u.id) ? 'bg-white/' : ''}`}>
                       <td className="px-4 py-3">
                         <input
                           type="checkbox"
                           checked={selected.has(u.id)}
                           onChange={() => toggleSelect(u.id)}
-                          className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#D4AF37]"
+                          className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#EFEFF1]"
                         />
                       </td>
                       <td className="px-4 py-3">
@@ -431,7 +431,7 @@ export default function UserManagementPage() {
                           <div className="min-w-0">
                             <p className="font-medium text-[#EFEFF1] truncate max-w-[160px] flex items-center gap-1.5">
                               {u.name || 'Unknown'}
-                              {isAdmin && <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />}
+                              {isAdmin && <ShieldCheck className="w-3.5 h-3.5 text-white" />}
                             </p>
                             <p className="text-xs text-[#949599] truncate max-w-[180px]">{u.email}</p>
                           </div>
@@ -464,7 +464,7 @@ export default function UserManagementPage() {
                           {!isAdmin && (
                             <button
                               onClick={() => openReset(u)}
-                              className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#D4AF37]/15 transition"
+                              className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-white/ transition"
                               title="Reset Password"
                             >
                               <KeyRound className="w-4 h-4" />
@@ -475,7 +475,7 @@ export default function UserManagementPage() {
                               <button
                                 onClick={() => handleVerify(u)}
                                 disabled={actionLoading === `verify-${u.id}`}
-                                className="p-1.5 rounded-md text-[#D4AF37] hover:bg-[#D4AF37]/15 transition disabled:opacity-50"
+                                className="p-1.5 rounded-md text-white hover:bg-white/ transition disabled:opacity-50"
                                 title="Approve Organizer"
                               >
                                 <CheckCircle2 className="w-4 h-4" />
@@ -532,7 +532,7 @@ export default function UserManagementPage() {
         ) : profile ? (
           <div className="space-y-5">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center text-xl font-bold">
+              <div className="w-16 h-16 rounded-full bg-white/ text-white flex items-center justify-center text-xl font-bold">
                 {(profile.name || '?').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               <div>
@@ -578,12 +578,12 @@ export default function UserManagementPage() {
                   <div className="min-w-0">
                     <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1">Stored Password</p>
                     <p className="text-xs text-[#949599]">
-                      Passwords are stored as an irreversible <span className="text-[#D4AF37]">bcrypt hash</span>. The plaintext password can never be recovered — reset it if the user forgot it.
+                      Passwords are stored as an irreversible <span className="text-white">bcrypt hash</span>. The plaintext password can never be recovered — reset it if the user forgot it.
                     </p>
                   </div>
                   <button
                     onClick={() => setRevealHash((v) => !v)}
-                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#949599] hover:text-[#EFEFF1] hover:border-[#D4AF37]/40 transition"
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#949599] hover:text-[#EFEFF1] hover:border-white/ transition"
                   >
                     {revealHash ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                     {revealHash ? 'Hide Hash' : 'View Hash'}
@@ -595,7 +595,7 @@ export default function UserManagementPage() {
                       <code className="flex-1 min-w-0 break-all rounded-lg bg-[#171A1D] border border-[#494F55]/30 px-3 py-2 text-[11px] text-[#9AA1A6] font-mono">{profile.passwordHash}</code>
                       <button
                         onClick={() => copyToClipboard(profile.passwordHash)}
-                        className="p-2 rounded-lg text-[#949599] hover:text-[#D4AF37] hover:bg-[#D4AF37]/15 transition"
+                        className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-white/ transition"
                         title="Copy hash"
                       >
                         <Copy className="w-4 h-4" />
@@ -606,7 +606,7 @@ export default function UserManagementPage() {
                 )}
                 <button
                   onClick={() => openReset(profile)}
-                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-semibold hover:bg-[#D4AF37]/25 transition"
+                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/ text-white border border-white/ text-xs font-semibold hover:bg-white/ transition"
                 >
                   <KeyRound className="w-3.5 h-3.5" /> Reset Password
                 </button>
@@ -636,7 +636,7 @@ export default function UserManagementPage() {
             <button
               onClick={handleSubmit(handleEdit)}
               disabled={actionLoading === editTarget?.id}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
             >
               {actionLoading === editTarget?.id ? 'Saving...' : 'Save Changes'}
             </button>
@@ -711,7 +711,7 @@ export default function UserManagementPage() {
         <textarea
           placeholder="Reason for rejection (optional)..."
           onChange={(e) => setRejectTarget({ ...rejectTarget, reason: e.target.value })}
-          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
+          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ resize-none"
           rows={3}
         />
       </Modal>
@@ -748,7 +748,7 @@ export default function UserManagementPage() {
           <textarea
             placeholder="Reason for suspension (optional)..."
             onChange={(e) => setSuspendTarget({ ...suspendTarget, reason: e.target.value })}
-            className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
+            className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ resize-none"
             rows={3}
           />
         )}
@@ -792,7 +792,7 @@ export default function UserManagementPage() {
           resetResult ? (
             <button
               onClick={() => { setResetTarget(null); setResetResult(null); }}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition"
+              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition"
             >
               Done
             </button>
@@ -807,7 +807,7 @@ export default function UserManagementPage() {
               <button
                 onClick={handleResetPassword}
                 disabled={actionLoading === `reset-${resetTarget?.id}`}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
               >
                 {actionLoading === `reset-${resetTarget?.id}` ? (
                   <LoadingSpinner size="sm" />
@@ -824,15 +824,15 @@ export default function UserManagementPage() {
           <div className="space-y-4">
             <p className="text-sm text-[#EFEFF1]">{resetResult.message}</p>
             {resetResult.temporaryPassword && (
-              <div className="rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#D4AF37] mb-2">Temporary Password</p>
+              <div className="rounded-xl bg-white/ border border-white/ p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-white mb-2">Temporary Password</p>
                 <div className="flex items-center gap-2">
                   <code className="flex-1 min-w-0 break-all rounded-lg bg-[#171A1D] border border-[#494F55]/30 px-3 py-2.5 text-sm text-[#EFEFF1] font-mono">
                     {resetResult.temporaryPassword}
                   </code>
                   <button
                     onClick={() => copyToClipboard(resetResult.temporaryPassword)}
-                    className="p-2.5 rounded-lg text-[#949599] hover:text-[#D4AF37] hover:bg-[#D4AF37]/15 transition"
+                    className="p-2.5 rounded-lg text-[#949599] hover:text-white hover:bg-white/ transition"
                     title="Copy password"
                   >
                     <Copy className="w-4 h-4" />
@@ -857,11 +857,11 @@ export default function UserManagementPage() {
                   value={resetTarget?.password || ''}
                   onChange={(e) => setResetTarget({ ...resetTarget, password: e.target.value })}
                   placeholder="Leave empty to auto-generate"
-                  className="flex-1 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                  className="flex-1 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
                 />
                 <button
                   onClick={fillRandomPassword}
-                  className="px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#949599] hover:text-[#EFEFF1] hover:border-[#D4AF37]/50 transition whitespace-nowrap"
+                  className="px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#949599] hover:text-[#EFEFF1] hover:border-white/ transition whitespace-nowrap"
                 >
                   Random
                 </button>

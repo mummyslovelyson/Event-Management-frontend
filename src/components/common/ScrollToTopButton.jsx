@@ -5,7 +5,7 @@ import { ArrowUp } from 'lucide-react';
 /**
  * Floating "scroll to top" button shown on public pages once the user
  * scrolls down. Styled to match the gold reading bar (ScrollProgressBar):
- * same #D4AF37 gold, soft glow, and a bottom-right placement that never
+ * same #EFEFF1 gold, soft glow, and a bottom-right placement that never
  * collides with the fixed navbar.
  */
 export default function ScrollToTopButton() {
@@ -45,7 +45,7 @@ export default function ScrollToTopButton() {
           exit={{ opacity: 0, y: 16, scale: 0.9 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
           aria-label="Scroll to top"
-          className="fixed bottom-6 right-6 z-[60] w-11 h-11 rounded-full bg-gradient-to-br from-[#D4AF37] via-[#e8c75e] to-[#D4AF37] text-[#1C232B] flex items-center justify-center shadow-[0_4px_16px_rgba(212,175,55,0.45)] hover:bg-[#c4a030] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(212,175,55,0.6)] transition-all"
+          className="fixed bottom-6 right-6 z-[60] w-11 h-11 rounded-full bg-gradient-to-br from-white via-[#e8c75e] to-white text-[#1C232B] flex items-center justify-center shadow-[0_4px_16px_rgba(212,175,55,0.45)] hover:bg-[#CBD5E1] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(212,175,55,0.6)] transition-all"
         >
           <ArrowUp className="w-5 h-5" strokeWidth={2.5} />
         </motion.button>

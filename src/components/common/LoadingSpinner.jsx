@@ -10,7 +10,7 @@ export default function LoadingSpinner({ size = 'md', label, fullScreen = false,
 
   const content = (
     <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
-      <Loader2 className={`${sizes[size]} text-[#D4AF37] animate-spin`} />
+      <Loader2 className={`${sizes[size]} text-white animate-spin`} />
       {label && <p className="text-sm text-[#949599]">{label}</p>}
     </div>
   );

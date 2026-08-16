@@ -88,13 +88,13 @@ export default function FAQPage() {
       <section className="py-16 sm:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-semibold uppercase tracking-wider">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/ border border-white/ text-white text-xs font-semibold uppercase tracking-wider">
               <HelpCircle className="w-3.5 h-3.5" /> Help Center
             </span>
             <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EFEFF1]">Frequently Asked Questions</h1>
             <p className="mt-4 text-lg text-[#949599]">
               Find quick answers to common questions. Can't find what you're looking for?{' '}
-              <Link to="/contact" className="text-[#D4AF37] hover:underline">Contact us</Link>.
+              <Link to="/contact" className="text-white hover:underline">Contact us</Link>.
             </p>
 
             {/* Search */}
@@ -105,7 +105,7 @@ export default function FAQPage() {
                 placeholder="Search questions..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-[#D4AF37]/50"
+                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/"
               />
             </div>
           </motion.div>
@@ -123,7 +123,7 @@ export default function FAQPage() {
                   onClick={() => { setActiveCategory(cat.id); setOpenFaq(null); }}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
                     activeCategory === cat.id
-                      ? 'bg-[#D4AF37] text-[#1C232B]'
+                      ? 'bg-white text-[#1C232B]'
                       : 'bg-[#171A1D] border border-[#262B2F] text-[#949599] hover:text-[#EFEFF1] hover:border-[#494F55]'
                   }`}
                 >
@@ -145,7 +145,7 @@ export default function FAQPage() {
               </div>
               <h3 className="text-lg font-semibold text-[#EFEFF1]">No results found</h3>
               <p className="mt-2 text-sm text-[#949599]">Try a different search term or browse by category.</p>
-              <button onClick={() => setSearch('')} className="mt-4 px-4 py-2 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:text-[#D4AF37] hover:border-[#D4AF37]/50 transition">
+              <button onClick={() => setSearch('')} className="mt-4 px-4 py-2 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:text-white hover:border-white/ transition">
                 Clear search
               </button>
             </div>
@@ -168,7 +168,7 @@ export default function FAQPage() {
                     >
                       <div className="min-w-0 pr-4">
                         {search && (
-                          <span className="block text-xs text-[#D4AF37] mb-1">{faq.category}</span>
+                          <span className="block text-xs text-white mb-1">{faq.category}</span>
                         )}
                         <span className="text-sm font-semibold text-[#EFEFF1]">{faq.q}</span>
                       </div>
@@ -197,19 +197,19 @@ export default function FAQPage() {
       {/* Still need help CTA */}
       <section className="py-16">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative rounded-2xl bg-gradient-to-br from-[#D4AF37]/15 to-[#171A1D] border border-[#D4AF37]/30 p-8 text-center overflow-hidden">
-            <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-[#D4AF37]/10 blur-2xl" />
+          <div className="relative rounded-2xl bg-gradient-to-br from-white/ to-[#171A1D] border border-white/ p-8 text-center overflow-hidden">
+            <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/ blur-2xl" />
             <div className="relative">
-              <div className="w-14 h-14 rounded-xl bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 rounded-xl bg-white/ text-white flex items-center justify-center mx-auto mb-4">
                 <MessageSquare className="w-7 h-7" />
               </div>
               <h2 className="text-2xl font-bold text-[#EFEFF1]">Still Have Questions?</h2>
               <p className="mt-2 text-sm text-[#949599]">Our support team is here to help you 24/7.</p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition">
+                <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition">
                   <Mail className="w-4 h-4" /> Contact Support
                 </Link>
-                <a href="mailto:support@tribescliqs.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition">
+                <a href="mailto:support@tribescliqs.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-white/ hover:text-white transition">
                   <Sparkles className="w-4 h-4" /> support@tribescliqs.com
                 </a>
               </div>

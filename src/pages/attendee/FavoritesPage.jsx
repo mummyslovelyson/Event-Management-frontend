@@ -81,7 +81,7 @@ export default function FavoritesPage() {
         {favorites.length > 0 && (
           <Link
             to="/attendee/explore"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors w-fit"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors w-fit"
           >
             <Compass className="w-4 h-4" /> Explore More Events
           </Link>
@@ -97,7 +97,7 @@ export default function FavoritesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search your favorites..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
           />
         </motion.div>
       )}

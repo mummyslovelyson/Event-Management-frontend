@@ -6,7 +6,7 @@ const variants = {
   pending: 'bg-amber-500/10 text-amber-400',
   info: 'bg-blue-500/10 text-blue-400',
   neutral: 'bg-[#2A2F33] text-[#949599]',
-  gold: 'bg-[#D4AF37]/10 text-[#D4AF37]',
+  gold: 'bg-white/ text-white',
   default: 'bg-[#2A2F33] text-[#949599]',
 };
 

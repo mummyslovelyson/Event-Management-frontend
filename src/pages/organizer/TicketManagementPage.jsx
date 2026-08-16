@@ -16,7 +16,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
 
 const saleStatus = (t) => {
   if (!t.saleEndDate) return 'neutral';
@@ -140,7 +140,7 @@ export default function TicketManagementPage() {
         title="Ticket Management"
         subtitle="Manage ticket types, pricing, and availability."
         actions={
-          <button onClick={openAdd} disabled={!selectedEvent} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition-colors shrink-0">
+          <button onClick={openAdd} disabled={!selectedEvent} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors shrink-0">
             <Plus className="w-4 h-4" /> Add Ticket Type
           </button>
         }
@@ -149,7 +149,7 @@ export default function TicketManagementPage() {
       {/* Event selector */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <label className="text-xs font-medium uppercase tracking-wider text-[#949599]">Select Event</label>
-        <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer">
+        <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition cursor-pointer">
           <option value="">Choose an event...</option>
           {events.map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
         </select>
@@ -179,8 +179,8 @@ export default function TicketManagementPage() {
               <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><TicketIcon className="w-4 h-4" /> Available</div>
               <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{totalAvail}</p>
             </div>
-            <div className="rounded-xl bg-gradient-to-br from-[#D4AF37]/15 to-[#171A1D] border border-[#D4AF37]/30 p-4">
-              <div className="flex items-center gap-2 text-xs text-[#D4AF37] uppercase tracking-wider"><DollarSign className="w-4 h-4" /> Price Range</div>
+            <div className="rounded-xl bg-gradient-to-br from-white/ to-[#171A1D] border border-white/ p-4">
+              <div className="flex items-center gap-2 text-xs text-white uppercase tracking-wider"><DollarSign className="w-4 h-4" /> Price Range</div>
               <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{format(Math.min(...tickets.map((t) => Number(t.price) || 0)))} - {format(Math.max(...tickets.map((t) => Number(t.price) || 0)))}</p>
             </div>
           </div>
@@ -216,7 +216,7 @@ export default function TicketManagementPage() {
                       <div className="flex items-center gap-6">
                         <div className="text-center">
                           <p className="text-xs text-[#949599] uppercase tracking-wider">Price</p>
-                          <p className="text-lg font-bold text-[#D4AF37]">{format(t.price)}</p>
+                          <p className="text-lg font-bold text-white">{format(t.price)}</p>
                         </div>
                         <div className="min-w-[140px]">
                           <div className="flex items-center justify-between text-xs mb-1">
@@ -224,7 +224,7 @@ export default function TicketManagementPage() {
                             <span className="text-[#949599]">{avail} left</span>
                           </div>
                           <div className="h-2 rounded-full bg-[#494F55]/30 overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-[#D4AF37] to-[#c4a030] rounded-full transition-all" style={{ width: `${pct}%` }} />
+                            <div className="h-full bg-gradient-to-r from-white to-[#c4a030] rounded-full transition-all" style={{ width: `${pct}%` }} />
                           </div>
                           <p className="mt-1 text-[10px] text-[#494F55] text-center">of {total} total</p>
                         </div>
@@ -250,7 +250,7 @@ export default function TicketManagementPage() {
         footer={
           <>
             <button onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={handleSubmit(onSubmit)} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-[#D4AF37] hover:bg-[#c4a030] disabled:opacity-60 transition">{submitting ? 'Saving...' : editTarget ? 'Update' : 'Add Ticket'}</button>
+            <button onClick={handleSubmit(onSubmit)} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">{submitting ? 'Saving...' : editTarget ? 'Update' : 'Add Ticket'}</button>
           </>
         }
       >

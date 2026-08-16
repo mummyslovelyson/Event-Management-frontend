@@ -88,11 +88,11 @@ export default function ProfilePage() {
     <motion.div variants={containerStagger} initial="hidden" animate="show" className="space-y-6">
       {/* Profile header */}
       <motion.div variants={itemFade} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#171A1D] via-[#1C232B] to-[#242B32] border border-[#262B2F]">
-        <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-[#D4AF37]/10 blur-3xl" />
+        <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/ blur-3xl" />
         <div className="relative p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-5">
           {/* Avatar */}
           <div className="relative shrink-0">
-            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-[#D4AF37] flex items-center justify-center text-[#1C232B] text-3xl font-bold ring-2 ring-[#D4AF37]/30">
+            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-white flex items-center justify-center text-[#1C232B] text-3xl font-bold ring-2 ring-white/">
               {profile.avatar ? (
                 <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
               ) : (
@@ -102,7 +102,7 @@ export default function ProfilePage() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={avatarUploading}
-              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-[#D4AF37] hover:bg-[#242B32] disabled:opacity-50 transition"
+              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-white hover:bg-[#242B32] disabled:opacity-50 transition"
               title="Upload avatar"
             >
               {avatarUploading ? (
@@ -125,7 +125,7 @@ export default function ProfilePage() {
             <h1 className="text-2xl font-bold text-[#EFEFF1] truncate">{profile.name || 'User'}</h1>
             <p className="text-sm text-[#949599] truncate">{profile.email}</p>
             <div className="mt-3 flex items-center justify-center sm:justify-start gap-4 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/ text-white text-xs font-semibold">
                 <Check className="w-3.5 h-3.5" /> Attendee
               </span>
               {profile.createdAt && (
@@ -148,7 +148,7 @@ export default function ProfilePage() {
               key={t.value}
               onClick={() => setTab(t.value)}
               className={`relative inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors ${
-                tab === t.value ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'
+                tab === t.value ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -156,7 +156,7 @@ export default function ProfilePage() {
               {tab === t.value && (
                 <motion.div
                   layoutId="profileTab"
-                  className="absolute inset-x-0 -bottom-px h-0.5 bg-[#D4AF37]"
+                  className="absolute inset-x-0 -bottom-px h-0.5 bg-white"
                 />
               )}
             </button>
@@ -275,7 +275,7 @@ function PersonalInfoTab({ profile, setProfile }) {
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
         >
           <Save className="w-4 h-4" />
           {saving ? 'Saving...' : 'Save Changes'}
@@ -374,7 +374,7 @@ function SecurityTab() {
           </Field>
         </div>
         <div className="flex justify-end">
-          <button type="submit" disabled={saving} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition">
+          <button type="submit" disabled={saving} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition">
             <Lock className="w-4 h-4" />
             {saving ? 'Updating...' : 'Update Password'}
           </button>
@@ -433,7 +433,7 @@ function PaymentMethodsTab({ profile }) {
         <button
           onClick={handleAdd}
           disabled={adding}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
         >
           <Plus className="w-4 h-4" />
           {adding ? 'Adding...' : 'Add Payment Method'}
@@ -452,7 +452,7 @@ function PaymentMethodsTab({ profile }) {
         <div className="space-y-3">
           {cards.map((card, idx) => (
             <div key={idx} className="flex items-center gap-4 rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-              <div className="w-10 h-10 rounded-lg bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-white/ text-white flex items-center justify-center shrink-0">
                 <CreditCard className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
@@ -462,7 +462,7 @@ function PaymentMethodsTab({ profile }) {
                 <p className="text-xs text-[#949599]">Expires {card.expiryMonth || '**'}/{card.expiryYear || '****'}</p>
               </div>
               {card.isDefault && (
-                <span className="px-2 py-0.5 rounded-md bg-[#D4AF37]/10 text-[#D4AF37] text-[10px] font-semibold uppercase">Default</span>
+                <span className="px-2 py-0.5 rounded-md bg-white/ text-white text-[10px] font-semibold uppercase">Default</span>
               )}
               <button
                 onClick={() => handleRemove(idx)}
@@ -540,7 +540,7 @@ function NotificationSettingsTab({ profile, setProfile }) {
         return (
           <div key={group.title} className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
             <div className="flex items-center gap-2 mb-4">
-              <Icon className="w-4 h-4 text-[#D4AF37]" />
+              <Icon className="w-4 h-4 text-white" />
               <h4 className="text-sm font-semibold text-[#EFEFF1]">{group.title}</h4>
             </div>
             <div className="space-y-3">
@@ -567,7 +567,7 @@ function NotificationSettingsTab({ profile, setProfile }) {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
         >
           <Save className="w-4 h-4" />
           {saving ? 'Saving...' : 'Save Settings'}
@@ -579,7 +579,7 @@ function NotificationSettingsTab({ profile, setProfile }) {
 
 /* ============== Shared UI ============== */
 const inputClass =
-  'w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+  'w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
 
 function Field({ icon: Icon, label, children }) {
   return (
@@ -598,7 +598,7 @@ function ToggleSwitch({ checked, onChange }) {
     <button
       onClick={() => onChange(!checked)}
       className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${
-        checked ? 'bg-[#D4AF37]' : 'bg-[#494F55]/50'
+        checked ? 'bg-white' : 'bg-[#494F55]/50'
       }`}
       role="switch"
       aria-checked={checked}

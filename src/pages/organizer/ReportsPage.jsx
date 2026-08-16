@@ -20,7 +20,7 @@ import PageHeader from '@/components/common/PageHeader';
 import Badge from '@/components/common/Badge';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const COLORS = { gold: '#D4AF37', muted: '#949599', dim: '#494F55', green: '#34d399', red: '#f87171' };
+const COLORS = { gold: '#EFEFF1', muted: '#949599', dim: '#494F55', green: '#34d399', red: '#f87171' };
 
 const downloadBlob = (blob, filename) => {
   const url = URL.createObjectURL(blob);
@@ -148,10 +148,10 @@ export default function ReportsPage() {
         subtitle="Track revenue, attendance, and sales performance."
         actions={
           <>
-            <button onClick={handleExportCSV} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-[#D4AF37] border border-[#D4AF37]/40 hover:bg-[#D4AF37]/10 transition-colors">
+            <button onClick={handleExportCSV} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/ hover:bg-white/ transition-colors">
               <Download className="w-4 h-4" /> Download CSV
             </button>
-            <button onClick={handleExportPDF} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors">
+            <button onClick={handleExportPDF} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors">
               <FileText className="w-4 h-4" /> Download PDF
             </button>
           </>
@@ -170,7 +170,7 @@ export default function ReportsPage() {
                 value={fromDate}
                 max={toDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition"
               />
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function ReportsPage() {
                 value={toDate}
                 min={fromDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition"
               />
             </div>
           </div>
@@ -198,7 +198,7 @@ export default function ReportsPage() {
           {/* Revenue Report */}
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-[#D4AF37]" /> Revenue Report
+              <DollarSign className="w-5 h-5 text-white" /> Revenue Report
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <StatCard icon={DollarSign} label="Total Revenue" value={format(totalRevenue)} accent />
@@ -255,7 +255,7 @@ export default function ReportsPage() {
                           <td className="px-5 py-3 text-right text-[#949599]">{e.ticketsSold || 0}</td>
                           <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(e.revenue)}</td>
                           <td className="px-5 py-3 text-right">
-                            <span className="text-[#D4AF37] font-medium">{share}%</span>
+                            <span className="text-white font-medium">{share}%</span>
                           </td>
                         </tr>
                       );
@@ -269,7 +269,7 @@ export default function ReportsPage() {
           {/* Attendance Report */}
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
-              <Users className="w-5 h-5 text-[#D4AF37]" /> Attendance Report
+              <Users className="w-5 h-5 text-white" /> Attendance Report
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <StatCard icon={Users} label="Total Attendees" value={attendance.total || summary.totalAttendees || 0} />
@@ -298,7 +298,7 @@ export default function ReportsPage() {
           {/* Top Selling Events */}
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-[#D4AF37]" /> Top Selling Events
+              <Trophy className="w-5 h-5 text-white" /> Top Selling Events
             </h2>
             {topEvents.length === 0 ? (
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F]">
@@ -325,7 +325,7 @@ export default function ReportsPage() {
                           <td className="px-5 py-3">
                             <div className="flex items-center gap-2">
                               {RankIcon ? (
-                                <RankIcon className={`w-5 h-5 ${i === 0 ? 'text-[#D4AF37]' : i === 1 ? 'text-[#949599]' : 'text-[#a0611a]'}`} />
+                                <RankIcon className={`w-5 h-5 ${i === 0 ? 'text-white' : i === 1 ? 'text-[#949599]' : 'text-[#a0611a]'}`} />
                               ) : (
                                 <span className="w-5 h-5 flex items-center justify-center text-xs text-[#949599] font-semibold">{i + 1}</span>
                               )}
@@ -348,14 +348,14 @@ export default function ReportsPage() {
           <section className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-[#D4AF37]" /> Sales Report
+                <TrendingUp className="w-5 h-5 text-white" /> Sales Report
               </h2>
               <div className="flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#494F55]/40">
                 {['daily', 'weekly', 'monthly'].map((g) => (
                   <button
                     key={g}
                     onClick={() => setSalesGranularity(g)}
-                    className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition ${salesGranularity === g ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition ${salesGranularity === g ? 'bg-white/ text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
                   >
                     {g}
                   </button>
@@ -382,7 +382,7 @@ export default function ReportsPage() {
           {/* Refund Report */}
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
-              <RotateCcw className="w-5 h-5 text-[#D4AF37]" /> Refund Report
+              <RotateCcw className="w-5 h-5 text-white" /> Refund Report
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <StatCard icon={DollarSign} label="Total Refunds" value={format(refund.total)} />

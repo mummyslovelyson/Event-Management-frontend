@@ -121,7 +121,7 @@ export default function PricingPage() {
       <section className="py-16 sm:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-semibold uppercase tracking-wider">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/ border border-white/ text-white text-xs font-semibold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" /> For Organizers
             </span>
             <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EFEFF1]">Simple, Transparent Pricing</h1>
@@ -133,13 +133,13 @@ export default function PricingPage() {
             <div className="mt-8 inline-flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#494F55]/40">
               <button
                 onClick={() => setBillingCycle('monthly')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition ${billingCycle === 'monthly' ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition ${billingCycle === 'monthly' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
               >
                 Monthly
               </button>
               <button
                 onClick={() => setBillingCycle('yearly')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition flex items-center gap-1.5 ${billingCycle === 'yearly' ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition flex items-center gap-1.5 ${billingCycle === 'yearly' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
               >
                 Yearly <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">20% off</span>
               </button>
@@ -160,16 +160,16 @@ export default function PricingPage() {
                 transition={{ duration: 0.4, delay: i * 0.1 }}
                 className={`relative rounded-2xl p-6 border transition-all ${
                   tier.accent
-                    ? 'bg-gradient-to-b from-[#D4AF37]/10 to-[#171A1D] border-[#D4AF37]/40 shadow-xl shadow-[#D4AF37]/5'
+                    ? 'bg-gradient-to-b from-white/ to-[#171A1D] border-white/ shadow-xl shadow-white/'
                     : 'bg-[#171A1D] border-[#262B2F] hover:border-[#494F55]/50'
                 }`}
               >
                 {tier.badge && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#D4AF37] text-[#1C232B] text-xs font-bold uppercase tracking-wider">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white text-[#1C232B] text-xs font-bold uppercase tracking-wider">
                     {tier.badge}
                   </span>
                 )}
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${tier.accent ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'bg-[#494F55]/30 text-[#949599]'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${tier.accent ? 'bg-white/ text-white' : 'bg-[#494F55]/30 text-[#949599]'}`}>
                   <tier.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-[#EFEFF1]">{tier.name}</h3>
@@ -186,8 +186,8 @@ export default function PricingPage() {
                   disabled={subscribing === tier.id}
                   className={`mt-6 w-full py-3 rounded-lg text-sm font-semibold transition disabled:opacity-60 flex items-center justify-center gap-2 ${
                     tier.accent
-                      ? 'bg-[#D4AF37] text-[#1C232B] hover:bg-[#c4a030]'
-                      : 'border border-[#494F55]/40 text-[#EFEFF1] hover:border-[#D4AF37]/50 hover:text-[#D4AF37]'
+                      ? 'bg-white text-[#1C232B] hover:bg-[#CBD5E1]'
+                      : 'border border-[#494F55]/40 text-[#EFEFF1] hover:border-white/ hover:text-white'
                   }`}
                 >
                   {subscribing === tier.id ? <LoadingSpinner size="sm" /> : tier.cta}
@@ -215,7 +215,7 @@ export default function PricingPage() {
       <section className="py-16 bg-[#171A1D]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">Everything included</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-white">Everything included</span>
             <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Powerful Tools for Every Plan</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -228,7 +228,7 @@ export default function PricingPage() {
                 transition={{ duration: 0.3, delay: i * 0.06 }}
                 className="rounded-xl bg-[#1C232B] border border-[#262B2F] p-5"
               >
-                <div className="w-10 h-10 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center mb-3">
+                <div className="w-10 h-10 rounded-lg bg-white/ text-white flex items-center justify-center mb-3">
                   <f.icon className="w-5 h-5" />
                 </div>
                 <h3 className="text-sm font-semibold text-[#EFEFF1]">{f.title}</h3>
@@ -243,7 +243,7 @@ export default function PricingPage() {
       <section className="py-16 sm:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">Good to know</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-white">Good to know</span>
             <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Pricing FAQs</h2>
           </div>
           <div className="space-y-3">
@@ -267,16 +267,16 @@ export default function PricingPage() {
       {/* CTA */}
       <section className="py-16 bg-[#171A1D]">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex w-14 h-14 rounded-xl bg-[#D4AF37]/15 text-[#D4AF37] items-center justify-center mb-4">
+          <div className="inline-flex w-14 h-14 rounded-xl bg-white/ text-white items-center justify-center mb-4">
             <Zap className="w-7 h-7" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Ready to Start Hosting?</h2>
           <p className="mt-3 text-sm text-[#949599]">Join thousands of organizers creating unforgettable events with Tribes & Cliqs.</p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/register" className="px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition">
+            <Link to="/register" className="px-6 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition">
               Create an Account
             </Link>
-            <Link to="/contact" className="px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition">
+            <Link to="/contact" className="px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-white/ hover:text-white transition">
               Talk to Sales
             </Link>
           </div>

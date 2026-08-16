@@ -142,7 +142,7 @@ export default function SystemSettingsPage() {
 
   const toggleSecret = (key) => setShowSecrets((s) => ({ ...s, [key]: !s[key] }));
 
-  const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition';
+  const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition';
   const labelCls = 'block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5';
 
   return (
@@ -163,7 +163,7 @@ export default function SystemSettingsPage() {
                 key={key}
                 onClick={() => setTab(key)}
                 className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  tab === key ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
+                  tab === key ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
                 }`}
               >
                 <Icon className="w-4 h-4" /> {label}
@@ -270,7 +270,7 @@ export default function SystemSettingsPage() {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50"
                   >
                     {saving ? <LoadingSpinner size="sm" /> : <><Save className="w-4 h-4" /> Save Settings</>}
                   </button>
@@ -287,7 +287,7 @@ export default function SystemSettingsPage() {
 function SectionTitle({ icon: Icon, title, desc }) {
   return (
     <div className="flex items-center gap-3 pb-4 border-b border-[#494F55]/20">
-      <div className="w-10 h-10 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center"><Icon className="w-5 h-5" /></div>
+      <div className="w-10 h-10 rounded-lg bg-white/ text-white flex items-center justify-center"><Icon className="w-5 h-5" /></div>
       <div><h2 className="text-base font-semibold text-[#EFEFF1]">{title}</h2><p className="text-xs text-[#949599]">{desc}</p></div>
     </div>
   );
@@ -297,7 +297,7 @@ function ToggleRow({ label, desc, value, onChange }) {
   return (
     <div className="flex items-center justify-between p-3 rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20">
       <div><p className="text-sm font-medium text-[#EFEFF1]">{label}</p><p className="text-xs text-[#949599]">{desc}</p></div>
-      <button onClick={() => onChange(!value)} className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${value ? 'bg-[#D4AF37]' : 'bg-[#494F55]/40'}`}>
+      <button onClick={() => onChange(!value)} className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${value ? 'bg-white' : 'bg-[#494F55]/40'}`}>
         <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform ${value ? 'translate-x-5' : ''}`} />
       </button>
     </div>
@@ -305,7 +305,7 @@ function ToggleRow({ label, desc, value, onChange }) {
 }
 
 function SecretInput({ label, value, show, onToggle, onChange, placeholder }) {
-  const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition pr-10';
+  const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition pr-10';
   const labelCls = 'block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5';
   const displayValue = show ? value : (value ? '••••••••••••••••' : '');
   return (

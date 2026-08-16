@@ -119,7 +119,7 @@ export default function ContentManagementPage() {
         actions={
           <button
             onClick={openAdd}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
           >
             <Plus className="w-4 h-4" /> Add {itemLabels[tab]}
           </button>
@@ -133,7 +133,7 @@ export default function ContentManagementPage() {
             key={key}
             onClick={() => setTab(key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-              tab === key ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
+              tab === key ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
             <Icon className="w-4 h-4" /> {label}
@@ -150,7 +150,7 @@ export default function ContentManagementPage() {
         ) : tab === 'banners' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-5">
             {items.map((item, i) => (
-              <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="rounded-xl bg-[#1D2124] border border-[#262B2F] overflow-hidden hover:border-[#D4AF37]/40 transition-all">
+              <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="rounded-xl bg-[#1D2124] border border-[#262B2F] overflow-hidden hover:border-white/ transition-all">
                 {item.image ? (
                   <img src={item.image} alt={item.title} className="w-full h-32 object-cover" />
                 ) : (
@@ -158,14 +158,14 @@ export default function ContentManagementPage() {
                 )}
                 <div className="p-4">
                   <h3 className="font-semibold text-[#EFEFF1] truncate">{item.title}</h3>
-                  {item.link && <p className="text-xs text-[#D4AF37] mt-1 truncate">{item.link}</p>}
+                  {item.link && <p className="text-xs text-white mt-1 truncate">{item.link}</p>}
                   <div className="mt-3 flex items-center justify-between">
                     <Badge variant={item.isActive === false ? 'neutral' : 'success'} size="sm" dot>{item.isActive === false ? 'Inactive' : 'Active'}</Badge>
                     <div className="flex items-center gap-1">
-                      <button onClick={() => toggleActive(item)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title={item.isActive === false ? 'Activate' : 'Deactivate'}>
+                      <button onClick={() => toggleActive(item)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title={item.isActive === false ? 'Activate' : 'Deactivate'}>
                         {item.isActive === false ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                       </button>
-                      <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
+                      <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
                       <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </div>
@@ -177,7 +177,7 @@ export default function ContentManagementPage() {
           <div className="divide-y divide-[#262B2F]/70">
             {items.map((item) => (
               <div key={item.id} className="flex items-start gap-4 p-5 hover:bg-[#1D2124] transition-colors">
-                <div className="w-10 h-10 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center shrink-0"><HelpCircle className="w-5 h-5" /></div>
+                <div className="w-10 h-10 rounded-lg bg-white/ text-white flex items-center justify-center shrink-0"><HelpCircle className="w-5 h-5" /></div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-medium text-[#EFEFF1]">{item.question}</h3>
@@ -186,7 +186,7 @@ export default function ContentManagementPage() {
                   <p className="text-sm text-[#949599] mt-1 line-clamp-2">{item.answer}</p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
                   <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
@@ -196,7 +196,7 @@ export default function ContentManagementPage() {
           <div className="divide-y divide-[#262B2F]/70">
             {items.map((item) => (
               <div key={item.id} className="flex items-center gap-4 p-5 hover:bg-[#1D2124] transition-colors">
-                {item.image ? <img src={item.image} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" /> : <div className="w-14 h-14 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center shrink-0"><FileText className="w-6 h-6" /></div>}
+                {item.image ? <img src={item.image} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" /> : <div className="w-14 h-14 rounded-lg bg-white/ text-white flex items-center justify-center shrink-0"><FileText className="w-6 h-6" /></div>}
                 <div className="min-w-0 flex-1">
                   <h3 className="font-medium text-[#EFEFF1] truncate">{item.title}</h3>
                   <div className="flex items-center gap-3 mt-1 text-xs text-[#949599]">
@@ -206,7 +206,7 @@ export default function ContentManagementPage() {
                 </div>
                 <Badge variant={item.status === 'published' ? 'success' : 'pending'} size="sm" dot>{item.status || 'draft'}</Badge>
                 <div className="flex items-center gap-1 shrink-0">
-                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
                   <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
@@ -216,14 +216,14 @@ export default function ContentManagementPage() {
           <div className="divide-y divide-[#262B2F]/70">
             {items.map((item) => (
               <div key={item.id} className="flex items-start gap-4 p-5 hover:bg-[#1D2124] transition-colors">
-                <div className="w-10 h-10 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center shrink-0"><Megaphone className="w-5 h-5" /></div>
+                <div className="w-10 h-10 rounded-lg bg-white/ text-white flex items-center justify-center shrink-0"><Megaphone className="w-5 h-5" /></div>
                 <div className="min-w-0 flex-1">
                   <h3 className="font-medium text-[#EFEFF1]">{item.title}</h3>
                   <p className="text-sm text-[#949599] mt-1 line-clamp-2">{item.message || item.content}</p>
                   <p className="text-xs text-[#494F55] mt-1">{fmtDate(item.createdAt)}</p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
                   <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
@@ -241,7 +241,7 @@ export default function ContentManagementPage() {
         footer={
           <>
             <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
-            <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50">
+            <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50">
               {saving ? 'Saving...' : 'Save'}
             </button>
           </>
@@ -278,7 +278,7 @@ function initialForm(tab) {
 }
 
 function ContentForm({ tab, form, setForm }) {
-  const input = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition';
+  const input = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition';
   const label = 'block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5';
 
   if (tab === 'banners') {
@@ -288,7 +288,7 @@ function ContentForm({ tab, form, setForm }) {
         <div><label className={label}>Image URL</label><input className={input} value={form.image || ''} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." /></div>
         <div><label className={label}>Link</label><input className={input} value={form.link || ''} onChange={(e) => setForm({ ...form, link: e.target.value })} placeholder="https://..." /></div>
         <label className="flex items-center gap-3 cursor-pointer">
-          <button onClick={() => setForm({ ...form, isActive: !form.isActive })} className={`relative w-10 h-5 rounded-full transition-colors ${form.isActive ? 'bg-[#D4AF37]' : 'bg-[#494F55]/40'}`}>
+          <button onClick={() => setForm({ ...form, isActive: !form.isActive })} className={`relative w-10 h-5 rounded-full transition-colors ${form.isActive ? 'bg-white' : 'bg-[#494F55]/40'}`}>
             <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${form.isActive ? 'translate-x-5' : ''}`} />
           </button>
           <span className="text-sm text-[#EFEFF1]">Active</span>

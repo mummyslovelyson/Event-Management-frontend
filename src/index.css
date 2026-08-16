@@ -30,7 +30,7 @@
     background: #949599;
   }
   ::selection {
-    background: rgba(212, 175, 55, 0.25);
+    background: rgba(239, 239, 241, 0.2);
   }
 
   /* Hand-built tactile feel: buttons depress on click, links/inputs get a
@@ -45,7 +45,7 @@
   select:focus-visible,
   textarea:focus-visible,
   [tabindex]:focus-visible {
-    outline: 2px solid rgba(212, 175, 55, 0.55);
+    outline: 2px solid rgba(239, 239, 241, 0.45);
     outline-offset: 2px;
   }
 

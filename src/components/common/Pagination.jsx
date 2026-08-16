@@ -45,7 +45,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange, sibl
             onClick={() => go(item)}
             className={`${btnBase} border ${
               item === currentPage
-                ? 'bg-[#D4AF37] text-[#1C232B] border-[#D4AF37]'
+                ? 'bg-white text-[#1C232B] border-white/30'
                 : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] border-[#262B2F]'
             }`}
           >

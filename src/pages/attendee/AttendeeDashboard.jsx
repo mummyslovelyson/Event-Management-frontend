@@ -112,14 +112,14 @@ export default function AttendeeDashboard() {
     <motion.div variants={containerStagger} initial="hidden" animate="show" className="space-y-8">
       {/* Welcome banner */}
       <motion.div variants={itemFade} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#171A1D] via-[#1C232B] to-[#242B32] border border-[#262B2F] p-6 sm:p-8">
-        <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-[#D4AF37]/10 blur-3xl" />
-        <div className="absolute -bottom-16 -left-10 w-40 h-40 rounded-full bg-[#D4AF37]/5 blur-3xl" />
+        <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/ blur-3xl" />
+        <div className="absolute -bottom-16 -left-10 w-40 h-40 rounded-full bg-white/ blur-3xl" />
         <div className="relative flex flex-col sm:flex-row sm:items-center gap-5">
           <motion.div
             initial={{ scale: 0.7, rotate: -6 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.1 }}
-            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#D4AF37] flex items-center justify-center text-[#1C232B] text-2xl font-bold shrink-0 shadow-lg shadow-[#D4AF37]/20"
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white flex items-center justify-center text-[#1C232B] text-2xl font-bold shrink-0 shadow-lg shadow-white/"
           >
             {(user?.name || user?.email || 'U')
               .split(' ')
@@ -129,7 +129,7 @@ export default function AttendeeDashboard() {
               .toUpperCase()}
           </motion.div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-[#D4AF37] font-medium">
+            <p className="text-sm text-white font-medium">
               {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening'},
             </p>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#EFEFF1] truncate">
@@ -143,14 +143,14 @@ export default function AttendeeDashboard() {
           <div className="hidden sm:flex flex-col gap-2 shrink-0">
             <Link
               to="/attendee/explore"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] hover:-translate-y-0.5 transition-all"
             >
               <Compass className="w-4 h-4" />
               Explore Events
             </Link>
             <Link
               to="/attendee/tickets"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium hover:border-[#D4AF37]/40 hover:-translate-y-0.5 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium hover:border-white/ hover:-translate-y-0.5 transition-all"
             >
               <TicketIcon className="w-4 h-4" />
               My Tickets
@@ -168,7 +168,7 @@ export default function AttendeeDashboard() {
 
       {/* Quick actions (mobile) */}
       <motion.div variants={itemFade} className="flex sm:hidden gap-3">
-        <Link to="/attendee/explore" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold">
+        <Link to="/attendee/explore" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold">
           <Compass className="w-4 h-4" /> Browse
         </Link>
         <Link to="/attendee/tickets" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium">
@@ -254,7 +254,7 @@ export default function AttendeeDashboard() {
             ) : (
               activity.map((a) => (
                 <div key={a.id} className="group flex gap-3 items-start p-2 -m-2 rounded-lg hover:bg-[#1D2124] transition-colors">
-                  <div className="w-8 h-8 rounded-lg bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-white/ text-white flex items-center justify-center shrink-0">
                     <TicketIcon className="w-4 h-4" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -282,7 +282,7 @@ function SectionHeader({ title, subtitle, link, linkLabel }) {
         {subtitle && <p className="text-sm text-[#949599]">{subtitle}</p>}
       </div>
       {link && (
-        <Link to={link} className="inline-flex items-center gap-1 text-sm font-medium text-[#D4AF37] hover:gap-2 transition-all">
+        <Link to={link} className="inline-flex items-center gap-1 text-sm font-medium text-white hover:gap-2 transition-all">
           {linkLabel} <ArrowRight className="w-4 h-4" />
         </Link>
       )}

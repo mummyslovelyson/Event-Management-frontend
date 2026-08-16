@@ -34,7 +34,7 @@ export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/ blur-3xl" />
       </div>
 
       <motion.div
@@ -56,7 +56,7 @@ export default function VerifyEmailPage() {
           <div className="text-center py-6">
             {status === 'verifying' && (
               <div>
-                <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center mx-auto mb-5">
+                <div className="w-16 h-16 rounded-full bg-white/ text-white flex items-center justify-center mx-auto mb-5">
                   <Loader2 className="w-8 h-8 animate-spin" />
                 </div>
                 <p className="text-sm text-[#949599]">Verifying your email…</p>
@@ -74,7 +74,7 @@ export default function VerifyEmailPage() {
                 </p>
                 <Link
                   to="/login"
-                  className="mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
+                  className="mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
                 >
                   Sign In
                 </Link>
@@ -94,7 +94,7 @@ export default function VerifyEmailPage() {
                 </p>
                 <Link
                   to="/login"
-                  className="mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-[#494F55]/50 text-[#EFEFF1] text-sm font-medium hover:border-[#D4AF37]/50 transition"
+                  className="mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-[#494F55]/50 text-[#EFEFF1] text-sm font-medium hover:border-white/ transition"
                 >
                   <Mail className="w-4 h-4" /> Go to Sign In
                 </Link>
@@ -103,7 +103,7 @@ export default function VerifyEmailPage() {
           </div>
 
           <div className="mt-4 text-center">
-            <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-[#949599] hover:text-[#D4AF37] transition">
+            <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-[#949599] hover:text-white transition">
               <ArrowLeft className="w-4 h-4" /> Back to Login
             </Link>
           </div>

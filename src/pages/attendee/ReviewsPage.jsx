@@ -166,14 +166,14 @@ export default function ReviewsPage() {
                 <div key={star} className="flex items-center gap-3">
                   <div className="flex items-center gap-1 w-16 shrink-0">
                     <span className="text-sm text-[#EFEFF1]">{star}</span>
-                    <Star className="w-3.5 h-3.5 fill-[#D4AF37] text-[#D4AF37]" />
+                    <Star className="w-3.5 h-3.5 fill-[#EFEFF1] text-white" />
                   </div>
                   <div className="flex-1 h-2 rounded-full bg-[#242B32] overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${pct}%` }}
                       transition={{ duration: 0.5 }}
-                      className="h-full rounded-full bg-[#D4AF37]"
+                      className="h-full rounded-full bg-white"
                     />
                   </div>
                   <span className="text-sm text-[#949599] w-8 text-right shrink-0">{count}</span>
@@ -219,7 +219,7 @@ export default function ReviewsPage() {
                 </div>
                 <button
                   onClick={() => openReviewModal(event)}
-                  className="mt-3 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors"
+                  className="mt-3 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors"
                 >
                   <Pencil className="w-4 h-4" /> Write a Review
                 </button>
@@ -261,7 +261,7 @@ export default function ReviewsPage() {
                           {[1, 2, 3, 4, 5].map((s) => (
                             <Star
                               key={s}
-                              className={`w-4 h-4 ${s <= (review.rating || 0) ? 'fill-[#D4AF37] text-[#D4AF37]' : 'text-[#494F55]'}`}
+                              className={`w-4 h-4 ${s <= (review.rating || 0) ? 'fill-[#EFEFF1] text-white' : 'text-[#494F55]'}`}
                             />
                           ))}
                           <span className="text-xs text-[#949599] ml-1">
@@ -302,7 +302,7 @@ export default function ReviewsPage() {
             <button
               onClick={handleSubmitReview}
               disabled={submitting}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
             >
               <Pencil className="w-4 h-4" />
               {submitting ? 'Submitting...' : 'Submit Review'}
@@ -343,7 +343,7 @@ export default function ReviewsPage() {
                     <Star
                       className={`w-8 h-8 transition-colors ${
                         s <= (hoverRating || rating)
-                          ? 'fill-[#D4AF37] text-[#D4AF37]'
+                          ? 'fill-[#EFEFF1] text-white'
                           : 'text-[#494F55] hover:text-[#949599]'
                       }`}
                     />
@@ -363,7 +363,7 @@ export default function ReviewsPage() {
                 onChange={(e) => setReviewText(e.target.value)}
                 rows={5}
                 placeholder="Share details about your experience..."
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition resize-none"
               />
               <p className="text-xs text-[#494F55] mt-1.5">{reviewText.length} characters</p>
             </div>

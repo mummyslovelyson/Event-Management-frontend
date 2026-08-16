@@ -12,7 +12,7 @@ import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
 
 const TABS = [
   { key: 'email', label: 'Email Campaign', icon: Mail },
@@ -128,11 +128,11 @@ export default function MarketingPage() {
           <button
             key={key}
             onClick={() => setTab(key)}
-            className={`relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === key ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+            className={`relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === key ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             <Icon className="w-4 h-4" />
             {label}
-            {tab === key && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#D4AF37]" />}
+            {tab === key && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-white" />}
           </button>
         ))}
       </div>
@@ -142,7 +142,7 @@ export default function MarketingPage() {
         {/* Composer */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 space-y-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-[#EFEFF1]">
-            {(() => { const I = TABS.find((x) => x.key === tab).icon; return <I className="w-5 h-5 text-[#D4AF37]" />; })()}
+            {(() => { const I = TABS.find((x) => x.key === tab).icon; return <I className="w-5 h-5 text-white" />; })()}
             {TABS.find((x) => x.key === tab).label}
           </div>
 
@@ -263,7 +263,7 @@ export default function MarketingPage() {
             <button
               onClick={() => handleSend(tab)}
               disabled={sending}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-60 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-60 transition-colors"
             >
               <Send className="w-4 h-4" /> {sending ? 'Sending...' : 'Send Campaign'}
             </button>
@@ -295,7 +295,7 @@ export default function MarketingPage() {
             </div>
           ) : tab === 'sms' ? (
             <div className="space-y-3">
-              <div className="max-w-[280px] rounded-2xl rounded-bl-sm bg-[#D4AF37]/15 border border-[#D4AF37]/30 px-4 py-3">
+              <div className="max-w-[280px] rounded-2xl rounded-bl-sm bg-white/ border border-white/ px-4 py-3">
                 <p className="text-sm text-[#EFEFF1] leading-relaxed">{smsForm.message || 'SMS preview...'}</p>
                 <p className="text-[10px] text-[#949599] mt-1.5 text-right">{new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
               </div>
@@ -306,7 +306,7 @@ export default function MarketingPage() {
           ) : (
             <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4">
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-lg bg-[#D4AF37] flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0">
                   <Megaphone className="w-4 h-4 text-[#1C232B]" />
                 </div>
                 <div className="min-w-0">

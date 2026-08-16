@@ -41,10 +41,10 @@ export default function ScrollProgressBar() {
   }, [progress]);
 
   return (
-    <div className="fixed top-0 inset-x-0 h-[3px] z-[60] pointer-events-none bg-[#D4AF37]/10">
+    <div className="fixed top-0 inset-x-0 h-[3px] z-[60] pointer-events-none bg-white/">
       <motion.div
         style={{ scaleX, opacity }}
-        className="h-full origin-left bg-gradient-to-r from-[#D4AF37] via-[#e8c75e] to-[#D4AF37] shadow-[0_0_8px_rgba(212,175,55,0.7)]"
+        className="h-full origin-left bg-gradient-to-r from-white via-[#e8c75e] to-white shadow-[0_0_8px_rgba(212,175,55,0.7)]"
       />
     </div>
   );

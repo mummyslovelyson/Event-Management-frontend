@@ -162,10 +162,10 @@ export default function ExploreEventsPage() {
 
       {/* Recommended for you */}
       {isAuthenticated && (recommendedLoading || recommended.length > 0) && (
-        <motion.section variants={itemFade} className="rounded-xl bg-gradient-to-br from-[#D4AF37]/10 via-[#171A1D] to-[#171A1D] border border-[#D4AF37]/20 p-4 sm:p-5">
+        <motion.section variants={itemFade} className="rounded-xl bg-gradient-to-br from-white/ via-[#171A1D] to-[#171A1D] border border-white/ p-4 sm:p-5">
           <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center">
+              <span className="w-8 h-8 rounded-lg bg-white/ text-white flex items-center justify-center">
                 <Sparkles className="w-4 h-4" />
               </span>
               <div>
@@ -175,7 +175,7 @@ export default function ExploreEventsPage() {
             </div>
             <Link
               to="/attendee/favorites"
-              className="text-xs font-medium text-[#D4AF37] hover:underline underline-offset-4 decoration-[#D4AF37]/50 shrink-0"
+              className="text-xs font-medium text-white hover:underline underline-offset-4 decoration-white/ shrink-0"
             >
               Manage preferences
             </Link>
@@ -208,7 +208,7 @@ export default function ExploreEventsPage() {
             value={query}
             onChange={(e) => { setQuery(e.target.value); setPage(1); }}
             placeholder="Search events, artists, venues..."
-            className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition"
+            className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition"
           />
           {query && (
             <button
@@ -223,14 +223,14 @@ export default function ExploreEventsPage() {
           onClick={() => setShowFilters((v) => !v)}
           className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
             showFilters || activeFilterCount > 0
-              ? 'bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#D4AF37]'
+              ? 'bg-white/ border-white/ text-white'
               : 'bg-[#171A1D] border-[#494F55]/40 text-[#EFEFF1] hover:border-[#494F55]/60'
           }`}
         >
           <SlidersHorizontal className="w-4 h-4" />
           Filters
           {activeFilterCount > 0 && (
-            <span className="ml-1 w-5 h-5 rounded-full bg-[#D4AF37] text-[#1C232B] text-[10px] font-bold flex items-center justify-center">
+            <span className="ml-1 w-5 h-5 rounded-full bg-white text-[#1C232B] text-[10px] font-bold flex items-center justify-center">
               {activeFilterCount}
             </span>
           )}
@@ -273,7 +273,7 @@ export default function ExploreEventsPage() {
                 value={filters.location}
                 onChange={(e) => updateFilter('location', e.target.value)}
                 placeholder="City or venue"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
               />
             </FilterField>
           </div>
@@ -286,7 +286,7 @@ export default function ExploreEventsPage() {
             </button>
             <button
               onClick={() => setShowFilters(false)}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
+              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
             >
               Apply
             </button>
@@ -309,7 +309,7 @@ export default function ExploreEventsPage() {
             <select
               value={filters.sort}
               onChange={(e) => { updateFilter('sort', e.target.value); }}
-              className="appearance-none pl-3 pr-9 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer"
+              className="appearance-none pl-3 pr-9 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition cursor-pointer"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value} className="bg-[#171A1D]">{o.label}</option>
@@ -378,7 +378,7 @@ function SelectInput({ value, onChange, options }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none px-3 py-2.5 pr-9 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer"
+        className="w-full appearance-none px-3 py-2.5 pr-9 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition cursor-pointer"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value} className="bg-[#171A1D]">{o.label}</option>

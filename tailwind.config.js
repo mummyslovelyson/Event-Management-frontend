@@ -10,7 +10,7 @@ export default {
         'tc-text': '#EFEFF1',
         'tc-muted': '#949599',
         'tc-subtle': '#494F55',
-        'tc-gold': '#D4AF37',
+        'tc-silver': '#CBD5E1',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

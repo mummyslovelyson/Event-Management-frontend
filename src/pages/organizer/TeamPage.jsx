@@ -15,7 +15,7 @@ import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
 
 const ROLES = {
   Manager: {
@@ -157,7 +157,7 @@ export default function TeamPage() {
         title="Team"
         subtitle="Manage team members, roles, and permissions."
         actions={
-          <button onClick={() => setInviteModal(true)} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors shrink-0">
+          <button onClick={() => setInviteModal(true)} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0">
             <UserPlus className="w-4 h-4" /> Invite Member
           </button>
         }
@@ -171,7 +171,7 @@ export default function TeamPage() {
             <div key={role} className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                  info.variant === 'gold' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' :
+                  info.variant === 'gold' ? 'bg-white/ text-white' :
                   info.variant === 'info' ? 'bg-blue-500/10 text-blue-400' :
                   'bg-[#494F55]/30 text-[#949599]'
                 }`}>
@@ -199,7 +199,7 @@ export default function TeamPage() {
           {/* Current members */}
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
-              <UsersRound className="w-5 h-5 text-[#D4AF37]" /> Current Members
+              <UsersRound className="w-5 h-5 text-white" /> Current Members
               <span className="text-sm text-[#949599] font-normal">({members.length})</span>
             </h2>
             {members.length === 0 ? (
@@ -223,7 +223,7 @@ export default function TeamPage() {
                       >
                         <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                           <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <div className="w-11 h-11 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center text-sm font-semibold shrink-0">
+                            <div className="w-11 h-11 rounded-full bg-white/ text-white flex items-center justify-center text-sm font-semibold shrink-0">
                               {initials(m.name || m.email)}
                             </div>
                             <div className="min-w-0">
@@ -268,7 +268,7 @@ export default function TeamPage() {
           {invites.length > 0 && (
             <section className="space-y-3">
               <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
-                <Clock className="w-5 h-5 text-[#D4AF37]" /> Pending Invitations
+                <Clock className="w-5 h-5 text-white" /> Pending Invitations
                 <span className="text-sm text-[#949599] font-normal">({invites.length})</span>
               </h2>
               <div className="space-y-3">
@@ -282,14 +282,14 @@ export default function TeamPage() {
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-[#EFEFF1] truncate">{inv.email}</p>
                           <p className="text-xs text-[#949599]">
-                            Invited as <span className="text-[#D4AF37]">{inv.role || 'Staff'}</span>
+                            Invited as <span className="text-white">{inv.role || 'Staff'}</span>
                             {inv.createdAt && ` · ${new Date(inv.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}`}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge variant="pending" size="sm" dot>Awaiting</Badge>
-                        <button onClick={() => handleResend(inv)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title="Resend">
+                        <button onClick={() => handleResend(inv)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title="Resend">
                           <Mail className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleCancelInvite(inv)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Cancel">
@@ -314,7 +314,7 @@ export default function TeamPage() {
         footer={
           <>
             <button onClick={() => setInviteModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={submitInvite} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-[#D4AF37] hover:bg-[#c4a030] disabled:opacity-60 transition">
+            <button onClick={submitInvite} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">
               {submitting ? 'Sending...' : 'Send Invitation'}
             </button>
           </>
@@ -343,7 +343,7 @@ export default function TeamPage() {
                     onClick={() => handleRoleChange(role)}
                     className={`flex flex-col items-center gap-1.5 px-3 py-3 rounded-lg border text-sm font-medium transition ${
                       iForm.role === role
-                        ? 'bg-[#D4AF37]/10 border-[#D4AF37]/50 text-[#D4AF37]'
+                        ? 'bg-white/ border-white/ text-white'
                         : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599] hover:border-[#494F55]/60'
                     }`}
                   >
@@ -367,11 +367,11 @@ export default function TeamPage() {
                     onClick={() => togglePerm(perm)}
                     className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition text-left ${
                       checked
-                        ? 'bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#EFEFF1]'
+                        ? 'bg-white/ border-white/ text-[#EFEFF1]'
                         : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599] hover:border-[#494F55]/60'
                     }`}
                   >
-                    {checked ? <CheckSquare className="w-4 h-4 text-[#D4AF37] shrink-0" /> : <Square className="w-4 h-4 text-[#494F55] shrink-0" />}
+                    {checked ? <CheckSquare className="w-4 h-4 text-white shrink-0" /> : <Square className="w-4 h-4 text-[#494F55] shrink-0" />}
                     <Icon className="w-4 h-4 shrink-0" />
                     <span className="truncate">{perm}</span>
                   </button>
