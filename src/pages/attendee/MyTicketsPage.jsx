@@ -23,6 +23,22 @@ const TABS = [
   { value: 'cancelled', label: 'Cancelled' },
 ];
 
+// The tickets API returns flat snake_case columns (event_title, event_venue,
+// start_date, banner_image, ticket_type_name). Normalize them into the nested
+// camelCase shape the ticket cards expect so event info actually displays.
+const normalizeTicket = (t) => ({
+  ...t,
+  ticketType: t.ticketType || t.type || t.ticket_type_name || t.ticketTypeName || 'General',
+  seat: t.seat || t.seatNumber || t.seat_number || t.seatInfo,
+  event: {
+    title: t.event?.title || t.event_title || t.event_name || t.eventName || 'Event',
+    venue: t.event?.venue || t.event_venue || t.venue || 'Venue TBA',
+    startDate: t.event?.startDate || t.event?.start_date || t.startDate || t.start_date || t.eventDate,
+    startTime: t.event?.startTime || t.event?.start_time || t.startTime || t.start_time,
+    image: t.event?.image || t.banner_image || t.event?.banner_image || t.image,
+  },
+});
+
 const containerStagger = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { staggerChildren: 0.06 } },
@@ -57,7 +73,7 @@ export default function MyTicketsPage() {
     try {
       const res = await getUserTickets({ limit: 100 });
       const data = res.data?.tickets ?? res.data ?? [];
-      setTickets(Array.isArray(data) ? data : []);
+      setTickets((Array.isArray(data) ? data : []).map(normalizeTicket));
     } catch (err) {
       toast.error('Failed to load tickets');
       setTickets([]);
