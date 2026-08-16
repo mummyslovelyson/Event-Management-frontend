@@ -3,11 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Mail, Lock, User, Phone, Eye, EyeOff, Ticket, Loader2,
+  Mail, Lock, User, Phone, Eye, EyeOff, Loader2,
   UserPlus, Building2, Check, Users,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { registerUser } from '@/api/auth';
+import Logo from '@/components/common/Logo';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -66,13 +67,11 @@ export default function RegisterPage() {
         <div className="rounded-2xl bg-[#161D22] border border-[#494F55]/40 shadow-2xl shadow-black/40 p-6 sm:p-8">
           {/* Logo */}
           <div className="text-center mb-6">
-            <Link to="/" className="inline-flex items-center gap-2 mb-2">
-              <div className="w-11 h-11 rounded-xl bg-[#D4AF37] flex items-center justify-center shadow-lg">
-                <Ticket className="w-6 h-6 text-[#1C232B]" strokeWidth={2.5} />
-              </div>
-            </Link>
+            <div className="flex justify-center mb-3">
+              <Logo size="lg" showText={false} />
+            </div>
             <h1 className="text-2xl font-bold text-[#EFEFF1]">Create Account</h1>
-            <p className="mt-1 text-sm text-[#949599]">Join the Tribes & Cliqs community</p>
+            <p className="mt-1 text-sm text-[#949599]">Join the Tribes &amp; Cliqs community</p>
           </div>
 
           {/* Role tabs */}

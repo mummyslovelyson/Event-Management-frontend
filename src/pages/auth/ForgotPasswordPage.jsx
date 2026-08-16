@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { Mail, Ticket, Loader2, ArrowLeft, MailCheck, Send } from 'lucide-react';
+import { Mail, Loader2, ArrowLeft, MailCheck, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { forgotPassword } from '@/api/auth';
+import Logo from '@/components/common/Logo';
 
 export default function ForgotPasswordPage() {
   const [submitting, setSubmitting] = useState(false);
@@ -41,11 +42,9 @@ export default function ForgotPasswordPage() {
         <div className="rounded-2xl bg-[#161D22] border border-[#494F55]/40 shadow-2xl shadow-black/40 p-6 sm:p-8">
           {/* Logo */}
           <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-2">
-              <div className="w-11 h-11 rounded-xl bg-[#D4AF37] flex items-center justify-center shadow-lg">
-                <Ticket className="w-6 h-6 text-[#1C232B]" strokeWidth={2.5} />
-              </div>
-            </Link>
+            <div className="flex justify-center mb-3">
+              <Logo size="lg" showText={false} />
+            </div>
             <h1 className="text-2xl font-bold text-[#EFEFF1]">Forgot Password?</h1>
             <p className="mt-1 text-sm text-[#949599]">
               {sent ? 'Check your email for the reset link' : 'Enter your email and we\'ll send you a reset link'}

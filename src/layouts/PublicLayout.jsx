@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import ScrollProgressBar from '@/components/common/ScrollProgressBar';
 import ScrollToTopButton from '@/components/common/ScrollToTopButton';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
+import Logo from '@/components/common/Logo';
 
 const navLinks = [
   { to: '/', label: 'Home', end: true },
@@ -53,19 +54,7 @@ export default function PublicLayout() {
           <div className="flex items-center justify-between h-18 py-3">
 
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 shrink-0 group">
-              <img
-                src="/assets/images/Logo copy.jpeg"
-                alt="Tribes & Cliqs"
-                className="w-10 h-10 rounded-xl object-cover ring-1 ring-[#494F55]/40 group-hover:ring-[#D4AF37]/60 transition-all"
-              />
-              <div className="flex flex-col leading-tight">
-                <span className="text-[15px] font-bold tracking-wide text-[#EFEFF1]">
-                  TRIBES<span className="text-[#949599]">&amp;</span>CLIQS
-                </span>
-                <span className="text-[9px] text-[#949599] tracking-[0.2em] uppercase">Living The Moment</span>
-              </div>
-            </Link>
+            <Logo size="md" />
 
             {/* Desktop nav */}
             <nav className="hidden md:flex items-center gap-1">
@@ -186,13 +175,9 @@ export default function PublicLayout() {
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
             {/* Brand */}
             <div className="md:col-span-2">
-              <Link to="/" className="flex items-center gap-3 mb-4">
-                <img src="/assets/images/Logo copy.jpeg" alt="Tribes & Cliqs" className="w-10 h-10 rounded-xl object-cover" />
-                <div>
-                  <div className="text-[15px] font-bold text-[#EFEFF1]">TRIBES<span className="text-[#949599]">&amp;</span>CLIQS</div>
-                  <div className="text-[9px] text-[#494F55] tracking-[0.2em] uppercase">Living The Moment</div>
-                </div>
-              </Link>
+              <div className="mb-4">
+                <Logo size="md" />
+              </div>
               <p className="text-sm text-[#949599] leading-relaxed max-w-xs">
                 Discover, create, and manage unforgettable events. Your gateway to live experiences across Africa and beyond.
               </p>

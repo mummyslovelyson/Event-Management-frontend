@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Ticket, Loader2, CheckCircle2, XCircle, ArrowLeft, Mail } from 'lucide-react';
+import { Loader2, CheckCircle2, XCircle, ArrowLeft, Mail } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { verifyEmail } from '@/api/auth';
+import Logo from '@/components/common/Logo';
 
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
@@ -45,11 +46,9 @@ export default function VerifyEmailPage() {
         <div className="rounded-2xl bg-[#161D22] border border-[#494F55]/40 shadow-2xl shadow-black/40 p-6 sm:p-8">
           {/* Logo */}
           <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-2">
-              <div className="w-11 h-11 rounded-xl bg-[#D4AF37] flex items-center justify-center shadow-lg">
-                <Ticket className="w-6 h-6 text-[#1C232B]" strokeWidth={2.5} />
-              </div>
-            </Link>
+            <div className="flex justify-center mb-3">
+              <Logo size="lg" showText={false} />
+            </div>
             <h1 className="text-2xl font-bold text-[#EFEFF1]">Verify Your Email</h1>
             <p className="mt-1 text-sm text-[#949599]">Confirm your email address to activate your account</p>
           </div>

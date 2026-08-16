@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ShieldCheck, Lock, Mail, Eye, EyeOff, Loader2, AlertTriangle, ShieldAlert } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
+import Logo from '@/components/common/Logo';
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
@@ -50,13 +51,18 @@ export default function AdminLoginPage() {
         className="relative w-full max-w-md"
       >
         <div className="rounded-2xl bg-[#161D22] border border-[#494F55]/40 shadow-2xl shadow-black/50 p-6 sm:p-8">
-          {/* Shield icon */}
+          {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4AF37]/25 to-[#D4AF37]/5 items-center justify-center mb-4 border border-[#D4AF37]/30">
-              <ShieldCheck className="w-8 h-8 text-[#D4AF37]" />
+            <div className="flex justify-center mb-4">
+              <div className="relative">
+                <Logo size="lg" showText={false} />
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#161D22] border border-[#D4AF37]/50 flex items-center justify-center shadow">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
+                </div>
+              </div>
             </div>
             <h1 className="text-2xl font-bold text-[#EFEFF1] tracking-tight">Administration Portal</h1>
-            <p className="mt-1.5 text-sm text-[#949599]">Tribes & Cliqs Admin</p>
+            <p className="mt-1.5 text-sm text-[#949599]">Tribes &amp; Cliqs Admin</p>
           </div>
 
           {/* Form */}

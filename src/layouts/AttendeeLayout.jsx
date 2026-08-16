@@ -154,7 +154,7 @@ function SidebarContent({ user, initials, onNavigate }) {
     <>
       <div className="flex items-center justify-between h-14 px-4 border-b border-[#262B2F] shrink-0">
         <Link to="/attendee/dashboard" className="flex items-center gap-2.5 group">
-          <img src="/assets/images/Logo copy.jpeg" alt="" className="w-8 h-8 rounded-lg object-cover ring-1 ring-[#3A4045] group-hover:ring-[#D4AF37]/60 transition" />
+          <img src="/assets/images/Logo.jpeg" alt="Tribes & Cliqs" className="w-8 h-8 rounded-lg object-cover ring-1 ring-[#3A4045] group-hover:ring-[#D4AF37]/60 transition" />
           <div className="flex flex-col leading-tight">
             <span className="text-[13px] font-semibold tracking-tight text-[#EFEFF1]">Attendee</span>
             <span className="text-[10px] text-[#6B7278]">Tribes &amp; Cliqs</span>
