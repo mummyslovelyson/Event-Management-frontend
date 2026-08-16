@@ -4,6 +4,7 @@ import { Menu, X, LogIn, UserPlus, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import ScrollProgressBar from '@/components/common/ScrollProgressBar';
 import ScrollToTopButton from '@/components/common/ScrollToTopButton';
+import CurrencyToggle from '@/components/common/CurrencyToggle';
 
 const navLinks = [
   { to: '/', label: 'Home', end: true },
@@ -95,6 +96,7 @@ export default function PublicLayout() {
 
             {/* Desktop CTA */}
             <div className="hidden md:flex items-center gap-2">
+              <CurrencyToggle />
               {isAuthenticated ? (
                 <Link
                   to={dashHref}
@@ -153,6 +155,7 @@ export default function PublicLayout() {
               ))}
             </nav>
             <div className="pt-3 border-t border-[#262B2F] space-y-2">
+              <CurrencyToggle className="w-full justify-center" />
               {isAuthenticated ? (
                 <Link to={dashHref} className="block w-full text-center px-4 py-3 rounded-xl bg-[#D4AF37] text-[#1E252B] text-sm font-bold">
                   My Dashboard

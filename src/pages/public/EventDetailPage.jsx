@@ -21,6 +21,7 @@ import { getEventMeetups, createMeetup, joinMeetup, leaveMeetup, deleteMeetup } 
 import { getEventResale, purchaseResaleListing } from '@/api/resale';
 import { applyCoupon, createOrder, initiatePayment } from '@/api/orders';
 import { useAuth } from '@/context/AuthContext';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const TABS = ['Overview', 'Tickets', 'Meet-ups', 'FAQs'];
 
@@ -46,6 +47,7 @@ export default function EventDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, user: currentUser } = useAuth();
+  const { format } = useCurrency();
 
   const [event, setEvent] = useState(null);
   const [tickets, setTickets] = useState([]);
@@ -704,7 +706,7 @@ export default function EventDetailPage() {
                                   <p className="mt-1 text-sm text-[#8A9196] line-clamp-2">{ticket.description || ticket.name}</p>
                                   <div className="mt-2 flex items-center gap-3 text-xs">
                                     <span className="text-2xl font-bold text-[#D4AF37]">
-                                      {ticket.price === 0 ? 'Free' : `$${Number(ticket.price).toLocaleString()}`}
+                                      {ticket.price === 0 ? 'Free' : format(ticket.price)}
                                     </span>
                                     {available !== null && (
                                       <span className={available > 0 ? 'text-emerald-400' : 'text-red-400'}>
@@ -785,7 +787,7 @@ export default function EventDetailPage() {
                                 </div>
                                 <div className="flex items-center gap-3 shrink-0">
                                   <div className="text-right">
-                                    <span className="text-2xl font-bold text-[#D4AF37]">${Number(listing.price).toLocaleString()}</span>
+                                    <span className="text-2xl font-bold text-[#D4AF37]">{format(listing.price)}</span>
                                   </div>
                                   <button
                                     onClick={() => handleBuyResale(listing)}
@@ -1101,7 +1103,7 @@ export default function EventDetailPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-[#D4AF37]">
-                    {purchaseModal.price === 0 ? 'Free' : `$${Number(purchaseModal.price).toLocaleString()}`}
+                    {purchaseModal.price === 0 ? 'Free' : format(purchaseModal.price)}
                   </p>
                   <p className="text-xs text-[#494F55]">per ticket</p>
                 </div>
@@ -1186,17 +1188,17 @@ export default function EventDetailPage() {
             <div className="rounded-lg bg-[#1E252B] border border-[#262B2F] p-4 space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-[#8A9196]">Subtotal</span>
-                <span className="text-[#EDF0F1] font-medium">${subtotal.toLocaleString()}</span>
+                <span className="text-[#EDF0F1] font-medium">{format(subtotal)}</span>
               </div>
               {couponDiscount > 0 && (
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-emerald-400">Discount ({couponDiscount}%)</span>
-                  <span className="text-emerald-400 font-medium">-${discountAmount.toLocaleString()}</span>
+                  <span className="text-emerald-400 font-medium">-{format(discountAmount)}</span>
                 </div>
               )}
               <div className="pt-2 border-t border-[#262B2F] flex items-center justify-between">
                 <span className="text-sm font-semibold text-[#EDF0F1]">Total</span>
-                <span className="text-xl font-bold text-[#D4AF37]">${total.toLocaleString()}</span>
+                <span className="text-xl font-bold text-[#D4AF37]">{format(total)}</span>
               </div>
             </div>
 

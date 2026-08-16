@@ -18,8 +18,7 @@ import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import Badge from '@/components/common/Badge';
-
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
+import { useCurrency } from '@/context/CurrencyContext';
 
 const COLORS = { gold: '#D4AF37', muted: '#8A9196', dim: '#494F55', green: '#34d399', red: '#f87171' };
 
@@ -30,11 +29,6 @@ const downloadBlob = (blob, filename) => {
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
-};
-
-const fmtAxis = (v) => {
-  if (v >= 1000) return `₵${(v / 1000).toFixed(1)}k`;
-  return `₵${v}`;
 };
 
 const ChartTooltip = ({ active, payload, label, formatter }) => {
@@ -52,6 +46,8 @@ const ChartTooltip = ({ active, payload, label, formatter }) => {
 };
 
 export default function ReportsPage() {
+  const { format } = useCurrency();
+  const axisFmt = (v) => format(v, { compact: true });
   const today = new Date();
   const monthAgo = new Date();
   monthAgo.setMonth(today.getMonth() - 1);
@@ -205,9 +201,9 @@ export default function ReportsPage() {
               <DollarSign className="w-5 h-5 text-[#D4AF37]" /> Revenue Report
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <StatCard icon={DollarSign} label="Total Revenue" value={ghc(totalRevenue)} accent />
-              <StatCard icon={TrendingUp} label="Net Revenue" value={ghc(netRevenue)} />
-              <StatCard icon={RotateCcw} label="Commission" value={ghc(commission)} />
+              <StatCard icon={DollarSign} label="Total Revenue" value={format(totalRevenue)} accent />
+              <StatCard icon={TrendingUp} label="Net Revenue" value={format(netRevenue)} />
+              <StatCard icon={RotateCcw} label="Commission" value={format(commission)} />
             </div>
 
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
@@ -225,7 +221,7 @@ export default function ReportsPage() {
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke={COLORS.dim} strokeOpacity={0.3} />
                     <XAxis dataKey="date" stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} />
-                    <YAxis stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} tickFormatter={fmtAxis} />
+                    <YAxis stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} tickFormatter={axisFmt} />
                     <Tooltip content={<ChartTooltip formatter={ghc} />} />
                     <Area type="monotone" dataKey="revenue" name="Revenue" stroke={COLORS.gold} strokeWidth={2} fill="url(#revGrad)" />
                   </AreaChart>
@@ -257,7 +253,7 @@ export default function ReportsPage() {
                         <tr key={e.id} className="hover:bg-[#1D2124] transition-colors">
                           <td className="px-5 py-3 text-[#EDF0F1] font-medium max-w-[220px] truncate">{e.title || e.eventTitle}</td>
                           <td className="px-5 py-3 text-right text-[#8A9196]">{e.ticketsSold || 0}</td>
-                          <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{ghc(e.revenue)}</td>
+                          <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{format(e.revenue)}</td>
                           <td className="px-5 py-3 text-right">
                             <span className="text-[#D4AF37] font-medium">{share}%</span>
                           </td>
@@ -337,8 +333,8 @@ export default function ReportsPage() {
                           </td>
                           <td className="px-5 py-3 text-[#EDF0F1] font-medium max-w-[220px] truncate">{e.title || e.eventTitle}</td>
                           <td className="px-5 py-3 text-right text-[#8A9196]">{e.ticketsSold || 0}</td>
-                          <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{ghc(e.revenue)}</td>
-                          <td className="px-5 py-3 text-right text-[#8A9196]">{ghc(avg)}</td>
+                          <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{format(e.revenue)}</td>
+                          <td className="px-5 py-3 text-right text-[#8A9196]">{format(avg)}</td>
                         </tr>
                       );
                     })}
@@ -389,7 +385,7 @@ export default function ReportsPage() {
               <RotateCcw className="w-5 h-5 text-[#D4AF37]" /> Refund Report
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <StatCard icon={DollarSign} label="Total Refunds" value={ghc(refund.total)} />
+              <StatCard icon={DollarSign} label="Total Refunds" value={format(refund.total)} />
               <StatCard icon={RotateCcw} label="Refund Count" value={refund.count || 0} />
             </div>
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
@@ -401,7 +397,7 @@ export default function ReportsPage() {
                   <LineChart data={refund.trend} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={COLORS.dim} strokeOpacity={0.3} />
                     <XAxis dataKey="date" stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} />
-                    <YAxis stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} tickFormatter={fmtAxis} />
+                    <YAxis stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} tickFormatter={axisFmt} />
                     <Tooltip content={<ChartTooltip formatter={ghc} />} />
                     <Line type="monotone" dataKey="amount" name="Refunds" stroke={COLORS.red} strokeWidth={2} dot={{ fill: COLORS.red, r: 3 }} />
                   </LineChart>

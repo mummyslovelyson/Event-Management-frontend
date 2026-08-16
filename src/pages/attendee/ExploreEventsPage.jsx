@@ -15,10 +15,10 @@ import EmptyState from '@/components/common/EmptyState';
 const PRICE_OPTIONS = [
   { value: '', label: 'Any Price' },
   { value: 'free', label: 'Free' },
-  { value: '0-50', label: '$0 - $50' },
-  { value: '50-100', label: '$50 - $100' },
-  { value: '100-250', label: '$100 - $250' },
-  { value: '250+', label: '$250+' },
+  { value: '0-50', label: '₵0 - ₵50' },
+  { value: '50-100', label: '₵50 - ₵100' },
+  { value: '100-250', label: '₵100 - ₵250' },
+  { value: '250+', label: '₵250+' },
 ];
 
 const DATE_OPTIONS = [

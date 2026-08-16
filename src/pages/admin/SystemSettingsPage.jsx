@@ -25,6 +25,7 @@ const DB_KEYS = {
   general: {
     platformName: 'platform_name',
     currency: 'currency',
+    usdRate: 'usd_rate',
     timezone: 'timezone',
     supportEmail: 'support_email',
     logoUrl: 'logo_url',
@@ -183,7 +184,8 @@ export default function SystemSettingsPage() {
                     <SectionTitle icon={Settings} title="General Settings" desc="Site name, currency, timezone, and support contact." />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div><label className={labelCls}>Platform Name</label><input className={inputCls} value={settings.general?.platformName || settings.platformName || ''} onChange={(e) => update('platformName', e.target.value)} placeholder="Tribes & Cliqs" /></div>
-                      <div><label className={labelCls}>Currency</label><select className={inputCls} value={settings.general?.currency || settings.currency || 'GHS'} onChange={(e) => update('currency', e.target.value)}><option value="GHS">GHS (₵)</option><option value="USD">USD ($)</option><option value="EUR">EUR (€)</option></select></div>
+                      <div><label className={labelCls}>Currency</label><select className={inputCls} value={settings.general?.currency || settings.currency || 'GHS'} onChange={(e) => update('currency', e.target.value)}><option value="GHS">GHS (₵)</option><option value="USD">USD ($)</option></select></div>
+                      <div><label className={labelCls}>USD Exchange Rate (GHS per $1)</label><input type="number" step="0.01" min="0.01" className={inputCls} value={settings.general?.usdRate ?? settings.usdRate ?? 15} onChange={(e) => update('usdRate', parseFloat(e.target.value))} /><p className="mt-1 text-xs text-[#494F55]">Used to convert GHS amounts into USD for display. All prices are stored in GHS.</p></div>
                       <div><label className={labelCls}>Timezone</label><select className={inputCls} value={settings.general?.timezone || settings.timezone || 'Africa/Accra'} onChange={(e) => update('timezone', e.target.value)}><option value="Africa/Accra">Africa/Accra</option><option value="UTC">UTC</option><option value="Europe/London">Europe/London</option></select></div>
                       <div><label className={labelCls}>Support Email</label><input className={inputCls} value={settings.general?.supportEmail || settings.supportEmail || ''} onChange={(e) => update('supportEmail', e.target.value)} placeholder="support@tribescliqs.com" /></div>
                     </div>

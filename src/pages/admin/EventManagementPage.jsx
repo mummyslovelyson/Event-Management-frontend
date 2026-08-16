@@ -16,6 +16,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import PageHeader from '@/components/common/PageHeader';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const tabs = [
   { key: 'all', label: 'All' },
@@ -25,7 +26,6 @@ const tabs = [
   { key: 'completed', label: 'Completed' },
 ];
 
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 
 const statusVariant = (s) => ({
@@ -34,6 +34,7 @@ const statusVariant = (s) => ({
 }[s] || 'neutral');
 
 export default function EventManagementPage() {
+  const { format } = useCurrency();
   const [tab, setTab] = useState('all');
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -330,7 +331,7 @@ export default function EventManagementPage() {
                     <td className="px-4 py-3"><Badge variant="neutral" size="sm">{ev.category || '—'}</Badge></td>
                     <td className="px-4 py-3 text-xs text-[#7D8387]">{fmtDate(ev.startDate || ev.date)}</td>
                     <td className="px-4 py-3 text-center text-[#7D8387]">{ev.ticketsSold ?? ev.tickets ?? 0}</td>
-                    <td className="px-4 py-3 text-right font-medium text-[#F2F4F5]">{ghc(ev.revenue)}</td>
+                    <td className="px-4 py-3 text-right font-medium text-[#F2F4F5]">{format(ev.revenue)}</td>
                     <td className="px-4 py-3"><Badge variant={statusVariant(ev.status)} size="sm" dot>{ev.status || 'pending'}</Badge></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1.5">

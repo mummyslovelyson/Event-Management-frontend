@@ -4,8 +4,10 @@ import { Heart, MapPin, Calendar, Tag, Ticket } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { toggleFavorite } from '@/api/users';
+import { useCurrency } from '@/context/CurrencyContext';
 
 export default function EventCard({ event, onToggleFavorite, variant = 'default' }) {
+  const { format } = useCurrency();
   const [fav, setFav] = useState(!!event.isFavorite);
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +38,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
 
   const minPrice = event.minPrice ?? event.price ?? event.min_price;
   const priceLabel =
-    minPrice != null ? (minPrice === 0 ? 'Free' : `$${Number(minPrice).toLocaleString()}`) : '—';
+    minPrice != null ? (minPrice === 0 ? 'Free' : format(minPrice)) : '—';
 
   if (variant === 'compact') {
     return (

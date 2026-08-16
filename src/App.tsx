@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/context/AuthContext';
+import { CurrencyProvider } from '@/context/CurrencyContext';
 
 import PublicLayout from '@/layouts/PublicLayout';
 import AttendeeLayout from '@/layouts/AttendeeLayout';
@@ -69,7 +70,8 @@ import AuditLogsPage from '@/pages/admin/AuditLogsPage';
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <CurrencyProvider>
+        <BrowserRouter>
         <Toaster
           position="top-right"
           gutter={8}
@@ -182,6 +184,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      </CurrencyProvider>
     </AuthProvider>
   );
 }

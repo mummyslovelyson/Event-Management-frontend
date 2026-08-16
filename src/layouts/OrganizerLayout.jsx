@@ -7,6 +7,7 @@ import {
   LogOut, Search, ChevronDown, Bell,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import CurrencyToggle from '@/components/common/CurrencyToggle';
 
 const navGroups = [
   {
@@ -109,6 +110,8 @@ export default function OrganizerLayout() {
                 <Search className="w-4 h-4 text-[#6B7278]" />
                 <input type="text" placeholder="Search…" className="w-48 bg-transparent text-sm text-[#EDF0F1] placeholder-[#6B7278] focus:outline-none" />
               </label>
+
+              <CurrencyToggle />
 
               <button className="relative p-2 rounded-lg text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#262B2F] transition">
                 <Bell className="w-5 h-5" />

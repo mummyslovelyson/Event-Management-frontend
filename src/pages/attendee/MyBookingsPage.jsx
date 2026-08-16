@@ -13,6 +13,7 @@ import Modal from '@/components/common/Modal';
 import Badge from '@/components/common/Badge';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import EmptyState from '@/components/common/EmptyState';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const TABS = [
   { value: 'all', label: 'All Bookings' },
@@ -42,6 +43,7 @@ const itemFade = {
 };
 
 export default function MyBookingsPage() {
+  const { format } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
   const [tab, setTab] = useState('all');
@@ -264,7 +266,7 @@ export default function MyBookingsPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-[#494F55]">Total Paid:</span>
                         <span className="text-lg font-bold text-[#D4AF37]">
-                          ${Number(order.totalAmount || order.total || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {format(order.totalAmount || order.total || 0)}
                         </span>
                       </div>
                       <p className="text-xs text-[#494F55]">
@@ -336,10 +338,10 @@ export default function MyBookingsPage() {
                                 </div>
                                 <div className="text-right">
                                   <p className="text-sm text-[#8A9196]">
-                                    ${Number(item.price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })} each
+                                    {format(item.price || 0)} each
                                   </p>
                                   <p className="text-sm font-semibold text-[#EDF0F1]">
-                                    ${Number((item.price || 0) * (item.quantity || 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                    {format((item.price || 0) * (item.quantity || 0))}
                                   </p>
                                 </div>
                               </div>
@@ -351,7 +353,7 @@ export default function MyBookingsPage() {
                         <div className="mt-3 pt-3 border-t border-[#262B2F] flex items-center justify-between">
                           <span className="text-sm font-semibold text-[#EDF0F1]">Total</span>
                           <span className="text-base font-bold text-[#D4AF37]">
-                            ${Number(order.totalAmount || order.total || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            {format(order.totalAmount || order.total || 0)}
                           </span>
                         </div>
                       </div>

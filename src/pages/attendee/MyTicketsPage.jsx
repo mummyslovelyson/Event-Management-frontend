@@ -13,6 +13,7 @@ import { getMyResale, createResaleListing, cancelResaleListing } from '@/api/res
 import Modal from '@/components/common/Modal';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import EmptyState from '@/components/common/EmptyState';
+import { useCurrency } from '@/context/CurrencyContext';
 import Badge from '@/components/common/Badge';
 
 const TABS = [
@@ -32,6 +33,7 @@ const itemFade = {
 };
 
 export default function MyTicketsPage() {
+  const { format } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [tickets, setTickets] = useState([]);
   const [tab, setTab] = useState('all');
@@ -309,7 +311,7 @@ export default function MyTicketsPage() {
                         <p className="mt-0.5 text-xs text-[#8A9196]">{listing.ticketTypeName || 'Ticket'} • Listed {new Date(listing.createdAt).toLocaleDateString()}</p>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
-                        <span className="text-lg font-bold text-[#D4AF37]">${Number(listing.price).toLocaleString()}</span>
+                        <span className="text-lg font-bold text-[#D4AF37]">{format(listing.price)}</span>
                         <Badge variant={s.variant} size="sm">{s.label}</Badge>
                         {st === 'active' && (
                           <button
@@ -365,7 +367,7 @@ export default function MyTicketsPage() {
             </div>
             <div>
               <label className="block text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-2">
-                Sale Price ($)
+                Sale Price (₵)
               </label>
               <input
                 type="number"

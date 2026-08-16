@@ -14,8 +14,7 @@ import Badge from '@/components/common/Badge';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
-
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
+import { useCurrency } from '@/context/CurrencyContext';
 
 const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
 
@@ -30,6 +29,7 @@ const saleStatus = (t) => {
 };
 
 export default function TicketManagementPage() {
+  const { format } = useCurrency();
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState('');
   const [tickets, setTickets] = useState([]);
@@ -181,7 +181,7 @@ export default function TicketManagementPage() {
             </div>
             <div className="rounded-xl bg-gradient-to-br from-[#D4AF37]/15 to-[#171A1D] border border-[#D4AF37]/30 p-4">
               <div className="flex items-center gap-2 text-xs text-[#D4AF37] uppercase tracking-wider"><DollarSign className="w-4 h-4" /> Price Range</div>
-              <p className="mt-2 text-xl font-bold text-[#EDF0F1]">{ghc(Math.min(...tickets.map((t) => Number(t.price) || 0)))} - {ghc(Math.max(...tickets.map((t) => Number(t.price) || 0)))}</p>
+              <p className="mt-2 text-xl font-bold text-[#EDF0F1]">{format(Math.min(...tickets.map((t) => Number(t.price) || 0)))} - {format(Math.max(...tickets.map((t) => Number(t.price) || 0)))}</p>
             </div>
           </div>
 
@@ -216,7 +216,7 @@ export default function TicketManagementPage() {
                       <div className="flex items-center gap-6">
                         <div className="text-center">
                           <p className="text-xs text-[#8A9196] uppercase tracking-wider">Price</p>
-                          <p className="text-lg font-bold text-[#D4AF37]">{ghc(t.price)}</p>
+                          <p className="text-lg font-bold text-[#D4AF37]">{format(t.price)}</p>
                         </div>
                         <div className="min-w-[140px]">
                           <div className="flex items-center justify-between text-xs mb-1">

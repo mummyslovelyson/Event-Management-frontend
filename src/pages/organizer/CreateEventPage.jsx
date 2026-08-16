@@ -11,6 +11,7 @@ import {
 import { createEvent, getCategories, publishEvent, uploadImage } from '@/api/events';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const STEPS = [
   { id: 1, title: 'Basic Info', icon: Info },
@@ -279,8 +280,8 @@ const StepTickets = () => {
 
 const StepReview = () => {
   const { watch } = useFormContext();
+  const { format } = useCurrency();
   const d = watch();
-  const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
   return (
     <div className="space-y-5">
       <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
@@ -316,7 +317,7 @@ const StepReview = () => {
                 <p className="text-sm font-medium text-[#EDF0F1]">{t.name || `Ticket ${i + 1}`}</p>
                 <p className="text-xs text-[#8A9196]">{t.quantity} available</p>
               </div>
-              <span className="text-sm font-semibold text-[#D4AF37]">{ghc(t.price)}</span>
+                <span className="text-sm font-semibold text-[#D4AF37]">{format(t.price)}</span>
             </div>
           ))}
         </div>

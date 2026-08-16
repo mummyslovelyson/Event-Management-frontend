@@ -15,15 +15,9 @@ import {
   getAdminDashboard, approveEvent, rejectEvent,
 } from '@/api/admin';
 import { useAuth } from '@/context/AuthContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 
-const fullGHS = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
-const shortGHS = (n) => {
-  const v = Number(n || 0);
-  if (v >= 1e6) return `₵${(v / 1e6).toFixed(1)}M`;
-  if (v >= 1e3) return `₵${(v / 1e3).toFixed(1)}K`;
-  return `₵${v}`;
-};
 const fmtDay = (iso) => {
   const d = new Date(`${iso}T00:00:00`);
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
@@ -141,6 +135,8 @@ function SnapshotTile({ icon: Icon, label, value, tone = 'text-[#7D8387]' }) {
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { format } = useCurrency();
+  const shortFmt = (v) => format(v, { compact: true });
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
@@ -248,7 +244,7 @@ export default function AdminDashboard() {
         <KpiCard
           icon={CircleDollarSign}
           label="Gross Revenue"
-          value={fullGHS(o.totalRevenue)}
+          value={format(o.totalRevenue)}
           accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
           sub={
             <div className="mt-1.5 flex items-center gap-2 flex-wrap">
@@ -302,7 +298,7 @@ export default function AdminDashboard() {
                   <CircleDollarSign className="w-3.5 h-3.5" /> Revenue overview
                 </p>
                 <p className="mt-2 text-3xl sm:text-4xl font-bold text-[#F2F4F5] tabular-nums tracking-tight">
-                  {fullGHS(o.totalRevenue)}
+                  {format(o.totalRevenue)}
                 </p>
                 <div className="mt-2 flex items-center gap-2">
                   <DeltaPill value={o.revenueTrend} />
@@ -316,7 +312,7 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <p className="text-xs text-[#8A9196]">7-day revenue</p>
-                  <p className="mt-1 text-lg font-semibold text-[#D4AF37] tabular-nums break-words">{fullGHS(o.last7Revenue)}</p>
+                  <p className="mt-1 text-lg font-semibold text-[#D4AF37] tabular-nums break-words">{format(o.last7Revenue)}</p>
                 </div>
               </div>
             </div>
@@ -333,8 +329,8 @@ export default function AdminDashboard() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.18} vertical={false} />
                   <XAxis dataKey="date" stroke="#494F55" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmtDay} minTickGap={28} />
-                  <YAxis stroke="#494F55" fontSize={10} tickLine={false} axisLine={false} tickFormatter={shortGHS} width={42} />
-                  <Tooltip content={<ChartTip formatter={shortGHS} />} cursor={{ stroke: '#494F55', strokeOpacity: 0.4 }} />
+                  <YAxis stroke="#494F55" fontSize={10} tickLine={false} axisLine={false} tickFormatter={shortFmt} width={42} />
+                  <Tooltip content={<ChartTip formatter={shortFmt} />} cursor={{ stroke: '#494F55', strokeOpacity: 0.4 }} />
                   <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2} fill="url(#revGrad)" name="Revenue" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -421,7 +417,7 @@ export default function AdminDashboard() {
           <p className="text-xs text-[#7D8387] mt-0.5">Orders and payouts at a glance.</p>
           <div className="mt-4 grid grid-cols-2 gap-3">
             <SnapshotTile icon={ShoppingCart} label="Total Orders" value={(o.totalOrders ?? 0).toLocaleString()} tone="text-sky-400" />
-            <SnapshotTile icon={CircleDollarSign} label="7-day Revenue" value={shortGHS(o.last7Revenue)} tone="text-[#D4AF37]" />
+            <SnapshotTile icon={CircleDollarSign} label="7-day Revenue" value={shortFmt(o.last7Revenue)} tone="text-[#D4AF37]" />
             <SnapshotTile icon={Wallet} label="Withdrawals Pending" value={(o.pendingWithdrawals ?? 0).toLocaleString()} tone="text-amber-400" />
             <SnapshotTile icon={UserCheck} label="Organizer Apps" value={(o.pendingOrganizers ?? 0).toLocaleString()} tone="text-emerald-400" />
           </div>

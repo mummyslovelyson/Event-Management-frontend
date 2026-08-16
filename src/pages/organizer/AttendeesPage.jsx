@@ -12,10 +12,9 @@ import Modal from '@/components/common/Modal';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const TABS = ['All Attendees', 'Checked In', 'Not Arrived'];
-
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
 
 const downloadBlob = (blob, filename) => {
   const url = URL.createObjectURL(blob);
@@ -27,6 +26,7 @@ const downloadBlob = (blob, filename) => {
 };
 
 export default function AttendeesPage() {
+  const { format } = useCurrency();
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [eventOpen, setEventOpen] = useState(false);
@@ -372,7 +372,7 @@ export default function AttendeesPage() {
             {(detail.amountPaid != null || detail.price != null) && (
               <div className="flex items-center justify-between rounded-lg bg-gradient-to-br from-[#D4AF37]/10 to-[#1D2124] border border-[#D4AF37]/30 p-4">
                 <span className="text-sm font-medium text-[#8A9196]">Amount Paid</span>
-                <span className="text-lg font-bold text-[#D4AF37]">{ghc(detail.amountPaid ?? detail.price)}</span>
+                <span className="text-lg font-bold text-[#D4AF37]">{format(detail.amountPaid ?? detail.price)}</span>
               </div>
             )}
           </div>

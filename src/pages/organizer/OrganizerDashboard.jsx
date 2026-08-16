@@ -11,13 +11,12 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { getDashboard, getRevenue } from '@/api/organizer';
 import StatCard from '@/components/common/StatCard';
 import Badge from '@/components/common/Badge';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
-
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
 
 const orderStatusVariant = (s) => {
   const map = {
@@ -29,6 +28,7 @@ const orderStatusVariant = (s) => {
 
 export default function OrganizerDashboard() {
   const { user } = useAuth();
+  const { format, currency } = useCurrency();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
@@ -100,7 +100,7 @@ export default function OrganizerDashboard() {
         />
         <StatCard
           label="Total Revenue"
-          value={ghc(metrics.totalRevenue ?? 0)}
+          value={format(metrics.totalRevenue ?? 0)}
           trend={metrics.revenueTrend ?? 0}
           trendLabel="vs last month"
           accent
@@ -142,7 +142,7 @@ export default function OrganizerDashboard() {
               <h2 className="text-[15px] font-semibold text-[#EDF0F1]">Revenue</h2>
               <p className="text-xs text-[#8A9196]">Daily revenue, last 30 days</p>
             </div>
-            <Badge variant="gold">GHS</Badge>
+            <Badge variant="gold">{currency}</Badge>
           </div>
           {revenueData.length > 0 ? (
             <ResponsiveContainer width="100%" height={260}>
@@ -155,11 +155,11 @@ export default function OrganizerDashboard() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} vertical={false} />
                 <XAxis dataKey="date" stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => `₵${v}`} />
+                <YAxis stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => format(v, { compact: true })} />
                 <Tooltip
                   contentStyle={{ background: '#171A1D', border: '1px solid #494F55', borderRadius: 8, color: '#EDF0F1', fontSize: 12 }}
                   labelStyle={{ color: '#7D8387' }}
-                  formatter={(v) => [ghc(v), 'Revenue']}
+                  formatter={(v) => [format(v), 'Revenue']}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2} fill="url(#revGrad)" />
               </AreaChart>
@@ -226,7 +226,7 @@ export default function OrganizerDashboard() {
                       <td className="px-5 py-3 text-[#EDF0F1]">{o.customerName || o.user?.name || '—'}</td>
                       <td className="px-5 py-3 text-[#8A9196] max-w-[140px] truncate">{o.eventTitle || o.event?.title || '—'}</td>
                       <td className="px-5 py-3 text-center text-[#8A9196]">{o.quantity || o.ticketCount || 0}</td>
-                      <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{ghc(o.amount || o.total)}</td>
+                      <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{format(o.amount || o.total)}</td>
                       <td className="px-5 py-3"><Badge variant={orderStatusVariant(o.status)} size="sm">{o.status}</Badge></td>
                       <td className="px-5 py-3 text-xs text-[#8A9196]">{o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'}</td>
                     </tr>

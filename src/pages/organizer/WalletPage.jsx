@@ -16,23 +16,20 @@ import Modal from '@/components/common/Modal';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
 
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
-
 const COLORS = { gold: '#D4AF37', muted: '#8A9196', dim: '#494F55', green: '#34d399', red: '#f87171' };
 
-const fmtAxis = (v) => (v >= 1000 ? `₵${(v / 1000).toFixed(1)}k` : `₵${v}`);
-
-const ChartTooltip = ({ active, payload, label }) => {
+const ChartTooltip = ({ active, payload, label, formatter = (v) => v }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-lg bg-[#171A1D] border border-[#494F55]/50 px-3 py-2 shadow-xl">
       {label != null && <p className="text-xs text-[#8A9196] mb-1">{label}</p>}
       {payload.map((p, i) => (
         <p key={i} className="text-sm font-medium" style={{ color: p.color || p.stroke || p.fill }}>
-          {p.name}: {ghc(p.value)}
+          {p.name}: {formatter(p.value)}
         </p>
       ))}
     </div>
@@ -45,6 +42,8 @@ const withdrawalStatus = (s) => {
 };
 
 export default function WalletPage() {
+  const { format, currency } = useCurrency();
+  const axisFmt = (v) => format(v, { compact: true });
   const [balance, setBalance] = useState({ available: 0, pending: 0, totalEarned: 0 });
   const [transactions, setTransactions] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
@@ -117,7 +116,7 @@ export default function WalletPage() {
     }
   };
 
-  const maskBalance = (val) => (hideBalance ? '₵ ••••••' : ghc(val));
+  const maskBalance = (val) => (hideBalance ? `${currency === 'USD' ? '$' : '₵'} ••••••` : format(val));
 
   const txTypeMeta = (type) => {
     const t = (type || '').toLowerCase();
@@ -217,8 +216,8 @@ export default function WalletPage() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={COLORS.dim} strokeOpacity={0.3} />
                   <XAxis dataKey="month" stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} />
-                  <YAxis stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} tickFormatter={fmtAxis} />
-                  <Tooltip content={<ChartTooltip />} />
+                <YAxis stroke={COLORS.muted} fontSize={11} tickLine={false} axisLine={false} tickFormatter={axisFmt} />
+                <Tooltip content={<ChartTooltip formatter={format} />} />
                   <Area type="monotone" dataKey="earnings" name="Earnings" stroke={COLORS.gold} strokeWidth={2} fill="url(#earnGrad)" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -262,7 +261,7 @@ export default function WalletPage() {
                           </td>
                           <td className="px-4 py-3 text-[#8A9196] max-w-[200px] truncate">{t.description || t.eventTitle || '—'}</td>
                           <td className={`px-4 py-3 text-right font-semibold tabular-nums ${meta.color}`}>
-                            {meta.sign}{ghc(t.amount)}
+                            {meta.sign}{format(t.amount)}
                           </td>
                           <td className="px-4 py-3">
                             <Badge variant={t.status === 'completed' || t.status === 'success' ? 'success' : t.status === 'pending' ? 'pending' : 'neutral'} size="sm">
@@ -305,7 +304,7 @@ export default function WalletPage() {
                   <tbody className="divide-y divide-[#262B2F]/70">
                     {withdrawals.map((w, i) => (
                       <tr key={w.id || i} className="hover:bg-[#1D2124] transition-colors">
-                        <td className="px-4 py-3 font-semibold text-[#EDF0F1] tabular-nums">{ghc(w.amount)}</td>
+                        <td className="px-4 py-3 font-semibold text-[#EDF0F1] tabular-nums">{format(w.amount)}</td>
                         <td className="px-4 py-3">
                           <span className="inline-flex items-center gap-2 text-[#8A9196]">
                             <Building2 className="w-4 h-4 text-[#494F55]" />
@@ -347,7 +346,7 @@ export default function WalletPage() {
         <form onSubmit={submitWithdraw} className="space-y-4">
           <div className="rounded-lg bg-gradient-to-br from-[#D4AF37]/10 to-[#1D2124] border border-[#D4AF37]/30 p-4 flex items-center justify-between">
             <span className="text-sm text-[#8A9196]">Available</span>
-            <span className="text-lg font-bold text-[#D4AF37]">{ghc(balance.available)}</span>
+            <span className="text-lg font-bold text-[#D4AF37]">{format(balance.available)}</span>
           </div>
           <div>
             <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Amount (₵)</label>

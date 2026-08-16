@@ -7,14 +7,13 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getOrganizerEvents, deleteEvent, publishEvent, unpublishEvent, getCategories } from '@/api/events';
+import { useCurrency } from '@/context/CurrencyContext';
 import Badge from '@/components/common/Badge';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
-
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
 
 const statusVariant = (s) => {
   const map = {
@@ -29,6 +28,7 @@ const TABS = ['All', 'Draft', 'Pending', 'Published', 'Rejected', 'Cancelled', '
 
 export default function EventsPage() {
   const navigate = useNavigate();
+  const { format } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -219,7 +219,7 @@ export default function EventsPage() {
                     <td className="px-5 py-3 text-[#8A9196]">{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}</td>
                     <td className="px-5 py-3 text-[#8A9196] max-w-[140px] truncate">{e.venue || e.city || '—'}</td>
                     <td className="px-5 py-3 text-center text-[#8A9196]">{sold}/{cap}</td>
-                    <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{ghc(e.revenue)}</td>
+                    <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{format(e.revenue)}</td>
                     <td className="px-5 py-3"><Badge variant={statusVariant(e.status)} size="sm">{e.status}</Badge></td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-1" onClick={(ev) => ev.stopPropagation()}>
@@ -308,7 +308,7 @@ function EventCard({ event, onEdit, onView, onTogglePublish, onDelete }) {
           <span className="text-[10px] font-medium text-[#8A9196] tabular-nums">{sold}/{cap}</span>
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <span className="flex items-center gap-1 text-xs text-[#D4AF37] font-medium"><DollarSign className="w-3.5 h-3.5" /> {ghc(event.revenue)}</span>
+          <span className="flex items-center gap-1 text-xs text-[#D4AF37] font-medium"><DollarSign className="w-3.5 h-3.5" /> {format(event.revenue)}</span>
           <span className="flex items-center gap-1 text-xs text-[#8A9196]"><TicketIcon className="w-3.5 h-3.5" /> {event.category?.name || event.category || '—'}</span>
         </div>
       </div>

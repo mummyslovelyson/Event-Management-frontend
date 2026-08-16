@@ -7,6 +7,7 @@ import {
 import toast from 'react-hot-toast';
 import { getOrders } from '@/api/orders';
 import { getDashboard } from '@/api/organizer';
+import { useCurrency } from '@/context/CurrencyContext';
 import Badge from '@/components/common/Badge';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
@@ -14,8 +15,6 @@ import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import StatCard from '@/components/common/StatCard';
 import PageHeader from '@/components/common/PageHeader';
-
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
 
 const statusVariant = (s) => {
   const map = { completed: 'success', paid: 'success', pending: 'pending', failed: 'error', refunded: 'warning', cancelled: 'neutral' };
@@ -25,6 +24,7 @@ const statusVariant = (s) => {
 const STATUS_TABS = ['All', 'Completed', 'Pending', 'Failed', 'Refunded'];
 
 export default function OrdersPage() {
+  const { format } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
   const [summary, setSummary] = useState({});
@@ -115,7 +115,7 @@ export default function OrdersPage() {
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard icon={ShoppingBag} label="Total Orders" value={summary.totalOrders ?? 0} />
-        <StatCard icon={DollarSign} label="Revenue" value={ghc(summary.totalRevenue ?? 0)} accent />
+        <StatCard icon={DollarSign} label="Revenue" value={format(summary.totalRevenue ?? 0)} accent />
         <StatCard icon={Clock} label="Pending Payments" value={summary.pendingOrders ?? 0} />
         <StatCard icon={RotateCcw} label="Refunds" value={summary.refunds ?? 0} />
       </div>
@@ -179,7 +179,7 @@ export default function OrdersPage() {
                       <td className="px-4 py-3 text-[#8A9196] max-w-[160px] truncate">{o.eventTitle || o.event?.title || '—'}</td>
                       <td className="px-4 py-3 text-[#8A9196]">{o.ticketType || o.ticket?.type || '—'}</td>
                       <td className="px-4 py-3 text-center text-[#8A9196]">{o.quantity || o.ticketCount || 0}</td>
-                      <td className="px-4 py-3 text-right font-medium text-[#EDF0F1]">{ghc(o.amount || o.total)}</td>
+                      <td className="px-4 py-3 text-right font-medium text-[#EDF0F1]">{format(o.amount || o.total)}</td>
                       <td className="px-4 py-3 text-[#8A9196] capitalize">{o.paymentMethod || '—'}</td>
                       <td className="px-4 py-3"><Badge variant={statusVariant(o.status)} size="sm">{o.status}</Badge></td>
                       <td className="px-4 py-3 text-xs text-[#8A9196]">{o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'}</td>
@@ -221,13 +221,13 @@ export default function OrdersPage() {
                 {(detailOrder.items || [{ name: detailOrder.ticketType || detailOrder.eventTitle, quantity: detailOrder.quantity, price: detailOrder.amount }]).map((it, i) => (
                   <div key={i} className="flex items-center justify-between text-sm">
                     <span className="text-[#EDF0F1]">{it.quantity || 1}× {it.name || it.ticketType || 'Ticket'}</span>
-                    <span className="text-[#8A9196]">{ghc(it.price || (it.quantity || 1) * (it.unitPrice || 0))}</span>
+                    <span className="text-[#8A9196]">{format(it.price || (it.quantity || 1) * (it.unitPrice || 0))}</span>
                   </div>
                 ))}
               </div>
               <div className="mt-3 pt-3 border-t border-[#262B2F] flex items-center justify-between">
                 <span className="text-sm font-semibold text-[#EDF0F1]">Total</span>
-                <span className="text-lg font-bold text-[#D4AF37]">{ghc(detailOrder.amount || detailOrder.total)}</span>
+                <span className="text-lg font-bold text-[#D4AF37]">{format(detailOrder.amount || detailOrder.total)}</span>
               </div>
             </div>
           </div>

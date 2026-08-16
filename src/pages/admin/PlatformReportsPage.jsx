@@ -15,8 +15,7 @@ import Badge from '@/components/common/Badge';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
-
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
+import { useCurrency } from '@/context/CurrencyContext';
 
 const pieColors = ['#D4AF37', '#60A5FA', '#34D399', '#F472B6', '#A78BFA', '#FB923C', '#22D3EE', '#FBBF24'];
 
@@ -35,6 +34,7 @@ const exportCSV = (rows, filename) => {
 };
 
 export default function PlatformReportsPage() {
+  const { format } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [fromDate, setFromDate] = useState('');
@@ -120,9 +120,9 @@ export default function PlatformReportsPage() {
           <div className="space-y-4">
             <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EDF0F1]"><span className="w-1 h-4 rounded-full bg-[#D4AF37]" /> Revenue</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <StatCard icon={DollarSign} label="Total Revenue" value={ghc(revenue.total)} trend={revenue.growth} trendLabel="vs last period" accent />
+              <StatCard icon={DollarSign} label="Total Revenue" value={format(revenue.total)} trend={revenue.growth} trendLabel="vs last period" accent />
               <StatCard icon={TrendingUp} label="Growth" value={`${revenue.growth ?? 0}%`} />
-              <StatCard icon={DollarSign} label="Commission Earned" value={ghc(revenue.commission)} />
+              <StatCard icon={DollarSign} label="Commission Earned" value={format(revenue.commission)} />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
@@ -138,8 +138,8 @@ export default function PlatformReportsPage() {
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} vertical={false} />
                       <XAxis dataKey="date" stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                      <YAxis stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => `₵${v}`} />
-                      <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#F2F4F5', fontSize: 12 }} formatter={(v) => [ghc(v), 'Revenue']} />
+                      <YAxis stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => format(v, { compact: true })} />
+                      <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#F2F4F5', fontSize: 12 }} formatter={(v) => [format(v), 'Revenue']} />
                       <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2} fill="url(#reportRev)" />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -158,7 +158,7 @@ export default function PlatformReportsPage() {
                       <div key={i}>
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-sm text-[#7D8387]">{c.label}</span>
-                          <span className="text-sm font-medium text-[#F2F4F5]">{ghc(c.value)}</span>
+                          <span className="text-sm font-medium text-[#F2F4F5]">{format(c.value)}</span>
                         </div>
                         <div className="h-2 rounded-full bg-[#494F55]/30 overflow-hidden">
                           <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: pieColors[i % pieColors.length] }} />
@@ -294,7 +294,7 @@ export default function PlatformReportsPage() {
                           <td className="px-5 py-3 font-medium text-[#F2F4F5]">{c.city || c.name}</td>
                           <td className="px-5 py-3 text-right text-[#7D8387]">{(c.users ?? 0).toLocaleString()}</td>
                           <td className="px-5 py-3 text-right text-[#7D8387]">{c.events ?? 0}</td>
-                          <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{ghc(c.revenue)}</td>
+                          <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{format(c.revenue)}</td>
                         </tr>
                       ))}
                     </tbody>

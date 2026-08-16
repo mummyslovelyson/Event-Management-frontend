@@ -6,6 +6,7 @@ import {
   Bell, Star, User, Menu, X, LogOut, Search, ChevronDown,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import CurrencyToggle from '@/components/common/CurrencyToggle';
 
 const navGroups = [
   {
@@ -99,6 +100,8 @@ export default function AttendeeLayout() {
                 <Search className="w-4 h-4 text-[#6B7278]" />
                 <input type="text" placeholder="Search…" className="w-44 bg-transparent text-sm text-[#EDF0F1] placeholder-[#6B7278] focus:outline-none" />
               </label>
+
+              <CurrencyToggle />
 
               <Link to="/attendee/notifications" className="relative p-2 rounded-lg text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#262B2F] transition">
                 <Bell className="w-5 h-5" />

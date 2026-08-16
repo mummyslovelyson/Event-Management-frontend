@@ -13,6 +13,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import PageHeader from '@/components/common/PageHeader';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const tabs = [
   { key: 'transactions', label: 'Transactions' },
@@ -20,7 +21,6 @@ const tabs = [
   { key: 'refunds', label: 'Refunds' },
 ];
 
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 
 const txStatusVariant = (s) => ({
@@ -43,6 +43,7 @@ const exportCSV = (rows, filename) => {
 };
 
 export default function PaymentManagementPage() {
+  const { format } = useCurrency();
   const [tab, setTab] = useState('transactions');
   const [data, setData] = useState({ transactions: [], withdrawals: [], refunds: [] });
   const [summary, setSummary] = useState({ totalTransactions: 0, platformRevenue: 0, pendingWithdrawals: 0, refunds: 0 });
@@ -128,9 +129,9 @@ export default function PaymentManagementPage() {
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard icon={CreditCard} label="Total Transactions" value={(summary.totalTransactions ?? 0).toLocaleString()} />
-        <StatCard label="Platform Revenue" value={ghc(summary.platformRevenue)} accent />
-        <StatCard icon={Wallet} label="Pending Withdrawals" value={ghc(summary.pendingWithdrawals)} />
-        <StatCard icon={RotateCcw} label="Refunds" value={ghc(summary.refunds)} />
+        <StatCard label="Platform Revenue" value={format(summary.platformRevenue)} accent />
+        <StatCard icon={Wallet} label="Pending Withdrawals" value={format(summary.pendingWithdrawals)} />
+        <StatCard icon={RotateCcw} label="Refunds" value={format(summary.refunds)} />
       </div>
 
       {/* Tabs */}
@@ -176,7 +177,7 @@ export default function PaymentManagementPage() {
                         <td className="px-4 py-3 font-mono text-xs text-[#F2F4F5]">#{tx.reference || tx.id?.slice(-6)}</td>
                         <td className="px-5 py-3 text-[#F2F4F5]">{tx.user?.name || tx.userName || '—'}</td>
                         <td className="px-5 py-3 text-[#7D8387] max-w-[160px] truncate">{tx.event?.title || tx.eventTitle || '—'}</td>
-                        <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{ghc(tx.amount)}</td>
+                        <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{format(tx.amount)}</td>
                         <td className="px-5 py-3 text-[#7D8387]">{tx.method || tx.paymentMethod || '—'}</td>
                         <td className="px-5 py-3"><Badge variant={txStatusVariant(tx.status)} size="sm" dot>{tx.status}</Badge></td>
                         <td className="px-5 py-3 text-xs text-[#7D8387]">{fmtDate(tx.createdAt)}</td>
@@ -211,7 +212,7 @@ export default function PaymentManagementPage() {
                   {data.withdrawals.map((wd) => (
                     <tr key={wd.id} className="hover:bg-[#1D2124] transition-colors">
                       <td className="px-5 py-3 text-[#F2F4F5]">{wd.organizerName || wd.organizer || '—'}</td>
-                      <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{ghc(wd.amount)}</td>
+                      <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{format(wd.amount)}</td>
                       <td className="px-5 py-3 text-[#7D8387]"><span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" />{wd.bank || wd.bankName || '—'}</span></td>
                       <td className="px-5 py-3 text-xs text-[#7D8387]">{fmtDate(wd.createdAt || wd.requestedAt)}</td>
                       <td className="px-5 py-3"><Badge variant={txStatusVariant(wd.status)} size="sm" dot>{wd.status || 'pending'}</Badge></td>
@@ -266,7 +267,7 @@ export default function PaymentManagementPage() {
                       <td className="px-4 py-3 font-mono text-xs text-[#F2F4F5]">#{rf.reference || rf.orderId || rf.id?.slice(-6)}</td>
                       <td className="px-5 py-3 text-[#F2F4F5]">{rf.user?.name || rf.userName || '—'}</td>
                       <td className="px-5 py-3 text-[#7D8387] max-w-[140px] truncate">{rf.event?.title || rf.eventTitle || '—'}</td>
-                      <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{ghc(rf.amount)}</td>
+                      <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{format(rf.amount)}</td>
                       <td className="px-5 py-3 text-[#7D8387] max-w-[160px] truncate">{rf.reason || '—'}</td>
                       <td className="px-5 py-3"><Badge variant={txStatusVariant(rf.status)} size="sm" dot>{rf.status || 'pending'}</Badge></td>
                       <td className="px-5 py-3 text-right">
@@ -306,7 +307,7 @@ export default function PaymentManagementPage() {
           </>
         }
       >
-        <p className="text-sm text-[#F2F4F5]">Refund <span className="font-semibold">{ghc(refundTarget?.amount)}</span> to {refundTarget?.user?.name || refundTarget?.userName}?</p>
+        <p className="text-sm text-[#F2F4F5]">Refund <span className="font-semibold">{format(refundTarget?.amount)}</span> to {refundTarget?.user?.name || refundTarget?.userName}?</p>
         <textarea
           value={refundReason}
           onChange={(e) => setRefundReason(e.target.value)}

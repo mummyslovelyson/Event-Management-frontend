@@ -15,10 +15,9 @@ import Modal from '@/components/common/Modal';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
-
-const ghc = (n) => `₵${Number(n || 0).toLocaleString('en-GH', { maximumFractionDigits: 2 })}`;
 
 const genCode = () => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -42,6 +41,7 @@ const isCouponActive = (c) => {
 };
 
 export default function PromotionsPage() {
+  const { format } = useCurrency();
   const [tab, setTab] = useState('Discount Codes');
   const [events, setEvents] = useState([]);
 
@@ -336,7 +336,7 @@ export default function PromotionsPage() {
                         <td className="px-4 py-3 font-medium text-[#EDF0F1]">
                           {(c.type === 'percentage' || c.discountType === 'percentage')
                             ? `${c.value ?? c.discountValue}%`
-                            : ghc(c.value ?? c.discountValue)}
+                            : format(c.value ?? c.discountValue)}
                         </td>
                         <td className="px-4 py-3 text-[#8A9196]">{max || '∞'}</td>
                         <td className="px-4 py-3">
