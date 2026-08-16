@@ -142,13 +142,13 @@ export default function NotificationCenterPage() {
 
       {/* Templates sidebar */}
       <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 h-fit">
-        <h2 className="text-sm font-semibold text-[#EDF0F1] mb-4 flex items-center gap-2"><FileText className="w-4 h-4 text-[#FBBF24]" /> Templates</h2>
+        <h2 className="text-sm font-semibold text-[#EDF0F1] mb-4 flex items-center gap-2"><FileText className="w-4 h-4 text-[#D4AF37]" /> Templates</h2>
         <div className="grid grid-cols-1 gap-3">
           {templates.map((t) => {
             const TypeIcon = typeOptions.find((o) => o.key === t.type)?.icon || Mail;
             return (
-              <div key={t.id} className="flex items-center gap-3 p-3.5 rounded-lg bg-[#1D2124] border border-[#262B2F] hover:border-[#FBBF24]/30 transition">
-                <div className="w-9 h-9 rounded-lg bg-[#FBBF24]/12 text-[#FBBF24] flex items-center justify-center shrink-0"><TypeIcon className="w-4 h-4" /></div>
+              <div key={t.id} className="flex items-center gap-3 p-3.5 rounded-lg bg-[#1D2124] border border-[#262B2F] hover:border-[#D4AF37]/30 transition">
+                <div className="w-9 h-9 rounded-lg bg-[#D4AF37]/12 text-[#D4AF37] flex items-center justify-center shrink-0"><TypeIcon className="w-4 h-4" /></div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-[#EDF0F1]">{t.name}</p>
                   <p className="text-xs text-[#8A9196] truncate">{t.desc}</p>

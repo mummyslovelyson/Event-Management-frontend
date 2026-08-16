@@ -43,7 +43,7 @@ const userStatus = (u) => {
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 const fmtDateTime = (d) => (d ? new Date(d).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
 
-const avatarColors = ['bg-[#D4AF37]/20 text-[#D4AF37]', 'bg-blue-500/20 text-blue-400', 'bg-emerald-500/20 text-emerald-400', 'bg-purple-500/20 text-purple-400', 'bg-amber-500/20 text-amber-400'];
+const avatarColors = ['bg-[#D4AF37]/20 text-[#D4AF37]', 'bg-[#D4AF37]/30 text-[#D4AF37]', 'bg-[#F2F4F5]/10 text-[#F2F4F5]', 'bg-[#494F55]/40 text-[#9AA1A6]', 'bg-[#D4AF37]/40 text-[#E8C75E]'];
 
 const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition';
 
@@ -414,7 +414,7 @@ export default function UserManagementPage() {
                   const isAdmin = u.role === 'admin';
                   const isPendingOrg = u.role === 'organizer' && u.is_approved !== 1 && u.status !== 'rejected';
                   return (
-                    <tr key={u.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(u.id) ? 'bg-[#38BDF8]/5' : ''}`}>
+                    <tr key={u.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(u.id) ? 'bg-[#D4AF37]/5' : ''}`}>
                       <td className="px-4 py-3">
                         <input
                           type="checkbox"
@@ -431,7 +431,7 @@ export default function UserManagementPage() {
                           <div className="min-w-0">
                             <p className="font-medium text-[#F2F4F5] truncate max-w-[160px] flex items-center gap-1.5">
                               {u.name || 'Unknown'}
-                              {isAdmin && <ShieldCheck className="w-3.5 h-3.5 text-red-400" />}
+                              {isAdmin && <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />}
                             </p>
                             <p className="text-xs text-[#7D8387] truncate max-w-[180px]">{u.email}</p>
                           </div>

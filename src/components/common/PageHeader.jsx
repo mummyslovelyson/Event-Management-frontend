@@ -1,17 +1,21 @@
-// Editorial page header used across the admin and organizer portals. Each page
-// passes its own accent + icon so no two sections feel identical.
+// Editorial page header used across the admin and organizer portals.
+// Brand-wide, every section uses the same gold accent so the UI stays
+// unified (the accent prop is kept for compatibility but always resolves
+// to gold).
 import { motion } from 'framer-motion';
 
+const GOLD = '#D4AF37';
+
 const ACCENTS = {
-  gold: '#D4AF37',
-  blue: '#60A5FA',
-  emerald: '#34D399',
-  violet: '#A78BFA',
-  teal: '#2DD4BF',
-  rose: '#FB7185',
-  sky: '#38BDF8',
-  amber: '#FBBF24',
-  slate: '#94A3B8',
+  gold: GOLD,
+  blue: GOLD,
+  emerald: GOLD,
+  violet: GOLD,
+  teal: GOLD,
+  rose: GOLD,
+  sky: GOLD,
+  amber: GOLD,
+  slate: GOLD,
 };
 
 export default function PageHeader({ title, subtitle, count, icon: Icon, accent = 'gold', actions }) {

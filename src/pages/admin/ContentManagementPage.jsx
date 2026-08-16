@@ -150,7 +150,7 @@ export default function ContentManagementPage() {
         ) : tab === 'banners' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-5">
             {items.map((item, i) => (
-              <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="rounded-xl bg-[#1D2124] border border-[#262B2F] overflow-hidden hover:border-[#A78BFA]/40 transition-all">
+              <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="rounded-xl bg-[#1D2124] border border-[#262B2F] overflow-hidden hover:border-[#D4AF37]/40 transition-all">
                 {item.image ? (
                   <img src={item.image} alt={item.title} className="w-full h-32 object-cover" />
                 ) : (
@@ -216,7 +216,7 @@ export default function ContentManagementPage() {
           <div className="divide-y divide-[#262B2F]/70">
             {items.map((item) => (
               <div key={item.id} className="flex items-start gap-4 p-5 hover:bg-[#1D2124] transition-colors">
-                <div className="w-10 h-10 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0"><Megaphone className="w-5 h-5" /></div>
+                <div className="w-10 h-10 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center shrink-0"><Megaphone className="w-5 h-5" /></div>
                 <div className="min-w-0 flex-1">
                   <h3 className="font-medium text-[#F2F4F5]">{item.title}</h3>
                   <p className="text-sm text-[#7D8387] mt-1 line-clamp-2">{item.message || item.content}</p>

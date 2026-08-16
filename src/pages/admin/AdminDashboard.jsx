@@ -36,9 +36,9 @@ const EVENT_STATUS = {
 
 const ROLE_LABEL = { attendee: 'Attendee', organizer: 'Organizer', admin: 'Admin' };
 const ROLE_CLS = {
-  attendee: 'text-sky-400',
+  attendee: 'text-[#D4AF37]',
   organizer: 'text-[#D4AF37]',
-  admin: 'text-purple-400',
+  admin: 'text-[#D4AF37]',
 };
 
 const initials = (name = '') =>
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
           icon={TicketIcon}
           label="Tickets Sold"
           value={(o.ticketsSold ?? 0).toLocaleString()}
-          accent={{ bg: 'bg-sky-500/15', text: 'text-sky-400' }}
+          accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
           sub={
             <p className="mt-1.5 text-[11px] text-[#7D8387]">
               <span className="text-[#D4AF37] font-semibold">{(o.ticketsSoldToday ?? 0).toLocaleString()}</span> sold today
@@ -268,7 +268,7 @@ export default function AdminDashboard() {
           icon={Users}
           label="Total Users"
           value={(o.totalUsers ?? 0).toLocaleString()}
-          accent={{ bg: 'bg-emerald-500/15', text: 'text-emerald-400' }}
+          accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
           sub={
             <p className="mt-1.5 text-[11px] text-[#7D8387]">
               <span className="text-[#D4AF37] font-semibold">{(o.totalOrganizers ?? 0).toLocaleString()}</span> organizers
@@ -279,7 +279,7 @@ export default function AdminDashboard() {
           icon={CalendarDays}
           label="Total Events"
           value={(o.totalEvents ?? 0).toLocaleString()}
-          accent={{ bg: 'bg-purple-500/15', text: 'text-purple-400' }}
+          accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
           sub={
             <p className="mt-1.5 text-[11px] text-[#7D8387]">
               <span className="text-amber-400 font-semibold">{(o.pendingEvents ?? 0).toLocaleString()}</span> pending approval
@@ -416,10 +416,10 @@ export default function AdminDashboard() {
           </div>
           <p className="text-xs text-[#7D8387] mt-0.5">Orders and payouts at a glance.</p>
           <div className="mt-4 grid grid-cols-2 gap-3">
-            <SnapshotTile icon={ShoppingCart} label="Total Orders" value={(o.totalOrders ?? 0).toLocaleString()} tone="text-sky-400" />
+            <SnapshotTile icon={ShoppingCart} label="Total Orders" value={(o.totalOrders ?? 0).toLocaleString()} tone="text-[#D4AF37]" />
             <SnapshotTile icon={CircleDollarSign} label="7-day Revenue" value={shortFmt(o.last7Revenue)} tone="text-[#D4AF37]" />
             <SnapshotTile icon={Wallet} label="Withdrawals Pending" value={(o.pendingWithdrawals ?? 0).toLocaleString()} tone="text-amber-400" />
-            <SnapshotTile icon={UserCheck} label="Organizer Apps" value={(o.pendingOrganizers ?? 0).toLocaleString()} tone="text-emerald-400" />
+            <SnapshotTile icon={UserCheck} label="Organizer Apps" value={(o.pendingOrganizers ?? 0).toLocaleString()} tone="text-[#D4AF37]" />
           </div>
           <div className="mt-5 pt-4 border-t border-[#494F55]/30">
             <Link to="/admin/reports" className="flex items-center justify-between text-xs text-[#7D8387] hover:text-[#F2F4F5] transition">

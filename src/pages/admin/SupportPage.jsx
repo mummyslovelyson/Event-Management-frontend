@@ -242,7 +242,7 @@ export default function SupportPage() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#7D8387]">Conversation</p>
                 {detail.responses.map((r, i) => (
                   <div key={i} className={`flex gap-3 ${r.isAdmin ? 'flex-row-reverse' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${r.isAdmin ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'bg-blue-500/20 text-blue-400'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${r.isAdmin ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'bg-[#494F55]/30 text-[#9AA1A6]'}`}>
                       {r.isAdmin ? 'AD' : (r.author?.name || 'U').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
                     <div className={`max-w-[75%] rounded-lg p-3 ${r.isAdmin ? 'bg-[#D4AF37]/10 border border-[#D4AF37]/20' : 'bg-[#1E252B]/50 border border-[#494F55]/20'}`}>

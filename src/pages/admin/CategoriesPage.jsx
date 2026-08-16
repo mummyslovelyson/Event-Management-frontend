@@ -153,10 +153,10 @@ export default function CategoriesPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
-                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-[#2DD4BF]/40 transition-all group"
+                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-[#D4AF37]/40 transition-all group"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#2DD4BF]/12 text-[#2DD4BF] flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/12 text-[#D4AF37] flex items-center justify-center">
                     <Icon className="w-6 h-6" />
                   </div>
                   <div className="flex items-center gap-1">
@@ -176,7 +176,7 @@ export default function CategoriesPage() {
                     <span className="text-xs text-[#7D8387]">{cat.isActive === false ? 'Inactive' : 'Active'}</span>
                     <button
                       onClick={() => toggleActive(cat)}
-                      className={`relative w-10 h-5 rounded-full transition-colors ${cat.isActive === false ? 'bg-[#494F55]/40' : 'bg-[#2DD4BF]'}`}
+                      className={`relative w-10 h-5 rounded-full transition-colors ${cat.isActive === false ? 'bg-[#494F55]/40' : 'bg-[#D4AF37]'}`}
                     >
                       <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${cat.isActive === false ? 'translate-x-0' : 'translate-x-5'}`} />
                     </button>

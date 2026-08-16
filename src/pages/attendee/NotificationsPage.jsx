@@ -23,8 +23,8 @@ const FILTERS = [
 
 const TYPE_CONFIG = {
   ticket: { icon: TicketIcon, color: 'text-[#D4AF37]', bg: 'bg-[#D4AF37]/10' },
-  reminder: { icon: CalendarClock, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-  promotion: { icon: Tag, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+  reminder: { icon: CalendarClock, color: 'text-[#D4AF37]', bg: 'bg-[#D4AF37]/10' },
+  promotion: { icon: Tag, color: 'text-[#D4AF37]', bg: 'bg-[#D4AF37]/10' },
   alert: { icon: AlertCircle, color: 'text-amber-400', bg: 'bg-amber-500/10' },
   info: { icon: Info, color: 'text-[#8A9196]', bg: 'bg-[#494F55]/30' },
   system: { icon: Bell, color: 'text-[#8A9196]', bg: 'bg-[#494F55]/30' },
