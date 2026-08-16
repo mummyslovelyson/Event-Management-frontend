@@ -44,7 +44,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
     return (
       <Link
         to={`/events/${event.id}`}
-        className="flex gap-3 p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/ transition group"
+        className="flex gap-3 p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/40 transition group"
       >
         <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-[#1C232B]">
           {img && <img src={img} alt={event.title} className="w-full h-full object-cover" />}
@@ -64,7 +64,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
     <motion.div
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
-      className="group rounded-xl overflow-hidden bg-[#171A1D] border border-[#262B2F] hover:border-white/ hover:shadow-xl hover:shadow-black/25 transition-all"
+      className="group rounded-xl overflow-hidden bg-[#171A1D] border border-[#262B2F] hover:border-white/40 hover:shadow-xl hover:shadow-black/25 transition-all"
     >
       <Link to={`/events/${event.id}`} className="block">
         <div className="relative aspect-[16/10] overflow-hidden bg-[#1C232B]">
@@ -122,7 +122,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
               <span className="text-xs text-[#494F55]">From</span>
               <span className="text-lg font-bold text-white">{priceLabel}</span>
             </div>
-            <span className="px-3 py-1.5 rounded-lg bg-white/ text-white text-xs font-semibold group-hover:bg-white group-hover:text-[#1C232B] transition">
+            <span className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-semibold group-hover:bg-white group-hover:text-[#1C232B] transition">
               View Details
             </span>
           </div>

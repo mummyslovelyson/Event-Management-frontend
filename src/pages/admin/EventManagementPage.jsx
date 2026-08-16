@@ -234,13 +234,13 @@ export default function EventManagementPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search events..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
             />
           </div>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition"
+            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition"
           >
             <option value="">All Categories</option>
             <option value="music">Music</option>
@@ -254,7 +254,7 @@ export default function EventManagementPage() {
             value={organizerFilter}
             onChange={(e) => setOrganizerFilter(e.target.value)}
             placeholder="Organizer..."
-            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
           />
         </div>
 
@@ -310,7 +310,7 @@ export default function EventManagementPage() {
               </thead>
               <tbody className="divide-y divide-[#262B2F]/70">
                 {events.map((ev) => (
-                  <tr key={ev.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(ev.id) ? 'bg-white/' : ''}`}>
+                  <tr key={ev.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(ev.id) ? 'bg-white/10' : ''}`}>
                     <td className="px-4 py-3">
                       <input type="checkbox" checked={selected.has(ev.id)} onChange={() => toggleSelect(ev.id)} className="w-4 h-4 rounded border-[#3A4045] bg-[#111417] accent-[#EFEFF1]" />
                     </td>
@@ -319,7 +319,7 @@ export default function EventManagementPage() {
                         {ev.thumbnail || ev.image ? (
                           <img src={ev.thumbnail || ev.image} alt="" className="w-10 h-10 rounded-lg object-cover" />
                         ) : (
-                          <div className="w-10 h-10 rounded-lg bg-white/ text-white flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-lg bg-white/10 text-white flex items-center justify-center">
                             <ImageIcon className="w-5 h-5" />
                           </div>
                         )}
@@ -341,7 +341,7 @@ export default function EventManagementPage() {
                         <button
                           onClick={() => handleToggleFeatured(ev)}
                           disabled={actionLoading === `feature-${ev.id}`}
-                          className={`p-1.5 rounded-md transition disabled:opacity-50 ${ev.is_featured ? 'text-white hover:bg-white/' : 'text-[#949599] hover:text-white hover:bg-[#494F55]/30'}`}
+                          className={`p-1.5 rounded-md transition disabled:opacity-50 ${ev.is_featured ? 'text-white hover:bg-white/10' : 'text-[#949599] hover:text-white hover:bg-[#494F55]/30'}`}
                           title={ev.is_featured ? 'Remove from featured' : 'Feature on homepage'}
                         >
                           <Star className="w-4 h-4" fill={ev.is_featured ? 'currentColor' : 'none'} />
@@ -431,7 +431,7 @@ export default function EventManagementPage() {
           value={rejectReason}
           onChange={(e) => setRejectReason(e.target.value)}
           placeholder="Reason for rejection (sent to organizer)..."
-          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ resize-none"
+          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 resize-none"
           rows={4}
         />
       </Modal>

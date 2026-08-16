@@ -150,7 +150,7 @@ export default function ContentManagementPage() {
         ) : tab === 'banners' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-5">
             {items.map((item, i) => (
-              <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="rounded-xl bg-[#1D2124] border border-[#262B2F] overflow-hidden hover:border-white/ transition-all">
+              <motion.div key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="rounded-xl bg-[#1D2124] border border-[#262B2F] overflow-hidden hover:border-white/40 transition-all">
                 {item.image ? (
                   <img src={item.image} alt={item.title} className="w-full h-32 object-cover" />
                 ) : (
@@ -177,7 +177,7 @@ export default function ContentManagementPage() {
           <div className="divide-y divide-[#262B2F]/70">
             {items.map((item) => (
               <div key={item.id} className="flex items-start gap-4 p-5 hover:bg-[#1D2124] transition-colors">
-                <div className="w-10 h-10 rounded-lg bg-white/ text-white flex items-center justify-center shrink-0"><HelpCircle className="w-5 h-5" /></div>
+                <div className="w-10 h-10 rounded-lg bg-white/10 text-white flex items-center justify-center shrink-0"><HelpCircle className="w-5 h-5" /></div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-medium text-[#EFEFF1]">{item.question}</h3>
@@ -196,7 +196,7 @@ export default function ContentManagementPage() {
           <div className="divide-y divide-[#262B2F]/70">
             {items.map((item) => (
               <div key={item.id} className="flex items-center gap-4 p-5 hover:bg-[#1D2124] transition-colors">
-                {item.image ? <img src={item.image} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" /> : <div className="w-14 h-14 rounded-lg bg-white/ text-white flex items-center justify-center shrink-0"><FileText className="w-6 h-6" /></div>}
+                {item.image ? <img src={item.image} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" /> : <div className="w-14 h-14 rounded-lg bg-white/10 text-white flex items-center justify-center shrink-0"><FileText className="w-6 h-6" /></div>}
                 <div className="min-w-0 flex-1">
                   <h3 className="font-medium text-[#EFEFF1] truncate">{item.title}</h3>
                   <div className="flex items-center gap-3 mt-1 text-xs text-[#949599]">
@@ -216,7 +216,7 @@ export default function ContentManagementPage() {
           <div className="divide-y divide-[#262B2F]/70">
             {items.map((item) => (
               <div key={item.id} className="flex items-start gap-4 p-5 hover:bg-[#1D2124] transition-colors">
-                <div className="w-10 h-10 rounded-lg bg-white/ text-white flex items-center justify-center shrink-0"><Megaphone className="w-5 h-5" /></div>
+                <div className="w-10 h-10 rounded-lg bg-white/10 text-white flex items-center justify-center shrink-0"><Megaphone className="w-5 h-5" /></div>
                 <div className="min-w-0 flex-1">
                   <h3 className="font-medium text-[#EFEFF1]">{item.title}</h3>
                   <p className="text-sm text-[#949599] mt-1 line-clamp-2">{item.message || item.content}</p>
@@ -278,7 +278,7 @@ function initialForm(tab) {
 }
 
 function ContentForm({ tab, form, setForm }) {
-  const input = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition';
+  const input = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition';
   const label = 'block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5';
 
   if (tab === 'banners') {

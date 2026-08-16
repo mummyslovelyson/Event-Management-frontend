@@ -92,9 +92,9 @@ export default function PlatformReportsPage() {
               ))}
             </div>
             <div className="flex items-center gap-2">
-              <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-white/" />
+              <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-white/50" />
               <span className="text-[#494F55]">—</span>
-              <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-white/" />
+              <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-white/50" />
             </div>
             <button
               onClick={() => exportCSV([{ section: 'Revenue', ...revenue }, { section: 'Users', ...users }, { section: 'Events', ...events }], 'platform-report.csv')}
@@ -260,7 +260,7 @@ export default function PlatformReportsPage() {
                   <div className="space-y-3">
                     {topEvents.slice(0, 5).map((e, i) => (
                       <div key={i} className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-full bg-white/ text-white flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+                        <span className="w-6 h-6 rounded-full bg-white/10 text-white flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
                         <span className="text-sm text-[#EFEFF1] flex-1 truncate">{e.title || e.name}</span>
                         <span className="text-sm font-medium text-white">{e.tickets ?? e.value ?? 0}</span>
                       </div>

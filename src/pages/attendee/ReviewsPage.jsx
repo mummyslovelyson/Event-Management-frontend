@@ -363,7 +363,7 @@ export default function ReviewsPage() {
                 onChange={(e) => setReviewText(e.target.value)}
                 rows={5}
                 placeholder="Share details about your experience..."
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition resize-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition resize-none"
               />
               <p className="text-xs text-[#494F55] mt-1.5">{reviewText.length} characters</p>
             </div>

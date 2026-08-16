@@ -118,15 +118,15 @@ export default function PricingPage() {
   return (
     <>
       {/* Hero */}
-      <section className="py-16 sm:py-20">
+      <section className="pt-28 pb-14 sm:pt-36 sm:pb-18 border-b border-[#262B2F]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/ border border-white/ text-white text-xs font-semibold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" /> For Organizers
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161D22] border border-[#494F55]/60 text-white text-xs font-semibold uppercase tracking-widest mb-6">
+              Organizer Plans &amp; Pricing
             </span>
-            <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EFEFF1]">Simple, Transparent Pricing</h1>
-            <p className="mt-4 text-lg text-[#949599]">
-              Choose the plan that fits your needs. No hidden fees, cancel anytime.
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-[#EFEFF1] tracking-tight">Simple, Fair Pricing</h1>
+            <p className="mt-4 text-base sm:text-lg text-[#949599] max-w-xl mx-auto leading-relaxed">
+              Start for free. No setup fees, no contracts, and free events are always 100% free.
             </p>
 
             {/* Billing toggle */}
@@ -160,7 +160,7 @@ export default function PricingPage() {
                 transition={{ duration: 0.4, delay: i * 0.1 }}
                 className={`relative rounded-2xl p-6 border transition-all ${
                   tier.accent
-                    ? 'bg-gradient-to-b from-white/ to-[#171A1D] border-white/ shadow-xl shadow-white/'
+                    ? 'bg-gradient-to-b from-white/10 to-[#171A1D] border-white/20 shadow-xl shadow-white/5'
                     : 'bg-[#171A1D] border-[#262B2F] hover:border-[#494F55]/50'
                 }`}
               >
@@ -169,7 +169,7 @@ export default function PricingPage() {
                     {tier.badge}
                   </span>
                 )}
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${tier.accent ? 'bg-white/ text-white' : 'bg-[#494F55]/30 text-[#949599]'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${tier.accent ? 'bg-white/10 text-white' : 'bg-[#494F55]/30 text-[#949599]'}`}>
                   <tier.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-[#EFEFF1]">{tier.name}</h3>
@@ -187,7 +187,7 @@ export default function PricingPage() {
                   className={`mt-6 w-full py-3 rounded-lg text-sm font-semibold transition disabled:opacity-60 flex items-center justify-center gap-2 ${
                     tier.accent
                       ? 'bg-white text-[#1C232B] hover:bg-[#CBD5E1]'
-                      : 'border border-[#494F55]/40 text-[#EFEFF1] hover:border-white/ hover:text-white'
+                      : 'border border-[#494F55]/40 text-[#EFEFF1] hover:border-white/40 hover:text-white'
                   }`}
                 >
                   {subscribing === tier.id ? <LoadingSpinner size="sm" /> : tier.cta}
@@ -228,7 +228,7 @@ export default function PricingPage() {
                 transition={{ duration: 0.3, delay: i * 0.06 }}
                 className="rounded-xl bg-[#1C232B] border border-[#262B2F] p-5"
               >
-                <div className="w-10 h-10 rounded-lg bg-white/ text-white flex items-center justify-center mb-3">
+                <div className="w-10 h-10 rounded-lg bg-white/10 text-white flex items-center justify-center mb-3">
                   <f.icon className="w-5 h-5" />
                 </div>
                 <h3 className="text-sm font-semibold text-[#EFEFF1]">{f.title}</h3>
@@ -267,7 +267,7 @@ export default function PricingPage() {
       {/* CTA */}
       <section className="py-16 bg-[#171A1D]">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex w-14 h-14 rounded-xl bg-white/ text-white items-center justify-center mb-4">
+          <div className="inline-flex w-14 h-14 rounded-xl bg-white/10 text-white items-center justify-center mb-4">
             <Zap className="w-7 h-7" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Ready to Start Hosting?</h2>
@@ -276,7 +276,7 @@ export default function PricingPage() {
             <Link to="/register" className="px-6 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition">
               Create an Account
             </Link>
-            <Link to="/contact" className="px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-white/ hover:text-white transition">
+            <Link to="/contact" className="px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-white/40 hover:text-white transition">
               Talk to Sales
             </Link>
           </div>

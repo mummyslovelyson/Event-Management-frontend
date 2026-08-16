@@ -23,7 +23,7 @@ const STEPS = [
 ];
 
 const inputCls =
-  'w-full px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
+  'w-full px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
 const labelCls = 'block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider';
 const errCls = 'mt-1 text-xs text-red-400';
 
@@ -136,7 +136,7 @@ const StepMedia = () => {
         <label className={labelCls}>Banner Image</label>
         <div
           onClick={() => { if (!uploading) fileRef.current?.click(); }}
-          className="relative border-2 border-dashed border-[#494F55]/50 rounded-xl p-6 text-center cursor-pointer hover:border-white/ transition-colors bg-[#171A1D]"
+          className="relative border-2 border-dashed border-[#494F55]/50 rounded-xl p-6 text-center cursor-pointer hover:border-white/40 transition-colors bg-[#171A1D]"
         >
           {uploading === 'banner' ? (
             <div className="flex flex-col items-center gap-2 py-6">
@@ -171,7 +171,7 @@ const StepMedia = () => {
           {additional.length < 5 && (
             <button
               onClick={() => { if (!uploading) extraRef.current?.click(); }}
-              className="aspect-square rounded-lg border-2 border-dashed border-[#494F55]/50 flex items-center justify-center text-[#494F55] hover:border-white/ hover:text-white transition-colors disabled:opacity-50"
+              className="aspect-square rounded-lg border-2 border-dashed border-[#494F55]/50 flex items-center justify-center text-[#494F55] hover:border-white/40 hover:text-white transition-colors disabled:opacity-50"
               disabled={!!uploading}
             >
               {uploading === 'extra'
@@ -271,7 +271,7 @@ const StepTickets = () => {
           </motion.div>
         ))}
       </AnimatePresence>
-      <button type="button" onClick={addTicket} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-[#494F55]/40 text-sm font-medium text-[#949599] hover:border-white/ hover:text-white transition-colors">
+      <button type="button" onClick={addTicket} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-[#494F55]/40 text-sm font-medium text-[#949599] hover:border-white/40 hover:text-white transition-colors">
         <Plus className="w-4 h-4" /> Add Another Ticket Type
       </button>
     </div>

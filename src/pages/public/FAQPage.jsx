@@ -85,27 +85,27 @@ export default function FAQPage() {
   return (
     <>
       {/* Hero */}
-      <section className="py-16 sm:py-20">
+      <section className="pt-28 pb-14 sm:pt-36 sm:pb-18 border-b border-[#262B2F] mb-8">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/ border border-white/ text-white text-xs font-semibold uppercase tracking-wider">
-              <HelpCircle className="w-3.5 h-3.5" /> Help Center
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161D22] border border-[#494F55]/60 text-white text-xs font-semibold uppercase tracking-widest mb-6">
+              <HelpCircle className="w-3.5 h-3.5" /> Help &amp; Answers
             </span>
-            <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EFEFF1]">Frequently Asked Questions</h1>
-            <p className="mt-4 text-lg text-[#949599]">
-              Find quick answers to common questions. Can't find what you're looking for?{' '}
-              <Link to="/contact" className="text-white hover:underline">Contact us</Link>.
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-[#EFEFF1] tracking-tight">Frequently Asked Questions</h1>
+            <p className="mt-4 text-base sm:text-lg text-[#949599] max-w-xl mx-auto leading-relaxed">
+              Find quick answers to common questions about ticket booking, payouts, and managing events. Can't find what you're looking for?{' '}
+              <Link to="/contact" className="text-white hover:underline">Reach out directly</Link>.
             </p>
 
             {/* Search */}
             <div className="mt-8 relative max-w-lg mx-auto">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#494F55]" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#949599]" />
               <input
                 type="text"
-                placeholder="Search questions..."
+                placeholder="Search questions or topics..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/"
+                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[#161D22] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#949599] focus:outline-none focus:border-white/50"
               />
             </div>
           </motion.div>
@@ -145,7 +145,7 @@ export default function FAQPage() {
               </div>
               <h3 className="text-lg font-semibold text-[#EFEFF1]">No results found</h3>
               <p className="mt-2 text-sm text-[#949599]">Try a different search term or browse by category.</p>
-              <button onClick={() => setSearch('')} className="mt-4 px-4 py-2 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:text-white hover:border-white/ transition">
+              <button onClick={() => setSearch('')} className="mt-4 px-4 py-2 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:text-white hover:border-white/40 transition">
                 Clear search
               </button>
             </div>
@@ -197,10 +197,10 @@ export default function FAQPage() {
       {/* Still need help CTA */}
       <section className="py-16">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative rounded-2xl bg-gradient-to-br from-white/ to-[#171A1D] border border-white/ p-8 text-center overflow-hidden">
-            <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/ blur-2xl" />
+          <div className="relative rounded-2xl bg-gradient-to-br from-white/10 to-[#171A1D] border border-white/20 p-8 text-center overflow-hidden">
+            <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
             <div className="relative">
-              <div className="w-14 h-14 rounded-xl bg-white/ text-white flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 rounded-xl bg-white/10 text-white flex items-center justify-center mx-auto mb-4">
                 <MessageSquare className="w-7 h-7" />
               </div>
               <h2 className="text-2xl font-bold text-[#EFEFF1]">Still Have Questions?</h2>
@@ -209,7 +209,7 @@ export default function FAQPage() {
                 <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition">
                   <Mail className="w-4 h-4" /> Contact Support
                 </Link>
-                <a href="mailto:support@tribescliqs.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-white/ hover:text-white transition">
+                <a href="mailto:support@tribescliqs.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-white/40 hover:text-white transition">
                   <Sparkles className="w-4 h-4" /> support@tribescliqs.com
                 </a>
               </div>

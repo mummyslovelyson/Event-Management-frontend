@@ -31,8 +31,8 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12 relative overflow-hidden">
       {/* Ambient background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-white/ blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-white/ blur-3xl" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-white/10 blur-3xl" />
       </div>
 
       {/* Grid pattern overlay */}
@@ -56,7 +56,7 @@ export default function AdminLoginPage() {
             <div className="flex justify-center mb-4">
               <div className="relative">
                 <Logo size="lg" showText={false} />
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#161D22] border border-white/ flex items-center justify-center shadow">
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#161D22] border border-white/20 flex items-center justify-center shadow">
                   <ShieldCheck className="w-3.5 h-3.5 text-white" />
                 </div>
               </div>
@@ -81,7 +81,7 @@ export default function AdminLoginPage() {
                     pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },
                   })}
                   className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-                    errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
+                    errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/50'
                   }`}
                 />
               </div>
@@ -98,7 +98,7 @@ export default function AdminLoginPage() {
                   autoComplete="current-password"
                   {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 characters' } })}
                   className={`w-full pl-10 pr-10 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-                    errors.password ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
+                    errors.password ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/50'
                   }`}
                 />
                 <button

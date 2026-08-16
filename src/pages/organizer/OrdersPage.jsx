@@ -101,7 +101,7 @@ export default function OrdersPage() {
         actions={
           <>
             {selected.size > 0 && (
-              <button onClick={() => exportCSV(orders.filter((o) => selected.has(o.id)))} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/ hover:bg-white/ transition">
+              <button onClick={() => exportCSV(orders.filter((o) => selected.has(o.id)))} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 transition">
                 <Download className="w-4 h-4" /> Export Selected ({selected.size})
               </button>
             )}
@@ -124,7 +124,7 @@ export default function OrdersPage() {
       <div className="flex flex-col lg:flex-row lg:items-center gap-3">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by order ID, customer, email..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by order ID, customer, email..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition" />
         </div>
       </div>
 

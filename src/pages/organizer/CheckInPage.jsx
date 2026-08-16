@@ -137,7 +137,7 @@ export default function CheckInPage() {
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <label className="text-xs font-medium uppercase tracking-wider text-[#949599]">Event</label>
-        <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition cursor-pointer">
+        <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer">
           <option value="">Choose event...</option>
           {events.map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
         </select>
@@ -157,7 +157,7 @@ export default function CheckInPage() {
           <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><Clock className="w-4 h-4" /> Not Arrived</div>
           <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{stats.notArrived}</p>
         </div>
-        <div className="rounded-xl bg-gradient-to-br from-white/ to-[#171A1D] border border-white/ p-4">
+        <div className="rounded-xl bg-gradient-to-br from-white/10 to-[#171A1D] border border-white/20 p-4">
           <div className="flex items-center gap-2 text-xs text-white uppercase tracking-wider"><UserCheck className="w-4 h-4" /> Check-in Rate</div>
           <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{stats.rate}%</p>
         </div>
@@ -193,7 +193,7 @@ export default function CheckInPage() {
               <div className="relative aspect-video rounded-xl bg-[#1C232B] border-2 border-dashed border-[#494F55]/40 flex flex-col items-center justify-center overflow-hidden">
                 {cameraOpen ? (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/ to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
                     <div className="w-48 h-48 border-2 border-white/30 rounded-xl relative">
                       <div className="absolute -top-px -left-px w-6 h-6 border-t-4 border-l-4 border-white/30 rounded-tl-lg" />
                       <div className="absolute -top-px -right-px w-6 h-6 border-t-4 border-r-4 border-white/30 rounded-tr-lg" />
@@ -220,7 +220,7 @@ export default function CheckInPage() {
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <QrCode className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-                    <input value={qrInput} onChange={(e) => setQrInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleScan(qrInput)} placeholder="Enter ticket code..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition" />
+                    <input value={qrInput} onChange={(e) => setQrInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleScan(qrInput)} placeholder="Enter ticket code..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition" />
                   </div>
                   <button onClick={() => handleScan(qrInput)} disabled={!qrInput || scanning} className="px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition">
                     {scanning ? 'Scanning...' : 'Verify'}
@@ -257,7 +257,7 @@ export default function CheckInPage() {
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-                  <input value={manualQuery} onChange={(e) => setManualQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleManualSearch()} placeholder="Search by name, email, or ticket number..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition" />
+                  <input value={manualQuery} onChange={(e) => setManualQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleManualSearch()} placeholder="Search by name, email, or ticket number..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition" />
                 </div>
                 <button onClick={handleManualSearch} disabled={searching} className="px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition">{searching ? 'Searching...' : 'Search'}</button>
               </div>

@@ -218,7 +218,7 @@ export default function SupportPage() {
           <div className="space-y-4">
             {/* User info */}
             <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20">
-              <div className="w-10 h-10 rounded-full bg-white/ text-white flex items-center justify-center text-sm font-bold">
+              <div className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center text-sm font-bold">
                 {(detail.user?.name || '?').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
@@ -242,10 +242,10 @@ export default function SupportPage() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Conversation</p>
                 {detail.responses.map((r, i) => (
                   <div key={i} className={`flex gap-3 ${r.isAdmin ? 'flex-row-reverse' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${r.isAdmin ? 'bg-white/ text-white' : 'bg-[#494F55]/30 text-[#9AA1A6]'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${r.isAdmin ? 'bg-white/10 text-white' : 'bg-[#494F55]/30 text-[#9AA1A6]'}`}>
                       {r.isAdmin ? 'AD' : (r.author?.name || 'U').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
-                    <div className={`max-w-[75%] rounded-lg p-3 ${r.isAdmin ? 'bg-white/ border border-white/' : 'bg-[#1C232B]/50 border border-[#494F55]/20'}`}>
+                    <div className={`max-w-[75%] rounded-lg p-3 ${r.isAdmin ? 'bg-white/10 border border-white/20' : 'bg-[#1C232B]/50 border border-[#494F55]/20'}`}>
                       <p className="text-sm text-[#EFEFF1]">{r.message}</p>
                       <p className="text-xs text-[#494F55] mt-1">{fmtDateTime(r.createdAt)}</p>
                     </div>
@@ -262,7 +262,7 @@ export default function SupportPage() {
                   onChange={(e) => setReply(e.target.value)}
                   placeholder="Type your reply..."
                   rows={3}
-                  className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ resize-none"
+                  className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 resize-none"
                 />
                 <div className="flex justify-end mt-2">
                   <button

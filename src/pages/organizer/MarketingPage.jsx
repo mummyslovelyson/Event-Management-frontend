@@ -12,7 +12,7 @@ import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
 
 const TABS = [
   { key: 'email', label: 'Email Campaign', icon: Mail },
@@ -295,7 +295,7 @@ export default function MarketingPage() {
             </div>
           ) : tab === 'sms' ? (
             <div className="space-y-3">
-              <div className="max-w-[280px] rounded-2xl rounded-bl-sm bg-white/ border border-white/ px-4 py-3">
+              <div className="max-w-[280px] rounded-2xl rounded-bl-sm bg-white/10 border border-white/20 px-4 py-3">
                 <p className="text-sm text-[#EFEFF1] leading-relaxed">{smsForm.message || 'SMS preview...'}</p>
                 <p className="text-[10px] text-[#949599] mt-1.5 text-right">{new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
               </div>

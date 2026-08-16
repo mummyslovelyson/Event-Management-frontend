@@ -274,7 +274,7 @@ export default function PaymentManagementPage() {
                         {rf.status === 'pending' && (
                           <button
                             onClick={() => { setRefundTarget(rf); setRefundReason(''); }}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-white/ text-white border border-white/ text-xs font-semibold hover:bg-white/ transition"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-white/10 text-white border border-white/20 text-xs font-semibold hover:bg-white/10 transition"
                           >
                             <RotateCcw className="w-3.5 h-3.5" /> Process
                           </button>
@@ -312,7 +312,7 @@ export default function PaymentManagementPage() {
           value={refundReason}
           onChange={(e) => setRefundReason(e.target.value)}
           placeholder="Reason for refund..."
-          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ resize-none"
+          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 resize-none"
           rows={3}
         />
       </Modal>

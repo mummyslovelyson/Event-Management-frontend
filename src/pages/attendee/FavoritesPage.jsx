@@ -97,7 +97,7 @@ export default function FavoritesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search your favorites..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
           />
         </motion.div>
       )}

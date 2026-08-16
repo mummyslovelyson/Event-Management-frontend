@@ -16,7 +16,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
 
 const saleStatus = (t) => {
   if (!t.saleEndDate) return 'neutral';
@@ -149,7 +149,7 @@ export default function TicketManagementPage() {
       {/* Event selector */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <label className="text-xs font-medium uppercase tracking-wider text-[#949599]">Select Event</label>
-        <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition cursor-pointer">
+        <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer">
           <option value="">Choose an event...</option>
           {events.map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
         </select>
@@ -179,7 +179,7 @@ export default function TicketManagementPage() {
               <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><TicketIcon className="w-4 h-4" /> Available</div>
               <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{totalAvail}</p>
             </div>
-            <div className="rounded-xl bg-gradient-to-br from-white/ to-[#171A1D] border border-white/ p-4">
+            <div className="rounded-xl bg-gradient-to-br from-white/10 to-[#171A1D] border border-white/20 p-4">
               <div className="flex items-center gap-2 text-xs text-white uppercase tracking-wider"><DollarSign className="w-4 h-4" /> Price Range</div>
               <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{format(Math.min(...tickets.map((t) => Number(t.price) || 0)))} - {format(Math.max(...tickets.map((t) => Number(t.price) || 0)))}</p>
             </div>

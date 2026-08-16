@@ -562,7 +562,7 @@ export default function EventDetailPage() {
           <div className="lg:col-span-2">
             {/* Organizer card */}
             {event.organizer && (
-              <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 mb-6 flex items-center justify-between gap-4 hover:border-white/ transition-colors">
+              <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 mb-6 flex items-center justify-between gap-4 hover:border-white/40 transition-colors">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-12 h-12 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] flex items-center justify-center shrink-0 overflow-hidden">
                     {event.organizer.avatar ? (
@@ -585,7 +585,7 @@ export default function EventDetailPage() {
                     disabled={followLoading}
                     className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${
                       isFollowing
-                        ? 'bg-white/ text-white border border-white/ hover:bg-white/'
+                        ? 'bg-white/10 text-white border border-white/20 hover:bg-white/10'
                         : 'bg-white text-[#1C232B] hover:bg-[#CBD5E1]'
                     }`}
                   >
@@ -695,7 +695,7 @@ export default function EventDetailPage() {
                             <motion.div
                               key={ticket.id}
                               whileHover={{ y: -2 }}
-                              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/ transition-colors"
+                              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/40 transition-colors"
                             >
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="min-w-0">
@@ -773,7 +773,7 @@ export default function EventDetailPage() {
                             <motion.div
                               key={listing.id}
                               whileHover={{ y: -2 }}
-                              className="rounded-xl bg-[#14171A] border border-[#262B2F] p-4 sm:p-5 hover:border-white/ transition-colors"
+                              className="rounded-xl bg-[#14171A] border border-[#262B2F] p-4 sm:p-5 hover:border-white/40 transition-colors"
                             >
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="min-w-0">
@@ -843,7 +843,7 @@ export default function EventDetailPage() {
                             <motion.div
                               key={m.id}
                               whileHover={{ y: -2 }}
-                              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/ transition-colors"
+                              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/40 transition-colors"
                             >
                               <div className="flex items-start justify-between gap-4">
                                 <div className="min-w-0">
@@ -892,7 +892,7 @@ export default function EventDetailPage() {
                                     disabled={meetupBusy || (full && !m.joined)}
                                     className={`px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed ${
                                       m.joined
-                                        ? 'bg-white/ text-white border border-white/ hover:bg-white/'
+                                        ? 'bg-white/10 text-white border border-white/20 hover:bg-white/10'
                                         : 'bg-white text-[#1C232B] hover:bg-[#CBD5E1]'
                                     }`}
                                   >
@@ -920,7 +920,7 @@ export default function EventDetailPage() {
                     ) : (
                       <div className="space-y-3">
                         {faqs.map((faq, i) => (
-                          <div key={i} className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden hover:border-white/ transition-colors">
+                          <div key={i} className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden hover:border-white/40 transition-colors">
                             <button
                               onClick={() => setOpenFaq(openFaq === i ? null : i)}
                               className="w-full flex items-center justify-between px-5 py-4 text-left"
@@ -1037,7 +1037,7 @@ export default function EventDetailPage() {
               value={meetupForm.title}
               onChange={(e) => setMeetupForm((f) => ({ ...f, title: e.target.value }))}
               placeholder="e.g. Pre-show dinner at the Grand Arena"
-              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
             />
           </div>
           <div>
@@ -1047,7 +1047,7 @@ export default function EventDetailPage() {
               onChange={(e) => setMeetupForm((f) => ({ ...f, description: e.target.value }))}
               rows={3}
               placeholder="What's the plan? Where should people look out for you?"
-              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition resize-none"
+              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition resize-none"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1058,7 +1058,7 @@ export default function EventDetailPage() {
                 value={meetupForm.meetingSpot}
                 onChange={(e) => setMeetupForm((f) => ({ ...f, meetingSpot: e.target.value }))}
                 placeholder="e.g. Main entrance, VIP lounge"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
               />
             </div>
             <div>
@@ -1067,7 +1067,7 @@ export default function EventDetailPage() {
                 type="datetime-local"
                 value={meetupForm.meetAt}
                 onChange={(e) => setMeetupForm((f) => ({ ...f, meetAt: e.target.value }))}
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition"
               />
             </div>
           </div>
@@ -1079,7 +1079,7 @@ export default function EventDetailPage() {
               value={meetupForm.maxMembers}
               onChange={(e) => setMeetupForm((f) => ({ ...f, maxMembers: e.target.value }))}
               placeholder="e.g. 12"
-              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
             />
           </div>
         </div>
@@ -1140,13 +1140,13 @@ export default function EventDetailPage() {
                     placeholder="Enter code"
                     value={coupon}
                     onChange={(e) => setCoupon(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/50"
                   />
                 </div>
                 <button
                   onClick={handleApplyCoupon}
                   disabled={couponLoading || !coupon.trim()}
-                  className="px-4 py-2.5 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:border-white/ hover:text-white transition disabled:opacity-50"
+                  className="px-4 py-2.5 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:border-white/40 hover:text-white transition disabled:opacity-50"
                 >
                   {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
                 </button>
@@ -1165,7 +1165,7 @@ export default function EventDetailPage() {
                     transition={{ duration: 0.25 }}
                     className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                       paymentMethod === m.id
-                        ? 'border-white/ bg-white/'
+                        ? 'border-white/20 bg-white/10'
                         : 'border-[#494F55]/40 hover:border-[#494F55]'
                     }`}
                   >
@@ -1175,7 +1175,7 @@ export default function EventDetailPage() {
                       value={m.id}
                       checked={paymentMethod === m.id}
                       onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="w-4 h-4 text-white focus:ring-white/ focus:ring-offset-0"
+                      className="w-4 h-4 text-white focus:ring-white/30 focus:ring-offset-0"
                     />
                     <m.icon className="w-5 h-5 text-[#494F55]" />
                     <span className="text-sm text-[#EFEFF1]">{m.label}</span>
@@ -1227,7 +1227,7 @@ function InfoRow({ icon: Icon, label, value }) {
   return (
     <motion.div
       whileHover={{ y: -2 }}
-      className="flex items-start gap-3 rounded-lg bg-[#171A1D] border border-[#262B2F] p-4 hover:border-white/ transition-colors"
+      className="flex items-start gap-3 rounded-lg bg-[#171A1D] border border-[#262B2F] p-4 hover:border-white/40 transition-colors"
     >
       <Icon className="w-5 h-5 text-[#494F55] mt-0.5 shrink-0" />
       <div className="min-w-0">

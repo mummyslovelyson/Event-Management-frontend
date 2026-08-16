@@ -22,9 +22,9 @@ const FILTERS = [
 ];
 
 const TYPE_CONFIG = {
-  ticket: { icon: TicketIcon, color: 'text-white', bg: 'bg-white/' },
-  reminder: { icon: CalendarClock, color: 'text-white', bg: 'bg-white/' },
-  promotion: { icon: Tag, color: 'text-white', bg: 'bg-white/' },
+  ticket: { icon: TicketIcon, color: 'text-white', bg: 'bg-white/10' },
+  reminder: { icon: CalendarClock, color: 'text-white', bg: 'bg-white/10' },
+  promotion: { icon: Tag, color: 'text-white', bg: 'bg-white/10' },
   alert: { icon: AlertCircle, color: 'text-amber-400', bg: 'bg-amber-500/10' },
   info: { icon: Info, color: 'text-[#949599]', bg: 'bg-[#494F55]/30' },
   system: { icon: Bell, color: 'text-[#949599]', bg: 'bg-[#494F55]/30' },
@@ -147,7 +147,7 @@ export default function NotificationsPage() {
           <button
             onClick={handleMarkAllRead}
             disabled={markingAll}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium hover:border-white/ disabled:opacity-50 transition w-fit"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium hover:border-white/40 disabled:opacity-50 transition w-fit"
           >
             <CheckCheck className="w-4 h-4" />
             {markingAll ? 'Marking...' : 'Mark All Read'}
@@ -194,7 +194,7 @@ export default function NotificationsPage() {
                 className={`relative rounded-xl border p-4 transition-colors cursor-pointer group ${
                   n.read
                     ? 'bg-[#171A1D] border-[#262B2F] hover:border-[#494F55]/50'
-                    : 'bg-[#171A1D] border-white/ hover:border-white/'
+                    : 'bg-[#171A1D] border-white/20 hover:border-white/40'
                 }`}
                 onClick={() => handleOpen(n)}
               >
@@ -219,7 +219,7 @@ export default function NotificationsPage() {
                     {!n.read && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleMarkRead(n.id); }}
-                        className="w-8 h-8 rounded-lg text-[#949599] hover:text-white hover:bg-white/ flex items-center justify-center transition"
+                        className="w-8 h-8 rounded-lg text-[#949599] hover:text-white hover:bg-white/10 flex items-center justify-center transition"
                         title="Mark as read"
                       >
                         <CheckCircle2 className="w-4 h-4" />
@@ -251,7 +251,7 @@ export default function NotificationsPage() {
               <Link
                 to={selected.link}
                 onClick={() => setSelected(null)}
-                className="px-4 py-2 rounded-lg bg-white/ text-white text-sm font-semibold hover:bg-white/ transition"
+                className="px-4 py-2 rounded-lg bg-white/10 text-white text-sm font-semibold hover:bg-white/10 transition"
               >
                 View Event
               </Link>

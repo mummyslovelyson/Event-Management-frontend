@@ -15,7 +15,7 @@ import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
 
 const ROLES = {
   Manager: {
@@ -171,7 +171,7 @@ export default function TeamPage() {
             <div key={role} className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                  info.variant === 'gold' ? 'bg-white/ text-white' :
+                  info.variant === 'gold' ? 'bg-white/10 text-white' :
                   info.variant === 'info' ? 'bg-blue-500/10 text-blue-400' :
                   'bg-[#494F55]/30 text-[#949599]'
                 }`}>
@@ -223,7 +223,7 @@ export default function TeamPage() {
                       >
                         <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                           <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <div className="w-11 h-11 rounded-full bg-white/ text-white flex items-center justify-center text-sm font-semibold shrink-0">
+                            <div className="w-11 h-11 rounded-full bg-white/10 text-white flex items-center justify-center text-sm font-semibold shrink-0">
                               {initials(m.name || m.email)}
                             </div>
                             <div className="min-w-0">
@@ -343,7 +343,7 @@ export default function TeamPage() {
                     onClick={() => handleRoleChange(role)}
                     className={`flex flex-col items-center gap-1.5 px-3 py-3 rounded-lg border text-sm font-medium transition ${
                       iForm.role === role
-                        ? 'bg-white/ border-white/ text-white'
+                        ? 'bg-white/10 border-white/20 text-white'
                         : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599] hover:border-[#494F55]/60'
                     }`}
                   >
@@ -367,7 +367,7 @@ export default function TeamPage() {
                     onClick={() => togglePerm(perm)}
                     className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm transition text-left ${
                       checked
-                        ? 'bg-white/ border-white/ text-[#EFEFF1]'
+                        ? 'bg-white/10 border-white/20 text-[#EFEFF1]'
                         : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599] hover:border-[#494F55]/60'
                     }`}
                   >

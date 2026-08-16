@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/ blur-3xl" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/10 blur-3xl" />
       </div>
 
       <motion.div
@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
                       pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },
                     })}
                     className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-                      errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
+                      errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/50'
                     }`}
                   />
                 </div>

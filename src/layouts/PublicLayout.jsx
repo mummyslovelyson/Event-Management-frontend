@@ -151,7 +151,7 @@ export default function PublicLayout() {
                 </Link>
               ) : (
                 <>
-                  <Link to="/login" className="block w-full text-center px-4 py-3 rounded-xl border border-[#494F55]/50 text-[#EFEFF1] text-sm font-medium hover:border-white/ transition">
+                  <Link to="/login" className="block w-full text-center px-4 py-3 rounded-xl border border-[#494F55]/50 text-[#EFEFF1] text-sm font-medium hover:border-white/40 transition">
                     Sign In
                   </Link>
                   <Link to="/register" className="block w-full text-center px-4 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold">
@@ -183,7 +183,7 @@ export default function PublicLayout() {
               </p>
               <div className="flex items-center gap-3 mt-5">
                 {['Twitter', 'Instagram', 'Facebook', 'LinkedIn'].map((s) => (
-                  <a key={s} href="#" className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-[#949599] hover:text-white hover:border-white/ transition text-[10px] font-bold">
+                  <a key={s} href="#" className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-[#949599] hover:text-white hover:border-white/40 transition text-[10px] font-bold">
                     {s[0]}
                   </a>
                 ))}

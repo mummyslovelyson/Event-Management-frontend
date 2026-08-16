@@ -137,7 +137,7 @@ export default function AttendeesPage() {
             <button
               onClick={handleExportCSV}
               disabled={!selectedEvent}
-              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/ hover:bg-white/ disabled:opacity-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 disabled:opacity-50 transition-colors"
             >
               <Download className="w-4 h-4" /> Export CSV
             </button>
@@ -160,7 +160,7 @@ export default function AttendeesPage() {
         <button
           onClick={() => setEventOpen((v) => !v)}
           disabled={loadingEvents}
-          className="flex items-center justify-between gap-2 w-full sm:w-80 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition disabled:opacity-50"
+          className="flex items-center justify-between gap-2 w-full sm:w-80 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition disabled:opacity-50"
         >
           <span className="truncate">
             {loadingEvents ? 'Loading events...' : selectedEventObj ? selectedEventObj.title : 'Choose an event...'}
@@ -209,7 +209,7 @@ export default function AttendeesPage() {
           </div>
           <p className="mt-2 text-2xl font-bold text-emerald-400">{checkedInCount}</p>
         </div>
-        <div className="rounded-xl bg-gradient-to-br from-white/ to-[#171A1D] border border-white/ p-5">
+        <div className="rounded-xl bg-gradient-to-br from-white/10 to-[#171A1D] border border-white/20 p-5">
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-2 text-xs uppercase tracking-wider text-white">
               <Clock className="w-4 h-4" /> Check-in Rate
@@ -237,7 +237,7 @@ export default function AttendeesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name, email, or phone..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition"
+          className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition"
         />
       </div>
 
@@ -296,7 +296,7 @@ export default function AttendeesPage() {
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-white/ text-white flex items-center justify-center text-xs font-semibold shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center text-xs font-semibold shrink-0">
                           {fullName.split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
                         </div>
                         <span className="font-medium text-[#EFEFF1]">{fullName}</span>
@@ -333,7 +333,7 @@ export default function AttendeesPage() {
         {detail && (
           <div className="space-y-5">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-white/ text-white flex items-center justify-center text-xl font-semibold shrink-0">
+              <div className="w-16 h-16 rounded-full bg-white/10 text-white flex items-center justify-center text-xl font-semibold shrink-0">
                 {`${detail.firstName || ''} ${detail.lastName || ''}`.trim().split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               <div className="min-w-0">
@@ -370,7 +370,7 @@ export default function AttendeesPage() {
             )}
 
             {(detail.amountPaid != null || detail.price != null) && (
-              <div className="flex items-center justify-between rounded-lg bg-gradient-to-br from-white/ to-[#1D2124] border border-white/ p-4">
+              <div className="flex items-center justify-between rounded-lg bg-gradient-to-br from-white/10 to-[#1D2124] border border-white/20 p-4">
                 <span className="text-sm font-medium text-[#949599]">Amount Paid</span>
                 <span className="text-lg font-bold text-white">{format(detail.amountPaid ?? detail.price)}</span>
               </div>

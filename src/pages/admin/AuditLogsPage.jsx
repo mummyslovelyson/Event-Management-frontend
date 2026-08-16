@@ -115,10 +115,10 @@ export default function AuditLogsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search logs..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
             />
           </div>
-          <select value={actionFilter} onChange={(e) => setActionFilter(e.target.value)} className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition">
+          <select value={actionFilter} onChange={(e) => setActionFilter(e.target.value)} className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition">
             <option value="">All Actions</option>
             <option value="CREATE">Create</option>
             <option value="UPDATE">Update</option>
@@ -126,7 +126,7 @@ export default function AuditLogsPage() {
             <option value="LOGIN">Login</option>
             <option value="SUSPEND">Suspend</option>
           </select>
-          <select value={entityFilter} onChange={(e) => setEntityFilter(e.target.value)} className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition">
+          <select value={entityFilter} onChange={(e) => setEntityFilter(e.target.value)} className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition">
             <option value="">All Entities</option>
             <option value="user">User</option>
             <option value="event">Event</option>
@@ -135,11 +135,11 @@ export default function AuditLogsPage() {
             <option value="content">Content</option>
             <option value="settings">Settings</option>
           </select>
-          <input type="text" value={userFilter} onChange={(e) => setUserFilter(e.target.value)} placeholder="User..." className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition" />
+          <input type="text" value={userFilter} onChange={(e) => setUserFilter(e.target.value)} placeholder="User..." className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition" />
           <div className="flex items-center gap-2">
-            <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs text-[#EFEFF1] focus:outline-none focus:border-white/ transition" />
+            <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs text-[#EFEFF1] focus:outline-none focus:border-white/50 transition" />
             <span className="text-[#494F55]">—</span>
-            <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs text-[#EFEFF1] focus:outline-none focus:border-white/ transition" />
+            <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs text-[#EFEFF1] focus:outline-none focus:border-white/50 transition" />
           </div>
         </div>
       </div>

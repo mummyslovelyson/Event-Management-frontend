@@ -17,7 +17,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
 
 const genCode = () => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -401,10 +401,10 @@ export default function PromotionsPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="rounded-xl bg-gradient-to-br from-[#171A1D] to-[#1D2124] border border-[#262B2F] p-5 hover:border-white/ transition-all"
+                    className="rounded-xl bg-gradient-to-br from-[#171A1D] to-[#1D2124] border border-[#262B2F] p-5 hover:border-white/40 transition-all"
                   >
                     <div className="flex items-start justify-between">
-                      <div className="w-10 h-10 rounded-lg bg-white/ text-white flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-lg bg-white/10 text-white flex items-center justify-center">
                         <Zap className="w-5 h-5" />
                       </div>
                       <Badge variant={st.v} size="sm" dot>{st.label}</Badge>
@@ -471,7 +471,7 @@ export default function PromotionsPage() {
               <button
                 type="button"
                 onClick={() => setCForm((f) => ({ ...f, code: genCode() }))}
-                className="shrink-0 px-3 rounded-lg border border-[#494F55]/40 text-[#949599] hover:text-white hover:border-white/ transition text-sm"
+                className="shrink-0 px-3 rounded-lg border border-[#494F55]/40 text-[#949599] hover:text-white hover:border-white/40 transition text-sm"
                 title="Auto-generate"
               >
                 <RefreshCw className="w-4 h-4" />

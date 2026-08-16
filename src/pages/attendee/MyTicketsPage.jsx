@@ -245,7 +245,7 @@ export default function MyTicketsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tickets..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
           />
         </div>
       </motion.div>
@@ -282,7 +282,7 @@ export default function MyTicketsPage() {
           className="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-[#1C232B]/60 transition-colors"
         >
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-white/ border border-white/ flex items-center justify-center">
+            <div className="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center">
               <Store className="w-4.5 h-4.5 text-white" />
             </div>
             <div className="text-left">
@@ -392,7 +392,7 @@ export default function MyTicketsPage() {
                 value={sellPrice}
                 onChange={(e) => setSellPrice(e.target.value)}
                 placeholder="e.g. 45"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
               />
               <p className="text-xs text-[#494F55] mt-2">
                 Your ticket will appear in the event's Resale section. When someone buys it, the ticket transfers to them and you're notified.
@@ -443,7 +443,7 @@ export default function MyTicketsPage() {
                 value={transferEmail}
                 onChange={(e) => setTransferEmail(e.target.value)}
                 placeholder="friend@example.com"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
               />
               <p className="text-xs text-[#494F55] mt-2">
                 The recipient will receive an email to accept this ticket transfer.
@@ -521,7 +521,7 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
     <motion.div
       whileHover={{ y: -4 }}
       transition={{ type: 'spring', stiffness: 380, damping: 26 }}
-      className={`group relative rounded-2xl overflow-hidden bg-[#171A1D] border shadow-[0_0_0_0_rgba(212,175,55,0)] hover:shadow-[0_14px_36px_-16px_rgba(0,0,0,0.7),0_0_0_1px_rgba(212,175,55,0.15)] ${isCancelled ? 'border-red-500/30 opacity-70' : 'border-[#262B2F] hover:border-white/'} transition-[border-color,box-shadow,opacity]`}
+      className={`group relative rounded-2xl overflow-hidden bg-[#171A1D] border shadow-[0_0_0_0_rgba(212,175,55,0)] hover:shadow-[0_14px_36px_-16px_rgba(0,0,0,0.7),0_0_0_1px_rgba(212,175,55,0.15)] ${isCancelled ? 'border-red-500/30 opacity-70' : 'border-[#262B2F] hover:border-white/40'} transition-[border-color,box-shadow,opacity]`}
     >
       {/* Banner */}
       <div className="relative h-24 overflow-hidden bg-[#242B32]">
@@ -587,7 +587,7 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
             <motion.div
               whileHover={{ scale: 1.08 }}
               transition={{ type: 'spring', stiffness: 400, damping: 18 }}
-              className="w-28 h-28 rounded-xl bg-white p-2 flex items-center justify-center ring-1 ring-transparent hover:ring-white/ transition-shadow"
+              className="w-28 h-28 rounded-xl bg-white p-2 flex items-center justify-center ring-1 ring-transparent hover:ring-white/40 transition-shadow"
             >
               <QRCodeSVG value={qrValue} size={96} level="M" includeMargin={false} />
             </motion.div>
@@ -601,27 +601,27 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
         <div className="flex gap-2 p-5 pt-0">
           <button
             onClick={onDownload}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/ hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
           >
             <Download className="w-3.5 h-3.5" /> Download
           </button>
           <button
             onClick={onPrint}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/ hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
           >
             <Printer className="w-3.5 h-3.5" /> Print
           </button>
           <button
             onClick={onTransfer}
             disabled={isCancelled}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/ hover:bg-[#242B32] disabled:opacity-40 disabled:cursor-not-allowed transition-colors group-hover:border-[#494F55]/60"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] disabled:opacity-40 disabled:cursor-not-allowed transition-colors group-hover:border-[#494F55]/60"
           >
             <Send className="w-3.5 h-3.5" /> Transfer
           </button>
           <button
             onClick={onSell}
             disabled={isCancelled}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white/ border border-white/ text-white text-xs font-semibold hover:bg-white hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-xs font-semibold hover:bg-white hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Tag className="w-3.5 h-3.5" /> Sell
           </button>

@@ -49,13 +49,13 @@ export default function RegisterPage() {
 
   const inputClass = (field) =>
     `w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-      errors[field] ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
+      errors[field] ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/50'
     }`;
 
   return (
     <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/ blur-3xl" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/10 blur-3xl" />
       </div>
 
       <motion.div
@@ -220,7 +220,7 @@ export default function RegisterPage() {
                 type="checkbox"
                 checked={agree}
                 onChange={(e) => setAgree(e.target.checked)}
-                className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] text-white focus:ring-white/ mt-0.5"
+                className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] text-white focus:ring-white/30 mt-0.5"
               />
               <span className="text-xs text-[#949599] leading-relaxed">
                 I agree to the{' '}

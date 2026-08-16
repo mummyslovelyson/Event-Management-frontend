@@ -125,7 +125,7 @@ export default function OrganizerDashboard() {
           <Link
             key={label}
             to={to}
-            className="flex items-center gap-3 p-4 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/ transition-colors group"
+            className="flex items-center gap-3 p-4 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/40 transition-colors group"
           >
             <Icon className="w-5 h-5 text-[#5A6166] shrink-0 group-hover:text-white transition-colors" />
             <span className="text-sm font-medium text-[#EFEFF1] transition-colors">{label}</span>

@@ -148,7 +148,7 @@ export default function ReportsPage() {
         subtitle="Track revenue, attendance, and sales performance."
         actions={
           <>
-            <button onClick={handleExportCSV} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/ hover:bg-white/ transition-colors">
+            <button onClick={handleExportCSV} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 transition-colors">
               <Download className="w-4 h-4" /> Download CSV
             </button>
             <button onClick={handleExportPDF} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors">
@@ -170,7 +170,7 @@ export default function ReportsPage() {
                 value={fromDate}
                 max={toDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition"
               />
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function ReportsPage() {
                 value={toDate}
                 min={fromDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition"
               />
             </div>
           </div>
@@ -355,7 +355,7 @@ export default function ReportsPage() {
                   <button
                     key={g}
                     onClick={() => setSalesGranularity(g)}
-                    className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition ${salesGranularity === g ? 'bg-white/ text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition ${salesGranularity === g ? 'bg-white/10 text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
                   >
                     {g}
                   </button>

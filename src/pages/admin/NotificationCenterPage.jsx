@@ -147,8 +147,8 @@ export default function NotificationCenterPage() {
           {templates.map((t) => {
             const TypeIcon = typeOptions.find((o) => o.key === t.type)?.icon || Mail;
             return (
-              <div key={t.id} className="flex items-center gap-3 p-3.5 rounded-lg bg-[#1D2124] border border-[#262B2F] hover:border-white/ transition">
-                <div className="w-9 h-9 rounded-lg bg-white/ text-white flex items-center justify-center shrink-0"><TypeIcon className="w-4 h-4" /></div>
+              <div key={t.id} className="flex items-center gap-3 p-3.5 rounded-lg bg-[#1D2124] border border-[#262B2F] hover:border-white/40 transition">
+                <div className="w-9 h-9 rounded-lg bg-white/10 text-white flex items-center justify-center shrink-0"><TypeIcon className="w-4 h-4" /></div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-[#EFEFF1]">{t.name}</p>
                   <p className="text-xs text-[#949599] truncate">{t.desc}</p>
@@ -179,30 +179,30 @@ export default function NotificationCenterPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Title</label>
-            <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Notification title" className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition" />
+            <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Notification title" className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition" />
           </div>
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Message</label>
-            <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Notification message..." rows={4} className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ resize-none transition" />
+            <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Notification message..." rows={4} className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 resize-none transition" />
           </div>
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">Target Audience</label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {targetOptions.map((t) => (
-                <button key={t.key} onClick={() => setForm({ ...form, target: t.key })} className={`px-3 py-2 rounded-lg text-sm font-medium border transition ${form.target === t.key ? 'bg-white/ text-white border-white/' : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-[#494F55]/60'}`}>
+                <button key={t.key} onClick={() => setForm({ ...form, target: t.key })} className={`px-3 py-2 rounded-lg text-sm font-medium border transition ${form.target === t.key ? 'bg-white/10 text-white border-white/20' : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-[#494F55]/60'}`}>
                   {t.label}
                 </button>
               ))}
             </div>
             {form.target === 'specific' && (
-              <input type="text" value={form.userId} onChange={(e) => setForm({ ...form, userId: e.target.value })} placeholder="User ID or email" className="mt-2 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition" />
+              <input type="text" value={form.userId} onChange={(e) => setForm({ ...form, userId: e.target.value })} placeholder="User ID or email" className="mt-2 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition" />
             )}
           </div>
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">Delivery Type</label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {typeOptions.map(({ key, label, icon: Icon }) => (
-                <button key={key} onClick={() => setForm({ ...form, type: key })} className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition ${form.type === key ? 'bg-white/ text-white border-white/' : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-[#494F55]/60'}`}>
+                <button key={key} onClick={() => setForm({ ...form, type: key })} className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition ${form.type === key ? 'bg-white/10 text-white border-white/20' : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-[#494F55]/60'}`}>
                   <Icon className="w-4 h-4" /> {label}
                 </button>
               ))}

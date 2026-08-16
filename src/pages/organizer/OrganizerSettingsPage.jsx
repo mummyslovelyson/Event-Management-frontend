@@ -16,7 +16,7 @@ import Badge from '@/components/common/Badge';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
 
 const labelCls = 'block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider';
 
@@ -212,7 +212,7 @@ export default function OrganizerSettingsPage() {
                     <button
                       type="button"
                       onClick={() => logoInput.current?.click()}
-                      className="w-full aspect-square rounded-xl bg-[#171A1D] border border-dashed border-[#494F55]/50 hover:border-white/ flex items-center justify-center overflow-hidden transition group"
+                      className="w-full aspect-square rounded-xl bg-[#171A1D] border border-dashed border-[#494F55]/50 hover:border-white/40 flex items-center justify-center overflow-hidden transition group"
                     >
                       {logoPreview ? (
                         <img src={logoPreview} alt="logo" className="w-full h-full object-cover" />
@@ -230,7 +230,7 @@ export default function OrganizerSettingsPage() {
                     <button
                       type="button"
                       onClick={() => bannerInput.current?.click()}
-                      className="w-full h-40 sm:h-44 rounded-xl bg-[#171A1D] border border-dashed border-[#494F55]/50 hover:border-white/ flex items-center justify-center overflow-hidden transition group"
+                      className="w-full h-40 sm:h-44 rounded-xl bg-[#171A1D] border border-dashed border-[#494F55]/50 hover:border-white/40 flex items-center justify-center overflow-hidden transition group"
                     >
                       {bannerPreview ? (
                         <img src={bannerPreview} alt="banner" className="w-full h-full object-cover" />
@@ -293,7 +293,7 @@ export default function OrganizerSettingsPage() {
                           onClick={() => setPayment((p) => ({ ...p, payoutMethod: opt.value }))}
                           className={`flex items-center gap-2.5 px-4 py-3 rounded-lg border text-sm font-medium transition ${
                             payment.payoutMethod === opt.value
-                              ? 'bg-white/ border-white/ text-white'
+                              ? 'bg-white/10 border-white/20 text-white'
                               : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599] hover:border-[#494F55]/60'
                           }`}
                         >

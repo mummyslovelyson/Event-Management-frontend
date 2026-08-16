@@ -18,7 +18,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
 
 const COLORS = { gold: '#EFEFF1', muted: '#949599', dim: '#494F55', green: '#34d399', red: '#f87171' };
 
@@ -149,10 +149,10 @@ export default function WalletPage() {
       ) : (
         <>
           {/* Balance card */}
-          <div className="relative rounded-2xl overflow-hidden border border-white/">
+          <div className="relative rounded-2xl overflow-hidden border border-white/20">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1C232B] via-[#242B32] to-[#1D2124]" />
-            <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/ blur-3xl" />
-            <div className="absolute -bottom-16 -left-8 w-40 h-40 rounded-full bg-white/ blur-3xl" />
+            <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -bottom-16 -left-8 w-40 h-40 rounded-full bg-white/10 blur-3xl" />
             <div className="relative p-6 sm:p-8">
               <div className="flex items-start justify-between">
                 <div>
@@ -166,7 +166,7 @@ export default function WalletPage() {
                     </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/ border border-white/">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-white/20">
                   <span className="w-6 h-6 rounded bg-white flex items-center justify-center">
                     <span className="text-[#1C232B] font-bold text-xs">T</span>
                   </span>
@@ -344,7 +344,7 @@ export default function WalletPage() {
         }
       >
         <form onSubmit={submitWithdraw} className="space-y-4">
-          <div className="rounded-lg bg-gradient-to-br from-white/ to-[#1D2124] border border-white/ p-4 flex items-center justify-between">
+          <div className="rounded-lg bg-gradient-to-br from-white/10 to-[#1D2124] border border-white/20 p-4 flex items-center justify-between">
             <span className="text-sm text-[#949599]">Available</span>
             <span className="text-lg font-bold text-white">{format(balance.available)}</span>
           </div>

@@ -30,7 +30,7 @@ const EVENT_STATUS = {
   pending: { label: 'Pending', cls: 'bg-amber-500/15 text-amber-400' },
   published: { label: 'Published', cls: 'bg-emerald-500/15 text-emerald-400' },
   cancelled: { label: 'Cancelled', cls: 'bg-red-500/15 text-red-400' },
-  completed: { label: 'Completed', cls: 'bg-white/ text-white' },
+  completed: { label: 'Completed', cls: 'bg-white/10 text-white' },
   rejected: { label: 'Rejected', cls: 'bg-red-500/15 text-red-400' },
 };
 
@@ -224,7 +224,7 @@ export default function AdminDashboard() {
             </span>
             <button
               onClick={() => fetchDashboard(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#EFEFF1] hover:border-white/ transition"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#EFEFF1] hover:border-white/40 transition"
               title="Refresh dashboard"
             >
               <RefreshCw className="w-4 h-4" /> Refresh
@@ -245,7 +245,7 @@ export default function AdminDashboard() {
           icon={CircleDollarSign}
           label="Gross Revenue"
           value={format(o.totalRevenue)}
-          accent={{ bg: 'bg-white/', text: 'text-white' }}
+          accent={{ bg: 'bg-white/10', text: 'text-white' }}
           sub={
             <div className="mt-1.5 flex items-center gap-2 flex-wrap">
               <DeltaPill value={o.revenueTrend} />
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
           icon={TicketIcon}
           label="Tickets Sold"
           value={(o.ticketsSold ?? 0).toLocaleString()}
-          accent={{ bg: 'bg-white/', text: 'text-white' }}
+          accent={{ bg: 'bg-white/10', text: 'text-white' }}
           sub={
             <p className="mt-1.5 text-[11px] text-[#949599]">
               <span className="text-white font-semibold">{(o.ticketsSoldToday ?? 0).toLocaleString()}</span> sold today
@@ -268,7 +268,7 @@ export default function AdminDashboard() {
           icon={Users}
           label="Total Users"
           value={(o.totalUsers ?? 0).toLocaleString()}
-          accent={{ bg: 'bg-white/', text: 'text-white' }}
+          accent={{ bg: 'bg-white/10', text: 'text-white' }}
           sub={
             <p className="mt-1.5 text-[11px] text-[#949599]">
               <span className="text-white font-semibold">{(o.totalOrganizers ?? 0).toLocaleString()}</span> organizers
@@ -279,7 +279,7 @@ export default function AdminDashboard() {
           icon={CalendarDays}
           label="Total Events"
           value={(o.totalEvents ?? 0).toLocaleString()}
-          accent={{ bg: 'bg-white/', text: 'text-white' }}
+          accent={{ bg: 'bg-white/10', text: 'text-white' }}
           sub={
             <p className="mt-1.5 text-[11px] text-[#949599]">
               <span className="text-amber-400 font-semibold">{(o.pendingEvents ?? 0).toLocaleString()}</span> pending approval

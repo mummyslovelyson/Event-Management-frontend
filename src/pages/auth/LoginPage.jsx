@@ -37,7 +37,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       {/* Background accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/ blur-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-white/10 blur-3xl" />
       </div>
 
       <motion.div
@@ -71,7 +71,7 @@ export default function LoginPage() {
                     pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },
                   })}
                   className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-                    errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
+                    errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/50'
                   }`}
                 />
               </div>
@@ -90,7 +90,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 characters' } })}
                   className={`w-full pl-10 pr-10 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
-                    errors.password ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/'
+                    errors.password ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/50'
                   }`}
                 />
                 <button

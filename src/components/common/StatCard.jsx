@@ -57,7 +57,7 @@ export default function StatCard({ icon: Icon, label, value, trend, trendLabel, 
       whileHover={{ y: -2 }}
       className={`relative rounded-xl p-5 border ${
         accent
-          ? 'bg-gradient-to-br from-[#1A1D20] to-[#15181A] border-white/'
+          ? 'bg-gradient-to-br from-[#1A1D20] to-[#15181A] border-white/20'
           : 'bg-[#171A1D] border-[#262B2F] hover:border-[#3A4045] transition-colors'
       }`}
     >

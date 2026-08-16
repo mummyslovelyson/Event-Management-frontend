@@ -162,10 +162,10 @@ export default function ExploreEventsPage() {
 
       {/* Recommended for you */}
       {isAuthenticated && (recommendedLoading || recommended.length > 0) && (
-        <motion.section variants={itemFade} className="rounded-xl bg-gradient-to-br from-white/ via-[#171A1D] to-[#171A1D] border border-white/ p-4 sm:p-5">
+        <motion.section variants={itemFade} className="rounded-xl bg-gradient-to-br from-white/10 via-[#171A1D] to-[#171A1D] border border-white/20 p-4 sm:p-5">
           <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-white/ text-white flex items-center justify-center">
+              <span className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center">
                 <Sparkles className="w-4 h-4" />
               </span>
               <div>
@@ -208,7 +208,7 @@ export default function ExploreEventsPage() {
             value={query}
             onChange={(e) => { setQuery(e.target.value); setPage(1); }}
             placeholder="Search events, artists, venues..."
-            className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ focus:ring-1 focus:ring-white/ transition"
+            className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition"
           />
           {query && (
             <button
@@ -223,7 +223,7 @@ export default function ExploreEventsPage() {
           onClick={() => setShowFilters((v) => !v)}
           className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
             showFilters || activeFilterCount > 0
-              ? 'bg-white/ border-white/ text-white'
+              ? 'bg-white/10 border-white/20 text-white'
               : 'bg-[#171A1D] border-[#494F55]/40 text-[#EFEFF1] hover:border-[#494F55]/60'
           }`}
         >
@@ -273,7 +273,7 @@ export default function ExploreEventsPage() {
                 value={filters.location}
                 onChange={(e) => updateFilter('location', e.target.value)}
                 placeholder="City or venue"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
               />
             </FilterField>
           </div>
@@ -309,7 +309,7 @@ export default function ExploreEventsPage() {
             <select
               value={filters.sort}
               onChange={(e) => { updateFilter('sort', e.target.value); }}
-              className="appearance-none pl-3 pr-9 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition cursor-pointer"
+              className="appearance-none pl-3 pr-9 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value} className="bg-[#171A1D]">{o.label}</option>
@@ -378,7 +378,7 @@ function SelectInput({ value, onChange, options }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none px-3 py-2.5 pr-9 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/ transition cursor-pointer"
+        className="w-full appearance-none px-3 py-2.5 pr-9 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value} className="bg-[#171A1D]">{o.label}</option>

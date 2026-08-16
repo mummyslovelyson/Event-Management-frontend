@@ -153,10 +153,10 @@ export default function CategoriesPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
-                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/ transition-all group"
+                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/40 transition-all group"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-white/ text-white flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-white/10 text-white flex items-center justify-center">
                     <Icon className="w-6 h-6" />
                   </div>
                   <div className="flex items-center gap-1">
@@ -214,7 +214,7 @@ export default function CategoriesPage() {
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value, slug: slugify(e.target.value) }))}
               placeholder="e.g. Music & Concerts"
-              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ transition"
+              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
             />
           </div>
           <div>
@@ -224,7 +224,7 @@ export default function CategoriesPage() {
               value={form.slug}
               onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
               placeholder="auto-generated"
-              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] font-mono focus:outline-none focus:border-white/ transition"
+              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] font-mono focus:outline-none focus:border-white/50 transition"
             />
           </div>
           <div>
@@ -236,7 +236,7 @@ export default function CategoriesPage() {
                   onClick={() => setForm((f) => ({ ...f, icon: key }))}
                   className={`aspect-square rounded-lg flex items-center justify-center border transition ${
                     form.icon === key
-                      ? 'bg-white/ text-white border-white/'
+                      ? 'bg-white/10 text-white border-white/20'
                       : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-[#494F55]/60'
                   }`}
                 >

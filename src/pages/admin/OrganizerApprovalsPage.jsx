@@ -153,11 +153,11 @@ export default function OrganizerApprovalsPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/ transition-all"
+              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/40 transition-all"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-white/ text-white flex items-center justify-center text-sm font-bold">
+                  <div className="w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center text-sm font-bold">
                     {(app.name || '?').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
                   </div>
                   <div>
@@ -184,7 +184,7 @@ export default function OrganizerApprovalsPage() {
 
               <button
                 onClick={() => openReview(app)}
-                className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#EFEFF1] hover:border-white/ hover:text-white transition"
+                className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#EFEFF1] hover:border-white/40 hover:text-white transition"
               >
                 <Eye className="w-4 h-4" /> Review Application
               </button>
@@ -216,7 +216,7 @@ export default function OrganizerApprovalsPage() {
           <div className="space-y-5">
             {/* Profile header */}
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-white/ text-white flex items-center justify-center text-xl font-bold">
+              <div className="w-16 h-16 rounded-full bg-white/10 text-white flex items-center justify-center text-xl font-bold">
                 {(reviewApp.name || '?').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               <div>
@@ -284,7 +284,7 @@ export default function OrganizerApprovalsPage() {
                   value={reviewData.reason}
                   onChange={(e) => setReviewData((d) => ({ ...d, reason: e.target.value }))}
                   placeholder="Reason for rejection (sent to applicant)..."
-                  className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/ resize-none"
+                  className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 resize-none"
                   rows={3}
                 />
               )}
