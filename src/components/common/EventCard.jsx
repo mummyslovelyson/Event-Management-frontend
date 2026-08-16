@@ -46,13 +46,13 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
         to={`/events/${event.id}`}
         className="flex gap-3 p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-[#D4AF37]/40 transition group"
       >
-        <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-[#1E252B]">
+        <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-[#1C232B]">
           {img && <img src={img} alt={event.title} className="w-full h-full object-cover" />}
         </div>
         <div className="min-w-0 flex-1">
           <span className="text-[10px] font-semibold uppercase tracking-wide text-[#D4AF37]">{event.category}</span>
-          <h4 className="text-sm font-semibold text-[#EDF0F1] truncate group-hover:text-[#D4AF37] transition">{event.title}</h4>
-          <p className="text-xs text-[#8A9196] flex items-center gap-1 mt-1">
+          <h4 className="text-sm font-semibold text-[#EFEFF1] truncate group-hover:text-[#D4AF37] transition">{event.title}</h4>
+          <p className="text-xs text-[#949599] flex items-center gap-1 mt-1">
             <Calendar className="w-3 h-3" /> {formattedDate}
           </p>
         </div>
@@ -67,7 +67,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
       className="group rounded-xl overflow-hidden bg-[#171A1D] border border-[#262B2F] hover:border-[#D4AF37]/40 hover:shadow-xl hover:shadow-black/25 transition-all"
     >
       <Link to={`/events/${event.id}`} className="block">
-        <div className="relative aspect-[16/10] overflow-hidden bg-[#1E252B]">
+        <div className="relative aspect-[16/10] overflow-hidden bg-[#1C232B]">
           {img ? (
             <img
               src={img}
@@ -80,7 +80,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
             </div>
           )}
           {event.category && (
-            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wide bg-[#1E252B]/90 text-[#D4AF37] backdrop-blur-sm">
+            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wide bg-[#1C232B]/90 text-[#D4AF37] backdrop-blur-sm">
               {event.category}
             </span>
           )}
@@ -88,7 +88,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
             onClick={handleFav}
             disabled={loading}
             whileTap={{ scale: 0.8 }}
-            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#1E252B]/90 backdrop-blur-sm flex items-center justify-center text-[#EDF0F1] hover:scale-110 transition disabled:opacity-50"
+            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#1C232B]/90 backdrop-blur-sm flex items-center justify-center text-[#EFEFF1] hover:scale-110 transition disabled:opacity-50"
             aria-label="Toggle favorite"
           >
             <motion.span
@@ -104,15 +104,15 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
         </div>
 
         <div className="p-4">
-          <h3 className="text-base font-semibold text-[#EDF0F1] line-clamp-1 group-hover:text-[#D4AF37] transition">
+          <h3 className="text-base font-semibold text-[#EFEFF1] line-clamp-1 group-hover:text-[#D4AF37] transition">
             {event.title}
           </h3>
           <div className="mt-3 space-y-1.5">
-            <p className="text-sm text-[#8A9196] flex items-center gap-1.5">
+            <p className="text-sm text-[#949599] flex items-center gap-1.5">
               <Calendar className="w-4 h-4 text-[#494F55] shrink-0" />
               <span className="truncate">{formattedDate}</span>
             </p>
-            <p className="text-sm text-[#8A9196] flex items-center gap-1.5">
+            <p className="text-sm text-[#949599] flex items-center gap-1.5">
               <MapPin className="w-4 h-4 text-[#494F55] shrink-0" />
               <span className="truncate">{event.venue || event.location || 'Venue TBA'}</span>
             </p>
@@ -122,7 +122,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
               <span className="text-xs text-[#494F55]">From</span>
               <span className="text-lg font-bold text-[#D4AF37]">{priceLabel}</span>
             </div>
-            <span className="px-3 py-1.5 rounded-lg bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-semibold group-hover:bg-[#D4AF37] group-hover:text-[#1E252B] transition">
+            <span className="px-3 py-1.5 rounded-lg bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-semibold group-hover:bg-[#D4AF37] group-hover:text-[#1C232B] transition">
               View Details
             </span>
           </div>

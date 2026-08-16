@@ -27,7 +27,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange, sibl
         whileTap={{ scale: 0.92 }}
         onClick={() => go(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`${btnBase} text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#262B2F] disabled:opacity-30 disabled:cursor-not-allowed border border-[#262B2F]`}
+        className={`${btnBase} text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] disabled:opacity-30 disabled:cursor-not-allowed border border-[#262B2F]`}
         aria-label="Previous page"
       >
         <ChevronLeft className="w-4 h-4" />
@@ -45,8 +45,8 @@ export default function Pagination({ currentPage, totalPages, onPageChange, sibl
             onClick={() => go(item)}
             className={`${btnBase} border ${
               item === currentPage
-                ? 'bg-[#D4AF37] text-[#1E252B] border-[#D4AF37]'
-                : 'text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#262B2F] border-[#262B2F]'
+                ? 'bg-[#D4AF37] text-[#1C232B] border-[#D4AF37]'
+                : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] border-[#262B2F]'
             }`}
           >
             {item}
@@ -58,7 +58,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange, sibl
         whileTap={{ scale: 0.92 }}
         onClick={() => go(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`${btnBase} text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#262B2F] disabled:opacity-30 disabled:cursor-not-allowed border border-[#262B2F]`}
+        className={`${btnBase} text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] disabled:opacity-30 disabled:cursor-not-allowed border border-[#262B2F]`}
         aria-label="Next page"
       >
         <ChevronRight className="w-4 h-4" />

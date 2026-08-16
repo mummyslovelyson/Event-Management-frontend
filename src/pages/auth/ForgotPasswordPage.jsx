@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1E252B] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
       </div>
@@ -43,11 +43,11 @@ export default function ForgotPasswordPage() {
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-2">
               <div className="w-11 h-11 rounded-xl bg-[#D4AF37] flex items-center justify-center shadow-lg">
-                <Ticket className="w-6 h-6 text-[#1E252B]" strokeWidth={2.5} />
+                <Ticket className="w-6 h-6 text-[#1C232B]" strokeWidth={2.5} />
               </div>
             </Link>
-            <h1 className="text-2xl font-bold text-[#F2F4F5]">Forgot Password?</h1>
-            <p className="mt-1 text-sm text-[#7D8387]">
+            <h1 className="text-2xl font-bold text-[#EFEFF1]">Forgot Password?</h1>
+            <p className="mt-1 text-sm text-[#949599]">
               {sent ? 'Check your email for the reset link' : 'Enter your email and we\'ll send you a reset link'}
             </p>
           </div>
@@ -62,8 +62,8 @@ export default function ForgotPasswordPage() {
               <div className="w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto mb-5">
                 <MailCheck className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-semibold text-[#F2F4F5]">Email Sent!</h3>
-              <p className="mt-2 text-sm text-[#7D8387]">
+              <h3 className="text-lg font-semibold text-[#EFEFF1]">Email Sent!</h3>
+              <p className="mt-2 text-sm text-[#949599]">
                 We've sent a password reset link to <span className="text-[#D4AF37] font-medium">{email}</span>.
                 The link will expire in 1 hour.
               </p>
@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <input type="text" {...register('website')} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Email Address</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Email Address</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
                       required: 'Email is required',
                       pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },
                     })}
-                    className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1E252B] border text-sm text-[#F2F4F5] placeholder:text-[#494F55] focus:outline-none transition-colors ${
+                    className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
                       errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
                     }`}
                   />
@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</> : <><Send className="w-4 h-4" /> Send Reset Link</>}
               </button>
@@ -108,7 +108,7 @@ export default function ForgotPasswordPage() {
           )}
 
           <div className="mt-6 text-center">
-            <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-[#7D8387] hover:text-[#D4AF37] transition">
+            <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-[#949599] hover:text-[#D4AF37] transition">
               <ArrowLeft className="w-4 h-4" /> Back to Login
             </Link>
           </div>

@@ -23,8 +23,8 @@ const STEPS = [
 ];
 
 const inputCls =
-  'w-full px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
-const labelCls = 'block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider';
+  'w-full px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+const labelCls = 'block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider';
 const errCls = 'mt-1 text-xs text-red-400';
 
 function Field({ name, label, type = 'text', placeholder, validation, options, textarea, rows }) {
@@ -141,7 +141,7 @@ const StepMedia = () => {
           {uploading === 'banner' ? (
             <div className="flex flex-col items-center gap-2 py-6">
               <Upload className="w-8 h-8 text-[#D4AF37] mx-auto animate-pulse" />
-              <p className="text-sm text-[#8A9196]">Uploading banner...</p>
+              <p className="text-sm text-[#949599]">Uploading banner...</p>
             </div>
           ) : bannerUrl ? (
             <div className="relative">
@@ -151,7 +151,7 @@ const StepMedia = () => {
           ) : (
             <>
               <Upload className="w-8 h-8 text-[#494F55] mx-auto mb-2" />
-              <p className="text-sm text-[#8A9196]">Drag & drop or <span className="text-[#D4AF37]">browse</span></p>
+              <p className="text-sm text-[#949599]">Drag & drop or <span className="text-[#D4AF37]">browse</span></p>
               <p className="text-xs text-[#494F55] mt-1">Recommended 1600x900px, max 5MB</p>
             </>
           )}
@@ -200,12 +200,12 @@ const StepCapacity = () => {
       <div className="space-y-3">
         <label className="flex items-center justify-between p-4 rounded-lg bg-[#171A1D] border border-[#262B2F] cursor-pointer hover:border-[#494F55]/50">
           <div>
-            <p className="text-sm font-medium text-[#EDF0F1]">Event Visibility</p>
-            <p className="text-xs text-[#8A9196]">Public events are searchable, private are invite-only</p>
+            <p className="text-sm font-medium text-[#EFEFF1]">Event Visibility</p>
+            <p className="text-xs text-[#949599]">Public events are searchable, private are invite-only</p>
           </div>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setValue('visibility', 'public')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${visibility === 'public' ? 'bg-[#D4AF37] text-[#1E252B]' : 'bg-[#494F55]/30 text-[#8A9196]'}`}>Public</button>
-            <button type="button" onClick={() => setValue('visibility', 'private')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${visibility === 'private' ? 'bg-[#D4AF37] text-[#1E252B]' : 'bg-[#494F55]/30 text-[#8A9196]'}`}>Private</button>
+            <button type="button" onClick={() => setValue('visibility', 'public')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${visibility === 'public' ? 'bg-[#D4AF37] text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>Public</button>
+            <button type="button" onClick={() => setValue('visibility', 'private')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${visibility === 'private' ? 'bg-[#D4AF37] text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>Private</button>
           </div>
         </label>
       </div>
@@ -223,7 +223,7 @@ const StepTickets = () => {
   return (
     <div className="space-y-4">
       {fields.length === 0 && (
-        <div className="text-center py-8 text-sm text-[#8A9196]">No ticket types added yet. Click below to add one.</div>
+        <div className="text-center py-8 text-sm text-[#949599]">No ticket types added yet. Click below to add one.</div>
       )}
       <AnimatePresence>
         {fields.map((f, i) => (
@@ -237,7 +237,7 @@ const StepTickets = () => {
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-[#D4AF37]">Ticket Type {i + 1}</span>
               {fields.length > 1 && (
-                <button type="button" onClick={() => remove(i)} className="p-1.5 rounded-md text-[#8A9196] hover:text-red-400 hover:bg-red-500/10 transition"><Trash2 className="w-4 h-4" /></button>
+                <button type="button" onClick={() => remove(i)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition"><Trash2 className="w-4 h-4" /></button>
               )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -271,7 +271,7 @@ const StepTickets = () => {
           </motion.div>
         ))}
       </AnimatePresence>
-      <button type="button" onClick={addTicket} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-[#494F55]/40 text-sm font-medium text-[#8A9196] hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition-colors">
+      <button type="button" onClick={addTicket} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-[#494F55]/40 text-sm font-medium text-[#949599] hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition-colors">
         <Plus className="w-4 h-4" /> Add Another Ticket Type
       </button>
     </div>
@@ -287,25 +287,25 @@ const StepReview = () => {
       <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
         <h3 className="text-sm font-semibold text-[#D4AF37] mb-3">Basic Info</h3>
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          <div><dt className="text-xs text-[#8A9196]">Title</dt><dd className="text-[#EDF0F1]">{d.title || '—'}</dd></div>
-          <div><dt className="text-xs text-[#8A9196]">Category</dt><dd className="text-[#EDF0F1]">{d.category || '—'}</dd></div>
-          <div className="sm:col-span-2"><dt className="text-xs text-[#8A9196]">Description</dt><dd className="text-[#EDF0F1] line-clamp-2">{d.description || '—'}</dd></div>
+          <div><dt className="text-xs text-[#949599]">Title</dt><dd className="text-[#EFEFF1]">{d.title || '—'}</dd></div>
+          <div><dt className="text-xs text-[#949599]">Category</dt><dd className="text-[#EFEFF1]">{d.category || '—'}</dd></div>
+          <div className="sm:col-span-2"><dt className="text-xs text-[#949599]">Description</dt><dd className="text-[#EFEFF1] line-clamp-2">{d.description || '—'}</dd></div>
         </dl>
       </div>
       <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
         <h3 className="text-sm font-semibold text-[#D4AF37] mb-3">Location & Time</h3>
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          <div><dt className="text-xs text-[#8A9196]">Venue</dt><dd className="text-[#EDF0F1]">{d.venue || '—'}</dd></div>
-          <div><dt className="text-xs text-[#8A9196]">Location</dt><dd className="text-[#EDF0F1]">{[d.city, d.country].filter(Boolean).join(', ') || '—'}</dd></div>
-          <div><dt className="text-xs text-[#8A9196]">Date</dt><dd className="text-[#EDF0F1]">{d.startDate || '—'} → {d.endDate || '—'}</dd></div>
-          <div><dt className="text-xs text-[#8A9196]">Time</dt><dd className="text-[#EDF0F1]">{d.startTime || '—'} - {d.endTime || '—'}</dd></div>
+          <div><dt className="text-xs text-[#949599]">Venue</dt><dd className="text-[#EFEFF1]">{d.venue || '—'}</dd></div>
+          <div><dt className="text-xs text-[#949599]">Location</dt><dd className="text-[#EFEFF1]">{[d.city, d.country].filter(Boolean).join(', ') || '—'}</dd></div>
+          <div><dt className="text-xs text-[#949599]">Date</dt><dd className="text-[#EFEFF1]">{d.startDate || '—'} → {d.endDate || '—'}</dd></div>
+          <div><dt className="text-xs text-[#949599]">Time</dt><dd className="text-[#EFEFF1]">{d.startTime || '—'} - {d.endTime || '—'}</dd></div>
         </dl>
       </div>
       <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
         <h3 className="text-sm font-semibold text-[#D4AF37] mb-3">Capacity & Settings</h3>
         <dl className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-          <div><dt className="text-xs text-[#8A9196]">Total Capacity</dt><dd className="text-[#EDF0F1]">{d.totalCapacity || '—'}</dd></div>
-          <div><dt className="text-xs text-[#8A9196]">Visibility</dt><dd className="text-[#EDF0F1] capitalize">{d.visibility || '—'}</dd></div>
+          <div><dt className="text-xs text-[#949599]">Total Capacity</dt><dd className="text-[#EFEFF1]">{d.totalCapacity || '—'}</dd></div>
+          <div><dt className="text-xs text-[#949599]">Visibility</dt><dd className="text-[#EFEFF1] capitalize">{d.visibility || '—'}</dd></div>
         </dl>
       </div>
       <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
@@ -314,8 +314,8 @@ const StepReview = () => {
           {(d.ticketTypes || []).map((t, i) => (
             <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-[#171A1D]">
               <div>
-                <p className="text-sm font-medium text-[#EDF0F1]">{t.name || `Ticket ${i + 1}`}</p>
-                <p className="text-xs text-[#8A9196]">{t.quantity} available</p>
+                <p className="text-sm font-medium text-[#EFEFF1]">{t.name || `Ticket ${i + 1}`}</p>
+                <p className="text-xs text-[#949599]">{t.quantity} available</p>
               </div>
                 <span className="text-sm font-semibold text-[#D4AF37]">{format(t.price)}</span>
             </div>
@@ -424,7 +424,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
           title={eventId ? 'Edit Event' : 'Create New Event'}
           subtitle="Complete all steps to publish your event."
           actions={
-            <button type="button" onClick={() => navigate(-1)} className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#262B2F] transition sm:self-start">Cancel</button>
+            <button type="button" onClick={() => navigate(-1)} className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition sm:self-start">Cancel</button>
           }
         />
 
@@ -434,10 +434,10 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
             {STEPS.map((s) => (
               <div key={s.id} className="flex items-center flex-1 last:flex-none">
                 <div className="flex flex-col items-center gap-1.5">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${step >= s.id ? 'bg-[#D4AF37] text-[#1E252B]' : 'bg-[#494F55]/30 text-[#8A9196]'}`}>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${step >= s.id ? 'bg-[#D4AF37] text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>
                     {step > s.id ? <CheckCircle2 className="w-5 h-5" /> : <s.icon className="w-4 h-4" />}
                   </div>
-                  <span className={`text-[10px] font-medium hidden sm:block ${step >= s.id ? 'text-[#EDF0F1]' : 'text-[#8A9196]'}`}>{s.title}</span>
+                  <span className={`text-[10px] font-medium hidden sm:block ${step >= s.id ? 'text-[#EFEFF1]' : 'text-[#949599]'}`}>{s.title}</span>
                 </div>
                 {s.id < STEPS.length && <div className={`flex-1 h-0.5 mx-2 ${step > s.id ? 'bg-[#D4AF37]' : 'bg-[#494F55]/30'}`} />}
               </div>
@@ -452,7 +452,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 sm:p-6 min-h-[300px]">
           <AnimatePresence mode="wait">
             <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
-              <h2 className="text-lg font-semibold text-[#EDF0F1] mb-5">{STEPS[step - 1].title}</h2>
+              <h2 className="text-lg font-semibold text-[#EFEFF1] mb-5">{STEPS[step - 1].title}</h2>
               {step === 1 && <StepBasicInfo categories={categories} />}
               {step === 2 && <StepLocationTime />}
               {step === 3 && <StepMedia />}
@@ -465,19 +465,19 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
 
         {/* Navigation */}
         <div className="flex items-center justify-between">
-          <button type="button" onClick={back} disabled={step === 1 || submitting} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 disabled:opacity-30 disabled:cursor-not-allowed transition">
+          <button type="button" onClick={back} disabled={step === 1 || submitting} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 disabled:opacity-30 disabled:cursor-not-allowed transition">
             <ChevronLeft className="w-4 h-4" /> Back
           </button>
           {step < 6 ? (
-            <button type="button" onClick={next} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold bg-[#D4AF37] text-[#1E252B] hover:bg-[#c4a030] disabled:opacity-60 transition">
+            <button type="button" onClick={next} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold bg-[#D4AF37] text-[#1C232B] hover:bg-[#c4a030] disabled:opacity-60 transition">
               Next <ChevronRight className="w-4 h-4" />
             </button>
           ) : (
             <div className="flex items-center gap-3">
-              <button type="submit" disabled={submitting} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] border border-[#494F55]/40 hover:bg-[#494F55]/20 disabled:opacity-60 transition">
+              <button type="submit" disabled={submitting} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] border border-[#494F55]/40 hover:bg-[#494F55]/20 disabled:opacity-60 transition">
                 <Save className="w-4 h-4" /> {submitting ? 'Saving...' : 'Save as Draft'}
               </button>
-              <button type="button" onClick={handleSubmit((d) => submit(d, 'published'))} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold bg-[#D4AF37] text-[#1E252B] hover:bg-[#c4a030] disabled:opacity-60 transition">
+              <button type="button" onClick={handleSubmit((d) => submit(d, 'published'))} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold bg-[#D4AF37] text-[#1C232B] hover:bg-[#c4a030] disabled:opacity-60 transition">
                 <Send className="w-4 h-4" /> {submitting ? 'Submitting...' : 'Submit for Review'}
               </button>
             </div>

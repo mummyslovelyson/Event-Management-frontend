@@ -119,7 +119,7 @@ export default function ContentManagementPage() {
         actions={
           <button
             onClick={openAdd}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
           >
             <Plus className="w-4 h-4" /> Add {itemLabels[tab]}
           </button>
@@ -133,7 +133,7 @@ export default function ContentManagementPage() {
             key={key}
             onClick={() => setTab(key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-              tab === key ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#7D8387] hover:text-[#F2F4F5] hover:bg-[#242B32]'
+              tab === key ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
             <Icon className="w-4 h-4" /> {label}
@@ -157,16 +157,16 @@ export default function ContentManagementPage() {
                   <div className="w-full h-32 bg-[#494F55]/20 flex items-center justify-center"><ImageIcon className="w-8 h-8 text-[#494F55]" /></div>
                 )}
                 <div className="p-4">
-                  <h3 className="font-semibold text-[#F2F4F5] truncate">{item.title}</h3>
+                  <h3 className="font-semibold text-[#EFEFF1] truncate">{item.title}</h3>
                   {item.link && <p className="text-xs text-[#D4AF37] mt-1 truncate">{item.link}</p>}
                   <div className="mt-3 flex items-center justify-between">
                     <Badge variant={item.isActive === false ? 'neutral' : 'success'} size="sm" dot>{item.isActive === false ? 'Inactive' : 'Active'}</Badge>
                     <div className="flex items-center gap-1">
-                      <button onClick={() => toggleActive(item)} className="p-1.5 rounded-md text-[#7D8387] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title={item.isActive === false ? 'Activate' : 'Deactivate'}>
+                      <button onClick={() => toggleActive(item)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title={item.isActive === false ? 'Activate' : 'Deactivate'}>
                         {item.isActive === false ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                       </button>
-                      <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#7D8387] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
-                      <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#7D8387] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
+                      <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
+                      <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </div>
                 </div>
@@ -180,14 +180,14 @@ export default function ContentManagementPage() {
                 <div className="w-10 h-10 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center shrink-0"><HelpCircle className="w-5 h-5" /></div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-medium text-[#F2F4F5]">{item.question}</h3>
+                    <h3 className="font-medium text-[#EFEFF1]">{item.question}</h3>
                     {item.category && <Badge variant="neutral" size="sm">{item.category}</Badge>}
                   </div>
-                  <p className="text-sm text-[#7D8387] mt-1 line-clamp-2">{item.answer}</p>
+                  <p className="text-sm text-[#949599] mt-1 line-clamp-2">{item.answer}</p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#7D8387] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
-                  <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#7D8387] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             ))}
@@ -198,16 +198,16 @@ export default function ContentManagementPage() {
               <div key={item.id} className="flex items-center gap-4 p-5 hover:bg-[#1D2124] transition-colors">
                 {item.image ? <img src={item.image} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" /> : <div className="w-14 h-14 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center shrink-0"><FileText className="w-6 h-6" /></div>}
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-[#F2F4F5] truncate">{item.title}</h3>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-[#7D8387]">
+                  <h3 className="font-medium text-[#EFEFF1] truncate">{item.title}</h3>
+                  <div className="flex items-center gap-3 mt-1 text-xs text-[#949599]">
                     <span className="flex items-center gap-1"><UserIcon className="w-3 h-3" /> {item.author || '—'}</span>
                     <span className="flex items-center gap-1"><CalendarDays className="w-3 h-3" /> {fmtDate(item.createdAt)}</span>
                   </div>
                 </div>
                 <Badge variant={item.status === 'published' ? 'success' : 'pending'} size="sm" dot>{item.status || 'draft'}</Badge>
                 <div className="flex items-center gap-1 shrink-0">
-                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#7D8387] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
-                  <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#7D8387] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             ))}
@@ -218,13 +218,13 @@ export default function ContentManagementPage() {
               <div key={item.id} className="flex items-start gap-4 p-5 hover:bg-[#1D2124] transition-colors">
                 <div className="w-10 h-10 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center shrink-0"><Megaphone className="w-5 h-5" /></div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-[#F2F4F5]">{item.title}</h3>
-                  <p className="text-sm text-[#7D8387] mt-1 line-clamp-2">{item.message || item.content}</p>
+                  <h3 className="font-medium text-[#EFEFF1]">{item.title}</h3>
+                  <p className="text-sm text-[#949599] mt-1 line-clamp-2">{item.message || item.content}</p>
                   <p className="text-xs text-[#494F55] mt-1">{fmtDate(item.createdAt)}</p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#7D8387] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
-                  <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#7D8387] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             ))}
@@ -240,8 +240,8 @@ export default function ContentManagementPage() {
         size="lg"
         footer={
           <>
-            <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
-            <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50">
+            <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
+            <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50">
               {saving ? 'Saving...' : 'Save'}
             </button>
           </>
@@ -257,14 +257,14 @@ export default function ContentManagementPage() {
         title="Delete Content"
         footer={
           <>
-            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button onClick={handleDelete} disabled={deleting} className="px-4 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition disabled:opacity-50">
               {deleting ? 'Deleting...' : 'Delete'}
             </button>
           </>
         }
       >
-        <p className="text-sm text-[#F2F4F5]">Are you sure you want to delete this content? This action cannot be undone.</p>
+        <p className="text-sm text-[#EFEFF1]">Are you sure you want to delete this content? This action cannot be undone.</p>
       </Modal>
     </div>
   );
@@ -278,8 +278,8 @@ function initialForm(tab) {
 }
 
 function ContentForm({ tab, form, setForm }) {
-  const input = 'w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition';
-  const label = 'block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5';
+  const input = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition';
+  const label = 'block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5';
 
   if (tab === 'banners') {
     return (
@@ -291,7 +291,7 @@ function ContentForm({ tab, form, setForm }) {
           <button onClick={() => setForm({ ...form, isActive: !form.isActive })} className={`relative w-10 h-5 rounded-full transition-colors ${form.isActive ? 'bg-[#D4AF37]' : 'bg-[#494F55]/40'}`}>
             <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${form.isActive ? 'translate-x-5' : ''}`} />
           </button>
-          <span className="text-sm text-[#F2F4F5]">Active</span>
+          <span className="text-sm text-[#EFEFF1]">Active</span>
         </label>
       </div>
     );

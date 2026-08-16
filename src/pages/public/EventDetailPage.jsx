@@ -34,10 +34,10 @@ const PAYMENT_METHODS = [
 function EventCardSkeleton() {
   return (
     <div className="rounded-xl overflow-hidden bg-[#171A1D] border border-[#262B2F]">
-      <div className="aspect-[16/10] bg-[#1E252B] animate-pulse" />
+      <div className="aspect-[16/10] bg-[#1C232B] animate-pulse" />
       <div className="p-4 space-y-3">
-        <div className="h-4 bg-[#1E252B] rounded animate-pulse w-3/4" />
-        <div className="h-3 bg-[#1E252B] rounded animate-pulse w-1/2" />
+        <div className="h-4 bg-[#1C232B] rounded animate-pulse w-3/4" />
+        <div className="h-3 bg-[#1C232B] rounded animate-pulse w-1/2" />
       </div>
     </div>
   );
@@ -467,12 +467,12 @@ export default function EventDetailPage() {
           alt={event.title}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1E252B] via-[#1E252B]/50 to-[#1E252B]/30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1E252B]/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1C232B] via-[#1C232B]/50 to-[#1C232B]/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1C232B]/80 to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-            <Link to="/explore" className="group inline-flex items-center gap-1 text-sm text-[#8A9196] hover:text-[#D4AF37] mb-3 transition-colors">
+            <Link to="/explore" className="group inline-flex items-center gap-1 text-sm text-[#949599] hover:text-[#D4AF37] mb-3 transition-colors">
               <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Explore
             </Link>
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -480,18 +480,18 @@ export default function EventDetailPage() {
                 {event.category && (
                   <Badge variant="gold" className="mb-3">{event.category}</Badge>
                 )}
-                <h1 className="text-3xl sm:text-4xl font-bold text-[#EDF0F1] leading-tight">{event.title}</h1>
-                <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-[#8A9196]">
+                <h1 className="text-3xl sm:text-4xl font-bold text-[#EFEFF1] leading-tight">{event.title}</h1>
+                <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-[#949599]">
                   <span className="flex items-center gap-1.5">
-                    <Calendar className="w-4 h-4 text-[#8A9196]" /> {fmtDate}
+                    <Calendar className="w-4 h-4 text-[#949599]" /> {fmtDate}
                   </span>
                   {fmtTime && (
                     <span className="flex items-center gap-1.5">
-                      <Clock className="w-4 h-4 text-[#8A9196]" /> {fmtTime}
+                      <Clock className="w-4 h-4 text-[#949599]" /> {fmtTime}
                     </span>
                   )}
                   <span className="flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-[#8A9196]" /> {event.venue || event.location || 'Venue TBA'}
+                    <MapPin className="w-4 h-4 text-[#949599]" /> {event.venue || event.location || 'Venue TBA'}
                   </span>
                 </div>
               </div>
@@ -503,7 +503,7 @@ export default function EventDetailPage() {
                     onClick={() => setShareOpen((v) => !v)}
                     whileTap={{ scale: 0.88 }}
                     whileHover={{ y: -2 }}
-                    className="w-10 h-10 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EDF0F1] hover:text-[#9AA1A6] hover:border-[#494F55] transition"
+                    className="w-10 h-10 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EFEFF1] hover:text-[#9AA1A6] hover:border-[#494F55] transition"
                   >
                     <Share2 className="w-4 h-4" />
                   </motion.button>
@@ -524,7 +524,7 @@ export default function EventDetailPage() {
                           <button
                             key={s.id}
                             onClick={() => handleShare(s.id)}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#8A9196] hover:text-[#D4AF37] hover:bg-[#494F55]/20 transition"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/20 transition"
                           >
                             <s.icon className="w-4 h-4" /> {s.label}
                           </button>
@@ -538,7 +538,7 @@ export default function EventDetailPage() {
                   disabled={favLoading}
                   whileTap={{ scale: 0.88 }}
                   whileHover={{ y: -2 }}
-                  className="w-10 h-10 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EDF0F1] hover:border-[#494F55] transition disabled:opacity-50"
+                  className="w-10 h-10 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EFEFF1] hover:border-[#494F55] transition disabled:opacity-50"
                 >
                   <motion.span
                     key={isFav ? 'on' : 'off'}
@@ -573,8 +573,8 @@ export default function EventDetailPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs text-[#494F55] uppercase tracking-wider">Organized by</p>
-                    <h3 className="text-sm font-semibold text-[#EDF0F1] truncate">{event.organizer.name}</h3>
-                    <p className="text-xs text-[#8A9196] mt-0.5">
+                    <h3 className="text-sm font-semibold text-[#EFEFF1] truncate">{event.organizer.name}</h3>
+                    <p className="text-xs text-[#949599] mt-0.5">
                       {followersCount.toLocaleString()} follower{followersCount !== 1 ? 's' : ''}
                     </p>
                   </div>
@@ -586,7 +586,7 @@ export default function EventDetailPage() {
                     className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${
                       isFollowing
                         ? 'bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/40 hover:bg-[#D4AF37]/20'
-                        : 'bg-[#D4AF37] text-[#1E252B] hover:bg-[#c4a030]'
+                        : 'bg-[#D4AF37] text-[#1C232B] hover:bg-[#c4a030]'
                     }`}
                   >
                     {followLoading ? (
@@ -608,7 +608,7 @@ export default function EventDetailPage() {
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 py-3 text-sm font-medium transition-colors relative ${
-                    activeTab === tab ? 'text-[#F2F4F5]' : 'text-[#8A9196] hover:text-[#EDF0F1]'
+                    activeTab === tab ? 'text-[#EFEFF1]' : 'text-[#949599] hover:text-[#EFEFF1]'
                   }`}
                 >
                   {tab}
@@ -634,8 +634,8 @@ export default function EventDetailPage() {
                 {activeTab === 'Overview' && (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold text-[#EDF0F1] mb-3">About this event</h3>
-                      <p className="text-sm text-[#8A9196] leading-relaxed whitespace-pre-line">
+                      <h3 className="text-lg font-semibold text-[#EFEFF1] mb-3">About this event</h3>
+                      <p className="text-sm text-[#949599] leading-relaxed whitespace-pre-line">
                         {event.description || 'No description available for this event yet.'}
                       </p>
                     </div>
@@ -654,7 +654,7 @@ export default function EventDetailPage() {
 
                     {mapSrc && (
                       <div>
-                        <h3 className="text-lg font-semibold text-[#EDF0F1] mb-3">Location</h3>
+                        <h3 className="text-lg font-semibold text-[#EFEFF1] mb-3">Location</h3>
                         <div className="rounded-xl overflow-hidden border border-[#262B2F] h-64">
                           <iframe
                             src={mapSrc}
@@ -664,7 +664,7 @@ export default function EventDetailPage() {
                             referrerPolicy="no-referrer-when-downgrade"
                           />
                         </div>
-                        <p className="mt-2 text-sm text-[#8A9196] flex items-center gap-1.5">
+                        <p className="mt-2 text-sm text-[#949599] flex items-center gap-1.5">
                           <MapPin className="w-4 h-4 text-[#494F55]" />
                           {event.venue || event.location}
                         </p>
@@ -700,10 +700,10 @@ export default function EventDetailPage() {
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="min-w-0">
                                   <div className="flex items-center gap-2">
-                                    <h4 className="text-base font-semibold text-[#EDF0F1]">{ticket.name}</h4>
+                                    <h4 className="text-base font-semibold text-[#EFEFF1]">{ticket.name}</h4>
                                     {ticket.isVip && <Badge variant="gold" size="sm">VIP</Badge>}
                                   </div>
-                                  <p className="mt-1 text-sm text-[#8A9196] line-clamp-2">{ticket.description || ticket.name}</p>
+                                  <p className="mt-1 text-sm text-[#949599] line-clamp-2">{ticket.description || ticket.name}</p>
                                   <div className="mt-2 flex items-center gap-3 text-xs">
                                     <span className="text-2xl font-bold text-[#D4AF37]">
                                       {ticket.price === 0 ? 'Free' : format(ticket.price)}
@@ -722,15 +722,15 @@ export default function EventDetailPage() {
                                     <button
                                       onClick={() => setQty(ticket.id, -1)}
                                       disabled={qty <= 0}
-                                      className="w-9 h-9 flex items-center justify-center text-[#8A9196] hover:text-[#EDF0F1] disabled:opacity-30 transition"
+                                      className="w-9 h-9 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1] disabled:opacity-30 transition"
                                     >
                                       <Minus className="w-4 h-4" />
                                     </button>
-                                    <span className="w-10 text-center text-sm font-semibold text-[#EDF0F1]">{qty}</span>
+                                    <span className="w-10 text-center text-sm font-semibold text-[#EFEFF1]">{qty}</span>
                                     <button
                                       onClick={() => setQty(ticket.id, 1)}
                                       disabled={available !== null && qty >= available}
-                                      className="w-9 h-9 flex items-center justify-center text-[#8A9196] hover:text-[#EDF0F1] disabled:opacity-30 transition"
+                                      className="w-9 h-9 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1] disabled:opacity-30 transition"
                                     >
                                       <Plus className="w-4 h-4" />
                                     </button>
@@ -738,7 +738,7 @@ export default function EventDetailPage() {
                                   <button
                                     onClick={() => openPurchase(ticket)}
                                     disabled={available !== null && available <= 0}
-                                    className="px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-40 disabled:cursor-not-allowed"
                                   >
                                     Buy Now
                                   </button>
@@ -762,8 +762,8 @@ export default function EventDetailPage() {
                             <Ticket className="w-5 h-5 text-[#9AA1A6]" />
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold text-[#EDF0F1]">Resale Tickets</h3>
-                            <p className="text-xs text-[#8A9196]">
+                            <h3 className="text-lg font-semibold text-[#EFEFF1]">Resale Tickets</h3>
+                            <p className="text-xs text-[#949599]">
                               Tickets other attendees are reselling. Buy one and the ticket transfers to you instantly.
                             </p>
                           </div>
@@ -779,9 +779,9 @@ export default function EventDetailPage() {
                                 <div className="min-w-0">
                                   <div className="flex items-center gap-2">
                                     <Badge variant="gold" size="sm">Resale</Badge>
-                                    <span className="text-sm font-semibold text-[#EDF0F1]">{listing.ticketTypeName || 'General Admission'}</span>
+                                    <span className="text-sm font-semibold text-[#EFEFF1]">{listing.ticketTypeName || 'General Admission'}</span>
                                   </div>
-                                  <p className="mt-1.5 text-xs text-[#8A9196] flex items-center gap-1.5">
+                                  <p className="mt-1.5 text-xs text-[#949599] flex items-center gap-1.5">
                                     <User className="w-3.5 h-3.5" /> Sold by {listing.seller?.name || 'another attendee'}
                                   </p>
                                 </div>
@@ -792,7 +792,7 @@ export default function EventDetailPage() {
                                   <button
                                     onClick={() => handleBuyResale(listing)}
                                     disabled={buyingResaleId === listing.id}
-                                    className="px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+                                    className="px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
                                   >
                                     {buyingResaleId === listing.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Ticket className="w-4 h-4" />}
                                     {buyingResaleId === listing.id ? 'Buying...' : 'Buy'}
@@ -812,12 +812,12 @@ export default function EventDetailPage() {
                   <div>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-[#EDF0F1]">Meet-ups & Group Outings</h3>
-                        <p className="text-sm text-[#8A9196] mt-0.5">Gather with other attendees before the event.</p>
+                        <h3 className="text-lg font-semibold text-[#EFEFF1]">Meet-ups & Group Outings</h3>
+                        <p className="text-sm text-[#949599] mt-0.5">Gather with other attendees before the event.</p>
                       </div>
                       <button
                         onClick={() => setCreateMeetupOpen(true)}
-                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition w-fit"
+                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition w-fit"
                       >
                         <Plus className="w-4 h-4" /> Create Meet-up
                       </button>
@@ -848,16 +848,16 @@ export default function EventDetailPage() {
                               <div className="flex items-start justify-between gap-4">
                                 <div className="min-w-0">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <h4 className="text-base font-semibold text-[#EDF0F1]">{m.title}</h4>
+                                    <h4 className="text-base font-semibold text-[#EFEFF1]">{m.title}</h4>
                                     <Badge variant="gold" size="sm">
                                       {m.memberCount}/{m.maxMembers > 0 ? m.maxMembers : '∞'} going
                                     </Badge>
                                     {m.isPublic ? null : <Badge variant="neutral" size="sm">Private</Badge>}
                                   </div>
                                   {m.description && (
-                                    <p className="mt-1.5 text-sm text-[#8A9196] leading-relaxed line-clamp-2">{m.description}</p>
+                                    <p className="mt-1.5 text-sm text-[#949599] leading-relaxed line-clamp-2">{m.description}</p>
                                   )}
-                                  <div className="mt-3 space-y-1.5 text-xs text-[#8A9196]">
+                                  <div className="mt-3 space-y-1.5 text-xs text-[#949599]">
                                     {m.host && (
                                       <p className="flex items-center gap-1.5">
                                         <User className="w-3.5 h-3.5 text-[#494F55]" /> Hosted by {m.host.name}
@@ -893,7 +893,7 @@ export default function EventDetailPage() {
                                     className={`px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed ${
                                       m.joined
                                         ? 'bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/40 hover:bg-[#D4AF37]/20'
-                                        : 'bg-[#D4AF37] text-[#1E252B] hover:bg-[#c4a030]'
+                                        : 'bg-[#D4AF37] text-[#1C232B] hover:bg-[#c4a030]'
                                     }`}
                                   >
                                     {m.joined ? 'Joined' : full ? 'Full' : 'Join'}
@@ -925,8 +925,8 @@ export default function EventDetailPage() {
                               onClick={() => setOpenFaq(openFaq === i ? null : i)}
                               className="w-full flex items-center justify-between px-5 py-4 text-left"
                             >
-                              <span className="text-sm font-semibold text-[#EDF0F1] pr-4">{faq.question}</span>
-                              <ChevronDown className={`w-5 h-5 text-[#8A9196] shrink-0 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
+                              <span className="text-sm font-semibold text-[#EFEFF1] pr-4">{faq.question}</span>
+                              <ChevronDown className={`w-5 h-5 text-[#949599] shrink-0 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
                             </button>
                             <AnimatePresence>
                               {openFaq === i && (
@@ -936,7 +936,7 @@ export default function EventDetailPage() {
                                   exit={{ height: 0, opacity: 0 }}
                                   transition={{ duration: 0.2 }}
                                 >
-                                  <p className="px-5 pb-4 text-sm text-[#8A9196] leading-relaxed">{faq.answer}</p>
+                                  <p className="px-5 pb-4 text-sm text-[#949599] leading-relaxed">{faq.answer}</p>
                                 </motion.div>
                               )}
                             </AnimatePresence>
@@ -954,22 +954,22 @@ export default function EventDetailPage() {
           <aside className="lg:col-span-1">
             <div className="sticky top-20 space-y-4">
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-                <h3 className="text-sm font-semibold text-[#EDF0F1] mb-4">Event Details</h3>
+                <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4">Event Details</h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <Calendar className="w-4 h-4 text-[#494F55] mt-0.5 shrink-0" />
                     <div>
                       <p className="text-xs text-[#494F55]">Date & Time</p>
-                      <p className="text-sm text-[#EDF0F1]">{fmtDate}</p>
-                      {fmtTime && <p className="text-sm text-[#8A9196]">{fmtTime}</p>}
+                      <p className="text-sm text-[#EFEFF1]">{fmtDate}</p>
+                      {fmtTime && <p className="text-sm text-[#949599]">{fmtTime}</p>}
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <MapPin className="w-4 h-4 text-[#494F55] mt-0.5 shrink-0" />
                     <div>
                       <p className="text-xs text-[#494F55]">Venue</p>
-                      <p className="text-sm text-[#EDF0F1]">{event.venue || 'TBA'}</p>
-                      <p className="text-sm text-[#8A9196]">{event.location || event.city}</p>
+                      <p className="text-sm text-[#EFEFF1]">{event.venue || 'TBA'}</p>
+                      <p className="text-sm text-[#949599]">{event.location || event.city}</p>
                     </div>
                   </div>
                   {event.category && (
@@ -977,14 +977,14 @@ export default function EventDetailPage() {
                       <Tag className="w-4 h-4 text-[#494F55] mt-0.5 shrink-0" />
                       <div>
                         <p className="text-xs text-[#494F55]">Category</p>
-                        <p className="text-sm text-[#EDF0F1]">{event.category}</p>
+                        <p className="text-sm text-[#EFEFF1]">{event.category}</p>
                       </div>
                     </div>
                   )}
                 </div>
                 <button
                   onClick={() => setActiveTab('Tickets')}
-                  className="mt-5 w-full py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition flex items-center justify-center gap-2"
+                  className="mt-5 w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition flex items-center justify-center gap-2"
                 >
                   <Ticket className="w-4 h-4" /> Get Tickets
                 </button>
@@ -997,8 +997,8 @@ export default function EventDetailPage() {
         {related.length > 0 && (
           <div className="mt-16">
             <div className="flex items-end justify-between mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#EDF0F1]">You might also like</h2>
-              <Link to="/explore" className="group flex items-center gap-1 text-sm text-[#8A9196] hover:text-[#D4AF37] transition">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#EFEFF1]">You might also like</h2>
+              <Link to="/explore" className="group flex items-center gap-1 text-sm text-[#949599] hover:text-[#D4AF37] transition">
                 More events <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>
@@ -1016,13 +1016,13 @@ export default function EventDetailPage() {
         title="Create a Meet-up"
         footer={
           <>
-            <button onClick={() => setCreateMeetupOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] transition">
+            <button onClick={() => setCreateMeetupOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
               Cancel
             </button>
             <button
               onClick={handleCreateMeetup}
               disabled={meetupBusy}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
             >
               {meetupBusy ? 'Creating...' : 'Create Meet-up'}
             </button>
@@ -1031,55 +1031,55 @@ export default function EventDetailPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5">Title *</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5">Title *</label>
             <input
               type="text"
               value={meetupForm.title}
               onChange={(e) => setMeetupForm((f) => ({ ...f, title: e.target.value }))}
               placeholder="e.g. Pre-show dinner at the Grand Arena"
-              className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5">Description</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5">Description</label>
             <textarea
               value={meetupForm.description}
               onChange={(e) => setMeetupForm((f) => ({ ...f, description: e.target.value }))}
               rows={3}
               placeholder="What's the plan? Where should people look out for you?"
-              className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
+              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5">Meeting Spot</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5">Meeting Spot</label>
               <input
                 type="text"
                 value={meetupForm.meetingSpot}
                 onChange={(e) => setMeetupForm((f) => ({ ...f, meetingSpot: e.target.value }))}
                 placeholder="e.g. Main entrance, VIP lounge"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5">Meet Time</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5">Meet Time</label>
               <input
                 type="datetime-local"
                 value={meetupForm.meetAt}
                 onChange={(e) => setMeetupForm((f) => ({ ...f, meetAt: e.target.value }))}
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5">Max Members (leave empty for unlimited)</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5">Max Members (leave empty for unlimited)</label>
             <input
               type="number"
               min="1"
               value={meetupForm.maxMembers}
               onChange={(e) => setMeetupForm((f) => ({ ...f, maxMembers: e.target.value }))}
               placeholder="e.g. 12"
-              className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
             />
           </div>
         </div>
@@ -1095,11 +1095,11 @@ export default function EventDetailPage() {
         {purchaseModal && (
           <div className="space-y-5">
             {/* Ticket summary */}
-            <div className="rounded-lg bg-[#1E252B] border border-[#262B2F] p-4">
+            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-[#EDF0F1]">{purchaseModal.name}</p>
-                  <p className="text-xs text-[#8A9196]">{event.title}</p>
+                  <p className="text-sm font-semibold text-[#EFEFF1]">{purchaseModal.name}</p>
+                  <p className="text-xs text-[#949599]">{event.title}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-[#D4AF37]">
@@ -1109,19 +1109,19 @@ export default function EventDetailPage() {
                 </div>
               </div>
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm text-[#8A9196]">Quantity</span>
+                <span className="text-sm text-[#949599]">Quantity</span>
                 <div className="flex items-center rounded-lg border border-[#494F55]/40">
                   <button
                     onClick={() => setQty(purchaseModal.id, -1)}
                     disabled={selectedQty <= 1}
-                    className="w-8 h-8 flex items-center justify-center text-[#8A9196] hover:text-[#EDF0F1] disabled:opacity-30"
+                    className="w-8 h-8 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1] disabled:opacity-30"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="w-10 text-center text-sm font-semibold text-[#EDF0F1]">{selectedQty}</span>
+                  <span className="w-10 text-center text-sm font-semibold text-[#EFEFF1]">{selectedQty}</span>
                   <button
                     onClick={() => setQty(purchaseModal.id, 1)}
-                    className="w-8 h-8 flex items-center justify-center text-[#8A9196] hover:text-[#EDF0F1]"
+                    className="w-8 h-8 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1]"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -1131,7 +1131,7 @@ export default function EventDetailPage() {
 
             {/* Coupon */}
             <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#8A9196] mb-2 block">Coupon Code</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2 block">Coupon Code</label>
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
@@ -1140,13 +1140,13 @@ export default function EventDetailPage() {
                     placeholder="Enter code"
                     value={coupon}
                     onChange={(e) => setCoupon(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder:text-[#494F55] focus:outline-none focus:border-[#D4AF37]/50"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-[#D4AF37]/50"
                   />
                 </div>
                 <button
                   onClick={handleApplyCoupon}
                   disabled={couponLoading || !coupon.trim()}
-                  className="px-4 py-2.5 rounded-lg border border-[#494F55]/40 text-sm text-[#EDF0F1] hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition disabled:opacity-50"
+                  className="px-4 py-2.5 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition disabled:opacity-50"
                 >
                   {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
                 </button>
@@ -1155,7 +1155,7 @@ export default function EventDetailPage() {
 
             {/* Payment method */}
             <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#8A9196] mb-2 block">Payment Method</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2 block">Payment Method</label>
               <div className="space-y-2">
                 {PAYMENT_METHODS.map((m) => (
                   <motion.label
@@ -1178,17 +1178,17 @@ export default function EventDetailPage() {
                       className="w-4 h-4 text-[#D4AF37] focus:ring-[#D4AF37]/40 focus:ring-offset-0"
                     />
                     <m.icon className="w-5 h-5 text-[#494F55]" />
-                    <span className="text-sm text-[#EDF0F1]">{m.label}</span>
+                    <span className="text-sm text-[#EFEFF1]">{m.label}</span>
                   </motion.label>
                 ))}
               </div>
             </div>
 
             {/* Totals */}
-            <div className="rounded-lg bg-[#1E252B] border border-[#262B2F] p-4 space-y-2">
+            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4 space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-[#8A9196]">Subtotal</span>
-                <span className="text-[#EDF0F1] font-medium">{format(subtotal)}</span>
+                <span className="text-[#949599]">Subtotal</span>
+                <span className="text-[#EFEFF1] font-medium">{format(subtotal)}</span>
               </div>
               {couponDiscount > 0 && (
                 <div className="flex items-center justify-between text-sm">
@@ -1197,7 +1197,7 @@ export default function EventDetailPage() {
                 </div>
               )}
               <div className="pt-2 border-t border-[#262B2F] flex items-center justify-between">
-                <span className="text-sm font-semibold text-[#EDF0F1]">Total</span>
+                <span className="text-sm font-semibold text-[#EFEFF1]">Total</span>
                 <span className="text-xl font-bold text-[#D4AF37]">{format(total)}</span>
               </div>
             </div>
@@ -1205,7 +1205,7 @@ export default function EventDetailPage() {
             <button
               onClick={handleProceedPayment}
               disabled={placingOrder}
-              className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {placingOrder ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
@@ -1232,7 +1232,7 @@ function InfoRow({ icon: Icon, label, value }) {
       <Icon className="w-5 h-5 text-[#494F55] mt-0.5 shrink-0" />
       <div className="min-w-0">
         <p className="text-xs text-[#494F55] uppercase tracking-wider">{label}</p>
-        <p className="text-sm text-[#EDF0F1] truncate">{value}</p>
+        <p className="text-sm text-[#EFEFF1] truncate">{value}</p>
       </div>
     </motion.div>
   );

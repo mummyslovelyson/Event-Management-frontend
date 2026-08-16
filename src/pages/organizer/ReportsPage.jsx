@@ -20,7 +20,7 @@ import PageHeader from '@/components/common/PageHeader';
 import Badge from '@/components/common/Badge';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const COLORS = { gold: '#D4AF37', muted: '#8A9196', dim: '#494F55', green: '#34d399', red: '#f87171' };
+const COLORS = { gold: '#D4AF37', muted: '#949599', dim: '#494F55', green: '#34d399', red: '#f87171' };
 
 const downloadBlob = (blob, filename) => {
   const url = URL.createObjectURL(blob);
@@ -35,7 +35,7 @@ const ChartTooltip = ({ active, payload, label, formatter }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-lg bg-[#171A1D] border border-[#494F55]/50 px-3 py-2 shadow-xl">
-      {label != null && <p className="text-xs text-[#8A9196] mb-1">{label}</p>}
+      {label != null && <p className="text-xs text-[#949599] mb-1">{label}</p>}
       {payload.map((p, i) => (
         <p key={i} className="text-sm font-medium" style={{ color: p.color || p.stroke || p.fill }}>
           {p.name}: {formatter ? formatter(p.value) : p.value}
@@ -151,7 +151,7 @@ export default function ReportsPage() {
             <button onClick={handleExportCSV} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-[#D4AF37] border border-[#D4AF37]/40 hover:bg-[#D4AF37]/10 transition-colors">
               <Download className="w-4 h-4" /> Download CSV
             </button>
-            <button onClick={handleExportPDF} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition-colors">
+            <button onClick={handleExportPDF} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors">
               <FileText className="w-4 h-4" /> Download PDF
             </button>
           </>
@@ -162,7 +162,7 @@ export default function ReportsPage() {
       <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
         <div className="flex flex-col sm:flex-row sm:items-end gap-4">
           <div className="flex-1">
-            <label className="block text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-1.5">From Date</label>
+            <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-1.5">From Date</label>
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
               <input
@@ -170,12 +170,12 @@ export default function ReportsPage() {
                 value={fromDate}
                 max={toDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
               />
             </div>
           </div>
           <div className="flex-1">
-            <label className="block text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-1.5">To Date</label>
+            <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-1.5">To Date</label>
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
               <input
@@ -183,7 +183,7 @@ export default function ReportsPage() {
                 value={toDate}
                 min={fromDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
               />
             </div>
           </div>
@@ -197,7 +197,7 @@ export default function ReportsPage() {
         <>
           {/* Revenue Report */}
           <section className="space-y-4">
-            <h2 className="text-lg font-semibold text-[#EDF0F1] flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-[#D4AF37]" /> Revenue Report
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -207,7 +207,7 @@ export default function ReportsPage() {
             </div>
 
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-              <h3 className="text-sm font-medium text-[#EDF0F1] mb-4">Revenue Over Time</h3>
+              <h3 className="text-sm font-medium text-[#EFEFF1] mb-4">Revenue Over Time</h3>
               {revenueData.length === 0 ? (
                 <EmptyState icon={BarChart3} title="No revenue data" description="No sales recorded in this period." className="py-10" />
               ) : (
@@ -232,10 +232,10 @@ export default function ReportsPage() {
             {/* Event breakdown */}
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden overflow-x-auto">
               <div className="px-5 py-3 border-b border-[#262B2F]">
-                <h3 className="text-sm font-medium text-[#EDF0F1]">Revenue Breakdown by Event</h3>
+                <h3 className="text-sm font-medium text-[#EFEFF1]">Revenue Breakdown by Event</h3>
               </div>
               {topEvents.length === 0 ? (
-                <p className="px-5 py-8 text-sm text-[#8A9196] text-center">No event data for this period.</p>
+                <p className="px-5 py-8 text-sm text-[#949599] text-center">No event data for this period.</p>
               ) : (
                 <table className="w-full text-sm min-w-[500px]">
                   <thead>
@@ -251,9 +251,9 @@ export default function ReportsPage() {
                       const share = totalRevenue > 0 ? Math.round(((e.revenue || 0) / totalRevenue) * 100) : 0;
                       return (
                         <tr key={e.id} className="hover:bg-[#1D2124] transition-colors">
-                          <td className="px-5 py-3 text-[#EDF0F1] font-medium max-w-[220px] truncate">{e.title || e.eventTitle}</td>
-                          <td className="px-5 py-3 text-right text-[#8A9196]">{e.ticketsSold || 0}</td>
-                          <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{format(e.revenue)}</td>
+                          <td className="px-5 py-3 text-[#EFEFF1] font-medium max-w-[220px] truncate">{e.title || e.eventTitle}</td>
+                          <td className="px-5 py-3 text-right text-[#949599]">{e.ticketsSold || 0}</td>
+                          <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(e.revenue)}</td>
                           <td className="px-5 py-3 text-right">
                             <span className="text-[#D4AF37] font-medium">{share}%</span>
                           </td>
@@ -268,7 +268,7 @@ export default function ReportsPage() {
 
           {/* Attendance Report */}
           <section className="space-y-4">
-            <h2 className="text-lg font-semibold text-[#EDF0F1] flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
               <Users className="w-5 h-5 text-[#D4AF37]" /> Attendance Report
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -277,7 +277,7 @@ export default function ReportsPage() {
             </div>
 
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-              <h3 className="text-sm font-medium text-[#EDF0F1] mb-4">Attendance by Event</h3>
+              <h3 className="text-sm font-medium text-[#EFEFF1] mb-4">Attendance by Event</h3>
               {(attendance.byEvent || []).length === 0 ? (
                 <EmptyState icon={Users} title="No attendance data" description="No check-ins recorded in this period." className="py-10" />
               ) : (
@@ -297,7 +297,7 @@ export default function ReportsPage() {
 
           {/* Top Selling Events */}
           <section className="space-y-4">
-            <h2 className="text-lg font-semibold text-[#EDF0F1] flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
               <Trophy className="w-5 h-5 text-[#D4AF37]" /> Top Selling Events
             </h2>
             {topEvents.length === 0 ? (
@@ -325,16 +325,16 @@ export default function ReportsPage() {
                           <td className="px-5 py-3">
                             <div className="flex items-center gap-2">
                               {RankIcon ? (
-                                <RankIcon className={`w-5 h-5 ${i === 0 ? 'text-[#D4AF37]' : i === 1 ? 'text-[#8A9196]' : 'text-[#a0611a]'}`} />
+                                <RankIcon className={`w-5 h-5 ${i === 0 ? 'text-[#D4AF37]' : i === 1 ? 'text-[#949599]' : 'text-[#a0611a]'}`} />
                               ) : (
-                                <span className="w-5 h-5 flex items-center justify-center text-xs text-[#8A9196] font-semibold">{i + 1}</span>
+                                <span className="w-5 h-5 flex items-center justify-center text-xs text-[#949599] font-semibold">{i + 1}</span>
                               )}
                             </div>
                           </td>
-                          <td className="px-5 py-3 text-[#EDF0F1] font-medium max-w-[220px] truncate">{e.title || e.eventTitle}</td>
-                          <td className="px-5 py-3 text-right text-[#8A9196]">{e.ticketsSold || 0}</td>
-                          <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{format(e.revenue)}</td>
-                          <td className="px-5 py-3 text-right text-[#8A9196]">{format(avg)}</td>
+                          <td className="px-5 py-3 text-[#EFEFF1] font-medium max-w-[220px] truncate">{e.title || e.eventTitle}</td>
+                          <td className="px-5 py-3 text-right text-[#949599]">{e.ticketsSold || 0}</td>
+                          <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(e.revenue)}</td>
+                          <td className="px-5 py-3 text-right text-[#949599]">{format(avg)}</td>
                         </tr>
                       );
                     })}
@@ -347,7 +347,7 @@ export default function ReportsPage() {
           {/* Sales Report */}
           <section className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <h2 className="text-lg font-semibold text-[#EDF0F1] flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-[#D4AF37]" /> Sales Report
               </h2>
               <div className="flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#494F55]/40">
@@ -355,7 +355,7 @@ export default function ReportsPage() {
                   <button
                     key={g}
                     onClick={() => setSalesGranularity(g)}
-                    className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition ${salesGranularity === g ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-[#8A9196] hover:text-[#EDF0F1]'}`}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition ${salesGranularity === g ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
                   >
                     {g}
                   </button>
@@ -381,7 +381,7 @@ export default function ReportsPage() {
 
           {/* Refund Report */}
           <section className="space-y-4">
-            <h2 className="text-lg font-semibold text-[#EDF0F1] flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
               <RotateCcw className="w-5 h-5 text-[#D4AF37]" /> Refund Report
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -389,7 +389,7 @@ export default function ReportsPage() {
               <StatCard icon={RotateCcw} label="Refund Count" value={refund.count || 0} />
             </div>
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-              <h3 className="text-sm font-medium text-[#EDF0F1] mb-4">Refund Trend</h3>
+              <h3 className="text-sm font-medium text-[#EFEFF1] mb-4">Refund Trend</h3>
               {(refund.trend || []).length === 0 ? (
                 <EmptyState icon={RotateCcw} title="No refunds" description="No refunds issued in this period." className="py-10" />
               ) : (

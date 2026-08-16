@@ -156,8 +156,8 @@ export default function ExploreEventsPage() {
     >
       {/* Header */}
       <motion.div variants={itemFade}>
-        <h1 className="text-2xl font-bold text-[#EDF0F1]">Explore Events</h1>
-        <p className="text-sm text-[#8A9196] mt-1">Discover and book tickets for events near you.</p>
+        <h1 className="text-2xl font-bold text-[#EFEFF1]">Explore Events</h1>
+        <p className="text-sm text-[#949599] mt-1">Discover and book tickets for events near you.</p>
       </motion.div>
 
       {/* Recommended for you */}
@@ -169,8 +169,8 @@ export default function ExploreEventsPage() {
                 <Sparkles className="w-4 h-4" />
               </span>
               <div>
-                <h2 className="text-base font-bold text-[#EDF0F1]">Recommended For You</h2>
-                <p className="text-xs text-[#8A9196]">Based on your favorites, past events, and location</p>
+                <h2 className="text-base font-bold text-[#EFEFF1]">Recommended For You</h2>
+                <p className="text-xs text-[#949599]">Based on your favorites, past events, and location</p>
               </div>
             </div>
             <Link
@@ -183,7 +183,7 @@ export default function ExploreEventsPage() {
           {recommendedLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="rounded-xl bg-[#1E252B]/60 border border-[#262B2F] p-4 animate-pulse">
+                <div key={i} className="rounded-xl bg-[#1C232B]/60 border border-[#262B2F] p-4 animate-pulse">
                   <div className="h-20 bg-[#242B32] rounded-lg mb-3" />
                   <div className="h-3 bg-[#242B32] rounded w-3/4" />
                 </div>
@@ -208,12 +208,12 @@ export default function ExploreEventsPage() {
             value={query}
             onChange={(e) => { setQuery(e.target.value); setPage(1); }}
             placeholder="Search events, artists, venues..."
-            className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition"
+            className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition"
           />
           {query && (
             <button
               onClick={() => { setQuery(''); setPage(1); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A9196] hover:text-[#EDF0F1]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#949599] hover:text-[#EFEFF1]"
             >
               <X className="w-4 h-4" />
             </button>
@@ -224,13 +224,13 @@ export default function ExploreEventsPage() {
           className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
             showFilters || activeFilterCount > 0
               ? 'bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#D4AF37]'
-              : 'bg-[#171A1D] border-[#494F55]/40 text-[#EDF0F1] hover:border-[#494F55]/60'
+              : 'bg-[#171A1D] border-[#494F55]/40 text-[#EFEFF1] hover:border-[#494F55]/60'
           }`}
         >
           <SlidersHorizontal className="w-4 h-4" />
           Filters
           {activeFilterCount > 0 && (
-            <span className="ml-1 w-5 h-5 rounded-full bg-[#D4AF37] text-[#1E252B] text-[10px] font-bold flex items-center justify-center">
+            <span className="ml-1 w-5 h-5 rounded-full bg-[#D4AF37] text-[#1C232B] text-[10px] font-bold flex items-center justify-center">
               {activeFilterCount}
             </span>
           )}
@@ -273,20 +273,20 @@ export default function ExploreEventsPage() {
                 value={filters.location}
                 onChange={(e) => updateFilter('location', e.target.value)}
                 placeholder="City or venue"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
               />
             </FilterField>
           </div>
           <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#262B2F]">
             <button
               onClick={clearFilters}
-              className="text-sm text-[#8A9196] hover:text-[#EDF0F1] transition"
+              className="text-sm text-[#949599] hover:text-[#EFEFF1] transition"
             >
               Clear all filters
             </button>
             <button
               onClick={() => setShowFilters(false)}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition"
+              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
             >
               Apply
             </button>
@@ -296,26 +296,26 @@ export default function ExploreEventsPage() {
 
       {/* Sort + results count */}
       <motion.div variants={itemFade} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <p className="text-sm text-[#8A9196]">
+        <p className="text-sm text-[#949599]">
           {loading ? 'Searching...' : (
             <>
-              <span className="font-semibold text-[#EDF0F1]">{total}</span> event{total !== 1 ? 's' : ''} found
+              <span className="font-semibold text-[#EFEFF1]">{total}</span> event{total !== 1 ? 's' : ''} found
             </>
           )}
         </p>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-[#8A9196]">Sort by:</span>
+          <span className="text-sm text-[#949599]">Sort by:</span>
           <div className="relative">
             <select
               value={filters.sort}
               onChange={(e) => { updateFilter('sort', e.target.value); }}
-              className="appearance-none pl-3 pr-9 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer"
+              className="appearance-none pl-3 pr-9 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value} className="bg-[#171A1D]">{o.label}</option>
               ))}
             </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A9196] pointer-events-none" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#949599] pointer-events-none" />
           </div>
         </div>
       </motion.div>
@@ -363,7 +363,7 @@ export default function ExploreEventsPage() {
 function FilterField({ icon: Icon, label, children }) {
   return (
     <div>
-      <label className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-2">
+      <label className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-[#949599] mb-2">
         <Icon className="w-3.5 h-3.5 text-[#494F55]" />
         {label}
       </label>
@@ -378,13 +378,13 @@ function SelectInput({ value, onChange, options }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none px-3 py-2.5 pr-9 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer"
+        className="w-full appearance-none px-3 py-2.5 pr-9 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value} className="bg-[#171A1D]">{o.label}</option>
         ))}
       </select>
-      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A9196] pointer-events-none" />
+      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#949599] pointer-events-none" />
     </div>
   );
 }

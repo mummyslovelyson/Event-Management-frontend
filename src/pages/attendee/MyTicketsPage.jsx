@@ -204,12 +204,12 @@ export default function MyTicketsPage() {
       {/* Header */}
       <motion.div variants={itemFade} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#EDF0F1]">My Tickets</h1>
-          <p className="text-sm text-[#8A9196] mt-1">Your digital tickets and QR codes for events.</p>
+          <h1 className="text-2xl font-bold text-[#EFEFF1]">My Tickets</h1>
+          <p className="text-sm text-[#949599] mt-1">Your digital tickets and QR codes for events.</p>
         </div>
         <Link
           to="/attendee/explore"
-          className="group inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-[0_0_0_0_rgba(212,175,55,0)] hover:shadow-[0_6px_20px_-6px_rgba(212,175,55,0.45)] w-fit"
+          className="group inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-[0_0_0_0_rgba(212,175,55,0)] hover:shadow-[0_6px_20px_-6px_rgba(212,175,55,0.45)] w-fit"
         >
           <TicketIcon className="w-4 h-4 transition-transform group-hover:-rotate-6" /> Browse Events
           <span className="transition-transform group-hover:translate-x-0.5">→</span>
@@ -224,7 +224,7 @@ export default function MyTicketsPage() {
               key={t.value}
               onClick={() => setTab(t.value)}
               className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                tab === t.value ? 'text-[#1E252B]' : 'text-[#8A9196] hover:text-[#EDF0F1]'
+                tab === t.value ? 'text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'
               }`}
             >
               {tab === t.value && (
@@ -245,7 +245,7 @@ export default function MyTicketsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tickets..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
           />
         </div>
       </motion.div>
@@ -279,22 +279,22 @@ export default function MyTicketsPage() {
       <motion.div variants={itemFade} className="rounded-2xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
         <button
           onClick={() => setShowListings((v) => !v)}
-          className="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-[#1E252B]/60 transition-colors"
+          className="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-[#1C232B]/60 transition-colors"
         >
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
               <Store className="w-4.5 h-4.5 text-[#D4AF37]" />
             </div>
             <div className="text-left">
-              <h2 className="text-sm font-semibold text-[#EDF0F1]">My Resale Listings</h2>
-              <p className="text-xs text-[#8A9196]">Tickets you've put up for sale</p>
+              <h2 className="text-sm font-semibold text-[#EFEFF1]">My Resale Listings</h2>
+              <p className="text-xs text-[#949599]">Tickets you've put up for sale</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             {!listingsLoading && listings.length > 0 && (
               <Badge variant="gold" size="sm">{listings.length}</Badge>
             )}
-            <ChevronDown className={`w-4 h-4 text-[#8A9196] transition-transform ${showListings ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-[#949599] transition-transform ${showListings ? 'rotate-180' : ''}`} />
           </div>
         </button>
 
@@ -307,7 +307,7 @@ export default function MyTicketsPage() {
             ) : listings.length === 0 ? (
               <div className="flex flex-col items-center gap-2 py-6 text-center">
                 <Tag className="w-8 h-8 text-[#494F55]" />
-                <p className="text-sm text-[#8A9196]">No resale listings yet.</p>
+                <p className="text-sm text-[#949599]">No resale listings yet.</p>
                 <p className="text-xs text-[#494F55]">Tap "Sell" on any upcoming ticket to list it here.</p>
               </div>
             ) : (
@@ -323,8 +323,8 @@ export default function MyTicketsPage() {
                   return (
                     <div key={listing.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl bg-[#14171A] border border-[#262B2F] p-4">
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[#EDF0F1] truncate">{listing.eventTitle || 'Event'}</p>
-                        <p className="mt-0.5 text-xs text-[#8A9196]">{listing.ticketTypeName || 'Ticket'} • Listed {new Date(listing.createdAt).toLocaleDateString()}</p>
+                        <p className="text-sm font-semibold text-[#EFEFF1] truncate">{listing.eventTitle || 'Event'}</p>
+                        <p className="mt-0.5 text-xs text-[#949599]">{listing.ticketTypeName || 'Ticket'} • Listed {new Date(listing.createdAt).toLocaleDateString()}</p>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         <span className="text-lg font-bold text-[#D4AF37]">{format(listing.price)}</span>
@@ -333,7 +333,7 @@ export default function MyTicketsPage() {
                           <button
                             onClick={() => handleCancelListing(listing)}
                             disabled={cancellingId === listing.id}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-[#8A9196] text-xs font-medium hover:text-red-400 hover:border-red-400/40 disabled:opacity-50 transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#949599] text-xs font-medium hover:text-red-400 hover:border-red-400/40 disabled:opacity-50 transition-colors"
                           >
                             {cancellingId === listing.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
                             Remove
@@ -358,14 +358,14 @@ export default function MyTicketsPage() {
           <>
             <button
               onClick={() => { setSellTarget(null); setSellPrice(''); }}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] transition"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
             >
               Cancel
             </button>
             <button
               onClick={handleSell}
               disabled={selling}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
             >
               <Tag className="w-4 h-4" />
               {selling ? 'Listing...' : 'List for Sale'}
@@ -375,14 +375,14 @@ export default function MyTicketsPage() {
       >
         {sellTarget && (
           <div className="space-y-4">
-            <div className="rounded-lg bg-[#1E252B] border border-[#262B2F] p-3">
-              <p className="text-sm font-semibold text-[#EDF0F1]">{sellTarget.event?.title || sellTarget.eventName}</p>
-              <p className="text-xs text-[#8A9196] mt-0.5">
+            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-3">
+              <p className="text-sm font-semibold text-[#EFEFF1]">{sellTarget.event?.title || sellTarget.eventName}</p>
+              <p className="text-xs text-[#949599] mt-0.5">
                 {sellTarget.ticketType || sellTarget.type} • #{String(sellTarget.ticketNumber || sellTarget.id).slice(-8).toUpperCase()}
               </p>
             </div>
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-2">
+              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-2">
                 Sale Price (₵)
               </label>
               <input
@@ -392,7 +392,7 @@ export default function MyTicketsPage() {
                 value={sellPrice}
                 onChange={(e) => setSellPrice(e.target.value)}
                 placeholder="e.g. 45"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
               />
               <p className="text-xs text-[#494F55] mt-2">
                 Your ticket will appear in the event's Resale section. When someone buys it, the ticket transfers to them and you're notified.
@@ -411,14 +411,14 @@ export default function MyTicketsPage() {
           <>
             <button
               onClick={() => { setTransferTarget(null); setTransferEmail(''); }}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] transition"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
             >
               Cancel
             </button>
             <button
               onClick={handleTransfer}
               disabled={transferring}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
             >
               <Send className="w-4 h-4" />
               {transferring ? 'Sending...' : 'Transfer Ticket'}
@@ -428,14 +428,14 @@ export default function MyTicketsPage() {
       >
         {transferTarget && (
           <div className="space-y-4">
-            <div className="rounded-lg bg-[#1E252B] border border-[#262B2F] p-3">
-              <p className="text-sm font-semibold text-[#EDF0F1]">{transferTarget.event?.title || transferTarget.eventName}</p>
-              <p className="text-xs text-[#8A9196] mt-0.5">
+            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-3">
+              <p className="text-sm font-semibold text-[#EFEFF1]">{transferTarget.event?.title || transferTarget.eventName}</p>
+              <p className="text-xs text-[#949599] mt-0.5">
                 {transferTarget.ticketType || transferTarget.type} • #{(transferTarget.ticketNumber || transferTarget.id).toString().slice(-8).toUpperCase()}
               </p>
             </div>
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-2">
+              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-2">
                 Recipient Email
               </label>
               <input
@@ -443,7 +443,7 @@ export default function MyTicketsPage() {
                 value={transferEmail}
                 onChange={(e) => setTransferEmail(e.target.value)}
                 placeholder="friend@example.com"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
               />
               <p className="text-xs text-[#494F55] mt-2">
                 The recipient will receive an email to accept this ticket transfer.
@@ -463,13 +463,13 @@ export default function MyTicketsPage() {
           <>
             <button
               onClick={() => setPrintTicket(null)}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] transition"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
             >
               Close
             </button>
             <button
               onClick={() => window.print()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
             >
               <Printer className="w-4 h-4" /> Print
             </button>
@@ -544,9 +544,9 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
       <div className="relative">
         {/* Torn edge perforation */}
         <div className="flex items-center gap-2 px-5">
-          <div className="w-3 h-3 rounded-full bg-[#1E252B] -ml-6" />
+          <div className="w-3 h-3 rounded-full bg-[#1C232B] -ml-6" />
           <div className="flex-1 border-t-2 border-dashed border-[#494F55]/40 my-0" />
-          <div className="w-3 h-3 rounded-full bg-[#1E252B] -mr-6" />
+          <div className="w-3 h-3 rounded-full bg-[#1C232B] -mr-6" />
         </div>
 
         <div className="flex gap-4 p-5">
@@ -556,21 +556,21 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
               <span className="text-[10px] font-semibold uppercase tracking-wide text-[#D4AF37]">
                 {ticket.ticketType || ticket.type || 'General'}
               </span>
-              <h3 className="text-base font-bold text-[#EDF0F1] line-clamp-2">{event.title || ticket.eventName || 'Event'}</h3>
+              <h3 className="text-base font-bold text-[#EFEFF1] line-clamp-2">{event.title || ticket.eventName || 'Event'}</h3>
             </div>
             <div className="space-y-1.5 text-sm">
-              <p className="text-[#8A9196] flex items-center gap-1.5">
+              <p className="text-[#949599] flex items-center gap-1.5">
                 <Calendar className="w-4 h-4 text-[#494F55] shrink-0" />
                 <span className="truncate">
                   {eventDate ? new Date(eventDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'TBA'}
                 </span>
               </p>
-              <p className="text-[#8A9196] flex items-center gap-1.5">
+              <p className="text-[#949599] flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-[#494F55] shrink-0" />
                 <span className="truncate">{event.venue || ticket.venue || 'Venue TBA'}</span>
               </p>
               {seat && (
-                <p className="text-[#8A9196] flex items-center gap-1.5">
+                <p className="text-[#949599] flex items-center gap-1.5">
                   <Armchair className="w-4 h-4 text-[#494F55] shrink-0" />
                   <span className="truncate">Seat: {seat}</span>
                 </p>
@@ -578,7 +578,7 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
             </div>
             <div className="pt-2">
               <p className="text-[10px] uppercase tracking-wider text-[#494F55]">Ticket No.</p>
-              <p className="text-sm font-mono font-semibold text-[#EDF0F1]">#{ticketNumber.slice(-8).toUpperCase()}</p>
+              <p className="text-sm font-mono font-semibold text-[#EFEFF1]">#{ticketNumber.slice(-8).toUpperCase()}</p>
             </div>
           </div>
 
@@ -601,27 +601,27 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
         <div className="flex gap-2 p-5 pt-0">
           <button
             onClick={onDownload}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-[#EDF0F1] text-xs font-medium hover:border-[#D4AF37]/40 hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
           >
             <Download className="w-3.5 h-3.5" /> Download
           </button>
           <button
             onClick={onPrint}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-[#EDF0F1] text-xs font-medium hover:border-[#D4AF37]/40 hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 hover:bg-[#242B32] transition-colors group-hover:border-[#494F55]/60"
           >
             <Printer className="w-3.5 h-3.5" /> Print
           </button>
           <button
             onClick={onTransfer}
             disabled={isCancelled}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-[#EDF0F1] text-xs font-medium hover:border-[#D4AF37]/40 hover:bg-[#242B32] disabled:opacity-40 disabled:cursor-not-allowed transition-colors group-hover:border-[#494F55]/60"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 hover:bg-[#242B32] disabled:opacity-40 disabled:cursor-not-allowed transition-colors group-hover:border-[#494F55]/60"
           >
             <Send className="w-3.5 h-3.5" /> Transfer
           </button>
           <button
             onClick={onSell}
             disabled={isCancelled}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-semibold hover:bg-[#D4AF37] hover:text-[#1E252B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-semibold hover:bg-[#D4AF37] hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Tag className="w-3.5 h-3.5" /> Sell
           </button>
@@ -640,9 +640,9 @@ function PrintableTicket({ ticket }) {
 
   return (
     <div className="rounded-xl border border-[#494F55]/40 overflow-hidden">
-      <div className="bg-[#1E252B] p-5 text-center">
+      <div className="bg-[#1C232B] p-5 text-center">
         <p className="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold">Tribes & Cliqs</p>
-        <h3 className="text-lg font-bold text-[#EDF0F1] mt-1">{event.title || ticket.eventName}</h3>
+        <h3 className="text-lg font-bold text-[#EFEFF1] mt-1">{event.title || ticket.eventName}</h3>
       </div>
       <div className="bg-white p-6 flex flex-col items-center gap-4">
         <div className="w-40 h-40 bg-white p-2 flex items-center justify-center">

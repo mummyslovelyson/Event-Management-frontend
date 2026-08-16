@@ -85,26 +85,26 @@ export default function PlatformReportsPage() {
                 <button
                   key={r}
                   onClick={() => { setRange(r); setFromDate(''); setToDate(''); }}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${range === r ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#7D8387] hover:text-[#F2F4F5]'}`}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${range === r ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
                 >
                   {r === '1y' ? '1 Year' : r.toUpperCase()}
                 </button>
               ))}
             </div>
             <div className="flex items-center gap-2">
-              <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#F2F4F5] focus:outline-none focus:border-[#D4AF37]/60" />
+              <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60" />
               <span className="text-[#494F55]">—</span>
-              <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#F2F4F5] focus:outline-none focus:border-[#D4AF37]/60" />
+              <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60" />
             </div>
             <button
               onClick={() => exportCSV([{ section: 'Revenue', ...revenue }, { section: 'Users', ...users }, { section: 'Events', ...events }], 'platform-report.csv')}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-[#262B2F] text-xs font-medium text-[#EDF0F1] hover:bg-[#2A2F33] transition"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-[#262B2F] text-xs font-medium text-[#EFEFF1] hover:bg-[#2A2F33] transition"
             >
               <Download className="w-3.5 h-3.5" /> CSV
             </button>
             <button
               onClick={() => window.print()}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-[#262B2F] text-xs font-medium text-[#EDF0F1] hover:bg-[#2A2F33] transition"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-[#262B2F] text-xs font-medium text-[#EFEFF1] hover:bg-[#2A2F33] transition"
             >
               <FileText className="w-3.5 h-3.5" /> PDF
             </button>
@@ -118,7 +118,7 @@ export default function PlatformReportsPage() {
         <>
           {/* Revenue section */}
           <div className="space-y-4">
-            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EDF0F1]"><span className="w-1 h-4 rounded-full bg-[#D4AF37]" /> Revenue</h2>
+            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EFEFF1]"><span className="w-1 h-4 rounded-full bg-[#D4AF37]" /> Revenue</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <StatCard icon={DollarSign} label="Total Revenue" value={format(revenue.total)} trend={revenue.growth} trendLabel="vs last period" accent />
               <StatCard icon={TrendingUp} label="Growth" value={`${revenue.growth ?? 0}%`} />
@@ -126,7 +126,7 @@ export default function PlatformReportsPage() {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-                <h3 className="text-sm font-semibold text-[#F2F4F5] mb-4">Revenue Trend</h3>
+                <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4">Revenue Trend</h3>
                 {revenueSeries.length > 0 ? (
                   <ResponsiveContainer width="100%" height={280}>
                     <AreaChart data={revenueSeries} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
@@ -137,16 +137,16 @@ export default function PlatformReportsPage() {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} vertical={false} />
-                      <XAxis dataKey="date" stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                      <YAxis stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => format(v, { compact: true })} />
-                      <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#F2F4F5', fontSize: 12 }} formatter={(v) => [format(v), 'Revenue']} />
+                      <XAxis dataKey="date" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
+                      <YAxis stroke="#949599" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => format(v, { compact: true })} />
+                      <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#EFEFF1', fontSize: 12 }} formatter={(v) => [format(v), 'Revenue']} />
                       <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2} fill="url(#reportRev)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 ) : <EmptyState icon={BarChart3} title="No revenue in this period" className="py-10" />}
               </div>
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-                <h3 className="text-sm font-semibold text-[#F2F4F5] mb-4">Commission Breakdown</h3>
+                <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4">Commission Breakdown</h3>
                 <div className="space-y-3">
                   {(revenue.commissionBreakdown || [
                     { label: 'Ticket Sales', value: revenue.commission || 0 },
@@ -157,8 +157,8 @@ export default function PlatformReportsPage() {
                     return (
                       <div key={i}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm text-[#7D8387]">{c.label}</span>
-                          <span className="text-sm font-medium text-[#F2F4F5]">{format(c.value)}</span>
+                          <span className="text-sm text-[#949599]">{c.label}</span>
+                          <span className="text-sm font-medium text-[#EFEFF1]">{format(c.value)}</span>
                         </div>
                         <div className="h-2 rounded-full bg-[#494F55]/30 overflow-hidden">
                           <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: pieColors[i % pieColors.length] }} />
@@ -173,21 +173,21 @@ export default function PlatformReportsPage() {
 
           {/* Users section */}
           <div className="space-y-4">
-            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EDF0F1]"><span className="w-1 h-4 rounded-full bg-[#60A5FA]" /> Users</h2>
+            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EFEFF1]"><span className="w-1 h-4 rounded-full bg-[#60A5FA]" /> Users</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <StatCard icon={Users} label="New Users" value={(users.newUsers ?? 0).toLocaleString()} trend={users.growth} />
               <StatCard icon={TrendingUp} label="Active Users" value={(users.active ?? 0).toLocaleString()} />
               <StatCard icon={Users} label="Retention Rate" value={`${users.retention ?? 0}%`} />
             </div>
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-              <h3 className="text-sm font-semibold text-[#F2F4F5] mb-4">New User Signups</h3>
+              <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4">New User Signups</h3>
               {userSeries.length > 0 ? (
                 <ResponsiveContainer width="100%" height={260}>
                   <LineChart data={userSeries} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} vertical={false} />
-                    <XAxis dataKey="date" stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                    <YAxis stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                    <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#F2F4F5', fontSize: 12 }} />
+                    <XAxis dataKey="date" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
+                    <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#EFEFF1', fontSize: 12 }} />
                     <Line type="monotone" dataKey="users" stroke="#60A5FA" strokeWidth={2} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -197,31 +197,31 @@ export default function PlatformReportsPage() {
 
           {/* Events section */}
           <div className="space-y-4">
-            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EDF0F1]"><span className="w-1 h-4 rounded-full bg-[#34D399]" /> Events</h2>
+            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EFEFF1]"><span className="w-1 h-4 rounded-full bg-[#34D399]" /> Events</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-                <h3 className="text-sm font-semibold text-[#F2F4F5] mb-4">Events by Category</h3>
+                <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4">Events by Category</h3>
                 {categoryDist.length > 0 ? (
                   <ResponsiveContainer width="100%" height={260}>
                     <PieChart>
                       <Pie data={categoryDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} innerRadius={50}>
                         {categoryDist.map((_, i) => <Cell key={i} fill={pieColors[i % pieColors.length]} />)}
                       </Pie>
-                      <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#F2F4F5', fontSize: 12 }} />
-                      <Legend wrapperStyle={{ fontSize: 12, color: '#7D8387' }} />
+                      <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#EFEFF1', fontSize: 12 }} />
+                      <Legend wrapperStyle={{ fontSize: 12, color: '#949599' }} />
                     </PieChart>
                   </ResponsiveContainer>
                 ) : <EmptyState icon={CalendarDays} title="No categories with events yet" className="py-10" />}
               </div>
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-                <h3 className="text-sm font-semibold text-[#F2F4F5] mb-4">Events Created Over Time</h3>
+                <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4">Events Created Over Time</h3>
                 {eventsCreated.length > 0 ? (
                   <ResponsiveContainer width="100%" height={260}>
                     <BarChart data={eventsCreated} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} vertical={false} />
-                      <XAxis dataKey="date" stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                      <YAxis stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                      <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#F2F4F5', fontSize: 12 }} cursor={{ fill: '#494F55', fillOpacity: 0.1 }} />
+                      <XAxis dataKey="date" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
+                      <YAxis stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
+                      <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#EFEFF1', fontSize: 12 }} cursor={{ fill: '#494F55', fillOpacity: 0.1 }} />
                       <Bar dataKey="events" fill="#34D399" radius={[4, 4, 0, 0]} barSize={20} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -232,10 +232,10 @@ export default function PlatformReportsPage() {
 
           {/* Tickets section */}
           <div className="space-y-4">
-            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EDF0F1]"><span className="w-1 h-4 rounded-full bg-[#A78BFA]" /> Tickets</h2>
+            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EFEFF1]"><span className="w-1 h-4 rounded-full bg-[#A78BFA]" /> Tickets</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-                <h3 className="text-sm font-semibold text-[#F2F4F5] mb-4">Ticket Sales Trend</h3>
+                <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4">Ticket Sales Trend</h3>
                 {ticketTrend.length > 0 ? (
                   <ResponsiveContainer width="100%" height={260}>
                     <AreaChart data={ticketTrend} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
@@ -246,22 +246,22 @@ export default function PlatformReportsPage() {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} vertical={false} />
-                      <XAxis dataKey="date" stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                      <YAxis stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                      <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#F2F4F5', fontSize: 12 }} />
+                      <XAxis dataKey="date" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
+                      <YAxis stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
+                      <Tooltip contentStyle={{ background: '#161D22', border: '1px solid #494F55', borderRadius: 8, color: '#EFEFF1', fontSize: 12 }} />
                       <Area type="monotone" dataKey="tickets" stroke="#A78BFA" strokeWidth={2} fill="url(#ticketGrad)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 ) : <EmptyState icon={TicketIcon} title="No ticket sales in this period" className="py-10" />}
               </div>
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-                <h3 className="text-sm font-semibold text-[#F2F4F5] mb-4">Top Events by Tickets</h3>
+                <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4">Top Events by Tickets</h3>
                 {topEvents.length > 0 ? (
                   <div className="space-y-3">
                     {topEvents.slice(0, 5).map((e, i) => (
                       <div key={i} className="flex items-center gap-3">
                         <span className="w-6 h-6 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
-                        <span className="text-sm text-[#F2F4F5] flex-1 truncate">{e.title || e.name}</span>
+                        <span className="text-sm text-[#EFEFF1] flex-1 truncate">{e.title || e.name}</span>
                         <span className="text-sm font-medium text-[#D4AF37]">{e.tickets ?? e.value ?? 0}</span>
                       </div>
                     ))}
@@ -273,7 +273,7 @@ export default function PlatformReportsPage() {
 
           {/* Geographic section */}
           <div className="space-y-4">
-            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EDF0F1]"><span className="w-1 h-4 rounded-full bg-[#FB923C]" /> Geographic Distribution</h2>
+            <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-[#EFEFF1]"><span className="w-1 h-4 rounded-full bg-[#FB923C]" /> Geographic Distribution</h2>
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
               {geographic.length > 0 ? (
                 <div className="overflow-x-auto">
@@ -290,11 +290,11 @@ export default function PlatformReportsPage() {
                     <tbody className="divide-y divide-[#262B2F]/70">
                       {geographic.map((c, i) => (
                         <tr key={i} className="hover:bg-[#1D2124] transition-colors">
-                          <td className="px-5 py-3 text-[#7D8387]">{i + 1}</td>
-                          <td className="px-5 py-3 font-medium text-[#F2F4F5]">{c.city || c.name}</td>
-                          <td className="px-5 py-3 text-right text-[#7D8387]">{(c.users ?? 0).toLocaleString()}</td>
-                          <td className="px-5 py-3 text-right text-[#7D8387]">{c.events ?? 0}</td>
-                          <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{format(c.revenue)}</td>
+                          <td className="px-5 py-3 text-[#949599]">{i + 1}</td>
+                          <td className="px-5 py-3 font-medium text-[#EFEFF1]">{c.city || c.name}</td>
+                          <td className="px-5 py-3 text-right text-[#949599]">{(c.users ?? 0).toLocaleString()}</td>
+                          <td className="px-5 py-3 text-right text-[#949599]">{c.events ?? 0}</td>
+                          <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(c.revenue)}</td>
                         </tr>
                       ))}
                     </tbody>

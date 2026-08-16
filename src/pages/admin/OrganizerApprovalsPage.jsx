@@ -119,7 +119,7 @@ export default function OrganizerApprovalsPage() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === t.key ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#7D8387] hover:text-[#F2F4F5] hover:bg-[#242B32]'
+              tab === t.key ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
             {t.label}
@@ -161,8 +161,8 @@ export default function OrganizerApprovalsPage() {
                     {(app.name || '?').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-semibold text-[#F2F4F5]">{app.name}</p>
-                    <p className="text-xs text-[#7D8387]">{fmtDate(app.createdAt)}</p>
+                    <p className="font-semibold text-[#EFEFF1]">{app.name}</p>
+                    <p className="text-xs text-[#949599]">{fmtDate(app.createdAt)}</p>
                   </div>
                 </div>
                 <Badge variant={tab === 'pending' ? 'pending' : tab === 'approved' ? 'success' : 'error'} size="sm">
@@ -171,20 +171,20 @@ export default function OrganizerApprovalsPage() {
               </div>
 
               <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2 text-[#7D8387]">
+                <div className="flex items-center gap-2 text-[#949599]">
                   <Mail className="w-4 h-4 shrink-0" /> <span className="truncate">{app.email}</span>
                 </div>
-                <div className="flex items-center gap-2 text-[#7D8387]">
+                <div className="flex items-center gap-2 text-[#949599]">
                   <Building2 className="w-4 h-4 shrink-0" /> <span className="truncate">{app.organizationName || app.organization?.name || '—'}</span>
                 </div>
-                <div className="flex items-center gap-2 text-[#7D8387]">
+                <div className="flex items-center gap-2 text-[#949599]">
                   <Phone className="w-4 h-4 shrink-0" /> <span>{app.phone || '—'}</span>
                 </div>
               </div>
 
               <button
                 onClick={() => openReview(app)}
-                className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#F2F4F5] hover:border-[#D4AF37]/40 hover:text-[#D4AF37] transition"
+                className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#EFEFF1] hover:border-[#D4AF37]/40 hover:text-[#D4AF37] transition"
               >
                 <Eye className="w-4 h-4" /> Review Application
               </button>
@@ -201,11 +201,11 @@ export default function OrganizerApprovalsPage() {
         size="lg"
         footer={
           <>
-            <button onClick={() => setReviewApp(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setReviewApp(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleReview}
               disabled={actionLoading || !reviewData.action}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
             >
               {actionLoading ? 'Processing...' : 'Submit Decision'}
             </button>
@@ -220,8 +220,8 @@ export default function OrganizerApprovalsPage() {
                 {(reviewApp.name || '?').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-[#F2F4F5]">{reviewApp.name}</h3>
-                <p className="text-sm text-[#7D8387]">{reviewApp.email}</p>
+                <h3 className="text-lg font-semibold text-[#EFEFF1]">{reviewApp.name}</h3>
+                <p className="text-sm text-[#949599]">{reviewApp.email}</p>
               </div>
             </div>
 
@@ -233,22 +233,22 @@ export default function OrganizerApprovalsPage() {
                 { label: 'Location', value: reviewApp.city || reviewApp.location || '—' },
                 { label: 'Applied', value: fmtDate(reviewApp.createdAt || reviewApp.created_at) },
               ].map((f) => (
-                <div key={f.label} className="rounded-lg bg-[#1E252B]/50 border border-[#494F55]/20 p-3">
-                  <p className="text-xs text-[#7D8387]">{f.label}</p>
-                  <p className="mt-1 text-sm font-medium text-[#F2F4F5]">{f.value}</p>
+                <div key={f.label} className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-3">
+                  <p className="text-xs text-[#949599]">{f.label}</p>
+                  <p className="mt-1 text-sm font-medium text-[#EFEFF1]">{f.value}</p>
                 </div>
               ))}
             </div>
 
             {(reviewApp.organization?.description || reviewApp.bio) && (
-              <div className="rounded-lg bg-[#1E252B]/50 border border-[#494F55]/20 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-2">About</p>
-                <p className="text-sm text-[#F2F4F5] leading-relaxed">{reviewApp.organization?.description || reviewApp.bio}</p>
+              <div className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">About</p>
+                <p className="text-sm text-[#EFEFF1] leading-relaxed">{reviewApp.organization?.description || reviewApp.bio}</p>
               </div>
             )}
 
             {reviewApp.organization?.documentUrl && (
-              <div className="flex items-center gap-3 rounded-lg bg-[#1E252B]/50 border border-[#494F55]/20 p-3">
+              <div className="flex items-center gap-3 rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-3">
                 <FileText className="w-5 h-5 text-[#D4AF37]" />
                 <a href={reviewApp.organization.documentUrl} target="_blank" rel="noreferrer" className="text-sm text-[#D4AF37] hover:underline">View verification document</a>
               </div>
@@ -256,14 +256,14 @@ export default function OrganizerApprovalsPage() {
 
             {/* Decision */}
             <div className="space-y-3 pt-2">
-              <p className="text-sm font-semibold text-[#F2F4F5]">Decision</p>
+              <p className="text-sm font-semibold text-[#EFEFF1]">Decision</p>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setReviewData((d) => ({ ...d, action: 'approve' }))}
                   className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border text-sm font-semibold transition ${
                     reviewData.action === 'approve'
                       ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50'
-                      : 'bg-[#1E252B]/50 text-[#7D8387] border-[#494F55]/30 hover:border-emerald-500/30'
+                      : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-emerald-500/30'
                   }`}
                 >
                   <CheckCircle2 className="w-5 h-5" /> Approve
@@ -273,7 +273,7 @@ export default function OrganizerApprovalsPage() {
                   className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border text-sm font-semibold transition ${
                     reviewData.action === 'reject'
                       ? 'bg-red-500/20 text-red-400 border-red-500/50'
-                      : 'bg-[#1E252B]/50 text-[#7D8387] border-[#494F55]/30 hover:border-red-500/30'
+                      : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-red-500/30'
                   }`}
                 >
                   <XCircle className="w-5 h-5" /> Reject
@@ -284,7 +284,7 @@ export default function OrganizerApprovalsPage() {
                   value={reviewData.reason}
                   onChange={(e) => setReviewData((d) => ({ ...d, reason: e.target.value }))}
                   placeholder="Reason for rejection (sent to applicant)..."
-                  className="w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
+                  className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
                   rows={3}
                 />
               )}

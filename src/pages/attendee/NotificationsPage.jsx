@@ -26,9 +26,9 @@ const TYPE_CONFIG = {
   reminder: { icon: CalendarClock, color: 'text-[#D4AF37]', bg: 'bg-[#D4AF37]/10' },
   promotion: { icon: Tag, color: 'text-[#D4AF37]', bg: 'bg-[#D4AF37]/10' },
   alert: { icon: AlertCircle, color: 'text-amber-400', bg: 'bg-amber-500/10' },
-  info: { icon: Info, color: 'text-[#8A9196]', bg: 'bg-[#494F55]/30' },
-  system: { icon: Bell, color: 'text-[#8A9196]', bg: 'bg-[#494F55]/30' },
-  default: { icon: Bell, color: 'text-[#8A9196]', bg: 'bg-[#494F55]/30' },
+  info: { icon: Info, color: 'text-[#949599]', bg: 'bg-[#494F55]/30' },
+  system: { icon: Bell, color: 'text-[#949599]', bg: 'bg-[#494F55]/30' },
+  default: { icon: Bell, color: 'text-[#949599]', bg: 'bg-[#494F55]/30' },
 };
 
 function timeAgo(date) {
@@ -136,8 +136,8 @@ export default function NotificationsPage() {
       {/* Header */}
       <motion.div variants={itemFade} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#EDF0F1]">Notifications</h1>
-          <p className="text-sm text-[#8A9196] mt-1">
+          <h1 className="text-2xl font-bold text-[#EFEFF1]">Notifications</h1>
+          <p className="text-sm text-[#949599] mt-1">
             {unreadCount > 0
               ? `You have ${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}.`
               : 'You\'re all caught up!'}
@@ -147,7 +147,7 @@ export default function NotificationsPage() {
           <button
             onClick={handleMarkAllRead}
             disabled={markingAll}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EDF0F1] text-sm font-medium hover:border-[#D4AF37]/40 disabled:opacity-50 transition w-fit"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium hover:border-[#D4AF37]/40 disabled:opacity-50 transition w-fit"
           >
             <CheckCheck className="w-4 h-4" />
             {markingAll ? 'Marking...' : 'Mark All Read'}
@@ -166,8 +166,8 @@ export default function NotificationsPage() {
             onClick={() => setFilter(f.value)}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               filter === f.value
-                ? 'bg-[#D4AF37] text-[#1E252B]'
-                : 'bg-[#171A1D] border border-[#262B2F] text-[#8A9196] hover:text-[#EDF0F1] hover:border-[#494F55]/50'
+                ? 'bg-[#D4AF37] text-[#1C232B]'
+                : 'bg-[#171A1D] border border-[#262B2F] text-[#949599] hover:text-[#EFEFF1] hover:border-[#494F55]/50'
             }`}
           >
             {f.label}
@@ -207,10 +207,10 @@ export default function NotificationsPage() {
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-semibold text-[#EDF0F1] truncate">{n.title}</h3>
+                      <h3 className="text-sm font-semibold text-[#EFEFF1] truncate">{n.title}</h3>
                       {!n.read && <span className="w-2 h-2 rounded-full bg-[#D4AF37] shrink-0" />}
                     </div>
-                    <p className="text-sm text-[#8A9196] line-clamp-1 mt-0.5">{n.message || n.body}</p>
+                    <p className="text-sm text-[#949599] line-clamp-1 mt-0.5">{n.message || n.body}</p>
                     <p className="text-xs text-[#494F55] mt-1">{timeAgo(n.createdAt || n.timestamp)}</p>
                   </div>
 
@@ -219,7 +219,7 @@ export default function NotificationsPage() {
                     {!n.read && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleMarkRead(n.id); }}
-                        className="w-8 h-8 rounded-lg text-[#8A9196] hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 flex items-center justify-center transition"
+                        className="w-8 h-8 rounded-lg text-[#949599] hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 flex items-center justify-center transition"
                         title="Mark as read"
                       >
                         <CheckCircle2 className="w-4 h-4" />
@@ -227,7 +227,7 @@ export default function NotificationsPage() {
                     )}
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(n.id); }}
-                      className="w-8 h-8 rounded-lg text-[#8A9196] hover:text-red-400 hover:bg-red-500/10 flex items-center justify-center transition"
+                      className="w-8 h-8 rounded-lg text-[#949599] hover:text-red-400 hover:bg-red-500/10 flex items-center justify-center transition"
                       title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -256,7 +256,7 @@ export default function NotificationsPage() {
                 View Event
               </Link>
             )}
-            <button onClick={() => setSelected(null)} className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition">
+            <button onClick={() => setSelected(null)} className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition">
               Close
             </button>
           </>
@@ -273,8 +273,8 @@ export default function NotificationsPage() {
                 </div>
               );
             })()}
-            <h3 className="text-lg font-bold text-[#EDF0F1]">{selected.title}</h3>
-            <p className="text-sm text-[#8A9196] leading-relaxed">{selected.message || selected.body}</p>
+            <h3 className="text-lg font-bold text-[#EFEFF1]">{selected.title}</h3>
+            <p className="text-sm text-[#949599] leading-relaxed">{selected.message || selected.body}</p>
             <p className="text-xs text-[#494F55] pt-2 border-t border-[#262B2F]">
               {selected.createdAt ? new Date(selected.createdAt).toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' }) : ''}
             </p>

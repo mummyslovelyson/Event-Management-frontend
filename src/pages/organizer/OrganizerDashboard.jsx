@@ -69,14 +69,14 @@ export default function OrganizerDashboard() {
       >
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-semibold tracking-tight text-[#EDF0F1]">
+            <h1 className="text-xl font-semibold tracking-tight text-[#EFEFF1]">
               {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening'}, {user?.name?.split(' ')[0] || 'there'}
             </h1>
             {data?.organization?.isApproved
               ? <Badge variant="success" size="sm" dot>Approved</Badge>
               : <Badge variant="pending" size="sm" dot>Pending approval</Badge>}
           </div>
-          <p className="mt-1 text-sm text-[#8A9196]">
+          <p className="mt-1 text-sm text-[#949599]">
             {data?.organization?.name || 'Your organization'} · sales, tickets, and what's coming up.
           </p>
         </div>
@@ -128,7 +128,7 @@ export default function OrganizerDashboard() {
             className="flex items-center gap-3 p-4 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-[#D4AF37]/30 transition-colors group"
           >
             <Icon className="w-5 h-5 text-[#5A6166] shrink-0 group-hover:text-[#D4AF37] transition-colors" />
-            <span className="text-sm font-medium text-[#EDF0F1] transition-colors">{label}</span>
+            <span className="text-sm font-medium text-[#EFEFF1] transition-colors">{label}</span>
             <ArrowRight className="w-4 h-4 text-[#5A6166] ml-auto group-hover:text-[#D4AF37] transition-colors" />
           </Link>
         ))}
@@ -139,8 +139,8 @@ export default function OrganizerDashboard() {
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-[15px] font-semibold text-[#EDF0F1]">Revenue</h2>
-              <p className="text-xs text-[#8A9196]">Daily revenue, last 30 days</p>
+              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Revenue</h2>
+              <p className="text-xs text-[#949599]">Daily revenue, last 30 days</p>
             </div>
             <Badge variant="gold">{currency}</Badge>
           </div>
@@ -154,11 +154,11 @@ export default function OrganizerDashboard() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} vertical={false} />
-                <XAxis dataKey="date" stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => format(v, { compact: true })} />
+                <XAxis dataKey="date" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#949599" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => format(v, { compact: true })} />
                 <Tooltip
-                  contentStyle={{ background: '#171A1D', border: '1px solid #494F55', borderRadius: 8, color: '#EDF0F1', fontSize: 12 }}
-                  labelStyle={{ color: '#7D8387' }}
+                  contentStyle={{ background: '#171A1D', border: '1px solid #494F55', borderRadius: 8, color: '#EFEFF1', fontSize: 12 }}
+                  labelStyle={{ color: '#949599' }}
                   formatter={(v) => [format(v), 'Revenue']}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2} fill="url(#revGrad)" />
@@ -172,18 +172,18 @@ export default function OrganizerDashboard() {
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-[15px] font-semibold text-[#EDF0F1]">Ticket Sales by Event</h2>
-              <p className="text-xs text-[#8A9196]">Your five best sellers</p>
+              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Ticket Sales by Event</h2>
+              <p className="text-xs text-[#949599]">Your five best sellers</p>
             </div>
           </div>
           {topEvents.length > 0 ? (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={topEvents} layout="vertical" margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} horizontal={false} />
-                <XAxis type="number" stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="name" stroke="#7D8387" fontSize={11} tickLine={false} axisLine={false} width={100} />
+                <XAxis type="number" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="name" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} width={100} />
                 <Tooltip
-                  contentStyle={{ background: '#171A1D', border: '1px solid #494F55', borderRadius: 8, color: '#EDF0F1', fontSize: 12 }}
+                  contentStyle={{ background: '#171A1D', border: '1px solid #494F55', borderRadius: 8, color: '#EFEFF1', fontSize: 12 }}
                   cursor={{ fill: '#494F55', fillOpacity: 0.1 }}
                   formatter={(v) => [`${v} tickets`, 'Sold']}
                 />
@@ -200,7 +200,7 @@ export default function OrganizerDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#262B2F]">
-            <h2 className="text-[15px] font-semibold text-[#EDF0F1]">Recent Orders</h2>
+            <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Recent Orders</h2>
             <Link to="/organizer/orders" className="text-xs font-medium text-[#D4AF37] hover:underline flex items-center gap-1">
               View all <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -222,13 +222,13 @@ export default function OrganizerDashboard() {
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {recentOrders.map((o) => (
                     <tr key={o.id} className="hover:bg-[#1D2124] transition-colors">
-                      <td className="px-5 py-3 font-mono text-xs text-[#EDF0F1]">#{o.reference || o.id?.slice(-6)}</td>
-                      <td className="px-5 py-3 text-[#EDF0F1]">{o.customerName || o.user?.name || '—'}</td>
-                      <td className="px-5 py-3 text-[#8A9196] max-w-[140px] truncate">{o.eventTitle || o.event?.title || '—'}</td>
-                      <td className="px-5 py-3 text-center text-[#8A9196]">{o.quantity || o.ticketCount || 0}</td>
-                      <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{format(o.amount || o.total)}</td>
+                      <td className="px-5 py-3 font-mono text-xs text-[#EFEFF1]">#{o.reference || o.id?.slice(-6)}</td>
+                      <td className="px-5 py-3 text-[#EFEFF1]">{o.customerName || o.user?.name || '—'}</td>
+                      <td className="px-5 py-3 text-[#949599] max-w-[140px] truncate">{o.eventTitle || o.event?.title || '—'}</td>
+                      <td className="px-5 py-3 text-center text-[#949599]">{o.quantity || o.ticketCount || 0}</td>
+                      <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(o.amount || o.total)}</td>
                       <td className="px-5 py-3"><Badge variant={orderStatusVariant(o.status)} size="sm">{o.status}</Badge></td>
-                      <td className="px-5 py-3 text-xs text-[#8A9196]">{o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'}</td>
+                      <td className="px-5 py-3 text-xs text-[#949599]">{o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -241,7 +241,7 @@ export default function OrganizerDashboard() {
 
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#262B2F]">
-            <h2 className="text-[15px] font-semibold text-[#EDF0F1]">Upcoming Events</h2>
+            <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Upcoming Events</h2>
             <Link to="/organizer/events" className="text-xs font-medium text-[#D4AF37] hover:underline flex items-center gap-1">
               View all <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -260,13 +260,13 @@ export default function OrganizerDashboard() {
                   >
                     <Calendar className="w-5 h-5 text-[#494F55] shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-[#EDF0F1] truncate">{e.title}</p>
-                      <p className="text-xs text-[#8A9196]">{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'} · {e.venue || e.city || '—'}</p>
+                      <p className="text-sm font-medium text-[#EFEFF1] truncate">{e.title}</p>
+                      <p className="text-xs text-[#949599]">{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'} · {e.venue || e.city || '—'}</p>
                       <div className="mt-2 flex items-center gap-2">
                         <div className="flex-1 h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
                           <div className="h-full bg-[#D4AF37] rounded-full transition-all" style={{ width: `${pct}%` }} />
                         </div>
-                        <span className="text-[10px] font-medium text-[#8A9196] tabular-nums">{sold}/{cap}</span>
+                        <span className="text-[10px] font-medium text-[#949599] tabular-nums">{sold}/{cap}</span>
                       </div>
                     </div>
                   </Link>

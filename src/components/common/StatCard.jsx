@@ -62,13 +62,13 @@ export default function StatCard({ icon: Icon, label, value, trend, trendLabel, 
       }`}
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[13px] text-[#8A9196] leading-snug">{label}</p>
+        <p className="text-[13px] text-[#949599] leading-snug">{label}</p>
         {Icon && <Icon className={`shrink-0 w-4 h-4 ${accent ? 'text-[#D4AF37]' : 'text-[#5A6166]'}`} />}
       </div>
       <p
         ref={valueRef}
         className={`mt-2 text-[30px] font-semibold tracking-tight leading-none tabular-nums ${
-          accent ? 'text-[#D4AF37]' : 'text-[#EDF0F1]'
+          accent ? 'text-[#D4AF37]' : 'text-[#EFEFF1]'
         }`}
       >
         {value}

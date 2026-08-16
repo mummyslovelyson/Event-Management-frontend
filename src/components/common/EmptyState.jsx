@@ -230,7 +230,7 @@ export default function EmptyState({ icon: Icon, title = 'Nothing here yet', des
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25, duration: 0.35 }}
-        className="mt-4 text-lg font-semibold tracking-tight text-[#EDF0F1]"
+        className="mt-4 text-lg font-semibold tracking-tight text-[#EFEFF1]"
       >
         {title}
       </motion.h3>
@@ -239,7 +239,7 @@ export default function EmptyState({ icon: Icon, title = 'Nothing here yet', des
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.35 }}
-          className="mt-2 max-w-sm text-sm text-[#8A9196] leading-relaxed"
+          className="mt-2 max-w-sm text-sm text-[#949599] leading-relaxed"
         >
           {description}
         </motion.p>
@@ -251,7 +251,7 @@ export default function EmptyState({ icon: Icon, title = 'Nothing here yet', des
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.3 }}
           whileHover={{ y: -1 }}
-          className="mt-6 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition-colors"
+          className="mt-6 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors"
         >
           {actionLabel || 'Get Started'}
         </motion.button>

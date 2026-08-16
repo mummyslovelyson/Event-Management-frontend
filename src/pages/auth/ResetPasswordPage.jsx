@@ -36,12 +36,12 @@ export default function ResetPasswordPage() {
   };
 
   const inputClass = (field) =>
-    `w-full pl-10 pr-10 py-3 rounded-lg bg-[#1E252B] border text-sm text-[#F2F4F5] placeholder:text-[#494F55] focus:outline-none transition-colors ${
+    `w-full pl-10 pr-10 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
       errors[field] ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
     }`;
 
   return (
-    <div className="min-h-screen bg-[#1E252B] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
       </div>
@@ -57,11 +57,11 @@ export default function ResetPasswordPage() {
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-2">
               <div className="w-11 h-11 rounded-xl bg-[#D4AF37] flex items-center justify-center shadow-lg">
-                <Ticket className="w-6 h-6 text-[#1E252B]" strokeWidth={2.5} />
+                <Ticket className="w-6 h-6 text-[#1C232B]" strokeWidth={2.5} />
               </div>
             </Link>
-            <h1 className="text-2xl font-bold text-[#F2F4F5]">Reset Password</h1>
-            <p className="mt-1 text-sm text-[#7D8387]">Enter your new password below</p>
+            <h1 className="text-2xl font-bold text-[#EFEFF1]">Reset Password</h1>
+            <p className="mt-1 text-sm text-[#949599]">Enter your new password below</p>
           </div>
 
           {success ? (
@@ -74,8 +74,8 @@ export default function ResetPasswordPage() {
               <div className="w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto mb-5">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-semibold text-[#F2F4F5]">Password Reset!</h3>
-              <p className="mt-2 text-sm text-[#7D8387]">
+              <h3 className="text-lg font-semibold text-[#EFEFF1]">Password Reset!</h3>
+              <p className="mt-2 text-sm text-[#949599]">
                 Your password has been changed successfully. Redirecting you to login...
               </p>
               <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-[#494F55]">
@@ -92,7 +92,7 @@ export default function ResetPasswordPage() {
               )}
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">New Password</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">New Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
@@ -108,7 +108,7 @@ export default function ResetPasswordPage() {
                     })}
                     className={inputClass('password')}
                   />
-                  <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#7D8387] transition">
+                  <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#949599] transition">
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
@@ -116,7 +116,7 @@ export default function ResetPasswordPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Confirm Password</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Confirm Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
@@ -128,7 +128,7 @@ export default function ResetPasswordPage() {
                     })}
                     className={inputClass('confirmPassword')}
                   />
-                  <button type="button" onClick={() => setShowConfirm((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#7D8387] transition">
+                  <button type="button" onClick={() => setShowConfirm((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#949599] transition">
                     {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
@@ -136,7 +136,7 @@ export default function ResetPasswordPage() {
               </div>
 
               {/* Password strength hint */}
-              <div className="rounded-lg bg-[#1E252B] border border-[#494F55]/30 p-3">
+              <div className="rounded-lg bg-[#1C232B] border border-[#494F55]/30 p-3">
                 <p className="text-xs text-[#494F55] flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5" /> Use at least 8 characters with a mix of letters and numbers.
                 </p>
@@ -145,7 +145,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={submitting || !token}
-                className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Resetting...</> : 'Reset Password'}
               </button>
@@ -154,7 +154,7 @@ export default function ResetPasswordPage() {
 
           {!success && (
             <div className="mt-6 text-center">
-              <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-[#7D8387] hover:text-[#D4AF37] transition">
+              <Link to="/login" className="inline-flex items-center gap-1.5 text-sm text-[#949599] hover:text-[#D4AF37] transition">
                 <ArrowLeft className="w-4 h-4" /> Back to Login
               </Link>
             </div>

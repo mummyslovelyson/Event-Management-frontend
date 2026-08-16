@@ -11,8 +11,8 @@
     scroll-behavior: smooth;
   }
   body {
-    background-color: #1E252B;
-    color: #F2F4F5;
+    background-color: #1C232B;
+    color: #EFEFF1;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
   ::-webkit-scrollbar {
@@ -27,7 +27,7 @@
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #7D8387;
+    background: #949599;
   }
   ::selection {
     background: rgba(212, 175, 55, 0.25);

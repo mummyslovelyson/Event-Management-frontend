@@ -111,7 +111,7 @@ export default function AttendeeDashboard() {
   return (
     <motion.div variants={containerStagger} initial="hidden" animate="show" className="space-y-8">
       {/* Welcome banner */}
-      <motion.div variants={itemFade} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#171A1D] via-[#1E252B] to-[#242B32] border border-[#262B2F] p-6 sm:p-8">
+      <motion.div variants={itemFade} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#171A1D] via-[#1C232B] to-[#242B32] border border-[#262B2F] p-6 sm:p-8">
         <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-[#D4AF37]/10 blur-3xl" />
         <div className="absolute -bottom-16 -left-10 w-40 h-40 rounded-full bg-[#D4AF37]/5 blur-3xl" />
         <div className="relative flex flex-col sm:flex-row sm:items-center gap-5">
@@ -119,7 +119,7 @@ export default function AttendeeDashboard() {
             initial={{ scale: 0.7, rotate: -6 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.1 }}
-            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#D4AF37] flex items-center justify-center text-[#1E252B] text-2xl font-bold shrink-0 shadow-lg shadow-[#D4AF37]/20"
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#D4AF37] flex items-center justify-center text-[#1C232B] text-2xl font-bold shrink-0 shadow-lg shadow-[#D4AF37]/20"
           >
             {(user?.name || user?.email || 'U')
               .split(' ')
@@ -132,10 +132,10 @@ export default function AttendeeDashboard() {
             <p className="text-sm text-[#D4AF37] font-medium">
               {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening'},
             </p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#EDF0F1] truncate">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#EFEFF1] truncate">
               {user?.name || 'there'}
             </h1>
-            <p className="mt-1 text-sm text-[#8A9196] flex items-center gap-1.5">
+            <p className="mt-1 text-sm text-[#949599] flex items-center gap-1.5">
               <MapPin className="w-4 h-4 text-[#494F55]" />
               What's happening near you?
             </p>
@@ -143,14 +143,14 @@ export default function AttendeeDashboard() {
           <div className="hidden sm:flex flex-col gap-2 shrink-0">
             <Link
               to="/attendee/explore"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all"
             >
               <Compass className="w-4 h-4" />
               Explore Events
             </Link>
             <Link
               to="/attendee/tickets"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-[#EDF0F1] text-sm font-medium hover:border-[#D4AF37]/40 hover:-translate-y-0.5 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium hover:border-[#D4AF37]/40 hover:-translate-y-0.5 transition-all"
             >
               <TicketIcon className="w-4 h-4" />
               My Tickets
@@ -168,13 +168,13 @@ export default function AttendeeDashboard() {
 
       {/* Quick actions (mobile) */}
       <motion.div variants={itemFade} className="flex sm:hidden gap-3">
-        <Link to="/attendee/explore" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold">
+        <Link to="/attendee/explore" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold">
           <Compass className="w-4 h-4" /> Browse
         </Link>
-        <Link to="/attendee/tickets" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EDF0F1] text-sm font-medium">
+        <Link to="/attendee/tickets" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium">
           <TicketIcon className="w-4 h-4" /> Tickets
         </Link>
-        <Link to="/attendee/favorites" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EDF0F1] text-sm font-medium">
+        <Link to="/attendee/favorites" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium">
           <Heart className="w-4 h-4" /> Favorites
         </Link>
       </motion.div>
@@ -249,7 +249,7 @@ export default function AttendeeDashboard() {
             {activity.length === 0 ? (
               <div className="py-10 text-center">
                 <Activity className="w-8 h-8 text-[#494F55] mx-auto mb-2" />
-                <p className="text-sm text-[#8A9196]">No recent activity</p>
+                <p className="text-sm text-[#949599]">No recent activity</p>
               </div>
             ) : (
               activity.map((a) => (
@@ -258,8 +258,8 @@ export default function AttendeeDashboard() {
                     <TicketIcon className="w-4 h-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#EDF0F1] truncate">{a.title}</p>
-                    <p className="text-xs text-[#8A9196] truncate">{a.detail}</p>
+                    <p className="text-sm font-medium text-[#EFEFF1] truncate">{a.title}</p>
+                    <p className="text-xs text-[#949599] truncate">{a.detail}</p>
                     <p className="text-[10px] text-[#494F55] mt-0.5">
                       {a.date ? new Date(a.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}
                     </p>
@@ -278,8 +278,8 @@ function SectionHeader({ title, subtitle, link, linkLabel }) {
   return (
     <div className="flex items-end justify-between mb-4">
       <div>
-        <h2 className="text-lg font-bold text-[#EDF0F1]">{title}</h2>
-        {subtitle && <p className="text-sm text-[#8A9196]">{subtitle}</p>}
+        <h2 className="text-lg font-bold text-[#EFEFF1]">{title}</h2>
+        {subtitle && <p className="text-sm text-[#949599]">{subtitle}</p>}
       </div>
       {link && (
         <Link to={link} className="inline-flex items-center gap-1 text-sm font-medium text-[#D4AF37] hover:gap-2 transition-all">

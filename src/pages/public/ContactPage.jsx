@@ -43,7 +43,7 @@ export default function ContactPage() {
   };
 
   const inputClass = (field) =>
-    `w-full px-4 py-3 rounded-lg bg-[#1E252B] border text-sm text-[#EDF0F1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
+    `w-full px-4 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
       errors[field] ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
     }`;
 
@@ -56,8 +56,8 @@ export default function ContactPage() {
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-semibold uppercase tracking-wider">
               <MessageSquare className="w-3.5 h-3.5" /> Get in Touch
             </span>
-            <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EDF0F1]">Contact Us</h1>
-            <p className="mt-4 text-lg text-[#8A9196]">
+            <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EFEFF1]">Contact Us</h1>
+            <p className="mt-4 text-lg text-[#949599]">
               Have a question, suggestion, or need help? We're here for you. Reach out and we'll respond within 24 hours.
             </p>
           </motion.div>
@@ -79,13 +79,13 @@ export default function ContactPage() {
                 <div className="w-12 h-12 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center mx-auto mb-3">
                   <info.icon className="w-6 h-6" />
                 </div>
-                <p className="text-xs font-medium uppercase tracking-wider text-[#8A9196]">{info.label}</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-[#949599]">{info.label}</p>
                 {info.href ? (
-                  <a href={info.href} className="mt-1 block text-sm font-semibold text-[#EDF0F1] hover:text-[#D4AF37] transition">
+                  <a href={info.href} className="mt-1 block text-sm font-semibold text-[#EFEFF1] hover:text-[#D4AF37] transition">
                     {info.value}
                   </a>
                 ) : (
-                  <p className="mt-1 text-sm font-semibold text-[#EDF0F1]">{info.value}</p>
+                  <p className="mt-1 text-sm font-semibold text-[#EFEFF1]">{info.value}</p>
                 )}
               </motion.div>
             ))}
@@ -104,22 +104,22 @@ export default function ContactPage() {
               transition={{ duration: 0.4 }}
               className="lg:col-span-2 rounded-2xl bg-[#171A1D] border border-[#262B2F] p-6 sm:p-8"
             >
-              <h2 className="text-xl font-bold text-[#EDF0F1] mb-1">Send us a message</h2>
-              <p className="text-sm text-[#8A9196] mb-6">Fill out the form below and we'll be in touch.</p>
+              <h2 className="text-xl font-bold text-[#EFEFF1] mb-1">Send us a message</h2>
+              <p className="text-sm text-[#949599] mb-6">Fill out the form below and we'll be in touch.</p>
 
               {sent ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mb-4">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h3 className="text-lg font-semibold text-[#EDF0F1]">Message Sent!</h3>
-                  <p className="mt-1 text-sm text-[#8A9196]">Thank you for reaching out. We'll respond shortly.</p>
+                  <h3 className="text-lg font-semibold text-[#EFEFF1]">Message Sent!</h3>
+                  <p className="mt-1 text-sm text-[#949599]">Thank you for reaching out. We'll respond shortly.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[#8A9196] mb-1.5">Full Name</label>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Full Name</label>
                       <input
                         type="text"
                         placeholder="John Doe"
@@ -129,7 +129,7 @@ export default function ContactPage() {
                       {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[#8A9196] mb-1.5">Email</label>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Email</label>
                       <input
                         type="email"
                         placeholder="john@example.com"
@@ -143,7 +143,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#8A9196] mb-1.5">Subject</label>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Subject</label>
                     <input
                       type="text"
                       placeholder="How can we help?"
@@ -153,7 +153,7 @@ export default function ContactPage() {
                     {errors.subject && <p className="mt-1 text-xs text-red-400">{errors.subject.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#8A9196] mb-1.5">Message</label>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Message</label>
                     <textarea
                       rows="5"
                       placeholder="Tell us more..."
@@ -165,7 +165,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60"
                   >
                     {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</> : <><Send className="w-4 h-4" /> Send Message</>}
                   </button>
@@ -181,14 +181,14 @@ export default function ContactPage() {
               className="space-y-4"
             >
               <div className="rounded-2xl bg-[#171A1D] border border-[#262B2F] p-6">
-                <h3 className="text-sm font-semibold text-[#EDF0F1] mb-4">Connect with us</h3>
-                <p className="text-sm text-[#8A9196] mb-4">Follow us on social media for the latest updates and event news.</p>
+                <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4">Connect with us</h3>
+                <p className="text-sm text-[#949599] mb-4">Follow us on social media for the latest updates and event news.</p>
                 <div className="grid grid-cols-2 gap-2">
                   {socials.map((s) => (
                     <a
                       key={s.label}
                       href={s.href}
-                      className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#262B2F] text-sm text-[#8A9196] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition"
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#262B2F] text-sm text-[#949599] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition"
                     >
                       <s.icon className="w-4 h-4" /> {s.label}
                     </a>
@@ -197,8 +197,8 @@ export default function ContactPage() {
               </div>
 
               <div className="rounded-2xl bg-gradient-to-br from-[#D4AF37]/15 to-[#171A1D] border border-[#D4AF37]/30 p-6">
-                <h3 className="text-sm font-semibold text-[#EDF0F1]">Need faster help?</h3>
-                <p className="mt-2 text-sm text-[#8A9196]">Check out our Help Center for instant answers to common questions.</p>
+                <h3 className="text-sm font-semibold text-[#EFEFF1]">Need faster help?</h3>
+                <p className="mt-2 text-sm text-[#949599]">Check out our Help Center for instant answers to common questions.</p>
                 <a href="/faq" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#D4AF37] hover:underline">
                   Visit FAQ →
                 </a>

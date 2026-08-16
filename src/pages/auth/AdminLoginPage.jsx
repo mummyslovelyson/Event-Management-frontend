@@ -27,7 +27,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1E252B] flex items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12 relative overflow-hidden">
       {/* Ambient background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
@@ -38,7 +38,7 @@ export default function AdminLoginPage() {
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
-          backgroundImage: 'linear-gradient(#F2F4F5 1px, transparent 1px), linear-gradient(90deg, #F2F4F5 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(#EFEFF1 1px, transparent 1px), linear-gradient(90deg, #EFEFF1 1px, transparent 1px)',
           backgroundSize: '40px 40px',
         }}
       />
@@ -55,15 +55,15 @@ export default function AdminLoginPage() {
             <div className="inline-flex w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4AF37]/25 to-[#D4AF37]/5 items-center justify-center mb-4 border border-[#D4AF37]/30">
               <ShieldCheck className="w-8 h-8 text-[#D4AF37]" />
             </div>
-            <h1 className="text-2xl font-bold text-[#F2F4F5] tracking-tight">Administration Portal</h1>
-            <p className="mt-1.5 text-sm text-[#7D8387]">Tribes & Cliqs Admin</p>
+            <h1 className="text-2xl font-bold text-[#EFEFF1] tracking-tight">Administration Portal</h1>
+            <p className="mt-1.5 text-sm text-[#949599]">Tribes & Cliqs Admin</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <input type="text" {...register('website')} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Admin Email</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Admin Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                 <input
@@ -74,7 +74,7 @@ export default function AdminLoginPage() {
                     required: 'Email is required',
                     pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },
                   })}
-                  className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1E252B] border text-sm text-[#F2F4F5] placeholder:text-[#494F55] focus:outline-none transition-colors ${
+                  className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
                     errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
                   }`}
                 />
@@ -83,7 +83,7 @@ export default function AdminLoginPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Password</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                 <input
@@ -91,14 +91,14 @@ export default function AdminLoginPage() {
                   placeholder="••••••••"
                   autoComplete="current-password"
                   {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 characters' } })}
-                  className={`w-full pl-10 pr-10 py-3 rounded-lg bg-[#1E252B] border text-sm text-[#F2F4F5] placeholder:text-[#494F55] focus:outline-none transition-colors ${
+                  className={`w-full pl-10 pr-10 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
                     errors.password ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#7D8387] transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#949599] transition"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -109,22 +109,22 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Authenticating...</> : <><ShieldCheck className="w-4 h-4" /> Secure Admin Login</>}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-[#7D8387]">
+          <p className="mt-6 text-center text-sm text-[#949599]">
             Not an admin?{' '}
             <Link to="/login" className="text-[#D4AF37] font-semibold hover:underline">Back to regular login</Link>
           </p>
         </div>
 
         {/* Restricted area notice */}
-        <div className="mt-5 rounded-xl bg-[#1E252B]/60 border border-[#494F55]/30 p-4 flex items-start gap-3">
+        <div className="mt-5 rounded-xl bg-[#1C232B]/60 border border-[#494F55]/30 p-4 flex items-start gap-3">
           <ShieldAlert className="w-5 h-5 text-[#D4AF37] shrink-0 mt-0.5" />
-          <p className="text-xs text-[#7D8387] leading-relaxed">
+          <p className="text-xs text-[#949599] leading-relaxed">
             This is a restricted area. Unauthorized access is prohibited. All activities are monitored and logged.
           </p>
         </div>

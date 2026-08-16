@@ -18,15 +18,15 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
 
-const COLORS = { gold: '#D4AF37', muted: '#8A9196', dim: '#494F55', green: '#34d399', red: '#f87171' };
+const COLORS = { gold: '#D4AF37', muted: '#949599', dim: '#494F55', green: '#34d399', red: '#f87171' };
 
 const ChartTooltip = ({ active, payload, label, formatter = (v) => v }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-lg bg-[#171A1D] border border-[#494F55]/50 px-3 py-2 shadow-xl">
-      {label != null && <p className="text-xs text-[#8A9196] mb-1">{label}</p>}
+      {label != null && <p className="text-xs text-[#949599] mb-1">{label}</p>}
       {payload.map((p, i) => (
         <p key={i} className="text-sm font-medium" style={{ color: p.color || p.stroke || p.fill }}>
           {p.name}: {formatter(p.value)}
@@ -123,7 +123,7 @@ export default function WalletPage() {
     if (t === 'credit' || t === 'earning' || t === 'payout') return { v: 'success', icon: ArrowDownRight, color: 'text-emerald-400', sign: '+' };
     if (t === 'debit' || t === 'fee' || t === 'commission') return { v: 'error', icon: ArrowUpRight, color: 'text-red-400', sign: '-' };
     if (t === 'withdrawal' || t === 'withdraw') return { v: 'warning', icon: ArrowUpRight, color: 'text-amber-400', sign: '-' };
-    return { v: 'neutral', icon: CreditCard, color: 'text-[#8A9196]', sign: '' };
+    return { v: 'neutral', icon: CreditCard, color: 'text-[#949599]', sign: '' };
   };
 
   return (
@@ -137,7 +137,7 @@ export default function WalletPage() {
           <button
             onClick={() => setWithdrawModal(true)}
             disabled={loading || balance.available <= 0}
-            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition-colors shrink-0"
+            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition-colors shrink-0"
           >
             <ArrowDownToLine className="w-4 h-4" /> Withdraw Funds
           </button>
@@ -150,25 +150,25 @@ export default function WalletPage() {
         <>
           {/* Balance card */}
           <div className="relative rounded-2xl overflow-hidden border border-[#D4AF37]/30">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1E252B] via-[#242B32] to-[#1D2124]" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1C232B] via-[#242B32] to-[#1D2124]" />
             <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-[#D4AF37]/10 blur-3xl" />
             <div className="absolute -bottom-16 -left-8 w-40 h-40 rounded-full bg-[#D4AF37]/5 blur-3xl" />
             <div className="relative p-6 sm:p-8">
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[#8A9196]">
+                  <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[#949599]">
                     <Wallet className="w-4 h-4 text-[#D4AF37]" /> Available Balance
                   </div>
                   <div className="mt-2 flex items-center gap-3">
-                    <p className="text-3xl sm:text-4xl font-bold text-[#EDF0F1] tabular-nums">{maskBalance(balance.available)}</p>
-                    <button onClick={() => setHideBalance((v) => !v)} className="text-[#8A9196] hover:text-[#EDF0F1] transition">
+                    <p className="text-3xl sm:text-4xl font-bold text-[#EFEFF1] tabular-nums">{maskBalance(balance.available)}</p>
+                    <button onClick={() => setHideBalance((v) => !v)} className="text-[#949599] hover:text-[#EFEFF1] transition">
                       {hideBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#D4AF37]/15 border border-[#D4AF37]/30">
                   <span className="w-6 h-6 rounded bg-[#D4AF37] flex items-center justify-center">
-                    <span className="text-[#1E252B] font-bold text-xs">T</span>
+                    <span className="text-[#1C232B] font-bold text-xs">T</span>
                   </span>
                   <span className="text-xs font-semibold text-[#D4AF37]">Tribes & Cliqs</span>
                 </div>
@@ -176,20 +176,20 @@ export default function WalletPage() {
 
               <div className="mt-6 flex items-end justify-between">
                 <div className="text-xs text-[#494F55] font-mono">**** **** **** {new Date().getFullYear().toString().slice(-2)}</div>
-                <div className="flex items-center gap-1.5 text-xs text-[#8A9196]">
+                <div className="flex items-center gap-1.5 text-xs text-[#949599]">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Verified Account
                 </div>
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-4 pt-5 border-t border-[#262B2F]">
                 <div>
-                  <p className="text-xs uppercase tracking-wider text-[#8A9196] flex items-center gap-1.5">
+                  <p className="text-xs uppercase tracking-wider text-[#949599] flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" /> Pending Balance
                   </p>
                   <p className="mt-1 text-lg font-semibold text-amber-400 tabular-nums">{maskBalance(balance.pending)}</p>
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-wider text-[#8A9196] flex items-center gap-1.5">
+                  <p className="text-xs uppercase tracking-wider text-[#949599] flex items-center gap-1.5">
                     <TrendingUp className="w-3.5 h-3.5" /> Total Earned
                   </p>
                   <p className="mt-1 text-lg font-semibold text-[#D4AF37] tabular-nums">{maskBalance(balance.totalEarned)}</p>
@@ -200,7 +200,7 @@ export default function WalletPage() {
 
           {/* Earnings chart */}
           <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-            <h3 className="text-sm font-semibold text-[#EDF0F1] mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4 flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-[#D4AF37]" /> Monthly Earnings
             </h3>
             {earnings.length === 0 ? (
@@ -226,7 +226,7 @@ export default function WalletPage() {
 
           {/* Transaction history */}
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-[#EDF0F1] flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
               <CreditCard className="w-5 h-5 text-[#D4AF37]" /> Transaction History
             </h2>
             {transactions.length === 0 ? (
@@ -256,10 +256,10 @@ export default function WalletPage() {
                               <span className={`w-7 h-7 rounded-md bg-[#494F55]/30 flex items-center justify-center ${meta.color}`}>
                                 <Icon className="w-3.5 h-3.5" />
                               </span>
-                              <span className="text-[#EDF0F1] font-medium capitalize">{t.type || 'Transaction'}</span>
+                              <span className="text-[#EFEFF1] font-medium capitalize">{t.type || 'Transaction'}</span>
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-[#8A9196] max-w-[200px] truncate">{t.description || t.eventTitle || '—'}</td>
+                          <td className="px-4 py-3 text-[#949599] max-w-[200px] truncate">{t.description || t.eventTitle || '—'}</td>
                           <td className={`px-4 py-3 text-right font-semibold tabular-nums ${meta.color}`}>
                             {meta.sign}{format(t.amount)}
                           </td>
@@ -268,7 +268,7 @@ export default function WalletPage() {
                               {t.status || 'completed'}
                             </Badge>
                           </td>
-                          <td className="px-4 py-3 text-xs text-[#8A9196] whitespace-nowrap">
+                          <td className="px-4 py-3 text-xs text-[#949599] whitespace-nowrap">
                             {t.date || t.createdAt ? new Date(t.date || t.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
                           </td>
                         </tr>
@@ -282,7 +282,7 @@ export default function WalletPage() {
 
           {/* Withdrawal history */}
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-[#EDF0F1] flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[#EFEFF1] flex items-center gap-2">
               <Landmark className="w-5 h-5 text-[#D4AF37]" /> Withdrawal History
             </h2>
             {withdrawals.length === 0 ? (
@@ -304,9 +304,9 @@ export default function WalletPage() {
                   <tbody className="divide-y divide-[#262B2F]/70">
                     {withdrawals.map((w, i) => (
                       <tr key={w.id || i} className="hover:bg-[#1D2124] transition-colors">
-                        <td className="px-4 py-3 font-semibold text-[#EDF0F1] tabular-nums">{format(w.amount)}</td>
+                        <td className="px-4 py-3 font-semibold text-[#EFEFF1] tabular-nums">{format(w.amount)}</td>
                         <td className="px-4 py-3">
-                          <span className="inline-flex items-center gap-2 text-[#8A9196]">
+                          <span className="inline-flex items-center gap-2 text-[#949599]">
                             <Building2 className="w-4 h-4 text-[#494F55]" />
                             {w.bankName || '—'}
                           </span>
@@ -314,10 +314,10 @@ export default function WalletPage() {
                         <td className="px-4 py-3">
                           <Badge variant={withdrawalStatus(w.status)} size="sm" dot>{w.status || 'pending'}</Badge>
                         </td>
-                        <td className="px-4 py-3 text-xs text-[#8A9196] whitespace-nowrap">
+                        <td className="px-4 py-3 text-xs text-[#949599] whitespace-nowrap">
                           {w.requestedAt || w.createdAt ? new Date(w.requestedAt || w.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
                         </td>
-                        <td className="px-4 py-3 font-mono text-xs text-[#8A9196]">{w.reference || w.id?.slice(-8).toUpperCase() || '—'}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-[#949599]">{w.reference || w.id?.slice(-8).toUpperCase() || '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -336,8 +336,8 @@ export default function WalletPage() {
         size="md"
         footer={
           <>
-            <button onClick={() => setWithdrawModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={submitWithdraw} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1E252B] bg-[#D4AF37] hover:bg-[#c4a030] disabled:opacity-60 transition">
+            <button onClick={() => setWithdrawModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={submitWithdraw} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-[#D4AF37] hover:bg-[#c4a030] disabled:opacity-60 transition">
               {submitting ? 'Processing...' : 'Request Withdrawal'}
             </button>
           </>
@@ -345,11 +345,11 @@ export default function WalletPage() {
       >
         <form onSubmit={submitWithdraw} className="space-y-4">
           <div className="rounded-lg bg-gradient-to-br from-[#D4AF37]/10 to-[#1D2124] border border-[#D4AF37]/30 p-4 flex items-center justify-between">
-            <span className="text-sm text-[#8A9196]">Available</span>
+            <span className="text-sm text-[#949599]">Available</span>
             <span className="text-lg font-bold text-[#D4AF37]">{format(balance.available)}</span>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Amount (₵)</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Amount (₵)</label>
             <input
               type="number"
               step="0.01"
@@ -362,7 +362,7 @@ export default function WalletPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Bank Name</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Bank Name</label>
             <input
               value={wForm.bankName}
               onChange={(e) => setWForm((f) => ({ ...f, bankName: e.target.value }))}
@@ -371,7 +371,7 @@ export default function WalletPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Account Number</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Account Number</label>
             <input
               value={wForm.accountNumber}
               onChange={(e) => setWForm((f) => ({ ...f, accountNumber: e.target.value }))}
@@ -380,7 +380,7 @@ export default function WalletPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Account Name</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Account Name</label>
             <input
               value={wForm.accountName}
               onChange={(e) => setWForm((f) => ({ ...f, accountName: e.target.value }))}

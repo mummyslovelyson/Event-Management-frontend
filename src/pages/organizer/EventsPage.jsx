@@ -112,7 +112,7 @@ export default function EventsPage() {
         actions={
           <Link
             to="/organizer/events/create"
-            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition-colors shrink-0"
+            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" /> Create Event
           </Link>
@@ -127,13 +127,13 @@ export default function EventsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search events..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition"
           />
         </div>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer"
+          className="px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer"
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
@@ -143,13 +143,13 @@ export default function EventsPage() {
         <div className="flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#494F55]/40">
           <button
             onClick={() => setView('table')}
-            className={`p-2 rounded-md transition-colors ${view === 'table' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-[#8A9196] hover:text-[#EDF0F1]'}`}
+            className={`p-2 rounded-md transition-colors ${view === 'table' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             <List className="w-4 h-4" />
           </button>
           <button
             onClick={() => setView('grid')}
-            className={`p-2 rounded-md transition-colors ${view === 'grid' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-[#8A9196] hover:text-[#EDF0F1]'}`}
+            className={`p-2 rounded-md transition-colors ${view === 'grid' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             <LayoutGrid className="w-4 h-4" />
           </button>
@@ -162,7 +162,7 @@ export default function EventsPage() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`relative px-4 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${tab === t ? 'text-[#D4AF37]' : 'text-[#8A9196] hover:text-[#EDF0F1]'}`}
+            className={`relative px-4 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${tab === t ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             {t}
             {tab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#D4AF37]" />}
@@ -212,23 +212,23 @@ export default function EventsPage() {
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         <img src={e.banner_image || e.thumbnail || `https://picsum.photos/seed/${e.id}/80/80`} alt="" className="w-11 h-11 rounded-lg object-cover bg-[#242B32]" />
-                        <span className="font-medium text-[#EDF0F1] max-w-[180px] truncate">{e.title}</span>
+                        <span className="font-medium text-[#EFEFF1] max-w-[180px] truncate">{e.title}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-[#8A9196]">{e.category?.name || e.category || '—'}</td>
-                    <td className="px-5 py-3 text-[#8A9196]">{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}</td>
-                    <td className="px-5 py-3 text-[#8A9196] max-w-[140px] truncate">{e.venue || e.city || '—'}</td>
-                    <td className="px-5 py-3 text-center text-[#8A9196]">{sold}/{cap}</td>
-                    <td className="px-5 py-3 text-right font-medium text-[#EDF0F1]">{format(e.revenue)}</td>
+                    <td className="px-5 py-3 text-[#949599]">{e.category?.name || e.category || '—'}</td>
+                    <td className="px-5 py-3 text-[#949599]">{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}</td>
+                    <td className="px-5 py-3 text-[#949599] max-w-[140px] truncate">{e.venue || e.city || '—'}</td>
+                    <td className="px-5 py-3 text-center text-[#949599]">{sold}/{cap}</td>
+                    <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(e.revenue)}</td>
                     <td className="px-5 py-3"><Badge variant={statusVariant(e.status)} size="sm">{e.status}</Badge></td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-1" onClick={(ev) => ev.stopPropagation()}>
-                        <button onClick={() => navigate(`/organizer/events/${e.id}/edit`)} className="p-1.5 rounded-md text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition" title="Edit"><Edit2 className="w-4 h-4" /></button>
-                        <button onClick={() => navigate(`/events/${e.id}`)} className="p-1.5 rounded-md text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition" title="View"><Eye className="w-4 h-4" /></button>
-                        <button onClick={() => togglePublish(e)} className="p-1.5 rounded-md text-[#8A9196] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title={e.status === 'published' ? 'Unpublish' : 'Submit for Review'}>
+                        <button onClick={() => navigate(`/organizer/events/${e.id}/edit`)} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit"><Edit2 className="w-4 h-4" /></button>
+                        <button onClick={() => navigate(`/events/${e.id}`)} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View"><Eye className="w-4 h-4" /></button>
+                        <button onClick={() => togglePublish(e)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title={e.status === 'published' ? 'Unpublish' : 'Submit for Review'}>
                           {e.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Send className="w-4 h-4" />}
                         </button>
-                        <button onClick={() => setDeleteTarget(e)} className="p-1.5 rounded-md text-[#8A9196] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                        <button onClick={() => setDeleteTarget(e)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete"><Trash2 className="w-4 h-4" /></button>
                       </div>
                     </td>
                   </tr>
@@ -250,13 +250,13 @@ export default function EventsPage() {
         title="Delete Event"
         footer={
           <>
-            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
             <button onClick={handleDelete} disabled={deleting} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 disabled:opacity-60 transition">{deleting ? 'Deleting...' : 'Delete'}</button>
           </>
         }
       >
-        <p className="text-sm text-[#8A9196] leading-relaxed">
-          Are you sure you want to delete <span className="font-semibold text-[#EDF0F1]">{deleteTarget?.title}</span>? This action cannot be undone, and all associated ticket types and orders will be affected.
+        <p className="text-sm text-[#949599] leading-relaxed">
+          Are you sure you want to delete <span className="font-semibold text-[#EFEFF1]">{deleteTarget?.title}</span>? This action cannot be undone, and all associated ticket types and orders will be affected.
         </p>
       </Modal>
     </div>
@@ -285,10 +285,10 @@ function EventCard({ event, onEdit, onView, onTogglePublish, onDelete }) {
             <AnimatePresence>
               {menu && (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="absolute right-0 mt-1 w-40 rounded-lg bg-[#171A1D] border border-[#494F55]/40 shadow-xl py-1 z-10">
-                  <button onClick={() => { setMenu(false); onEdit(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/20"><Edit2 className="w-4 h-4" /> Edit</button>
-                  <button onClick={() => { setMenu(false); onView(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/20"><Eye className="w-4 h-4" /> View</button>
-                  <button onClick={() => { setMenu(false); onTogglePublish(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/20"><Send className="w-4 h-4" /> {event.status === 'published' ? 'Unpublish' : 'Submit for Review'}</button>
-                  <button onClick={() => { setMenu(false); onDelete(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#8A9196] hover:text-red-400 hover:bg-red-500/10"><Trash2 className="w-4 h-4" /> Delete</button>
+                  <button onClick={() => { setMenu(false); onEdit(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Edit2 className="w-4 h-4" /> Edit</button>
+                  <button onClick={() => { setMenu(false); onView(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Eye className="w-4 h-4" /> View</button>
+                  <button onClick={() => { setMenu(false); onTogglePublish(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Send className="w-4 h-4" /> {event.status === 'published' ? 'Unpublish' : 'Submit for Review'}</button>
+                  <button onClick={() => { setMenu(false); onDelete(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#949599] hover:text-red-400 hover:bg-red-500/10"><Trash2 className="w-4 h-4" /> Delete</button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -296,8 +296,8 @@ function EventCard({ event, onEdit, onView, onTogglePublish, onDelete }) {
         </div>
       </div>
       <div className="p-4">
-        <h3 className="font-semibold text-[#EDF0F1] truncate">{event.title}</h3>
-        <div className="mt-2 space-y-1.5 text-xs text-[#8A9196]">
+        <h3 className="font-semibold text-[#EFEFF1] truncate">{event.title}</h3>
+        <div className="mt-2 space-y-1.5 text-xs text-[#949599]">
           <p className="flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> {event.startDate ? new Date(event.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}</p>
           <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {event.venue || event.city || '—'}</p>
         </div>
@@ -305,11 +305,11 @@ function EventCard({ event, onEdit, onView, onTogglePublish, onDelete }) {
           <div className="flex-1 h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
             <div className="h-full bg-[#D4AF37] rounded-full" style={{ width: `${pct}%` }} />
           </div>
-          <span className="text-[10px] font-medium text-[#8A9196] tabular-nums">{sold}/{cap}</span>
+          <span className="text-[10px] font-medium text-[#949599] tabular-nums">{sold}/{cap}</span>
         </div>
         <div className="mt-3 flex items-center justify-between">
           <span className="flex items-center gap-1 text-xs text-[#D4AF37] font-medium"><DollarSign className="w-3.5 h-3.5" /> {format(event.revenue)}</span>
-          <span className="flex items-center gap-1 text-xs text-[#8A9196]"><TicketIcon className="w-3.5 h-3.5" /> {event.category?.name || event.category || '—'}</span>
+          <span className="flex items-center gap-1 text-xs text-[#949599]"><TicketIcon className="w-3.5 h-3.5" /> {event.category?.name || event.category || '—'}</span>
         </div>
       </div>
     </motion.div>

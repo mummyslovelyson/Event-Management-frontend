@@ -44,7 +44,7 @@ export default function PaymentCallbackPage() {
   const goToTickets = () => navigate('/attendee/tickets');
 
   return (
-    <div className="min-h-screen bg-[#1E252B] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
       </div>
@@ -60,11 +60,11 @@ export default function PaymentCallbackPage() {
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-2">
               <div className="w-11 h-11 rounded-xl bg-[#D4AF37] flex items-center justify-center shadow-lg">
-                <Ticket className="w-6 h-6 text-[#1E252B]" strokeWidth={2.5} />
+                <Ticket className="w-6 h-6 text-[#1C232B]" strokeWidth={2.5} />
               </div>
             </Link>
-            <h1 className="text-2xl font-bold text-[#F2F4F5]">Payment Confirmation</h1>
-            <p className="mt-1 text-sm text-[#7D8387]">Confirming your ticket payment</p>
+            <h1 className="text-2xl font-bold text-[#EFEFF1]">Payment Confirmation</h1>
+            <p className="mt-1 text-sm text-[#949599]">Confirming your ticket payment</p>
           </div>
 
           <div className="text-center py-6">
@@ -73,7 +73,7 @@ export default function PaymentCallbackPage() {
                 <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center mx-auto mb-5">
                   <Loader2 className="w-8 h-8 animate-spin" />
                 </div>
-                <p className="text-sm text-[#7D8387]">Verifying your payment…</p>
+                <p className="text-sm text-[#949599]">Verifying your payment…</p>
               </div>
             )}
 
@@ -82,13 +82,13 @@ export default function PaymentCallbackPage() {
                 <div className="w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto mb-5">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-lg font-semibold text-[#F2F4F5]">Payment Successful!</h3>
-                <p className="mt-2 text-sm text-[#7D8387]">
+                <h3 className="text-lg font-semibold text-[#EFEFF1]">Payment Successful!</h3>
+                <p className="mt-2 text-sm text-[#949599]">
                   Your tickets have been confirmed. You can view them in your tickets.
                 </p>
                 <button
                   onClick={goToTickets}
-                  className="mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition"
+                  className="mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
                 >
                   <TicketCheck className="w-4 h-4" /> View My Tickets
                 </button>
@@ -100,8 +100,8 @@ export default function PaymentCallbackPage() {
                 <div className="w-16 h-16 rounded-full bg-red-500/15 text-red-400 flex items-center justify-center mx-auto mb-5">
                   <XCircle className="w-8 h-8" />
                 </div>
-                <h3 className="text-lg font-semibold text-[#F2F4F5]">Payment Not Confirmed</h3>
-                <p className="mt-2 text-sm text-[#7D8387]">
+                <h3 className="text-lg font-semibold text-[#EFEFF1]">Payment Not Confirmed</h3>
+                <p className="mt-2 text-sm text-[#949599]">
                   {reference
                     ? 'We could not confirm your payment. If you were charged, your tickets may still be issued shortly.'
                     : 'No payment reference was found. Please return and try again.'}
@@ -109,13 +109,13 @@ export default function PaymentCallbackPage() {
                 <div className="mt-6 space-y-3">
                   <Link
                     to="/attendee/tickets"
-                    className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition"
+                    className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
                   >
                     <TicketCheck className="w-4 h-4" /> Check My Tickets
                   </Link>
                   <Link
                     to="/explore"
-                    className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-[#494F55]/50 text-[#EDF0F1] text-sm font-medium hover:border-[#D4AF37]/50 transition"
+                    className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-[#494F55]/50 text-[#EFEFF1] text-sm font-medium hover:border-[#D4AF37]/50 transition"
                   >
                     Browse Events
                   </Link>
@@ -126,7 +126,7 @@ export default function PaymentCallbackPage() {
 
           {status !== 'verifying' && (
             <div className="mt-4 text-center">
-              <Link to="/explore" className="inline-flex items-center gap-1.5 text-sm text-[#7D8387] hover:text-[#D4AF37] transition">
+              <Link to="/explore" className="inline-flex items-center gap-1.5 text-sm text-[#949599] hover:text-[#D4AF37] transition">
                 <ArrowLeft className="w-4 h-4" /> Back to Events
               </Link>
             </div>

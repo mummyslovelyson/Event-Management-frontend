@@ -72,10 +72,10 @@ function StatCounter({ stat }) {
   return (
     <div ref={ref} className="group rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 text-center hover:border-[#D4AF37]/25 hover:-translate-y-0.5 transition-all duration-300">
       <stat.icon className="w-6 h-6 text-[#494F55] mx-auto mb-3 group-hover:text-[#D4AF37] group-hover:scale-110 transition-all duration-300" />
-      <p className="text-3xl font-bold text-[#EDF0F1]">
+      <p className="text-3xl font-bold text-[#EFEFF1]">
         {format(count)}{stat.suffix}
       </p>
-      <p className="mt-1 text-xs font-medium uppercase tracking-wider text-[#8A9196]">{stat.label}</p>
+      <p className="mt-1 text-xs font-medium uppercase tracking-wider text-[#949599]">{stat.label}</p>
     </div>
   );
 }
@@ -83,11 +83,11 @@ function StatCounter({ stat }) {
 function SkeletonCard() {
   return (
     <div className="w-[280px] shrink-0 rounded-xl overflow-hidden bg-[#171A1D] border border-[#262B2F]">
-      <div className="aspect-[16/10] bg-[#1E252B] animate-pulse" />
+      <div className="aspect-[16/10] bg-[#1C232B] animate-pulse" />
       <div className="p-4 space-y-3">
-        <div className="h-4 bg-[#1E252B] rounded animate-pulse w-3/4" />
-        <div className="h-3 bg-[#1E252B] rounded animate-pulse w-1/2" />
-        <div className="h-3 bg-[#1E252B] rounded animate-pulse w-2/3" />
+        <div className="h-4 bg-[#1C232B] rounded animate-pulse w-3/4" />
+        <div className="h-3 bg-[#1C232B] rounded animate-pulse w-1/2" />
+        <div className="h-3 bg-[#1C232B] rounded animate-pulse w-2/3" />
       </div>
     </div>
   );
@@ -179,8 +179,8 @@ export default function HomePage() {
             className="w-full h-full object-cover scale-[1.4]"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1E252B]/80 via-[#1E252B]/70 to-[#1E252B]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1E252B]/90 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1C232B]/80 via-[#1C232B]/70 to-[#1C232B]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1C232B]/90 to-transparent" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
           <motion.div
@@ -192,10 +192,10 @@ export default function HomePage() {
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#171A1D]/90 border border-[#494F55]/40 text-[#9AA1A6] text-xs font-semibold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" /> Africa's Premier Event Platform
             </span>
-            <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold text-[#EDF0F1] leading-[1.1] tracking-tight">
+            <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold text-[#EFEFF1] leading-[1.1] tracking-tight">
               Where Every Event <br />Is a <span className="text-[#D4AF37]">Success</span>
             </h1>
-            <p className="mt-5 text-lg text-[#8A9196] max-w-xl leading-relaxed">
+            <p className="mt-5 text-lg text-[#949599] max-w-xl leading-relaxed">
               Tribes & Cliqs is an online self-ticketing platform that allows you to curate events seamlessly
               and provide your guests with the ultimate booking experience.
             </p>
@@ -213,7 +213,7 @@ export default function HomePage() {
                     placeholder="City"
                     value={search.city}
                     onChange={(e) => setSearch({ ...search, city: e.target.value })}
-                    className="w-full pl-9 pr-3 py-3 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder:text-[#494F55] focus:outline-none focus:border-[#494F55]/50"
+                    className="w-full pl-9 pr-3 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-[#494F55]/50"
                   />
                 </div>
                 <div className="relative">
@@ -221,7 +221,7 @@ export default function HomePage() {
                   <select
                     value={search.category}
                     onChange={(e) => setSearch({ ...search, category: e.target.value })}
-                    className="w-full pl-9 pr-3 py-3 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] focus:outline-none focus:border-[#494F55]/50 appearance-none cursor-pointer"
+                    className="w-full pl-9 pr-3 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#494F55]/50 appearance-none cursor-pointer"
                   >
                     <option value="">All categories</option>
                     {categories.map((c) => (
@@ -235,13 +235,13 @@ export default function HomePage() {
                     type="date"
                     value={search.date}
                     onChange={(e) => setSearch({ ...search, date: e.target.value })}
-                    className="w-full pl-9 pr-3 py-3 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] focus:outline-none focus:border-[#494F55]/50 [color-scheme:dark]"
+                    className="w-full pl-9 pr-3 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#494F55]/50 [color-scheme:dark]"
                   />
                 </div>
               </div>
               <button
                 type="submit"
-                className="mt-2 w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition-colors"
+                className="mt-2 w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors"
               >
                 <Search className="w-4 h-4" /> Search Events
               </button>
@@ -251,13 +251,13 @@ export default function HomePage() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/explore"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-lg"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-lg"
               >
                 Explore Events <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <Link
                 to="/register"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EDF0F1] text-sm font-semibold hover:border-[#D4AF37]/50 hover:text-[#D4AF37] hover:-translate-y-0.5 transition-all"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-[#D4AF37]/50 hover:text-[#D4AF37] hover:-translate-y-0.5 transition-all"
               >
                 Create Event
               </Link>
@@ -271,10 +271,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-8">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#8A9196]">Handpicked</span>
-              <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EDF0F1]">Featured Events</h2>
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Handpicked</span>
+              <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Featured Events</h2>
             </div>
-            <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm text-[#8A9196] hover:text-[#D4AF37] transition-colors">
+            <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm text-[#949599] hover:text-[#D4AF37] transition-colors">
               View all <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
@@ -284,7 +284,7 @@ export default function HomePage() {
               {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : featured.length === 0 ? (
-            <p className="text-sm text-[#8A9196] py-8 text-center">No featured events at the moment. Check back soon!</p>
+            <p className="text-sm text-[#949599] py-8 text-center">No featured events at the moment. Check back soon!</p>
           ) : (
             <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-thin">
               {featured.map((event) => (
@@ -302,12 +302,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-8">
             <div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#8A9196]">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#949599]">
                 <TrendingUp className="w-3.5 h-3.5" /> Hot Right Now
               </span>
-              <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EDF0F1]">Trending Events</h2>
+              <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Trending Events</h2>
             </div>
-            <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm text-[#8A9196] hover:text-[#D4AF37] transition-colors">
+            <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm text-[#949599] hover:text-[#D4AF37] transition-colors">
               View all <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
@@ -317,7 +317,7 @@ export default function HomePage() {
               {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : trending.length === 0 ? (
-            <p className="text-sm text-[#8A9196] py-8 text-center">No trending events right now.</p>
+            <p className="text-sm text-[#949599] py-8 text-center">No trending events right now.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {trending.map((event) => (
@@ -332,9 +332,9 @@ export default function HomePage() {
       <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#8A9196]">Browse by interest</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EDF0F1]">Explore Categories</h2>
-            <p className="mt-2 text-sm text-[#8A9196] max-w-lg mx-auto">Whatever you're into, we've got an event for you.</p>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Browse by interest</span>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Explore Categories</h2>
+            <p className="mt-2 text-sm text-[#949599] max-w-lg mx-auto">Whatever you're into, we've got an event for you.</p>
           </div>
           {loadingCategories ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
@@ -362,10 +362,10 @@ export default function HomePage() {
                       to={`/explore?category=${encodeURIComponent(name)}`}
                       className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-[#D4AF37]/30 hover:-translate-y-1 transition-all duration-300"
                     >
-                      <div className="w-12 h-12 rounded-lg bg-[#242B32] flex items-center justify-center group-hover:bg-[#1E252B] transition-colors">
+                      <div className="w-12 h-12 rounded-lg bg-[#242B32] flex items-center justify-center group-hover:bg-[#1C232B] transition-colors">
                         <Icon className="w-6 h-6 text-[#9AA1A6] group-hover:text-[#D4AF37] group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
                       </div>
-                      <span className="text-sm font-semibold text-[#EDF0F1]">{name}</span>
+                      <span className="text-sm font-semibold text-[#EFEFF1]">{name}</span>
                     </Link>
                   </motion.div>
                 );
@@ -379,8 +379,8 @@ export default function HomePage() {
       <section className="py-16 sm:py-20 bg-[#171A1D]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#8A9196]">Simple process</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EDF0F1]">How It Works</h2>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Simple process</span>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">How It Works</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {steps.map((step, i) => (
@@ -391,14 +391,14 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.12 }}
                 whileHover={{ y: -4 }}
-                className="group relative rounded-2xl bg-[#1E252B] border border-[#262B2F] p-6 text-center hover:border-[#D4AF37]/25 transition-colors"
+                className="group relative rounded-2xl bg-[#1C232B] border border-[#262B2F] p-6 text-center hover:border-[#D4AF37]/25 transition-colors"
               >
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] text-sm font-bold flex items-center justify-center transition group-hover:border-[#D4AF37]/50 group-hover:text-[#D4AF37]">
                   {i + 1}
                 </div>
                 <step.icon className="w-7 h-7 text-[#494F55] mx-auto mb-4 mt-2 group-hover:text-[#D4AF37] group-hover:scale-110 transition-all duration-300" />
-                <h3 className="text-lg font-semibold text-[#EDF0F1]">{step.title}</h3>
-                <p className="mt-2 text-sm text-[#8A9196] leading-relaxed">{step.desc}</p>
+                <h3 className="text-lg font-semibold text-[#EFEFF1]">{step.title}</h3>
+                <p className="mt-2 text-sm text-[#949599] leading-relaxed">{step.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -409,8 +409,8 @@ export default function HomePage() {
       <section className="py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#8A9196]">Trusted creators</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EDF0F1]">Featured Organizers</h2>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Trusted creators</span>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Featured Organizers</h2>
           </div>
           {loadingOrganizers ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -427,7 +427,7 @@ export default function HomePage() {
               ))}
             </div>
           ) : featuredOrganizers.length === 0 ? (
-            <p className="text-sm text-[#8A9196] py-8 text-center">No organizers featured yet. Check back soon!</p>
+            <p className="text-sm text-[#949599] py-8 text-center">No organizers featured yet. Check back soon!</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {featuredOrganizers.map((org, i) => {
@@ -449,8 +449,8 @@ export default function HomePage() {
                         ) : initials}
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-sm font-semibold text-[#EDF0F1] truncate">{org.organization_name || org.name}</h3>
-                        <p className="text-xs text-[#8A9196]">{org.specialty || 'Event Organizer'}</p>
+                        <h3 className="text-sm font-semibold text-[#EFEFF1] truncate">{org.organization_name || org.name}</h3>
+                        <p className="text-xs text-[#949599]">{org.specialty || 'Event Organizer'}</p>
                       </div>
                     </div>
                     <div className="mt-4 pt-4 border-t border-[#262B2F] flex items-center justify-between">
@@ -469,8 +469,8 @@ export default function HomePage() {
       <section className="py-16 sm:py-20 bg-[#171A1D]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#EDF0F1]">Trusted by Thousands</h2>
-            <p className="mt-2 text-sm text-[#8A9196]">The numbers speak for themselves.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Trusted by Thousands</h2>
+            <p className="mt-2 text-sm text-[#949599]">The numbers speak for themselves.</p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {stats.map((stat) => <StatCounter key={stat.label} stat={stat} />)}
@@ -511,8 +511,8 @@ function NewsletterSection() {
         >
           <div className="relative">
             <Mail className="w-7 h-7 text-[#494F55] mx-auto mb-4" />
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#EDF0F1]">Never Miss an Event</h2>
-            <p className="mt-2 text-sm text-[#8A9196] max-w-md mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Never Miss an Event</h2>
+            <p className="mt-2 text-sm text-[#949599] max-w-md mx-auto">
               Get the hottest events, exclusive deals, and early-bird tickets delivered straight to your inbox.
             </p>
             <form onSubmit={subscribe} className="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -522,12 +522,12 @@ function NewsletterSection() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder:text-[#494F55] focus:outline-none focus:border-[#494F55]/50"
+                className="flex-1 px-4 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-[#494F55]/50"
               />
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                className="px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
               >
                 {submitting ? <LoadingSpinner size="sm" /> : <><Star className="w-4 h-4" /> Subscribe</>}
               </button>

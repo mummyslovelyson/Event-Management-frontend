@@ -136,8 +136,8 @@ export default function CheckInPage() {
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <label className="text-xs font-medium uppercase tracking-wider text-[#8A9196]">Event</label>
-        <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer">
+        <label className="text-xs font-medium uppercase tracking-wider text-[#949599]">Event</label>
+        <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition cursor-pointer">
           <option value="">Choose event...</option>
           {events.map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
         </select>
@@ -146,26 +146,26 @@ export default function CheckInPage() {
       {/* Attendance Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-          <div className="flex items-center gap-2 text-xs text-[#8A9196] uppercase tracking-wider"><Users className="w-4 h-4" /> Expected</div>
-          <p className="mt-2 text-xl font-bold text-[#EDF0F1]">{stats.total}</p>
+          <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><Users className="w-4 h-4" /> Expected</div>
+          <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{stats.total}</p>
         </div>
         <div className="rounded-xl bg-[#171A1D] border border-emerald-500/30 p-4">
           <div className="flex items-center gap-2 text-xs text-emerald-400 uppercase tracking-wider"><UserCheck className="w-4 h-4" /> Checked In</div>
           <p className="mt-2 text-xl font-bold text-emerald-400">{stats.checkedIn}</p>
         </div>
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-          <div className="flex items-center gap-2 text-xs text-[#8A9196] uppercase tracking-wider"><Clock className="w-4 h-4" /> Not Arrived</div>
-          <p className="mt-2 text-xl font-bold text-[#EDF0F1]">{stats.notArrived}</p>
+          <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><Clock className="w-4 h-4" /> Not Arrived</div>
+          <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{stats.notArrived}</p>
         </div>
         <div className="rounded-xl bg-gradient-to-br from-[#D4AF37]/15 to-[#171A1D] border border-[#D4AF37]/30 p-4">
           <div className="flex items-center gap-2 text-xs text-[#D4AF37] uppercase tracking-wider"><UserCheck className="w-4 h-4" /> Check-in Rate</div>
-          <p className="mt-2 text-xl font-bold text-[#EDF0F1]">{stats.rate}%</p>
+          <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{stats.rate}%</p>
         </div>
       </div>
 
       {/* Progress */}
       <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-        <div className="flex items-center justify-between text-xs text-[#8A9196] mb-2">
+        <div className="flex items-center justify-between text-xs text-[#949599] mb-2">
           <span>Attendance Progress</span>
           <span className="tabular-nums">{stats.checkedIn}/{stats.total}</span>
         </div>
@@ -176,10 +176,10 @@ export default function CheckInPage() {
 
       {/* Tabs */}
       <div className="flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#262B2F] w-fit">
-        <button onClick={() => setTab('scanner')} className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition ${tab === 'scanner' ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#8A9196] hover:text-[#EDF0F1]'}`}>
+        <button onClick={() => setTab('scanner')} className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition ${tab === 'scanner' ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
           <ScanLine className="w-4 h-4" /> QR Scanner
         </button>
-        <button onClick={() => setTab('manual')} className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition ${tab === 'manual' ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#8A9196] hover:text-[#EDF0F1]'}`}>
+        <button onClick={() => setTab('manual')} className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition ${tab === 'manual' ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
           <Search className="w-4 h-4" /> Manual Search
         </button>
       </div>
@@ -190,7 +190,7 @@ export default function CheckInPage() {
           {tab === 'scanner' ? (
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-6 space-y-5">
               {/* Camera placeholder */}
-              <div className="relative aspect-video rounded-xl bg-[#1E252B] border-2 border-dashed border-[#494F55]/40 flex flex-col items-center justify-center overflow-hidden">
+              <div className="relative aspect-video rounded-xl bg-[#1C232B] border-2 border-dashed border-[#494F55]/40 flex flex-col items-center justify-center overflow-hidden">
                 {cameraOpen ? (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 to-transparent" />
@@ -201,13 +201,13 @@ export default function CheckInPage() {
                       <div className="absolute -bottom-px -right-px w-6 h-6 border-b-4 border-r-4 border-[#D4AF37] rounded-br-lg" />
                       <motion.div animate={{ y: [0, 180, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute inset-x-2 h-0.5 bg-[#D4AF37] shadow-[0_0_8px_#D4AF37]" />
                     </div>
-                    <p className="absolute bottom-4 text-sm text-[#8A9196]">Scanning...</p>
+                    <p className="absolute bottom-4 text-sm text-[#949599]">Scanning...</p>
                   </div>
                 ) : (
                   <>
                     <Camera className="w-12 h-12 text-[#494F55] mb-3" />
-                    <p className="text-sm text-[#8A9196]">Camera scanner is ready</p>
-                    <button onClick={() => setCameraOpen(true)} className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition">
+                    <p className="text-sm text-[#949599]">Camera scanner is ready</p>
+                    <button onClick={() => setCameraOpen(true)} className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition">
                       <Camera className="w-4 h-4" /> Open Camera Scanner
                     </button>
                   </>
@@ -216,13 +216,13 @@ export default function CheckInPage() {
 
               {/* Paste code */}
               <div>
-                <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Or paste QR code for testing</label>
+                <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Or paste QR code for testing</label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <QrCode className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-                    <input value={qrInput} onChange={(e) => setQrInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleScan(qrInput)} placeholder="Enter ticket code..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition" />
+                    <input value={qrInput} onChange={(e) => setQrInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleScan(qrInput)} placeholder="Enter ticket code..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition" />
                   </div>
-                  <button onClick={() => handleScan(qrInput)} disabled={!qrInput || scanning} className="px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition">
+                  <button onClick={() => handleScan(qrInput)} disabled={!qrInput || scanning} className="px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition">
                     {scanning ? 'Scanning...' : 'Verify'}
                   </button>
                 </div>
@@ -241,10 +241,10 @@ export default function CheckInPage() {
                           <p className={`text-lg font-bold ${st.color}`}>{st.label}</p>
                           {t ? (
                             <div className="mt-1 space-y-0.5 text-sm">
-                              <p className="text-[#EDF0F1]">{t.attendeeName || t.user?.name || 'Attendee'}</p>
-                              <p className="text-[#8A9196]">{t.ticketType || 'Ticket'} · Seat: {t.seatNumber || 'N/A'}</p>
+                              <p className="text-[#EFEFF1]">{t.attendeeName || t.user?.name || 'Attendee'}</p>
+                              <p className="text-[#949599]">{t.ticketType || 'Ticket'} · Seat: {t.seatNumber || 'N/A'}</p>
                             </div>
-                          ) : <p className="text-sm text-[#8A9196]">This ticket code is not valid.</p>}
+                          ) : <p className="text-sm text-[#949599]">This ticket code is not valid.</p>}
                         </div>
                       </div>
                     </motion.div>
@@ -257,24 +257,24 @@ export default function CheckInPage() {
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-                  <input value={manualQuery} onChange={(e) => setManualQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleManualSearch()} placeholder="Search by name, email, or ticket number..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition" />
+                  <input value={manualQuery} onChange={(e) => setManualQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleManualSearch()} placeholder="Search by name, email, or ticket number..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition" />
                 </div>
-                <button onClick={handleManualSearch} disabled={searching} className="px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition">{searching ? 'Searching...' : 'Search'}</button>
+                <button onClick={handleManualSearch} disabled={searching} className="px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition">{searching ? 'Searching...' : 'Search'}</button>
               </div>
               {manualResults.length > 0 ? (
                 <div className="space-y-2">
                   {manualResults.map((a) => {
                     const checked = a.checkedIn || a.checkInStatus === 'checked_in';
                     return (
-                      <div key={a.id} className="flex items-center justify-between p-4 rounded-lg bg-[#1E252B] border border-[#262B2F]">
+                      <div key={a.id} className="flex items-center justify-between p-4 rounded-lg bg-[#1C232B] border border-[#262B2F]">
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-[#EDF0F1] truncate">{a.name || a.attendeeName}</p>
-                          <p className="text-xs text-[#8A9196]">{a.email || a.attendeeEmail} · {a.ticketType}</p>
+                          <p className="text-sm font-medium text-[#EFEFF1] truncate">{a.name || a.attendeeName}</p>
+                          <p className="text-xs text-[#949599]">{a.email || a.attendeeEmail} · {a.ticketType}</p>
                         </div>
                         {checked ? (
                           <Badge variant="success" size="sm">Checked In</Badge>
                         ) : (
-                          <button onClick={() => handleManualCheckIn(a)} disabled={checkingIn === a.id} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#D4AF37] text-[#1E252B] text-xs font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition">
+                          <button onClick={() => handleManualCheckIn(a)} disabled={checkingIn === a.id} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#D4AF37] text-[#1C232B] text-xs font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition">
                             <UserCheck className="w-3.5 h-3.5" /> {checkingIn === a.id ? '...' : 'Check In'}
                           </button>
                         )}
@@ -291,18 +291,18 @@ export default function CheckInPage() {
 
         {/* Live log */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 h-fit">
-          <h3 className="text-sm font-semibold text-[#EDF0F1] mb-3 flex items-center gap-2"><TicketIcon className="w-4 h-4 text-[#D4AF37]" /> Recent Check-ins</h3>
+          <h3 className="text-sm font-semibold text-[#EFEFF1] mb-3 flex items-center gap-2"><TicketIcon className="w-4 h-4 text-[#D4AF37]" /> Recent Check-ins</h3>
           {log.length === 0 ? (
-            <p className="text-sm text-[#8A9196] py-6 text-center">No check-ins yet.</p>
+            <p className="text-sm text-[#949599] py-6 text-center">No check-ins yet.</p>
           ) : (
             <div className="space-y-2 max-h-[400px] overflow-y-auto">
               <AnimatePresence>
                 {log.map((l, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-3 p-2.5 rounded-lg bg-[#1E252B] border border-[#262B2F]">
+                  <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-3 p-2.5 rounded-lg bg-[#1C232B] border border-[#262B2F]">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-[#EDF0F1] truncate">{l.name}</p>
-                      <p className="text-xs text-[#8A9196]">{l.type} · {l.time.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
+                      <p className="text-sm font-medium text-[#EFEFF1] truncate">{l.name}</p>
+                      <p className="text-xs text-[#949599]">{l.type} · {l.time.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
                   </motion.div>
                 ))}

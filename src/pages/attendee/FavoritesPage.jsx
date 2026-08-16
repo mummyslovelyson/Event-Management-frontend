@@ -71,8 +71,8 @@ export default function FavoritesPage() {
       {/* Header */}
       <motion.div variants={itemFade} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#EDF0F1]">Favorites</h1>
-          <p className="text-sm text-[#8A9196] mt-1">
+          <h1 className="text-2xl font-bold text-[#EFEFF1]">Favorites</h1>
+          <p className="text-sm text-[#949599] mt-1">
             {favorites.length > 0
               ? `${favorites.length} event${favorites.length !== 1 ? 's' : ''} saved to your favorites.`
               : 'Events you save will appear here.'}
@@ -81,7 +81,7 @@ export default function FavoritesPage() {
         {favorites.length > 0 && (
           <Link
             to="/attendee/explore"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition-colors w-fit"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors w-fit"
           >
             <Compass className="w-4 h-4" /> Explore More Events
           </Link>
@@ -97,7 +97,7 @@ export default function FavoritesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search your favorites..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
           />
         </motion.div>
       )}

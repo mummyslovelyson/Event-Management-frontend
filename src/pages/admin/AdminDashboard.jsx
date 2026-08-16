@@ -48,12 +48,12 @@ function ChartTip({ active, payload, label, formatter }) {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-lg bg-[#0C1115] border border-[#494F55]/60 px-3 py-2 shadow-2xl shadow-black/50">
-      <p className="text-[11px] text-[#7D8387] mb-1.5">{fmtDay(label)}</p>
+      <p className="text-[11px] text-[#949599] mb-1.5">{fmtDay(label)}</p>
       {payload.map((p) => (
         <div key={p.dataKey} className="flex items-center gap-2 text-xs py-0.5">
           <span className="w-2 h-2 rounded-full shrink-0" style={{ background: p.stroke || p.color }} />
           <span className="text-[#9AA1A6]">{p.name}</span>
-          <span className="ml-auto pl-4 font-semibold text-[#F2F4F5] tabular-nums">
+          <span className="ml-auto pl-4 font-semibold text-[#EFEFF1] tabular-nums">
             {formatter ? formatter(p.value) : p.value}
           </span>
         </div>
@@ -64,7 +64,7 @@ function ChartTip({ active, payload, label, formatter }) {
 
 function DeltaPill({ value, suffix }) {
   if (value === null || value === undefined) {
-    return <span className="text-xs text-[#7D8387]">No prior data</span>;
+    return <span className="text-xs text-[#949599]">No prior data</span>;
   }
   const up = value >= 0;
   return (
@@ -89,8 +89,8 @@ function SectionHeader({ title, hint, action }) {
   return (
     <div className="flex items-center justify-between px-5 pt-4 pb-1">
       <div>
-        <h2 className="text-sm font-semibold text-[#F2F4F5]">{title}</h2>
-        {hint && <p className="text-xs text-[#7D8387] mt-0.5">{hint}</p>}
+        <h2 className="text-sm font-semibold text-[#EFEFF1]">{title}</h2>
+        {hint && <p className="text-xs text-[#949599] mt-0.5">{hint}</p>}
       </div>
       {action}
     </div>
@@ -99,7 +99,7 @@ function SectionHeader({ title, hint, action }) {
 
 function EmptyInline({ text }) {
   return (
-    <div className="flex items-center justify-center h-48 text-sm text-[#7D8387]">{text}</div>
+    <div className="flex items-center justify-center h-48 text-sm text-[#949599]">{text}</div>
   );
 }
 
@@ -108,13 +108,13 @@ function KpiCard({ icon: Icon, label, value, sub, accent }) {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
       <CardShell className="p-5 h-full flex flex-col gap-4">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-xs font-medium text-[#7D8387] truncate">{label}</p>
+          <p className="text-xs font-medium text-[#949599] truncate">{label}</p>
           <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${accent.bg} ${accent.text}`}>
             <Icon className="w-4 h-4" />
           </div>
         </div>
         <div className="mt-auto">
-          <p className="text-2xl font-bold text-[#F2F4F5] tabular-nums tracking-tight break-words leading-tight">{value}</p>
+          <p className="text-2xl font-bold text-[#EFEFF1] tabular-nums tracking-tight break-words leading-tight">{value}</p>
           {sub}
         </div>
       </CardShell>
@@ -122,12 +122,12 @@ function KpiCard({ icon: Icon, label, value, sub, accent }) {
   );
 }
 
-function SnapshotTile({ icon: Icon, label, value, tone = 'text-[#7D8387]' }) {
+function SnapshotTile({ icon: Icon, label, value, tone = 'text-[#949599]' }) {
   return (
-    <div className="rounded-lg bg-[#1E252B]/60 border border-[#494F55]/20 p-3">
+    <div className="rounded-lg bg-[#1C232B]/60 border border-[#494F55]/20 p-3">
       <Icon className={`w-4 h-4 ${tone}`} />
-      <p className="mt-2 text-lg font-bold text-[#F2F4F5] tabular-nums break-words leading-tight">{value}</p>
-      <p className="text-[11px] text-[#7D8387] break-words leading-tight">{label}</p>
+      <p className="mt-2 text-lg font-bold text-[#EFEFF1] tabular-nums break-words leading-tight">{value}</p>
+      <p className="text-[11px] text-[#949599] break-words leading-tight">{label}</p>
     </div>
   );
 }
@@ -185,10 +185,10 @@ export default function AdminDashboard() {
   if (!data) {
     return (
       <CardShell className="p-10 text-center">
-        <p className="text-sm text-[#7D8387]">Couldn't load the dashboard.</p>
+        <p className="text-sm text-[#949599]">Couldn't load the dashboard.</p>
         <button
           onClick={fetchDashboard}
-          className="mt-3 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition"
+          className="mt-3 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
         >
           Try again
         </button>
@@ -210,8 +210,8 @@ export default function AdminDashboard() {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3">
           <div>
             <p className="text-xs font-medium text-[#D4AF37]">{fmtFullDate()}</p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[#F2F4F5]">{greeting}{firstName ? `, ${firstName}` : ''}</h1>
-            <p className="mt-1 text-sm text-[#7D8387]">Revenue, orders, and signups at a glance.</p>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[#EFEFF1]">{greeting}{firstName ? `, ${firstName}` : ''}</h1>
+            <p className="mt-1 text-sm text-[#949599]">Revenue, orders, and signups at a glance.</p>
           </div>
           <div className="flex items-center gap-2.5">
             <span className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium border ${
@@ -224,14 +224,14 @@ export default function AdminDashboard() {
             </span>
             <button
               onClick={() => fetchDashboard(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#F2F4F5] hover:border-[#D4AF37]/40 transition"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#EFEFF1] hover:border-[#D4AF37]/40 transition"
               title="Refresh dashboard"
             >
               <RefreshCw className="w-4 h-4" /> Refresh
             </button>
             <button
               onClick={() => navigate('/admin/reports')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
             >
               <FileBarChart className="w-4 h-4" /> Full reports
             </button>
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
           sub={
             <div className="mt-1.5 flex items-center gap-2 flex-wrap">
               <DeltaPill value={o.revenueTrend} />
-              <span className="text-[11px] text-[#7D8387]">vs prev 7 days</span>
+              <span className="text-[11px] text-[#949599]">vs prev 7 days</span>
             </div>
           }
         />
@@ -259,7 +259,7 @@ export default function AdminDashboard() {
           value={(o.ticketsSold ?? 0).toLocaleString()}
           accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
           sub={
-            <p className="mt-1.5 text-[11px] text-[#7D8387]">
+            <p className="mt-1.5 text-[11px] text-[#949599]">
               <span className="text-[#D4AF37] font-semibold">{(o.ticketsSoldToday ?? 0).toLocaleString()}</span> sold today
             </p>
           }
@@ -270,7 +270,7 @@ export default function AdminDashboard() {
           value={(o.totalUsers ?? 0).toLocaleString()}
           accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
           sub={
-            <p className="mt-1.5 text-[11px] text-[#7D8387]">
+            <p className="mt-1.5 text-[11px] text-[#949599]">
               <span className="text-[#D4AF37] font-semibold">{(o.totalOrganizers ?? 0).toLocaleString()}</span> organizers
             </p>
           }
@@ -281,7 +281,7 @@ export default function AdminDashboard() {
           value={(o.totalEvents ?? 0).toLocaleString()}
           accent={{ bg: 'bg-[#D4AF37]/15', text: 'text-[#D4AF37]' }}
           sub={
-            <p className="mt-1.5 text-[11px] text-[#7D8387]">
+            <p className="mt-1.5 text-[11px] text-[#949599]">
               <span className="text-amber-400 font-semibold">{(o.pendingEvents ?? 0).toLocaleString()}</span> pending approval
             </p>
           }
@@ -294,24 +294,24 @@ export default function AdminDashboard() {
           <div className="p-5 pb-1">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="flex items-center gap-1.5 text-xs font-medium text-[#7D8387]">
+                <p className="flex items-center gap-1.5 text-xs font-medium text-[#949599]">
                   <CircleDollarSign className="w-3.5 h-3.5" /> Revenue overview
                 </p>
-                <p className="mt-2 text-3xl sm:text-4xl font-bold text-[#F2F4F5] tabular-nums tracking-tight">
+                <p className="mt-2 text-3xl sm:text-4xl font-bold text-[#EFEFF1] tabular-nums tracking-tight">
                   {format(o.totalRevenue)}
                 </p>
                 <div className="mt-2 flex items-center gap-2">
                   <DeltaPill value={o.revenueTrend} />
-                  <span className="text-xs text-[#7D8387]">vs previous 7 days</span>
+                  <span className="text-xs text-[#949599]">vs previous 7 days</span>
                 </div>
               </div>
               <div className="flex gap-6 text-right">
                 <div>
-                  <p className="text-xs text-[#8A9196]">Orders</p>
-                  <p className="mt-1 text-lg font-semibold text-[#EDF0F1] tabular-nums">{(o.totalOrders ?? 0).toLocaleString()}</p>
+                  <p className="text-xs text-[#949599]">Orders</p>
+                  <p className="mt-1 text-lg font-semibold text-[#EFEFF1] tabular-nums">{(o.totalOrders ?? 0).toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[#8A9196]">7-day revenue</p>
+                  <p className="text-xs text-[#949599]">7-day revenue</p>
                   <p className="mt-1 text-lg font-semibold text-[#D4AF37] tabular-nums break-words">{format(o.last7Revenue)}</p>
                 </div>
               </div>
@@ -343,10 +343,10 @@ export default function AdminDashboard() {
         {/* Needs attention */}
         <CardShell className="p-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-[#F2F4F5]">Needs your attention</h2>
+            <h2 className="text-sm font-semibold text-[#EFEFF1]">Needs your attention</h2>
             <ShieldAlert className="w-4 h-4 text-amber-400" />
           </div>
-          <p className="text-xs text-[#7D8387] mt-0.5">Work waiting on you.</p>
+          <p className="text-xs text-[#949599] mt-0.5">Work waiting on you.</p>
           <div className="mt-4 space-y-3">
             <AttentionRow
               icon={CalendarDays}
@@ -368,7 +368,7 @@ export default function AdminDashboard() {
             />
           </div>
           <div className="mt-5 pt-4 border-t border-[#494F55]/30">
-            <Link to="/admin/audit-logs" className="flex items-center justify-between text-xs text-[#7D8387] hover:text-[#F2F4F5] transition">
+            <Link to="/admin/audit-logs" className="flex items-center justify-between text-xs text-[#949599] hover:text-[#EFEFF1] transition">
               View audit logs <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -383,8 +383,8 @@ export default function AdminDashboard() {
             hint="New signups · last 14 days"
             action={
               <div className="flex items-center gap-3 pr-5 text-xs">
-                <span className="flex items-center gap-1.5 text-[#7D8387]"><span className="w-2 h-2 rounded-full bg-[#D4AF37]" /> Attendees</span>
-                <span className="flex items-center gap-1.5 text-[#7D8387]"><span className="w-2 h-2 rounded-full bg-[#60A5FA]" /> Organizers</span>
+                <span className="flex items-center gap-1.5 text-[#949599]"><span className="w-2 h-2 rounded-full bg-[#D4AF37]" /> Attendees</span>
+                <span className="flex items-center gap-1.5 text-[#949599]"><span className="w-2 h-2 rounded-full bg-[#60A5FA]" /> Organizers</span>
               </div>
             }
           />
@@ -409,12 +409,12 @@ export default function AdminDashboard() {
         {/* Platform snapshot */}
         <CardShell className="p-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-[#F2F4F5]">Platform snapshot</h2>
+            <h2 className="text-sm font-semibold text-[#EFEFF1]">Platform snapshot</h2>
             <Link to="/admin/payments" className="text-xs font-medium text-[#D4AF37] hover:underline flex items-center gap-1">
               Payments <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
-          <p className="text-xs text-[#7D8387] mt-0.5">Orders and payouts at a glance.</p>
+          <p className="text-xs text-[#949599] mt-0.5">Orders and payouts at a glance.</p>
           <div className="mt-4 grid grid-cols-2 gap-3">
             <SnapshotTile icon={ShoppingCart} label="Total Orders" value={(o.totalOrders ?? 0).toLocaleString()} tone="text-[#D4AF37]" />
             <SnapshotTile icon={CircleDollarSign} label="7-day Revenue" value={shortFmt(o.last7Revenue)} tone="text-[#D4AF37]" />
@@ -422,7 +422,7 @@ export default function AdminDashboard() {
             <SnapshotTile icon={UserCheck} label="Organizer Apps" value={(o.pendingOrganizers ?? 0).toLocaleString()} tone="text-[#D4AF37]" />
           </div>
           <div className="mt-5 pt-4 border-t border-[#494F55]/30">
-            <Link to="/admin/reports" className="flex items-center justify-between text-xs text-[#7D8387] hover:text-[#F2F4F5] transition">
+            <Link to="/admin/reports" className="flex items-center justify-between text-xs text-[#949599] hover:text-[#EFEFF1] transition">
               View platform reports <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -448,19 +448,19 @@ export default function AdminDashboard() {
                   {recentEvents.map((e) => {
                     const st = EVENT_STATUS[e.status] || EVENT_STATUS.draft;
                     return (
-                      <tr key={e.id} className="hover:bg-[#1E252B]/50 transition-colors">
+                      <tr key={e.id} className="hover:bg-[#1C232B]/50 transition-colors">
                         <td className="px-5 py-3">
-                          <p className="font-medium text-[#F2F4F5] break-words">{e.title}</p>
-                          <p className="text-xs text-[#7D8387] mt-0.5 break-words">{e.organizer_name || '—'}</p>
+                          <p className="font-medium text-[#EFEFF1] break-words">{e.title}</p>
+                          <p className="text-xs text-[#949599] mt-0.5 break-words">{e.organizer_name || '—'}</p>
                         </td>
                         <td className="px-5 py-3 hidden md:table-cell">
                           <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium ${st.cls}`}>{st.label}</span>
                         </td>
-                        <td className="px-5 py-3 hidden sm:table-cell text-xs text-[#7D8387]">
+                        <td className="px-5 py-3 hidden sm:table-cell text-xs text-[#949599]">
                           {e.start_date ? fmtDay(e.start_date) : '—'}
                         </td>
                         <td className="px-5 py-3 text-right">
-                          <Link to={`/admin/events`} className="text-xs text-[#7D8387] hover:text-[#D4AF37] transition">View</Link>
+                          <Link to={`/admin/events`} className="text-xs text-[#949599] hover:text-[#D4AF37] transition">View</Link>
                         </td>
                       </tr>
                     );
@@ -478,13 +478,13 @@ export default function AdminDashboard() {
           {recentUsers?.length ? (
             <div className="px-2 pb-3">
               {recentUsers.map((u) => (
-                <div key={u.id} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#1E252B]/50 transition-colors">
+                <div key={u.id} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#1C232B]/50 transition-colors">
                   <div className="w-9 h-9 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] text-xs font-bold flex items-center justify-center shrink-0">
                     {initials(u.name)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#F2F4F5] break-words">{u.name}</p>
-                    <p className="text-[11px] text-[#7D8387] break-words">{u.email}</p>
+                    <p className="text-sm font-medium text-[#EFEFF1] break-words">{u.name}</p>
+                    <p className="text-[11px] text-[#949599] break-words">{u.email}</p>
                   </div>
                   <span className={`text-[11px] font-medium capitalize ${ROLE_CLS[u.role] || ROLE_CLS.attendee}`}>
                     {ROLE_LABEL[u.role] || u.role}
@@ -513,7 +513,7 @@ export default function AdminDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[11px] uppercase tracking-wider text-[#7D8387] border-b border-[#494F55]/20">
+                <tr className="text-left text-[11px] uppercase tracking-wider text-[#949599] border-b border-[#494F55]/20">
                   <th className="px-5 py-2.5 font-medium">Event</th>
                   <th className="px-5 py-2.5 font-medium">Organizer</th>
                   <th className="px-5 py-2.5 font-medium">Date</th>
@@ -522,21 +522,21 @@ export default function AdminDashboard() {
               </thead>
               <tbody className="divide-y divide-[#494F55]/15">
                 {pendingEvents.map((e) => (
-                  <tr key={e.id} className="hover:bg-[#1E252B]/50 transition-colors">
+                  <tr key={e.id} className="hover:bg-[#1C232B]/50 transition-colors">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         {e.thumbnail ? (
                           <img src={e.thumbnail} alt="" className="w-9 h-9 rounded-lg object-cover" />
                         ) : (
-                          <div className="w-9 h-9 rounded-lg bg-[#1E252B] border border-[#494F55]/30 text-[#7D8387] flex items-center justify-center">
+                          <div className="w-9 h-9 rounded-lg bg-[#1C232B] border border-[#494F55]/30 text-[#949599] flex items-center justify-center">
                             <CalendarDays className="w-4 h-4" />
                           </div>
                         )}
-                        <span className="font-medium text-[#F2F4F5] break-words">{e.title}</span>
+                        <span className="font-medium text-[#EFEFF1] break-words">{e.title}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-[#7D8387]">{e.organizer_name || '—'}</td>
-                    <td className="px-5 py-3 text-xs text-[#7D8387]">{e.start_date ? fmtDay(e.start_date) : '—'}</td>
+                    <td className="px-5 py-3 text-[#949599]">{e.organizer_name || '—'}</td>
+                    <td className="px-5 py-3 text-xs text-[#949599]">{e.start_date ? fmtDay(e.start_date) : '—'}</td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-2">
                         <button
@@ -569,7 +569,7 @@ export default function AdminDashboard() {
           title="Recent activity"
           hint="Across the whole platform"
           action={
-            <div className="pr-5 flex items-center gap-1.5 text-xs text-[#7D8387]">
+            <div className="pr-5 flex items-center gap-1.5 text-xs text-[#949599]">
               <ActivityIcon className="w-3.5 h-3.5" /> Live feed
             </div>
           }
@@ -578,18 +578,18 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1 px-5 py-4">
             {activity.map((a, i) => (
               <div key={i} className="flex items-start gap-3 py-2">
-                <div className="shrink-0 w-7 h-7 rounded-full bg-[#1E252B] border border-[#494F55]/30 text-[#7D8387] flex items-center justify-center">
+                <div className="shrink-0 w-7 h-7 rounded-full bg-[#1C232B] border border-[#494F55]/30 text-[#949599] flex items-center justify-center">
                   {a.type === 'event' ? <CalendarDays className="w-3.5 h-3.5" /> : <Users className="w-3.5 h-3.5" />}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm text-[#F2F4F5]">
+                  <p className="text-sm text-[#EFEFF1]">
                     {a.type === 'event' ? (
                       <>New event <span className="font-medium">“{a.label}”</span></>
                     ) : (
                       <>{a.label.replace(' joined as ', ' joined as ')}</>
                     )}
                   </p>
-                  <p className="text-[11px] text-[#7D8387] mt-0.5">
+                  <p className="text-[11px] text-[#949599] mt-0.5">
                     {a.organizer || a.role || 'System'} · {new Date(a.time).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
@@ -608,11 +608,11 @@ function AttentionRow({ icon: Icon, count, label, to }) {
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 p-3 rounded-lg bg-[#1E252B]/60 border border-[#494F55]/20 hover:border-[#494F55]/50 transition group"
+      className="flex items-center gap-3 p-3 rounded-lg bg-[#1C232B]/60 border border-[#494F55]/20 hover:border-[#494F55]/50 transition group"
     >
       <Icon className="w-4 h-4 text-[#494F55] shrink-0 group-hover:text-[#9AA1A6] transition" />
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-[#F2F4F5] truncate">{label}</p>
+        <p className="text-sm font-medium text-[#EFEFF1] truncate">{label}</p>
       </div>
       <span className={`text-sm font-bold tabular-nums ${count > 0 ? 'text-amber-400' : 'text-[#494F55]'}`}>
         {count}

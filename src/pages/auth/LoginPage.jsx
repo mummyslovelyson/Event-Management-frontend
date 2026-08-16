@@ -33,7 +33,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1E252B] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       {/* Background accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
@@ -50,18 +50,18 @@ export default function LoginPage() {
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-2">
               <div className="w-11 h-11 rounded-xl bg-[#D4AF37] flex items-center justify-center shadow-lg">
-                <Ticket className="w-6 h-6 text-[#1E252B]" strokeWidth={2.5} />
+                <Ticket className="w-6 h-6 text-[#1C232B]" strokeWidth={2.5} />
               </div>
             </Link>
-            <h1 className="text-2xl font-bold text-[#F2F4F5]">Welcome Back</h1>
-            <p className="mt-1 text-sm text-[#7D8387]">Sign in to your Tribes & Cliqs account</p>
+            <h1 className="text-2xl font-bold text-[#EFEFF1]">Welcome Back</h1>
+            <p className="mt-1 text-sm text-[#949599]">Sign in to your Tribes & Cliqs account</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <input type="text" {...register('website')} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Email</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                 <input
@@ -71,7 +71,7 @@ export default function LoginPage() {
                     required: 'Email is required',
                     pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },
                   })}
-                  className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1E252B] border text-sm text-[#F2F4F5] placeholder:text-[#494F55] focus:outline-none transition-colors ${
+                  className={`w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
                     errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
                   }`}
                 />
@@ -81,7 +81,7 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-[#7D8387]">Password</label>
+                <label className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Password</label>
                 <Link to="/forgot-password" className="text-xs text-[#D4AF37] hover:underline">Forgot Password?</Link>
               </div>
               <div className="relative">
@@ -90,14 +90,14 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 characters' } })}
-                  className={`w-full pl-10 pr-10 py-3 rounded-lg bg-[#1E252B] border text-sm text-[#F2F4F5] placeholder:text-[#494F55] focus:outline-none transition-colors ${
+                  className={`w-full pl-10 pr-10 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
                     errors.password ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#7D8387] transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#949599] transition"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -108,7 +108,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Signing in...</> : <><LogIn className="w-4 h-4" /> Sign In</>}
             </button>
@@ -125,7 +125,7 @@ export default function LoginPage() {
           <button
             disabled
             title="Coming Soon"
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-[#494F55]/40 text-sm text-[#7D8387] cursor-not-allowed relative group"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-[#494F55]/40 text-sm text-[#949599] cursor-not-allowed relative group"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -134,13 +134,13 @@ export default function LoginPage() {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
             </svg>
             Continue with Google
-            <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-[#1E252B] border border-[#494F55]/40 text-xs text-[#7D8387] whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
+            <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-[#1C232B] border border-[#494F55]/40 text-xs text-[#949599] whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
               Coming Soon
             </span>
           </button>
 
           {/* Register link */}
-          <p className="mt-6 text-center text-sm text-[#7D8387]">
+          <p className="mt-6 text-center text-sm text-[#949599]">
             Don't have an account?{' '}
             <Link to="/register" className="text-[#D4AF37] font-semibold hover:underline">Sign up</Link>
           </p>

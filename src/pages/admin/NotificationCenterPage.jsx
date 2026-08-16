@@ -87,7 +87,7 @@ export default function NotificationCenterPage() {
         actions={
           <button
             onClick={() => setShowSend(true)}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
           >
             <Send className="w-4 h-4" /> Send Notification
           </button>
@@ -98,7 +98,7 @@ export default function NotificationCenterPage() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
       <div className="xl:col-span-2 rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
         <div className="px-5 py-4 border-b border-[#262B2F]">
-          <h2 className="text-base font-semibold text-[#EDF0F1]">Notification History</h2>
+          <h2 className="text-base font-semibold text-[#EFEFF1]">Notification History</h2>
         </div>
         {loading ? (
           <LoadingSpinner label="Loading history..." className="py-16" />
@@ -121,19 +121,19 @@ export default function NotificationCenterPage() {
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {history.map((n) => (
                     <tr key={n.id} className="hover:bg-[#1D2124] transition-colors">
-                      <td className="px-5 py-3 font-medium text-[#F2F4F5] max-w-[220px] truncate">{n.title}</td>
+                      <td className="px-5 py-3 font-medium text-[#EFEFF1] max-w-[220px] truncate">{n.title}</td>
                       <td className="px-5 py-3"><Badge variant="info" size="sm">{n.target || n.audience}</Badge></td>
                       <td className="px-5 py-3"><Badge variant="neutral" size="sm">{n.type}</Badge></td>
-                      <td className="px-5 py-3 text-center text-[#7D8387]">{(n.sentCount ?? n.recipients ?? 0).toLocaleString()}</td>
-                      <td className="px-5 py-3 text-xs text-[#7D8387]">{fmtDate(n.createdAt || n.sentAt)}</td>
-                      <td className="px-5 py-3 text-[#7D8387]">{n.sentBy?.name || n.sentBy || 'Admin'}</td>
+                      <td className="px-5 py-3 text-center text-[#949599]">{(n.sentCount ?? n.recipients ?? 0).toLocaleString()}</td>
+                      <td className="px-5 py-3 text-xs text-[#949599]">{fmtDate(n.createdAt || n.sentAt)}</td>
+                      <td className="px-5 py-3 text-[#949599]">{n.sentBy?.name || n.sentBy || 'Admin'}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
             <div className="px-5 py-4 border-t border-[#262B2F] flex items-center justify-between">
-              <span className="text-xs text-[#7D8387]">Page {page} of {totalPages}</span>
+              <span className="text-xs text-[#949599]">Page {page} of {totalPages}</span>
               <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
             </div>
           </>
@@ -142,7 +142,7 @@ export default function NotificationCenterPage() {
 
       {/* Templates sidebar */}
       <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 h-fit">
-        <h2 className="text-sm font-semibold text-[#EDF0F1] mb-4 flex items-center gap-2"><FileText className="w-4 h-4 text-[#D4AF37]" /> Templates</h2>
+        <h2 className="text-sm font-semibold text-[#EFEFF1] mb-4 flex items-center gap-2"><FileText className="w-4 h-4 text-[#D4AF37]" /> Templates</h2>
         <div className="grid grid-cols-1 gap-3">
           {templates.map((t) => {
             const TypeIcon = typeOptions.find((o) => o.key === t.type)?.icon || Mail;
@@ -150,8 +150,8 @@ export default function NotificationCenterPage() {
               <div key={t.id} className="flex items-center gap-3 p-3.5 rounded-lg bg-[#1D2124] border border-[#262B2F] hover:border-[#D4AF37]/30 transition">
                 <div className="w-9 h-9 rounded-lg bg-[#D4AF37]/12 text-[#D4AF37] flex items-center justify-center shrink-0"><TypeIcon className="w-4 h-4" /></div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-[#EDF0F1]">{t.name}</p>
-                  <p className="text-xs text-[#8A9196] truncate">{t.desc}</p>
+                  <p className="text-sm font-medium text-[#EFEFF1]">{t.name}</p>
+                  <p className="text-xs text-[#949599] truncate">{t.desc}</p>
                 </div>
                 <Badge variant="neutral" size="sm">{t.type}</Badge>
               </div>
@@ -169,8 +169,8 @@ export default function NotificationCenterPage() {
         size="lg"
         footer={
           <>
-            <button onClick={() => setShowSend(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
-            <button onClick={handleSend} disabled={sending} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50">
+            <button onClick={() => setShowSend(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
+            <button onClick={handleSend} disabled={sending} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50">
               {sending ? <LoadingSpinner size="sm" /> : <><Send className="w-4 h-4" /> Send</>}
             </button>
           </>
@@ -178,42 +178,42 @@ export default function NotificationCenterPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Title</label>
-            <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Notification title" className="w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition" />
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Title</label>
+            <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Notification title" className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition" />
           </div>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Message</label>
-            <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Notification message..." rows={4} className="w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none transition" />
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Message</label>
+            <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Notification message..." rows={4} className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none transition" />
           </div>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-2">Target Audience</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">Target Audience</label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {targetOptions.map((t) => (
-                <button key={t.key} onClick={() => setForm({ ...form, target: t.key })} className={`px-3 py-2 rounded-lg text-sm font-medium border transition ${form.target === t.key ? 'bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/50' : 'bg-[#1E252B]/50 text-[#7D8387] border-[#494F55]/30 hover:border-[#494F55]/60'}`}>
+                <button key={t.key} onClick={() => setForm({ ...form, target: t.key })} className={`px-3 py-2 rounded-lg text-sm font-medium border transition ${form.target === t.key ? 'bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/50' : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-[#494F55]/60'}`}>
                   {t.label}
                 </button>
               ))}
             </div>
             {form.target === 'specific' && (
-              <input type="text" value={form.userId} onChange={(e) => setForm({ ...form, userId: e.target.value })} placeholder="User ID or email" className="mt-2 w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition" />
+              <input type="text" value={form.userId} onChange={(e) => setForm({ ...form, userId: e.target.value })} placeholder="User ID or email" className="mt-2 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition" />
             )}
           </div>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-2">Delivery Type</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">Delivery Type</label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {typeOptions.map(({ key, label, icon: Icon }) => (
-                <button key={key} onClick={() => setForm({ ...form, type: key })} className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition ${form.type === key ? 'bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/50' : 'bg-[#1E252B]/50 text-[#7D8387] border-[#494F55]/30 hover:border-[#494F55]/60'}`}>
+                <button key={key} onClick={() => setForm({ ...form, type: key })} className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition ${form.type === key ? 'bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/50' : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-[#494F55]/60'}`}>
                   <Icon className="w-4 h-4" /> {label}
                 </button>
               ))}
             </div>
           </div>
           {/* Preview */}
-          <div className="rounded-lg bg-[#1E252B]/50 border border-[#494F55]/20 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-2 flex items-center gap-1.5"><Eye className="w-3.5 h-3.5" /> Preview</p>
+          <div className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2 flex items-center gap-1.5"><Eye className="w-3.5 h-3.5" /> Preview</p>
             <div className="rounded-lg bg-[#161D22] border border-[#494F55]/20 p-3">
-              <p className="text-sm font-semibold text-[#F2F4F5]">{form.title || 'Notification title'}</p>
-              <p className="text-sm text-[#7D8387] mt-1">{form.message || 'Notification message will appear here...'}</p>
+              <p className="text-sm font-semibold text-[#EFEFF1]">{form.title || 'Notification title'}</p>
+              <p className="text-sm text-[#949599] mt-1">{form.message || 'Notification message will appear here...'}</p>
             </div>
           </div>
         </div>

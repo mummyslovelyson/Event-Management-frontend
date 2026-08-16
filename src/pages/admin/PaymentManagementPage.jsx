@@ -119,7 +119,7 @@ export default function PaymentManagementPage() {
         actions={
           <button
             onClick={() => exportCSV(data[tab] || [], `${tab}.csv`)}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#262B2F] text-sm font-medium text-[#EDF0F1] hover:bg-[#2A2F33] transition"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#262B2F] text-sm font-medium text-[#EFEFF1] hover:bg-[#2A2F33] transition"
           >
             <Download className="w-4 h-4" /> Export CSV
           </button>
@@ -141,7 +141,7 @@ export default function PaymentManagementPage() {
             key={t.key}
             onClick={() => { setTab(t.key); setPage(1); }}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === t.key ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#7D8387] hover:text-[#F2F4F5] hover:bg-[#242B32]'
+              tab === t.key ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
             {t.label}
@@ -174,20 +174,20 @@ export default function PaymentManagementPage() {
                   <tbody className="divide-y divide-[#262B2F]/70">
                     {data.transactions.map((tx) => (
                       <tr key={tx.id} className="hover:bg-[#1D2124] transition-colors">
-                        <td className="px-4 py-3 font-mono text-xs text-[#F2F4F5]">#{tx.reference || tx.id?.slice(-6)}</td>
-                        <td className="px-5 py-3 text-[#F2F4F5]">{tx.user?.name || tx.userName || '—'}</td>
-                        <td className="px-5 py-3 text-[#7D8387] max-w-[160px] truncate">{tx.event?.title || tx.eventTitle || '—'}</td>
-                        <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{format(tx.amount)}</td>
-                        <td className="px-5 py-3 text-[#7D8387]">{tx.method || tx.paymentMethod || '—'}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{tx.reference || tx.id?.slice(-6)}</td>
+                        <td className="px-5 py-3 text-[#EFEFF1]">{tx.user?.name || tx.userName || '—'}</td>
+                        <td className="px-5 py-3 text-[#949599] max-w-[160px] truncate">{tx.event?.title || tx.eventTitle || '—'}</td>
+                        <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(tx.amount)}</td>
+                        <td className="px-5 py-3 text-[#949599]">{tx.method || tx.paymentMethod || '—'}</td>
                         <td className="px-5 py-3"><Badge variant={txStatusVariant(tx.status)} size="sm" dot>{tx.status}</Badge></td>
-                        <td className="px-5 py-3 text-xs text-[#7D8387]">{fmtDate(tx.createdAt)}</td>
+                        <td className="px-5 py-3 text-xs text-[#949599]">{fmtDate(tx.createdAt)}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
               <div className="px-5 py-4 border-t border-[#262B2F] flex items-center justify-between">
-                <span className="text-xs text-[#7D8387]">Page {page} of {totalPages}</span>
+                <span className="text-xs text-[#949599]">Page {page} of {totalPages}</span>
                 <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
               </div>
             </>
@@ -211,10 +211,10 @@ export default function PaymentManagementPage() {
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {data.withdrawals.map((wd) => (
                     <tr key={wd.id} className="hover:bg-[#1D2124] transition-colors">
-                      <td className="px-5 py-3 text-[#F2F4F5]">{wd.organizerName || wd.organizer || '—'}</td>
-                      <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{format(wd.amount)}</td>
-                      <td className="px-5 py-3 text-[#7D8387]"><span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" />{wd.bank || wd.bankName || '—'}</span></td>
-                      <td className="px-5 py-3 text-xs text-[#7D8387]">{fmtDate(wd.createdAt || wd.requestedAt)}</td>
+                      <td className="px-5 py-3 text-[#EFEFF1]">{wd.organizerName || wd.organizer || '—'}</td>
+                      <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(wd.amount)}</td>
+                      <td className="px-5 py-3 text-[#949599]"><span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" />{wd.bank || wd.bankName || '—'}</span></td>
+                      <td className="px-5 py-3 text-xs text-[#949599]">{fmtDate(wd.createdAt || wd.requestedAt)}</td>
                       <td className="px-5 py-3"><Badge variant={txStatusVariant(wd.status)} size="sm" dot>{wd.status || 'pending'}</Badge></td>
                       <td className="px-5 py-3">
                         <div className="flex items-center justify-end gap-2">
@@ -264,11 +264,11 @@ export default function PaymentManagementPage() {
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {data.refunds.map((rf) => (
                     <tr key={rf.id} className="hover:bg-[#1D2124] transition-colors">
-                      <td className="px-4 py-3 font-mono text-xs text-[#F2F4F5]">#{rf.reference || rf.orderId || rf.id?.slice(-6)}</td>
-                      <td className="px-5 py-3 text-[#F2F4F5]">{rf.user?.name || rf.userName || '—'}</td>
-                      <td className="px-5 py-3 text-[#7D8387] max-w-[140px] truncate">{rf.event?.title || rf.eventTitle || '—'}</td>
-                      <td className="px-5 py-3 text-right font-medium text-[#F2F4F5]">{format(rf.amount)}</td>
-                      <td className="px-5 py-3 text-[#7D8387] max-w-[160px] truncate">{rf.reason || '—'}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{rf.reference || rf.orderId || rf.id?.slice(-6)}</td>
+                      <td className="px-5 py-3 text-[#EFEFF1]">{rf.user?.name || rf.userName || '—'}</td>
+                      <td className="px-5 py-3 text-[#949599] max-w-[140px] truncate">{rf.event?.title || rf.eventTitle || '—'}</td>
+                      <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(rf.amount)}</td>
+                      <td className="px-5 py-3 text-[#949599] max-w-[160px] truncate">{rf.reason || '—'}</td>
                       <td className="px-5 py-3"><Badge variant={txStatusVariant(rf.status)} size="sm" dot>{rf.status || 'pending'}</Badge></td>
                       <td className="px-5 py-3 text-right">
                         {rf.status === 'pending' && (
@@ -296,23 +296,23 @@ export default function PaymentManagementPage() {
         title="Process Refund"
         footer={
           <>
-            <button onClick={() => setRefundTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setRefundTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleRefund}
               disabled={actionLoading === `refund-${refundTarget?.id}`}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
             >
               {actionLoading ? 'Processing...' : 'Process Refund'}
             </button>
           </>
         }
       >
-        <p className="text-sm text-[#F2F4F5]">Refund <span className="font-semibold">{format(refundTarget?.amount)}</span> to {refundTarget?.user?.name || refundTarget?.userName}?</p>
+        <p className="text-sm text-[#EFEFF1]">Refund <span className="font-semibold">{format(refundTarget?.amount)}</span> to {refundTarget?.user?.name || refundTarget?.userName}?</p>
         <textarea
           value={refundReason}
           onChange={(e) => setRefundReason(e.target.value)}
           placeholder="Reason for refund..."
-          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
+          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
           rows={3}
         />
       </Modal>

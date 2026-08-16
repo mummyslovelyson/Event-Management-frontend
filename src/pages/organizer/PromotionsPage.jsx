@@ -17,7 +17,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
 
 const genCode = () => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -249,11 +249,11 @@ export default function PromotionsPage() {
         subtitle="Create discount codes and flash sales to boost ticket sales."
         actions={
           tab === 'Discount Codes' ? (
-            <button onClick={openCreateCoupon} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition-colors shrink-0">
+            <button onClick={openCreateCoupon} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors shrink-0">
               <Plus className="w-4 h-4" /> Create Discount Code
             </button>
           ) : (
-            <button onClick={() => setFlashModal(true)} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition-colors shrink-0">
+            <button onClick={() => setFlashModal(true)} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors shrink-0">
               <Zap className="w-4 h-4" /> Create Flash Sale
             </button>
           )
@@ -266,7 +266,7 @@ export default function PromotionsPage() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === t ? 'text-[#D4AF37]' : 'text-[#8A9196] hover:text-[#EDF0F1]'}`}
+            className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === t ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             {t}
             {tab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#D4AF37]" />}
@@ -319,7 +319,7 @@ export default function PromotionsPage() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <span className="font-mono font-semibold text-[#D4AF37] tracking-wider">{c.code}</span>
-                            <button onClick={() => copyCode(c.code)} className="p-1 rounded text-[#8A9196] hover:text-[#EDF0F1] transition" title="Copy">
+                            <button onClick={() => copyCode(c.code)} className="p-1 rounded text-[#949599] hover:text-[#EFEFF1] transition" title="Copy">
                               {copied === c.code ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                             </button>
                           </div>
@@ -328,26 +328,26 @@ export default function PromotionsPage() {
                           )}
                         </td>
                         <td className="px-4 py-3">
-                          <span className="inline-flex items-center gap-1.5 text-[#8A9196]">
+                          <span className="inline-flex items-center gap-1.5 text-[#949599]">
                             {c.type === 'percentage' || c.discountType === 'percentage' ? <Percent className="w-3.5 h-3.5" /> : <DollarSign className="w-3.5 h-3.5" />}
                             <span className="capitalize">{c.type || c.discountType || 'percentage'}</span>
                           </span>
                         </td>
-                        <td className="px-4 py-3 font-medium text-[#EDF0F1]">
+                        <td className="px-4 py-3 font-medium text-[#EFEFF1]">
                           {(c.type === 'percentage' || c.discountType === 'percentage')
                             ? `${c.value ?? c.discountValue}%`
                             : format(c.value ?? c.discountValue)}
                         </td>
-                        <td className="px-4 py-3 text-[#8A9196]">{max || '∞'}</td>
+                        <td className="px-4 py-3 text-[#949599]">{max || '∞'}</td>
                         <td className="px-4 py-3">
-                          <span className="text-[#EDF0F1] font-medium">{used}</span>
+                          <span className="text-[#EFEFF1] font-medium">{used}</span>
                           {max && (
                             <div className="mt-1 h-1.5 w-16 rounded-full bg-[#494F55]/30 overflow-hidden">
                               <div className="h-full bg-[#D4AF37] rounded-full" style={{ width: `${Math.min(100, (used / max) * 100)}%` }} />
                             </div>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-xs text-[#8A9196] whitespace-nowrap">{periodLabel(c)}</td>
+                        <td className="px-4 py-3 text-xs text-[#949599] whitespace-nowrap">{periodLabel(c)}</td>
                         <td className="px-4 py-3">
                           <Badge variant={active ? 'success' : 'neutral'} size="sm" dot>
                             {active ? 'Active' : 'Inactive'}
@@ -355,13 +355,13 @@ export default function PromotionsPage() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-end gap-1">
-                            <button onClick={() => openEditCoupon(c)} className="p-1.5 rounded-md text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition" title="Edit">
+                            <button onClick={() => openEditCoupon(c)} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit">
                               <Edit2 className="w-4 h-4" />
                             </button>
-                            <button onClick={() => toggleCouponActive(c)} className="p-1.5 rounded-md text-[#8A9196] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title={active ? 'Deactivate' : 'Activate'}>
+                            <button onClick={() => toggleCouponActive(c)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title={active ? 'Deactivate' : 'Activate'}>
                               <RefreshCw className="w-4 h-4" />
                             </button>
-                            <button onClick={() => setDeleteCouponTarget(c)} className="p-1.5 rounded-md text-[#8A9196] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete">
+                            <button onClick={() => setDeleteCouponTarget(c)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -409,13 +409,13 @@ export default function PromotionsPage() {
                       </div>
                       <Badge variant={st.v} size="sm" dot>{st.label}</Badge>
                     </div>
-                    <h3 className="mt-3 text-base font-semibold text-[#EDF0F1]">{f.ticketType || f.ticketTypeName || 'Flash Sale'}</h3>
-                    {ev && <p className="text-xs text-[#8A9196] mt-0.5 truncate">{ev.title}</p>}
+                    <h3 className="mt-3 text-base font-semibold text-[#EFEFF1]">{f.ticketType || f.ticketTypeName || 'Flash Sale'}</h3>
+                    {ev && <p className="text-xs text-[#949599] mt-0.5 truncate">{ev.title}</p>}
                     <div className="mt-3 flex items-baseline gap-1">
                       <span className="text-2xl font-bold text-[#D4AF37]">{f.discountPct || f.discountPercent}%</span>
-                      <span className="text-xs text-[#8A9196]">off</span>
+                      <span className="text-xs text-[#949599]">off</span>
                     </div>
-                    <div className="mt-3 space-y-1.5 text-xs text-[#8A9196]">
+                    <div className="mt-3 space-y-1.5 text-xs text-[#949599]">
                       <p className="flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5" />
                         {f.startsAt ? new Date(f.startsAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : 'Now'}
@@ -431,7 +431,7 @@ export default function PromotionsPage() {
                     </div>
                     <button
                       onClick={() => setDeleteFlashTarget(f)}
-                      className="mt-4 w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#8A9196] border border-[#262B2F] hover:text-red-400 hover:border-red-500/30 transition"
+                      className="mt-4 w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#949599] border border-[#262B2F] hover:text-red-400 hover:border-red-500/30 transition"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Delete
                     </button>
@@ -451,8 +451,8 @@ export default function PromotionsPage() {
         size="lg"
         footer={
           <>
-            <button onClick={() => setCouponModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={submitCoupon} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1E252B] bg-[#D4AF37] hover:bg-[#c4a030] disabled:opacity-60 transition">
+            <button onClick={() => setCouponModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={submitCoupon} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-[#D4AF37] hover:bg-[#c4a030] disabled:opacity-60 transition">
               {submitting ? 'Saving...' : editingCoupon ? 'Update' : 'Create'}
             </button>
           </>
@@ -460,7 +460,7 @@ export default function PromotionsPage() {
       >
         <form onSubmit={submitCoupon} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Code</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Code</label>
             <div className="flex gap-2">
               <input
                 value={cForm.code}
@@ -471,7 +471,7 @@ export default function PromotionsPage() {
               <button
                 type="button"
                 onClick={() => setCForm((f) => ({ ...f, code: genCode() }))}
-                className="shrink-0 px-3 rounded-lg border border-[#494F55]/40 text-[#8A9196] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition text-sm"
+                className="shrink-0 px-3 rounded-lg border border-[#494F55]/40 text-[#949599] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition text-sm"
                 title="Auto-generate"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -480,7 +480,7 @@ export default function PromotionsPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Discount Type</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Discount Type</label>
               <select
                 value={cForm.type}
                 onChange={(e) => setCForm((f) => ({ ...f, type: e.target.value }))}
@@ -491,7 +491,7 @@ export default function PromotionsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">
                 {cForm.type === 'percentage' ? 'Percentage Off' : 'Amount Off (₵)'}
               </label>
               <input
@@ -506,7 +506,7 @@ export default function PromotionsPage() {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Max Uses (optional)</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Max Uses (optional)</label>
             <input
               type="number"
               min="1"
@@ -518,7 +518,7 @@ export default function PromotionsPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Valid From</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Valid From</label>
               <input
                 type="date"
                 value={cForm.validFrom}
@@ -527,7 +527,7 @@ export default function PromotionsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Valid To</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Valid To</label>
               <input
                 type="date"
                 value={cForm.validTo}
@@ -537,7 +537,7 @@ export default function PromotionsPage() {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Apply To</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Apply To</label>
             <select
               value={cForm.scope}
               onChange={(e) => setCForm((f) => ({ ...f, scope: e.target.value, eventId: '' }))}
@@ -549,7 +549,7 @@ export default function PromotionsPage() {
           </div>
           {cForm.scope === 'specific' && (
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Select Event</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Select Event</label>
               <select
                 value={cForm.eventId}
                 onChange={(e) => setCForm((f) => ({ ...f, eventId: e.target.value }))}
@@ -572,8 +572,8 @@ export default function PromotionsPage() {
         title="Create Flash Sale"
         footer={
           <>
-            <button onClick={() => setFlashModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={submitFlash} disabled={flashSubmitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1E252B] bg-[#D4AF37] hover:bg-[#c4a030] disabled:opacity-60 transition">
+            <button onClick={() => setFlashModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={submitFlash} disabled={flashSubmitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-[#D4AF37] hover:bg-[#c4a030] disabled:opacity-60 transition">
               {flashSubmitting ? 'Creating...' : 'Create Flash Sale'}
             </button>
           </>
@@ -581,14 +581,14 @@ export default function PromotionsPage() {
       >
         <form onSubmit={submitFlash} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Event</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Event</label>
             <select value={fForm.eventId} onChange={(e) => setFForm((f) => ({ ...f, eventId: e.target.value, ticketType: '' }))} className={inputCls}>
               <option value="">Choose an event...</option>
               {events.map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Ticket Type</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Ticket Type</label>
             <input
               value={fForm.ticketType}
               onChange={(e) => setFForm((f) => ({ ...f, ticketType: e.target.value }))}
@@ -598,7 +598,7 @@ export default function PromotionsPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Discount (%)</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Discount (%)</label>
               <input
                 type="number"
                 min="1"
@@ -610,7 +610,7 @@ export default function PromotionsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Duration (hours)</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Duration (hours)</label>
               <input
                 type="number"
                 min="1"
@@ -631,12 +631,12 @@ export default function PromotionsPage() {
         title="Delete Discount Code"
         footer={
           <>
-            <button onClick={() => setDeleteCouponTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={() => setDeleteCouponTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
             <button onClick={handleDeleteCoupon} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 transition">Delete</button>
           </>
         }
       >
-        <p className="text-sm text-[#8A9196]">
+        <p className="text-sm text-[#949599]">
           Delete code <span className="font-mono font-semibold text-[#D4AF37]">{deleteCouponTarget?.code}</span>? This cannot be undone.
         </p>
       </Modal>
@@ -648,12 +648,12 @@ export default function PromotionsPage() {
         title="Delete Flash Sale"
         footer={
           <>
-            <button onClick={() => setDeleteFlashTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={() => setDeleteFlashTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
             <button onClick={handleDeleteFlash} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 transition">Delete</button>
           </>
         }
       >
-        <p className="text-sm text-[#8A9196]">
+        <p className="text-sm text-[#949599]">
           Delete this flash sale? Any discounted tickets already sold will remain valid.
         </p>
       </Modal>

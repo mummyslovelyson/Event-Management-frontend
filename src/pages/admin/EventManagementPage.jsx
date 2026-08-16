@@ -216,7 +216,7 @@ export default function EventManagementPage() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-              tab === t.key ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#7D8387] hover:text-[#F2F4F5] hover:bg-[#242B32]'
+              tab === t.key ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
             {t.label}
@@ -234,13 +234,13 @@ export default function EventManagementPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search events..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
             />
           </div>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
           >
             <option value="">All Categories</option>
             <option value="music">Music</option>
@@ -254,7 +254,7 @@ export default function EventManagementPage() {
             value={organizerFilter}
             onChange={(e) => setOrganizerFilter(e.target.value)}
             placeholder="Organizer..."
-            className="px-4 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
           />
         </div>
 
@@ -279,7 +279,7 @@ export default function EventManagementPage() {
             >
               <XCircle className="w-3.5 h-3.5" /> Reject All
             </button>
-            <button onClick={() => setSelected(new Set())} className="text-xs text-[#7D8387] hover:text-[#F2F4F5] ml-auto">Clear</button>
+            <button onClick={() => setSelected(new Set())} className="text-xs text-[#949599] hover:text-[#EFEFF1] ml-auto">Clear</button>
           </motion.div>
         )}
       </div>
@@ -323,25 +323,25 @@ export default function EventManagementPage() {
                             <ImageIcon className="w-5 h-5" />
                           </div>
                         )}
-                        <span className="font-medium text-[#F2F4F5] max-w-[180px] truncate">{ev.title}</span>
+                        <span className="font-medium text-[#EFEFF1] max-w-[180px] truncate">{ev.title}</span>
                         {ev.is_featured && <Badge variant="gold" size="sm" className="ml-2 shrink-0">Featured</Badge>}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-[#7D8387] max-w-[140px] truncate">{ev.organizerName || ev.organizer || '—'}</td>
+                    <td className="px-4 py-3 text-[#949599] max-w-[140px] truncate">{ev.organizerName || ev.organizer || '—'}</td>
                     <td className="px-4 py-3"><Badge variant="neutral" size="sm">{ev.category || '—'}</Badge></td>
-                    <td className="px-4 py-3 text-xs text-[#7D8387]">{fmtDate(ev.startDate || ev.date)}</td>
-                    <td className="px-4 py-3 text-center text-[#7D8387]">{ev.ticketsSold ?? ev.tickets ?? 0}</td>
-                    <td className="px-4 py-3 text-right font-medium text-[#F2F4F5]">{format(ev.revenue)}</td>
+                    <td className="px-4 py-3 text-xs text-[#949599]">{fmtDate(ev.startDate || ev.date)}</td>
+                    <td className="px-4 py-3 text-center text-[#949599]">{ev.ticketsSold ?? ev.tickets ?? 0}</td>
+                    <td className="px-4 py-3 text-right font-medium text-[#EFEFF1]">{format(ev.revenue)}</td>
                     <td className="px-4 py-3"><Badge variant={statusVariant(ev.status)} size="sm" dot>{ev.status || 'pending'}</Badge></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1.5">
-                        <Link to={`/events/${ev.id}`} className="p-1.5 rounded-md text-[#7D8387] hover:text-[#F2F4F5] hover:bg-[#494F55]/30 transition" title="View">
+                        <Link to={`/events/${ev.id}`} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View">
                           <Eye className="w-4 h-4" />
                         </Link>
                         <button
                           onClick={() => handleToggleFeatured(ev)}
                           disabled={actionLoading === `feature-${ev.id}`}
-                          className={`p-1.5 rounded-md transition disabled:opacity-50 ${ev.is_featured ? 'text-[#D4AF37] hover:bg-[#D4AF37]/15' : 'text-[#7D8387] hover:text-[#D4AF37] hover:bg-[#494F55]/30'}`}
+                          className={`p-1.5 rounded-md transition disabled:opacity-50 ${ev.is_featured ? 'text-[#D4AF37] hover:bg-[#D4AF37]/15' : 'text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30'}`}
                           title={ev.is_featured ? 'Remove from featured' : 'Feature on homepage'}
                         >
                           <Star className="w-4 h-4" fill={ev.is_featured ? 'currentColor' : 'none'} />
@@ -402,7 +402,7 @@ export default function EventManagementPage() {
         )}
         {!loading && events.length > 0 && (
           <div className="px-5 py-4 border-t border-[#494F55]/20 flex items-center justify-between">
-            <span className="text-xs text-[#7D8387]">Page {page} of {totalPages}</span>
+            <span className="text-xs text-[#949599]">Page {page} of {totalPages}</span>
             <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
         )}
@@ -415,7 +415,7 @@ export default function EventManagementPage() {
         title="Reject Event"
         footer={
           <>
-            <button onClick={() => setRejectTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setRejectTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleReject}
               disabled={actionLoading === `reject-${rejectTarget?.id}`}
@@ -426,12 +426,12 @@ export default function EventManagementPage() {
           </>
         }
       >
-        <p className="text-sm text-[#F2F4F5]">You are rejecting <span className="font-semibold">{rejectTarget?.title}</span></p>
+        <p className="text-sm text-[#EFEFF1]">You are rejecting <span className="font-semibold">{rejectTarget?.title}</span></p>
         <textarea
           value={rejectReason}
           onChange={(e) => setRejectReason(e.target.value)}
           placeholder="Reason for rejection (sent to organizer)..."
-          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
+          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
           rows={4}
         />
       </Modal>
@@ -443,7 +443,7 @@ export default function EventManagementPage() {
         title="Delete Event"
         footer={
           <>
-            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleDelete}
               disabled={actionLoading === `delete-${deleteTarget?.id}`}
@@ -459,8 +459,8 @@ export default function EventManagementPage() {
             <Trash2 className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-[#F2F4F5]">Permanently delete <span className="font-semibold">{deleteTarget?.title}</span>?</p>
-            <p className="text-xs text-[#7D8387] mt-1">This action cannot be undone.</p>
+            <p className="text-sm text-[#EFEFF1]">Permanently delete <span className="font-semibold">{deleteTarget?.title}</span>?</p>
+            <p className="text-xs text-[#949599] mt-1">This action cannot be undone.</p>
           </div>
         </div>
       </Modal>

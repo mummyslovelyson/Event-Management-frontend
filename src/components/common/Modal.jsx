@@ -43,14 +43,14 @@ export default function Modal({ open, onClose, title, children, size = 'md', foo
             {(title || !hideClose) && (
               <div className="flex items-center justify-between px-5 py-4 border-b border-[#262B2F] shrink-0">
                 {title ? (
-                  <h3 className="text-base font-semibold text-[#EDF0F1]">{title}</h3>
+                  <h3 className="text-base font-semibold text-[#EFEFF1]">{title}</h3>
                 ) : (
                   <span />
                 )}
                 {!hideClose && (
                   <button
                     onClick={onClose}
-                    className="p-1.5 rounded-lg text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#262B2F] transition"
+                    className="p-1.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition"
                     aria-label="Close"
                   >
                     <X className="w-5 h-5" />

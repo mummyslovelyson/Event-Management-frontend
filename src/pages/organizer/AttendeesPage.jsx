@@ -144,7 +144,7 @@ export default function AttendeesPage() {
             <button
               onClick={handleExportPDF}
               disabled={!selectedEvent}
-              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition-colors"
             >
               <FileText className="w-4 h-4" /> Export PDF
             </button>
@@ -154,18 +154,18 @@ export default function AttendeesPage() {
 
       {/* Event selector */}
       <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-        <label className="block text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-1.5">
+        <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-1.5">
           Select Event
         </label>
         <button
           onClick={() => setEventOpen((v) => !v)}
           disabled={loadingEvents}
-          className="flex items-center justify-between gap-2 w-full sm:w-80 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] focus:outline-none focus:border-[#D4AF37]/60 transition disabled:opacity-50"
+          className="flex items-center justify-between gap-2 w-full sm:w-80 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition disabled:opacity-50"
         >
           <span className="truncate">
             {loadingEvents ? 'Loading events...' : selectedEventObj ? selectedEventObj.title : 'Choose an event...'}
           </span>
-          <ChevronDown className={`w-4 h-4 text-[#8A9196] shrink-0 transition-transform ${eventOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-4 h-4 text-[#949599] shrink-0 transition-transform ${eventOpen ? 'rotate-180' : ''}`} />
         </button>
         <AnimatePresence>
           {eventOpen && (
@@ -177,15 +177,15 @@ export default function AttendeesPage() {
               className="absolute z-30 mt-1 w-full sm:w-80 max-h-72 overflow-y-auto rounded-lg bg-[#171A1D] border border-[#494F55]/40 shadow-xl shadow-black/40 py-1"
             >
               {events.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-[#8A9196]">No events available</p>
+                <p className="px-4 py-3 text-sm text-[#949599]">No events available</p>
               ) : (
                 events.map((e) => (
                   <button
                     key={e.id}
                     onClick={() => { setSelectedEvent(e.id); setEventOpen(false); }}
-                    className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm hover:bg-[#494F55]/20 transition ${selectedEvent === e.id ? 'text-[#D4AF37]' : 'text-[#EDF0F1]'}`}
+                    className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm hover:bg-[#494F55]/20 transition ${selectedEvent === e.id ? 'text-[#D4AF37]' : 'text-[#EFEFF1]'}`}
                   >
-                    <Calendar className="w-4 h-4 text-[#8A9196] shrink-0" />
+                    <Calendar className="w-4 h-4 text-[#949599] shrink-0" />
                     <span className="truncate">{e.title}</span>
                   </button>
                 ))
@@ -198,13 +198,13 @@ export default function AttendeesPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[#8A9196]">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[#949599]">
             <Users className="w-4 h-4" /> Total Registrations
           </div>
-          <p className="mt-2 text-2xl font-bold text-[#EDF0F1]">{attendees.length}</p>
+          <p className="mt-2 text-2xl font-bold text-[#EFEFF1]">{attendees.length}</p>
         </div>
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[#8A9196]">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[#949599]">
             <CheckCircle2 className="w-4 h-4" /> Checked In
           </div>
           <p className="mt-2 text-2xl font-bold text-emerald-400">{checkedInCount}</p>
@@ -214,7 +214,7 @@ export default function AttendeesPage() {
             <span className="flex items-center gap-2 text-xs uppercase tracking-wider text-[#D4AF37]">
               <Clock className="w-4 h-4" /> Check-in Rate
             </span>
-            <span className="text-2xl font-bold text-[#EDF0F1]">{checkInPct}%</span>
+            <span className="text-2xl font-bold text-[#EFEFF1]">{checkInPct}%</span>
           </div>
           <div className="mt-3 h-2 rounded-full bg-[#494F55]/30 overflow-hidden">
             <motion.div
@@ -223,7 +223,7 @@ export default function AttendeesPage() {
               className="h-full bg-gradient-to-r from-[#D4AF37] to-[#c4a030] rounded-full"
             />
           </div>
-          <div className="mt-2 flex justify-between text-xs text-[#8A9196]">
+          <div className="mt-2 flex justify-between text-xs text-[#949599]">
             <span>{checkedInCount} in</span>
             <span>{notArrivedCount} not arrived</span>
           </div>
@@ -237,7 +237,7 @@ export default function AttendeesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name, email, or phone..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition"
+          className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition"
         />
       </div>
 
@@ -249,7 +249,7 @@ export default function AttendeesPage() {
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === t ? 'text-[#D4AF37]' : 'text-[#8A9196] hover:text-[#EDF0F1]'}`}
+              className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === t ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
             >
               {t} <span className="ml-1 text-xs text-[#494F55]">({count})</span>
               {tab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#D4AF37]" />}
@@ -299,22 +299,22 @@ export default function AttendeesPage() {
                         <div className="w-9 h-9 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center text-xs font-semibold shrink-0">
                           {fullName.split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
                         </div>
-                        <span className="font-medium text-[#EDF0F1]">{fullName}</span>
+                        <span className="font-medium text-[#EFEFF1]">{fullName}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-[#8A9196]">{a.email || '—'}</td>
-                    <td className="px-4 py-3 text-[#8A9196]">{a.phone || a.phoneNumber || '—'}</td>
-                    <td className="px-4 py-3 text-[#8A9196]">{a.ticketType || a.ticket?.type || '—'}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-[#8A9196]">#{a.orderId || a.orderReference || (a.order?.reference || '—')}</td>
+                    <td className="px-4 py-3 text-[#949599]">{a.email || '—'}</td>
+                    <td className="px-4 py-3 text-[#949599]">{a.phone || a.phoneNumber || '—'}</td>
+                    <td className="px-4 py-3 text-[#949599]">{a.ticketType || a.ticket?.type || '—'}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-[#949599]">#{a.orderId || a.orderReference || (a.order?.reference || '—')}</td>
                     <td className="px-4 py-3">
                       <Badge variant={isCheckedIn ? 'success' : 'pending'} size="sm">
                         {isCheckedIn ? 'Checked In' : 'Not Arrived'}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-xs text-[#8A9196]">
+                    <td className="px-4 py-3 text-xs text-[#949599]">
                       {isCheckedIn ? (a.checkInTime ? new Date(a.checkInTime).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—') : '—'}
                     </td>
-                    <td className="px-4 py-3 text-[#8A9196]">{a.seatNumber || a.seat || '—'}</td>
+                    <td className="px-4 py-3 text-[#949599]">{a.seatNumber || a.seat || '—'}</td>
                   </tr>
                 );
               })}
@@ -337,7 +337,7 @@ export default function AttendeesPage() {
                 {`${detail.firstName || ''} ${detail.lastName || ''}`.trim().split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               <div className="min-w-0">
-                <h3 className="text-lg font-semibold text-[#EDF0F1]">
+                <h3 className="text-lg font-semibold text-[#EFEFF1]">
                   {`${detail.firstName || ''} ${detail.lastName || ''}`.trim() || detail.name || 'Attendee'}
                 </h3>
                 <div className="mt-1">
@@ -358,11 +358,11 @@ export default function AttendeesPage() {
             </div>
 
             {detail.event && (
-              <div className="rounded-lg bg-[#1E252B] border border-[#262B2F] p-4">
-                <p className="text-xs uppercase tracking-wider text-[#8A9196] mb-1">Event</p>
-                <p className="text-sm font-medium text-[#EDF0F1]">{detail.event.title || detail.eventTitle || '—'}</p>
+              <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4">
+                <p className="text-xs uppercase tracking-wider text-[#949599] mb-1">Event</p>
+                <p className="text-sm font-medium text-[#EFEFF1]">{detail.event.title || detail.eventTitle || '—'}</p>
                 {detail.event.startDate && (
-                  <p className="text-sm text-[#8A9196] mt-1">
+                  <p className="text-sm text-[#949599] mt-1">
                     {new Date(detail.event.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}
                   </p>
                 )}
@@ -371,7 +371,7 @@ export default function AttendeesPage() {
 
             {(detail.amountPaid != null || detail.price != null) && (
               <div className="flex items-center justify-between rounded-lg bg-gradient-to-br from-[#D4AF37]/10 to-[#1D2124] border border-[#D4AF37]/30 p-4">
-                <span className="text-sm font-medium text-[#8A9196]">Amount Paid</span>
+                <span className="text-sm font-medium text-[#949599]">Amount Paid</span>
                 <span className="text-lg font-bold text-[#D4AF37]">{format(detail.amountPaid ?? detail.price)}</span>
               </div>
             )}
@@ -384,11 +384,11 @@ export default function AttendeesPage() {
 
 function InfoRow({ icon: Icon, label, value, mono }) {
   return (
-    <div className="rounded-lg bg-[#1E252B] border border-[#262B2F] p-4 space-y-1.5">
-      <p className="text-xs uppercase tracking-wider text-[#8A9196] flex items-center gap-1.5">
+    <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4 space-y-1.5">
+      <p className="text-xs uppercase tracking-wider text-[#949599] flex items-center gap-1.5">
         <Icon className="w-3.5 h-3.5" /> {label}
       </p>
-      <p className={`text-sm text-[#EDF0F1] ${mono ? 'font-mono' : 'font-medium'}`}>{value || '—'}</p>
+      <p className={`text-sm text-[#EFEFF1] ${mono ? 'font-mono' : 'font-medium'}`}>{value || '—'}</p>
     </div>
   );
 }

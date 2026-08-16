@@ -16,9 +16,9 @@ import Badge from '@/components/common/Badge';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
 
-const labelCls = 'block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider';
+const labelCls = 'block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider';
 
 const TABS = [
   { key: 'profile', label: 'Organization Profile', icon: Building2 },
@@ -182,7 +182,7 @@ export default function OrganizerSettingsPage() {
           <button
             key={key}
             onClick={() => setTab(key)}
-            className={`relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === key ? 'text-[#D4AF37]' : 'text-[#8A9196] hover:text-[#EDF0F1]'}`}
+            className={`relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === key ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             <Icon className="w-4 h-4" />
             <span className="hidden sm:inline">{label}</span>
@@ -217,7 +217,7 @@ export default function OrganizerSettingsPage() {
                       {logoPreview ? (
                         <img src={logoPreview} alt="logo" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="flex flex-col items-center gap-2 text-[#8A9196] group-hover:text-[#D4AF37] transition">
+                        <div className="flex flex-col items-center gap-2 text-[#949599] group-hover:text-[#D4AF37] transition">
                           <Upload className="w-6 h-6" />
                           <span className="text-xs">Upload logo</span>
                         </div>
@@ -235,7 +235,7 @@ export default function OrganizerSettingsPage() {
                       {bannerPreview ? (
                         <img src={bannerPreview} alt="banner" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="flex flex-col items-center gap-2 text-[#8A9196] group-hover:text-[#D4AF37] transition">
+                        <div className="flex flex-col items-center gap-2 text-[#949599] group-hover:text-[#D4AF37] transition">
                           <Upload className="w-6 h-6" />
                           <span className="text-xs">Upload banner (1200×400 recommended)</span>
                         </div>
@@ -294,7 +294,7 @@ export default function OrganizerSettingsPage() {
                           className={`flex items-center gap-2.5 px-4 py-3 rounded-lg border text-sm font-medium transition ${
                             payment.payoutMethod === opt.value
                               ? 'bg-[#D4AF37]/10 border-[#D4AF37]/50 text-[#D4AF37]'
-                              : 'bg-[#1E252B] border-[#494F55]/40 text-[#8A9196] hover:border-[#494F55]/60'
+                              : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599] hover:border-[#494F55]/60'
                           }`}
                         >
                           <Icon className="w-4 h-4" /> {opt.label}
@@ -335,7 +335,7 @@ export default function OrganizerSettingsPage() {
               <div className="space-y-6 max-w-2xl">
                 {/* Change password */}
                 <form onSubmit={handleChangePw} className="space-y-4">
-                  <h2 className="text-base font-semibold text-[#EDF0F1] flex items-center gap-2">
+                  <h2 className="text-base font-semibold text-[#EFEFF1] flex items-center gap-2">
                     <Lock className="w-4 h-4 text-[#D4AF37]" /> Change Password
                   </h2>
                   {[
@@ -356,7 +356,7 @@ export default function OrganizerSettingsPage() {
                         <button
                           type="button"
                           onClick={() => setShowPw((s) => ({ ...s, [key]: !s[key] }))}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A9196] hover:text-[#EDF0F1] transition"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#949599] hover:text-[#EFEFF1] transition"
                         >
                           {showPw[key] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
@@ -368,22 +368,22 @@ export default function OrganizerSettingsPage() {
 
                 {/* Active sessions */}
                 <div className="pt-4 border-t border-[#262B2F]">
-                  <h2 className="text-base font-semibold text-[#EDF0F1] mb-3">Active Sessions</h2>
+                  <h2 className="text-base font-semibold text-[#EFEFF1] mb-3">Active Sessions</h2>
                   {sessions.length === 0 ? (
-                    <p className="text-sm text-[#8A9196] py-4">No active sessions found.</p>
+                    <p className="text-sm text-[#949599] py-4">No active sessions found.</p>
                   ) : (
                     <div className="space-y-2">
                       {sessions.map((s) => (
                         <div key={s.id} className="flex items-center justify-between rounded-lg bg-[#171A1D] border border-[#262B2F] p-3">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-9 h-9 rounded-lg bg-[#494F55]/30 text-[#8A9196] flex items-center justify-center shrink-0">
+                            <div className="w-9 h-9 rounded-lg bg-[#494F55]/30 text-[#949599] flex items-center justify-center shrink-0">
                               <Smartphone className="w-4 h-4" />
                             </div>
                             <div className="min-w-0">
-                              <p className="text-sm font-medium text-[#EDF0F1] truncate">
+                              <p className="text-sm font-medium text-[#EFEFF1] truncate">
                                 {s.device || s.browser || 'Device'} · {s.location || 'Unknown location'}
                               </p>
-                              <p className="text-xs text-[#8A9196]">
+                              <p className="text-xs text-[#949599]">
                                 {s.lastActive ? `Active ${new Date(s.lastActive).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}` : ''}
                                 {s.current && <span className="ml-2"><Badge variant="success" size="sm">This device</Badge></span>}
                               </p>
@@ -392,7 +392,7 @@ export default function OrganizerSettingsPage() {
                           {!s.current && (
                             <button
                               onClick={() => handleRevokeSession(s.id)}
-                              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#8A9196] border border-[#262B2F] hover:text-red-400 hover:border-red-500/30 transition"
+                              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#949599] border border-[#262B2F] hover:text-red-400 hover:border-red-500/30 transition"
                             >
                               <LogOut className="w-3.5 h-3.5" /> Revoke
                             </button>
@@ -415,7 +415,7 @@ export default function OrganizerSettingsPage() {
                       type="color"
                       value={branding.primaryColor}
                       onChange={(e) => setBranding((b) => ({ ...b, primaryColor: e.target.value }))}
-                      className="w-14 h-11 rounded-lg border border-[#494F55]/40 bg-[#1E252B] cursor-pointer p-1"
+                      className="w-14 h-11 rounded-lg border border-[#494F55]/40 bg-[#1C232B] cursor-pointer p-1"
                     />
                     <input
                       value={branding.primaryColor}
@@ -423,7 +423,7 @@ export default function OrganizerSettingsPage() {
                       placeholder="#D4AF37"
                       className={`${inputCls} max-w-[160px] font-mono`}
                     />
-                    <div className="flex items-center gap-1.5 text-xs text-[#8A9196]">
+                    <div className="flex items-center gap-1.5 text-xs text-[#949599]">
                       <div className="w-5 h-5 rounded border border-[#494F55]/40" style={{ backgroundColor: branding.primaryColor }} />
                       Preview
                     </div>
@@ -440,12 +440,12 @@ export default function OrganizerSettingsPage() {
 
                 {/* Live preview card */}
                 <div className="rounded-xl border border-[#262B2F] overflow-hidden">
-                  <div className="h-20" style={{ background: `linear-gradient(135deg, ${branding.primaryColor}40, #1E252B)` }} />
+                  <div className="h-20" style={{ background: `linear-gradient(135deg, ${branding.primaryColor}40, #1C232B)` }} />
                   <div className="p-5 bg-[#171A1D]">
-                    <p className="text-xs uppercase tracking-wider text-[#8A9196]">Preview</p>
-                    <h3 className="mt-1 text-lg font-bold text-[#EDF0F1]">Your Organization</h3>
+                    <p className="text-xs uppercase tracking-wider text-[#949599]">Preview</p>
+                    <h3 className="mt-1 text-lg font-bold text-[#EFEFF1]">Your Organization</h3>
                     {branding.tagline && <p className="text-sm font-medium" style={{ color: branding.primaryColor }}>{branding.tagline}</p>}
-                    {branding.about && <p className="mt-2 text-sm text-[#8A9196] line-clamp-2">{branding.about}</p>}
+                    {branding.about && <p className="mt-2 text-sm text-[#949599] line-clamp-2">{branding.about}</p>}
                   </div>
                 </div>
 
@@ -479,7 +479,7 @@ function SaveButton({ onClick, saving, label = 'Save Changes' }) {
       <button
         onClick={onClick}
         disabled={saving}
-        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-60 transition-colors"
+        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-60 transition-colors"
       >
         {saving ? <LoadingSpinner size="sm" /> : <Save className="w-4 h-4" />}
         {saving ? 'Saving...' : label}

@@ -139,7 +139,7 @@ export default function SupportPage() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-              tab === t.key ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#7D8387] hover:text-[#F2F4F5] hover:bg-[#242B32]'
+              tab === t.key ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
             {t.label}
@@ -172,13 +172,13 @@ export default function SupportPage() {
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {tickets.map((t) => (
                     <tr key={t.id} className="hover:bg-[#1D2124] transition-colors cursor-pointer" onClick={() => openDetail(t)}>
-                      <td className="px-5 py-3 font-mono text-xs text-[#F2F4F5]">#{t.id?.slice(-6) || t.reference}</td>
-                      <td className="px-5 py-3 text-[#F2F4F5]">{t.user?.name || t.userName || '—'}</td>
-                      <td className="px-5 py-3 text-[#F2F4F5] max-w-[200px] truncate">{t.subject}</td>
+                      <td className="px-5 py-3 font-mono text-xs text-[#EFEFF1]">#{t.id?.slice(-6) || t.reference}</td>
+                      <td className="px-5 py-3 text-[#EFEFF1]">{t.user?.name || t.userName || '—'}</td>
+                      <td className="px-5 py-3 text-[#EFEFF1] max-w-[200px] truncate">{t.subject}</td>
                       <td className="px-5 py-3"><Badge variant="neutral" size="sm">{t.category || '—'}</Badge></td>
                       <td className="px-5 py-3"><Badge variant={priorityVariant(t.priority)} size="sm">{t.priority || 'low'}</Badge></td>
                       <td className="px-5 py-3"><Badge variant={statusVariant(t.status)} size="sm" dot>{(t.status || 'open').replace('_', ' ')}</Badge></td>
-                      <td className="px-5 py-3 text-xs text-[#7D8387]">{fmtDate(t.createdAt)}</td>
+                      <td className="px-5 py-3 text-xs text-[#949599]">{fmtDate(t.createdAt)}</td>
                       <td className="px-5 py-3 text-right">
                         <button className="text-xs font-medium text-[#D4AF37] hover:underline">View</button>
                       </td>
@@ -188,7 +188,7 @@ export default function SupportPage() {
               </table>
             </div>
             <div className="px-5 py-4 border-t border-[#262B2F] flex items-center justify-between">
-              <span className="text-xs text-[#7D8387]">Page {page} of {totalPages}</span>
+              <span className="text-xs text-[#949599]">Page {page} of {totalPages}</span>
               <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
             </div>
           </>
@@ -207,7 +207,7 @@ export default function SupportPage() {
               <button onClick={handleEscalate} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30 text-sm font-semibold hover:bg-amber-500/25 transition">
                 <ArrowUp className="w-4 h-4" /> Escalate
               </button>
-              <button onClick={handleClose} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Close Ticket</button>
+              <button onClick={handleClose} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Close Ticket</button>
             </>
           ) : null
         }
@@ -217,36 +217,36 @@ export default function SupportPage() {
         ) : detail ? (
           <div className="space-y-4">
             {/* User info */}
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1E252B]/50 border border-[#494F55]/20">
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20">
               <div className="w-10 h-10 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center text-sm font-bold">
                 {(detail.user?.name || '?').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[#F2F4F5]">{detail.user?.name || detail.userName}</p>
-                <p className="text-xs text-[#7D8387]">{detail.user?.email || '—'}</p>
+                <p className="text-sm font-medium text-[#EFEFF1]">{detail.user?.name || detail.userName}</p>
+                <p className="text-xs text-[#949599]">{detail.user?.email || '—'}</p>
               </div>
               <Badge variant={priorityVariant(detail.priority)} size="sm">{detail.priority}</Badge>
               <Badge variant={statusVariant(detail.status)} size="sm" dot>{(detail.status || 'open').replace('_', ' ')}</Badge>
             </div>
 
             {/* Subject + message */}
-            <div className="p-4 rounded-lg bg-[#1E252B]/50 border border-[#494F55]/20">
-              <h3 className="font-semibold text-[#F2F4F5]">{detail.subject}</h3>
-              <p className="text-sm text-[#7D8387] mt-2 leading-relaxed">{detail.message || detail.description}</p>
+            <div className="p-4 rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20">
+              <h3 className="font-semibold text-[#EFEFF1]">{detail.subject}</h3>
+              <p className="text-sm text-[#949599] mt-2 leading-relaxed">{detail.message || detail.description}</p>
               <p className="text-xs text-[#494F55] mt-2">{fmtDateTime(detail.createdAt)}</p>
             </div>
 
             {/* Thread */}
             {detail.responses && detail.responses.length > 0 && (
               <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#7D8387]">Conversation</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Conversation</p>
                 {detail.responses.map((r, i) => (
                   <div key={i} className={`flex gap-3 ${r.isAdmin ? 'flex-row-reverse' : ''}`}>
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${r.isAdmin ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'bg-[#494F55]/30 text-[#9AA1A6]'}`}>
                       {r.isAdmin ? 'AD' : (r.author?.name || 'U').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
-                    <div className={`max-w-[75%] rounded-lg p-3 ${r.isAdmin ? 'bg-[#D4AF37]/10 border border-[#D4AF37]/20' : 'bg-[#1E252B]/50 border border-[#494F55]/20'}`}>
-                      <p className="text-sm text-[#F2F4F5]">{r.message}</p>
+                    <div className={`max-w-[75%] rounded-lg p-3 ${r.isAdmin ? 'bg-[#D4AF37]/10 border border-[#D4AF37]/20' : 'bg-[#1C232B]/50 border border-[#494F55]/20'}`}>
+                      <p className="text-sm text-[#EFEFF1]">{r.message}</p>
                       <p className="text-xs text-[#494F55] mt-1">{fmtDateTime(r.createdAt)}</p>
                     </div>
                   </div>
@@ -262,13 +262,13 @@ export default function SupportPage() {
                   onChange={(e) => setReply(e.target.value)}
                   placeholder="Type your reply..."
                   rows={3}
-                  className="w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
+                  className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
                 />
                 <div className="flex justify-end mt-2">
                   <button
                     onClick={handleReply}
                     disabled={sending || !reply.trim()}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
                   >
                     {sending ? <LoadingSpinner size="sm" /> : <><Send className="w-4 h-4" /> Send Reply</>}
                   </button>

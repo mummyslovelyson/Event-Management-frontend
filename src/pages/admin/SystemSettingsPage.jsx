@@ -142,8 +142,8 @@ export default function SystemSettingsPage() {
 
   const toggleSecret = (key) => setShowSecrets((s) => ({ ...s, [key]: !s[key] }));
 
-  const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition';
-  const labelCls = 'block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5';
+  const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition';
+  const labelCls = 'block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5';
 
   return (
     <div className="space-y-6">
@@ -163,7 +163,7 @@ export default function SystemSettingsPage() {
                 key={key}
                 onClick={() => setTab(key)}
                 className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  tab === key ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#7D8387] hover:text-[#F2F4F5] hover:bg-[#242B32]'
+                  tab === key ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
                 }`}
               >
                 <Icon className="w-4 h-4" /> {label}
@@ -224,7 +224,7 @@ export default function SystemSettingsPage() {
                       <div><label className={labelCls}>From Email</label><input className={inputCls} value={settings.email?.fromEmail || ''} onChange={(e) => update('fromEmail', e.target.value)} placeholder="noreply@tribescliqs.com" /></div>
                       <div><label className={labelCls}>From Name</label><input className={inputCls} value={settings.email?.fromName || ''} onChange={(e) => update('fromName', e.target.value)} placeholder="Tribes & Cliqs" /></div>
                     </div>
-                    <button disabled title="Coming Soon" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#7D8387] cursor-not-allowed opacity-60">
+                    <button disabled title="Coming Soon" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#949599] cursor-not-allowed opacity-60">
                       <Send className="w-4 h-4" /> Send Test Email
                     </button>
                   </div>
@@ -235,7 +235,7 @@ export default function SystemSettingsPage() {
                     <SectionTitle icon={Smartphone} title="SMS Settings" desc="SMSOnlineGH key and the sender name users see." />
                     <SecretInput label="SMSOnlineGH API Key" value={settings.sms?.apiKey || ''} show={showSecrets.smsApiKey} onToggle={() => toggleSecret('smsApiKey')} onChange={(v) => update('apiKey', v)} placeholder="••••••••••••" />
                     <div><label className={labelCls}>Sender ID</label><input className={inputCls} value={settings.sms?.senderId || ''} onChange={(e) => update('senderId', e.target.value)} placeholder="TRIBES" maxLength={11} /></div>
-                    <button disabled title="Coming Soon" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#7D8387] cursor-not-allowed opacity-60">
+                    <button disabled title="Coming Soon" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#949599] cursor-not-allowed opacity-60">
                       <Send className="w-4 h-4" /> Send Test SMS
                     </button>
                   </div>
@@ -270,7 +270,7 @@ export default function SystemSettingsPage() {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
                   >
                     {saving ? <LoadingSpinner size="sm" /> : <><Save className="w-4 h-4" /> Save Settings</>}
                   </button>
@@ -288,15 +288,15 @@ function SectionTitle({ icon: Icon, title, desc }) {
   return (
     <div className="flex items-center gap-3 pb-4 border-b border-[#494F55]/20">
       <div className="w-10 h-10 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center"><Icon className="w-5 h-5" /></div>
-      <div><h2 className="text-base font-semibold text-[#F2F4F5]">{title}</h2><p className="text-xs text-[#7D8387]">{desc}</p></div>
+      <div><h2 className="text-base font-semibold text-[#EFEFF1]">{title}</h2><p className="text-xs text-[#949599]">{desc}</p></div>
     </div>
   );
 }
 
 function ToggleRow({ label, desc, value, onChange }) {
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg bg-[#1E252B]/50 border border-[#494F55]/20">
-      <div><p className="text-sm font-medium text-[#F2F4F5]">{label}</p><p className="text-xs text-[#7D8387]">{desc}</p></div>
+    <div className="flex items-center justify-between p-3 rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20">
+      <div><p className="text-sm font-medium text-[#EFEFF1]">{label}</p><p className="text-xs text-[#949599]">{desc}</p></div>
       <button onClick={() => onChange(!value)} className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${value ? 'bg-[#D4AF37]' : 'bg-[#494F55]/40'}`}>
         <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform ${value ? 'translate-x-5' : ''}`} />
       </button>
@@ -305,15 +305,15 @@ function ToggleRow({ label, desc, value, onChange }) {
 }
 
 function SecretInput({ label, value, show, onToggle, onChange, placeholder }) {
-  const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition pr-10';
-  const labelCls = 'block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5';
+  const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition pr-10';
+  const labelCls = 'block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5';
   const displayValue = show ? value : (value ? '••••••••••••••••' : '');
   return (
     <div>
       <label className={labelCls}>{label}</label>
       <div className="relative">
         <input type="text" value={displayValue} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className={inputCls} />
-        <button onClick={onToggle} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[#7D8387] hover:text-[#F2F4F5] transition">
+        <button onClick={onToggle} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[#949599] hover:text-[#EFEFF1] transition">
           {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>
       </div>

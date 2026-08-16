@@ -43,9 +43,9 @@ const userStatus = (u) => {
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 const fmtDateTime = (d) => (d ? new Date(d).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
 
-const avatarColors = ['bg-[#D4AF37]/20 text-[#D4AF37]', 'bg-[#D4AF37]/30 text-[#D4AF37]', 'bg-[#F2F4F5]/10 text-[#F2F4F5]', 'bg-[#494F55]/40 text-[#9AA1A6]', 'bg-[#D4AF37]/40 text-[#E8C75E]'];
+const avatarColors = ['bg-[#D4AF37]/20 text-[#D4AF37]', 'bg-[#D4AF37]/30 text-[#D4AF37]', 'bg-[#EFEFF1]/10 text-[#EFEFF1]', 'bg-[#494F55]/40 text-[#9AA1A6]', 'bg-[#D4AF37]/40 text-[#E8C75E]'];
 
-const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition';
+const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition';
 
 export default function UserManagementPage() {
   const [tab, setTab] = useState('all');
@@ -301,8 +301,8 @@ export default function UserManagementPage() {
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
               tab === t.key
-                ? 'bg-[#D4AF37] text-[#1E252B]'
-                : 'text-[#7D8387] hover:text-[#F2F4F5] hover:bg-[#242B32]'
+                ? 'bg-[#D4AF37] text-[#1C232B]'
+                : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
             {t.label}
@@ -320,13 +320,13 @@ export default function UserManagementPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name or email..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -336,7 +336,7 @@ export default function UserManagementPage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-[#D4AF37]/60 transition"
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -372,7 +372,7 @@ export default function UserManagementPage() {
             )}
             <button
               onClick={() => setSelected(new Set())}
-              className="text-xs text-[#7D8387] hover:text-[#F2F4F5] ml-auto"
+              className="text-xs text-[#949599] hover:text-[#EFEFF1] ml-auto"
             >
               Clear selection
             </button>
@@ -396,7 +396,7 @@ export default function UserManagementPage() {
                       type="checkbox"
                       checked={selected.size === users.length && users.length > 0}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded border-[#494F55] bg-[#1E252B] accent-[#D4AF37]"
+                      className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#D4AF37]"
                     />
                   </th>
                   <th className="px-4 py-3 font-medium">User</th>
@@ -420,7 +420,7 @@ export default function UserManagementPage() {
                           type="checkbox"
                           checked={selected.has(u.id)}
                           onChange={() => toggleSelect(u.id)}
-                          className="w-4 h-4 rounded border-[#494F55] bg-[#1E252B] accent-[#D4AF37]"
+                          className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#D4AF37]"
                         />
                       </td>
                       <td className="px-4 py-3">
@@ -429,11 +429,11 @@ export default function UserManagementPage() {
                             {initials}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-medium text-[#F2F4F5] truncate max-w-[160px] flex items-center gap-1.5">
+                            <p className="font-medium text-[#EFEFF1] truncate max-w-[160px] flex items-center gap-1.5">
                               {u.name || 'Unknown'}
                               {isAdmin && <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />}
                             </p>
-                            <p className="text-xs text-[#7D8387] truncate max-w-[180px]">{u.email}</p>
+                            <p className="text-xs text-[#949599] truncate max-w-[180px]">{u.email}</p>
                           </div>
                         </div>
                       </td>
@@ -443,19 +443,19 @@ export default function UserManagementPage() {
                           {userStatus(u).label}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-center text-[#7D8387]">{u.eventsCount ?? u.events ?? 0}</td>
-                      <td className="px-4 py-3 text-center text-[#7D8387]">{u.ticketsCount ?? u.tickets ?? 0}</td>
-                      <td className="px-4 py-3 text-xs text-[#7D8387]">{fmtDate(u.createdAt)}</td>
+                      <td className="px-4 py-3 text-center text-[#949599]">{u.eventsCount ?? u.events ?? 0}</td>
+                      <td className="px-4 py-3 text-center text-[#949599]">{u.ticketsCount ?? u.tickets ?? 0}</td>
+                      <td className="px-4 py-3 text-xs text-[#949599]">{fmtDate(u.createdAt)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1.5">
-                          <button onClick={() => openProfile(u.id)} className="p-1.5 rounded-md text-[#7D8387] hover:text-[#F2F4F5] hover:bg-[#494F55]/30 transition" title="View Profile">
+                          <button onClick={() => openProfile(u.id)} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View Profile">
                             <Eye className="w-4 h-4" />
                           </button>
                           {!isAdmin && (
                             <button
                               onClick={() => setEditTarget(u)}
                               disabled={actionLoading === u.id}
-                              className="p-1.5 rounded-md text-[#7D8387] hover:text-[#F2F4F5] hover:bg-[#494F55]/30 transition disabled:opacity-50"
+                              className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition disabled:opacity-50"
                               title="Edit User"
                             >
                               <Pencil className="w-4 h-4" />
@@ -464,7 +464,7 @@ export default function UserManagementPage() {
                           {!isAdmin && (
                             <button
                               onClick={() => openReset(u)}
-                              className="p-1.5 rounded-md text-[#7D8387] hover:text-[#D4AF37] hover:bg-[#D4AF37]/15 transition"
+                              className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#D4AF37]/15 transition"
                               title="Reset Password"
                             >
                               <KeyRound className="w-4 h-4" />
@@ -519,7 +519,7 @@ export default function UserManagementPage() {
         )}
         {!loading && users.length > 0 && (
           <div className="px-5 py-4 border-t border-[#262B2F] flex items-center justify-between">
-            <span className="text-xs text-[#7D8387]">Page {page} of {totalPages}</span>
+            <span className="text-xs text-[#949599]">Page {page} of {totalPages}</span>
             <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
         )}
@@ -536,8 +536,8 @@ export default function UserManagementPage() {
                 {(profile.name || '?').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-[#F2F4F5]">{profile.name}</h3>
-                <p className="text-sm text-[#7D8387]">{profile.email}</p>
+                <h3 className="text-lg font-semibold text-[#EFEFF1]">{profile.name}</h3>
+                <p className="text-sm text-[#949599]">{profile.email}</p>
                 <div className="flex items-center gap-2 mt-2">
                   <Badge variant={roleVariant(profile.role)} size="sm">{profile.role}</Badge>
                   <Badge variant={userStatus(profile).variant} size="sm" dot>
@@ -549,9 +549,9 @@ export default function UserManagementPage() {
             {profile.isSuspended && (
               <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-red-400 mb-1">Suspension</p>
-                <p className="text-sm text-[#F2F4F5]">{profile.suspendReason || 'No reason recorded'}</p>
+                <p className="text-sm text-[#EFEFF1]">{profile.suspendReason || 'No reason recorded'}</p>
                 {profile.suspendedAt && (
-                  <p className="text-xs text-[#7D8387] mt-1">Suspended {fmtDateTime(profile.suspendedAt)}</p>
+                  <p className="text-xs text-[#949599] mt-1">Suspended {fmtDateTime(profile.suspendedAt)}</p>
                 )}
               </div>
             )}
@@ -566,24 +566,24 @@ export default function UserManagementPage() {
                 { label: 'Email Verified', value: profile.emailVerified ? 'Yes' : 'No' },
                 { label: 'Date of Birth', value: profile.date_of_birth ? fmtDate(profile.date_of_birth) : '—' },
               ].map((f) => (
-                <div key={f.label} className="rounded-lg bg-[#1E252B]/50 border border-[#494F55]/20 p-3">
-                  <p className="text-xs text-[#7D8387]">{f.label}</p>
-                  <p className="mt-1 text-sm font-medium text-[#F2F4F5]">{f.value}</p>
+                <div key={f.label} className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-3">
+                  <p className="text-xs text-[#949599]">{f.label}</p>
+                  <p className="mt-1 text-sm font-medium text-[#EFEFF1]">{f.value}</p>
                 </div>
               ))}
             </div>
             {profile.passwordHash && (
-              <div className="rounded-lg bg-[#1E252B]/50 border border-[#494F55]/20 p-4">
+              <div className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1">Stored Password</p>
-                    <p className="text-xs text-[#7D8387]">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1">Stored Password</p>
+                    <p className="text-xs text-[#949599]">
                       Passwords are stored as an irreversible <span className="text-[#D4AF37]">bcrypt hash</span>. The plaintext password can never be recovered — reset it if the user forgot it.
                     </p>
                   </div>
                   <button
                     onClick={() => setRevealHash((v) => !v)}
-                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#8A9196] hover:text-[#F2F4F5] hover:border-[#D4AF37]/40 transition"
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#949599] hover:text-[#EFEFF1] hover:border-[#D4AF37]/40 transition"
                   >
                     {revealHash ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                     {revealHash ? 'Hide Hash' : 'View Hash'}
@@ -595,7 +595,7 @@ export default function UserManagementPage() {
                       <code className="flex-1 min-w-0 break-all rounded-lg bg-[#171A1D] border border-[#494F55]/30 px-3 py-2 text-[11px] text-[#9AA1A6] font-mono">{profile.passwordHash}</code>
                       <button
                         onClick={() => copyToClipboard(profile.passwordHash)}
-                        className="p-2 rounded-lg text-[#7D8387] hover:text-[#D4AF37] hover:bg-[#D4AF37]/15 transition"
+                        className="p-2 rounded-lg text-[#949599] hover:text-[#D4AF37] hover:bg-[#D4AF37]/15 transition"
                         title="Copy hash"
                       >
                         <Copy className="w-4 h-4" />
@@ -613,10 +613,10 @@ export default function UserManagementPage() {
               </div>
             )}
             {profile.organization && profile.organization.name && (
-              <div className="rounded-lg bg-[#1E252B]/50 border border-[#494F55]/20 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-2">Organization</p>
-                <p className="text-sm text-[#F2F4F5]">{profile.organization.name}</p>
-                <p className="text-xs text-[#7D8387] mt-1">{profile.organization.description}</p>
+              <div className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">Organization</p>
+                <p className="text-sm text-[#EFEFF1]">{profile.organization.name}</p>
+                <p className="text-xs text-[#949599] mt-1">{profile.organization.description}</p>
               </div>
             )}
           </div>
@@ -632,11 +632,11 @@ export default function UserManagementPage() {
         title={`Edit User — ${editTarget?.name || ''}`}
         footer={
           <>
-            <button onClick={() => setEditTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setEditTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleSubmit(handleEdit)}
               disabled={actionLoading === editTarget?.id}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
             >
               {actionLoading === editTarget?.id ? 'Saving...' : 'Save Changes'}
             </button>
@@ -645,7 +645,7 @@ export default function UserManagementPage() {
       >
         <form onSubmit={handleSubmit(handleEdit)} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-[#7D8387] mb-1.5">Full Name</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5">Full Name</label>
             <input
               {...register('name', { required: 'Name is required' })}
               className={inputCls}
@@ -654,7 +654,7 @@ export default function UserManagementPage() {
             {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name.message}</p>}
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#7D8387] mb-1.5">Email</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5">Email</label>
             <input
               type="email"
               {...register('email', {
@@ -668,7 +668,7 @@ export default function UserManagementPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-[#7D8387] mb-1.5">Phone</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5">Phone</label>
               <input
                 {...register('phone')}
                 className={inputCls}
@@ -676,7 +676,7 @@ export default function UserManagementPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#7D8387] mb-1.5">Role</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5">Role</label>
               <select {...register('role')} className={inputCls}>
                 <option value="attendee">Attendee</option>
                 <option value="organizer">Organizer</option>
@@ -694,7 +694,7 @@ export default function UserManagementPage() {
         title="Reject Organizer Application"
         footer={
           <>
-            <button onClick={() => setRejectTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setRejectTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleReject}
               disabled={actionLoading === rejectTarget?.id}
@@ -705,13 +705,13 @@ export default function UserManagementPage() {
           </>
         }
       >
-        <p className="text-sm text-[#7D8387]">
-          You are about to reject <span className="font-semibold text-[#F2F4F5]">{rejectTarget?.name}</span>&apos;s organizer application. They will be notified with the reason.
+        <p className="text-sm text-[#949599]">
+          You are about to reject <span className="font-semibold text-[#EFEFF1]">{rejectTarget?.name}</span>&apos;s organizer application. They will be notified with the reason.
         </p>
         <textarea
           placeholder="Reason for rejection (optional)..."
           onChange={(e) => setRejectTarget({ ...rejectTarget, reason: e.target.value })}
-          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
+          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
           rows={3}
         />
       </Modal>
@@ -723,7 +723,7 @@ export default function UserManagementPage() {
         title={isSuspendedUser(suspendTarget) ? 'Unsuspend User' : 'Suspend User'}
         footer={
           <>
-            <button onClick={() => setSuspendTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setSuspendTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleSuspend}
               disabled={actionLoading === suspendTarget?.id}
@@ -734,21 +734,21 @@ export default function UserManagementPage() {
           </>
         }
       >
-        <p className="text-sm text-[#7D8387]">
+        <p className="text-sm text-[#949599]">
           {isSuspendedUser(suspendTarget)
             ? `Are you sure you want to unsuspend ${suspendTarget?.name}? They will regain access.`
             : `You are about to suspend ${suspendTarget?.name}. They will lose access to the platform.`}
         </p>
         {isSuspendedUser(suspendTarget) && suspendTarget?.suspendReason && (
-          <p className="mt-2 text-xs text-[#7D8387]">
-            Suspension reason: <span className="text-[#F2F4F5]">{suspendTarget.suspendReason}</span>
+          <p className="mt-2 text-xs text-[#949599]">
+            Suspension reason: <span className="text-[#EFEFF1]">{suspendTarget.suspendReason}</span>
           </p>
         )}
         {!isSuspendedUser(suspendTarget) && (
           <textarea
             placeholder="Reason for suspension (optional)..."
             onChange={(e) => setSuspendTarget({ ...suspendTarget, reason: e.target.value })}
-            className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
+            className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 resize-none"
             rows={3}
           />
         )}
@@ -761,7 +761,7 @@ export default function UserManagementPage() {
         title="Delete User"
         footer={
           <>
-            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleDelete}
               disabled={actionLoading === deleteTarget?.id}
@@ -777,8 +777,8 @@ export default function UserManagementPage() {
             <Trash2 className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-[#F2F4F5]">Are you sure you want to permanently delete <span className="font-semibold">{deleteTarget?.name}</span>?</p>
-            <p className="text-xs text-[#7D8387] mt-1">This action cannot be undone. All associated data (orders, tickets, events) will be removed.</p>
+            <p className="text-sm text-[#EFEFF1]">Are you sure you want to permanently delete <span className="font-semibold">{deleteTarget?.name}</span>?</p>
+            <p className="text-xs text-[#949599] mt-1">This action cannot be undone. All associated data (orders, tickets, events) will be removed.</p>
           </div>
         </div>
       </Modal>
@@ -792,7 +792,7 @@ export default function UserManagementPage() {
           resetResult ? (
             <button
               onClick={() => { setResetTarget(null); setResetResult(null); }}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#E0C25A] transition"
+              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition"
             >
               Done
             </button>
@@ -800,14 +800,14 @@ export default function UserManagementPage() {
             <>
               <button
                 onClick={() => { setResetTarget(null); setResetResult(null); }}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleResetPassword}
                 disabled={actionLoading === `reset-${resetTarget?.id}`}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
               >
                 {actionLoading === `reset-${resetTarget?.id}` ? (
                   <LoadingSpinner size="sm" />
@@ -822,23 +822,23 @@ export default function UserManagementPage() {
       >
         {resetResult ? (
           <div className="space-y-4">
-            <p className="text-sm text-[#F2F4F5]">{resetResult.message}</p>
+            <p className="text-sm text-[#EFEFF1]">{resetResult.message}</p>
             {resetResult.temporaryPassword && (
               <div className="rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#D4AF37] mb-2">Temporary Password</p>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 min-w-0 break-all rounded-lg bg-[#171A1D] border border-[#494F55]/30 px-3 py-2.5 text-sm text-[#EDF0F1] font-mono">
+                  <code className="flex-1 min-w-0 break-all rounded-lg bg-[#171A1D] border border-[#494F55]/30 px-3 py-2.5 text-sm text-[#EFEFF1] font-mono">
                     {resetResult.temporaryPassword}
                   </code>
                   <button
                     onClick={() => copyToClipboard(resetResult.temporaryPassword)}
-                    className="p-2.5 rounded-lg text-[#8A9196] hover:text-[#D4AF37] hover:bg-[#D4AF37]/15 transition"
+                    className="p-2.5 rounded-lg text-[#949599] hover:text-[#D4AF37] hover:bg-[#D4AF37]/15 transition"
                     title="Copy password"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
-                <p className="mt-3 text-xs text-[#7D8387]">
+                <p className="mt-3 text-xs text-[#949599]">
                   Share this once with the user — it won't be shown again. They'll also receive an in-app notification.
                 </p>
               </div>
@@ -846,22 +846,22 @@ export default function UserManagementPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            <p className="text-sm text-[#7D8387]">
-              You are about to reset <span className="font-semibold text-[#F2F4F5]">{resetTarget?.name}</span>'s password. Leave the field empty to generate a strong temporary password, or enter a custom one below.
+            <p className="text-sm text-[#949599]">
+              You are about to reset <span className="font-semibold text-[#EFEFF1]">{resetTarget?.name}</span>'s password. Leave the field empty to generate a strong temporary password, or enter a custom one below.
             </p>
             <div>
-              <label className="block text-xs font-medium text-[#7D8387] mb-1.5">New Password (optional)</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5">New Password (optional)</label>
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={resetTarget?.password || ''}
                   onChange={(e) => setResetTarget({ ...resetTarget, password: e.target.value })}
                   placeholder="Leave empty to auto-generate"
-                  className="flex-1 px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+                  className="flex-1 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
                 />
                 <button
                   onClick={fillRandomPassword}
-                  className="px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#8A9196] hover:text-[#F2F4F5] hover:border-[#D4AF37]/50 transition whitespace-nowrap"
+                  className="px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#949599] hover:text-[#EFEFF1] hover:border-[#D4AF37]/50 transition whitespace-nowrap"
                 >
                   Random
                 </button>

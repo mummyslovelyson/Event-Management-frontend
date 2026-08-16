@@ -52,15 +52,15 @@ export default function AboutPage() {
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-semibold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" /> Our Story
             </span>
-            <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EDF0F1] leading-tight">
+            <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EFEFF1] leading-tight">
               Bringing People Together, <br className="hidden sm:block" />
               <span className="text-[#D4AF37]">One Event at a Time</span>
             </h1>
-            <p className="mt-5 text-lg text-[#8A9196] leading-relaxed">
+            <p className="mt-5 text-lg text-[#949599] leading-relaxed">
               Tribes & Cliqs is an online self-ticketing platform that allows you to curate events seamlessly
               and provide your guests with the ultimate booking experience.
             </p>
-            <p className="mt-4 text-lg text-[#8A9196] leading-relaxed">
+            <p className="mt-4 text-lg text-[#949599] leading-relaxed">
               We help people share, discover, and participate in events that connect your passions and stimulate their
               lives. From festivals and corporate events to fundraisers, concerts, and anything in between, our ultimate
               goal is uniting people from all walks of life through live experiences.
@@ -80,13 +80,13 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.12 }}
-                className="rounded-2xl bg-[#1E252B] border border-[#262B2F] p-8"
+                className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-8"
               >
                 <div className="w-14 h-14 rounded-xl bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center mb-5">
                   <item.icon className="w-7 h-7" />
                 </div>
-                <h2 className="text-xl font-bold text-[#EDF0F1]">{item.title}</h2>
-                <p className="mt-3 text-sm text-[#8A9196] leading-relaxed">{item.desc}</p>
+                <h2 className="text-xl font-bold text-[#EFEFF1]">{item.title}</h2>
+                <p className="mt-3 text-sm text-[#949599] leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -98,7 +98,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">What drives us</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EDF0F1]">Our Core Values</h2>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Our Core Values</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {values.map((v, i) => (
@@ -113,8 +113,8 @@ export default function AboutPage() {
                 <div className="w-12 h-12 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center mb-4">
                   <v.icon className="w-6 h-6" />
                 </div>
-                <h3 className="text-sm font-semibold text-[#EDF0F1]">{v.title}</h3>
-                <p className="mt-2 text-sm text-[#8A9196] leading-relaxed">{v.desc}</p>
+                <h3 className="text-sm font-semibold text-[#EFEFF1]">{v.title}</h3>
+                <p className="mt-2 text-sm text-[#949599] leading-relaxed">{v.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -125,8 +125,8 @@ export default function AboutPage() {
       <section className="py-16 sm:py-20 bg-[#171A1D]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#EDF0F1]">Our Impact</h2>
-            <p className="mt-2 text-sm text-[#8A9196]">Real numbers, real experiences.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Our Impact</h2>
+            <p className="mt-2 text-sm text-[#949599]">Real numbers, real experiences.</p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {stats.map((s, i) => (
@@ -136,13 +136,13 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: i * 0.08 }}
-                className="rounded-xl bg-[#1E252B] border border-[#262B2F] p-5 text-center"
+                className="rounded-xl bg-[#1C232B] border border-[#262B2F] p-5 text-center"
               >
                 <div className="w-12 h-12 rounded-lg bg-[#D4AF37]/15 text-[#D4AF37] flex items-center justify-center mx-auto mb-3">
                   <s.icon className="w-6 h-6" />
                 </div>
-                <p className="text-3xl font-bold text-[#EDF0F1]">{s.value}</p>
-                <p className="mt-1 text-xs font-medium uppercase tracking-wider text-[#8A9196]">{s.label}</p>
+                <p className="text-3xl font-bold text-[#EFEFF1]">{s.value}</p>
+                <p className="mt-1 text-xs font-medium uppercase tracking-wider text-[#949599]">{s.label}</p>
               </motion.div>
             ))}
           </div>
@@ -154,7 +154,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">The people behind it</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EDF0F1]">Meet Our Team</h2>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Meet Our Team</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {team.map((member, i) => (
@@ -169,12 +169,12 @@ export default function AboutPage() {
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/5 text-[#D4AF37] text-xl font-bold flex items-center justify-center mx-auto mb-4">
                   {member.initials}
                 </div>
-                <h3 className="text-sm font-semibold text-[#EDF0F1]">{member.name}</h3>
+                <h3 className="text-sm font-semibold text-[#EFEFF1]">{member.name}</h3>
                 <p className="text-xs text-[#D4AF37] mt-0.5">{member.role}</p>
-                <p className="mt-3 text-xs text-[#8A9196] leading-relaxed">{member.bio}</p>
+                <p className="mt-3 text-xs text-[#949599] leading-relaxed">{member.bio}</p>
                 <div className="mt-4 flex items-center justify-center gap-3">
                   {[Linkedin, Twitter, Github].map((Icon, idx) => (
-                    <button key={idx} className="w-8 h-8 rounded-lg bg-[#1E252B] border border-[#262B2F] flex items-center justify-center text-[#8A9196] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition">
+                    <button key={idx} className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#262B2F] flex items-center justify-center text-[#949599] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition">
                       <Icon className="w-4 h-4" />
                     </button>
                   ))}
@@ -188,15 +188,15 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="py-16 sm:py-20 bg-[#171A1D]">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#EDF0F1]">Join Our Community</h2>
-          <p className="mt-3 text-sm text-[#8A9196]">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Join Our Community</h2>
+          <p className="mt-3 text-sm text-[#949599]">
             Whether you're looking to attend events or host your own, we'd love to have you.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <a href="/explore" className="px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition">
+            <a href="/explore" className="px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition">
               Explore Events
             </a>
-            <a href="/register" className="px-6 py-3 rounded-lg border border-[#494F55] text-[#EDF0F1] text-sm font-semibold hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition">
+            <a href="/register" className="px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition">
               Become an Organizer
             </a>
           </div>

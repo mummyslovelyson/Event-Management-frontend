@@ -13,14 +13,14 @@ export default function CurrencyToggle({ className = '' }) {
     >
       <span
         className={`flex-1 text-center px-2.5 py-1.5 text-xs font-semibold transition-colors ${
-          currency === 'GHS' ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#8A9196] hover:text-[#EDF0F1]'
+          currency === 'GHS' ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'
         }`}
       >
         ₵
       </span>
       <span
         className={`flex-1 text-center px-2.5 py-1.5 text-xs font-semibold transition-colors ${
-          currency === 'USD' ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#8A9196] hover:text-[#EDF0F1]'
+          currency === 'USD' ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'
         }`}
       >
         $

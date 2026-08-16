@@ -143,8 +143,8 @@ export default function ReviewsPage() {
     <motion.div variants={containerStagger} initial="hidden" animate="show" className="space-y-8">
       {/* Header */}
       <motion.div variants={itemFade}>
-        <h1 className="text-2xl font-bold text-[#EDF0F1]">My Reviews</h1>
-        <p className="text-sm text-[#8A9196] mt-1">Share your experience and help others discover great events.</p>
+        <h1 className="text-2xl font-bold text-[#EFEFF1]">My Reviews</h1>
+        <p className="text-sm text-[#949599] mt-1">Share your experience and help others discover great events.</p>
       </motion.div>
 
       {/* Stats */}
@@ -157,7 +157,7 @@ export default function ReviewsPage() {
       {/* Rating distribution */}
       {reviews.length > 0 && (
         <motion.div variants={itemFade} className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#8A9196] mb-4">Rating Distribution</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-4">Rating Distribution</p>
           <div className="space-y-2">
             {[5, 4, 3, 2, 1].map((star) => {
               const count = ratingDistribution[star];
@@ -165,7 +165,7 @@ export default function ReviewsPage() {
               return (
                 <div key={star} className="flex items-center gap-3">
                   <div className="flex items-center gap-1 w-16 shrink-0">
-                    <span className="text-sm text-[#EDF0F1]">{star}</span>
+                    <span className="text-sm text-[#EFEFF1]">{star}</span>
                     <Star className="w-3.5 h-3.5 fill-[#D4AF37] text-[#D4AF37]" />
                   </div>
                   <div className="flex-1 h-2 rounded-full bg-[#242B32] overflow-hidden">
@@ -176,7 +176,7 @@ export default function ReviewsPage() {
                       className="h-full rounded-full bg-[#D4AF37]"
                     />
                   </div>
-                  <span className="text-sm text-[#8A9196] w-8 text-right shrink-0">{count}</span>
+                  <span className="text-sm text-[#949599] w-8 text-right shrink-0">{count}</span>
                 </div>
               );
             })}
@@ -186,10 +186,10 @@ export default function ReviewsPage() {
 
       {/* Events to review */}
       <motion.div variants={itemFade}>
-        <h2 className="text-lg font-bold text-[#EDF0F1] mb-4">Events to Review</h2>
+        <h2 className="text-lg font-bold text-[#EFEFF1] mb-4">Events to Review</h2>
         {eventsToReview.length === 0 ? (
           <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-8">
-            <p className="text-sm text-[#8A9196] text-center">
+            <p className="text-sm text-[#949599] text-center">
               {reviews.length > 0 ? "You've reviewed all your past events. Great job!" : "No past events to review yet. Attend an event to leave a review."}
             </p>
           </div>
@@ -204,8 +204,8 @@ export default function ReviewsPage() {
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-sm font-semibold text-[#EDF0F1] line-clamp-1">{event.title}</h3>
-                    <p className="text-xs text-[#8A9196] flex items-center gap-1 mt-1">
+                    <h3 className="text-sm font-semibold text-[#EFEFF1] line-clamp-1">{event.title}</h3>
+                    <p className="text-xs text-[#949599] flex items-center gap-1 mt-1">
                       <Calendar className="w-3 h-3" />
                       {event.startDate ? new Date(event.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'TBA'}
                     </p>
@@ -219,7 +219,7 @@ export default function ReviewsPage() {
                 </div>
                 <button
                   onClick={() => openReviewModal(event)}
-                  className="mt-3 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition-colors"
+                  className="mt-3 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition-colors"
                 >
                   <Pencil className="w-4 h-4" /> Write a Review
                 </button>
@@ -231,7 +231,7 @@ export default function ReviewsPage() {
 
       {/* Reviews I've written */}
       <motion.div variants={itemFade}>
-        <h2 className="text-lg font-bold text-[#EDF0F1] mb-4">Reviews I've Written</h2>
+        <h2 className="text-lg font-bold text-[#EFEFF1] mb-4">Reviews I've Written</h2>
         {reviews.length === 0 ? (
           <EmptyState
             icon={Star}
@@ -256,7 +256,7 @@ export default function ReviewsPage() {
                         ) : null}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-sm font-semibold text-[#EDF0F1] truncate">{event.title || review.eventName || 'Event'}</h3>
+                        <h3 className="text-sm font-semibold text-[#EFEFF1] truncate">{event.title || review.eventName || 'Event'}</h3>
                         <div className="flex items-center gap-1 mt-1">
                           {[1, 2, 3, 4, 5].map((s) => (
                             <Star
@@ -264,7 +264,7 @@ export default function ReviewsPage() {
                               className={`w-4 h-4 ${s <= (review.rating || 0) ? 'fill-[#D4AF37] text-[#D4AF37]' : 'text-[#494F55]'}`}
                             />
                           ))}
-                          <span className="text-xs text-[#8A9196] ml-1">
+                          <span className="text-xs text-[#949599] ml-1">
                             {review.createdAt ? new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
                           </span>
                         </div>
@@ -273,14 +273,14 @@ export default function ReviewsPage() {
                     <button
                       onClick={() => handleDelete(review.id)}
                       disabled={deletingId === review.id}
-                      className="w-8 h-8 rounded-lg text-[#8A9196] hover:text-red-400 hover:bg-red-500/10 flex items-center justify-center disabled:opacity-50 transition shrink-0"
+                      className="w-8 h-8 rounded-lg text-[#949599] hover:text-red-400 hover:bg-red-500/10 flex items-center justify-center disabled:opacity-50 transition shrink-0"
                       title="Delete review"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                   {review.review && (
-                    <p className="mt-3 text-sm text-[#8A9196] leading-relaxed">{review.review}</p>
+                    <p className="mt-3 text-sm text-[#949599] leading-relaxed">{review.review}</p>
                   )}
                 </motion.div>
               );
@@ -296,13 +296,13 @@ export default function ReviewsPage() {
         title="Write a Review"
         footer={
           <>
-            <button onClick={() => setReviewModal(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] transition">
+            <button onClick={() => setReviewModal(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
               Cancel
             </button>
             <button
               onClick={handleSubmitReview}
               disabled={submitting}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-50 transition"
             >
               <Pencil className="w-4 h-4" />
               {submitting ? 'Submitting...' : 'Submit Review'}
@@ -313,15 +313,15 @@ export default function ReviewsPage() {
         {reviewModal && (
           <div className="space-y-5">
             {/* Event info */}
-            <div className="flex gap-3 items-center rounded-lg bg-[#1E252B] border border-[#262B2F] p-3">
+            <div className="flex gap-3 items-center rounded-lg bg-[#1C232B] border border-[#262B2F] p-3">
               <div className="w-12 h-12 rounded-lg overflow-hidden bg-[#242B32] shrink-0">
                 {reviewModal.image ? (
                   <img src={reviewModal.image} alt={reviewModal.title} className="w-full h-full object-cover" />
                 ) : null}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-[#EDF0F1] truncate">{reviewModal.title}</p>
-                <p className="text-xs text-[#8A9196]">
+                <p className="text-sm font-semibold text-[#EFEFF1] truncate">{reviewModal.title}</p>
+                <p className="text-xs text-[#949599]">
                   {reviewModal.startDate ? new Date(reviewModal.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
                 </p>
               </div>
@@ -329,7 +329,7 @@ export default function ReviewsPage() {
 
             {/* Star rating */}
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-3">Your Rating</label>
+              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-3">Your Rating</label>
               <div className="flex items-center gap-2">
                 {[1, 2, 3, 4, 5].map((s) => (
                   <button
@@ -344,12 +344,12 @@ export default function ReviewsPage() {
                       className={`w-8 h-8 transition-colors ${
                         s <= (hoverRating || rating)
                           ? 'fill-[#D4AF37] text-[#D4AF37]'
-                          : 'text-[#494F55] hover:text-[#8A9196]'
+                          : 'text-[#494F55] hover:text-[#949599]'
                       }`}
                     />
                   </button>
                 ))}
-                <span className="ml-2 text-sm font-medium text-[#EDF0F1]">
+                <span className="ml-2 text-sm font-medium text-[#EFEFF1]">
                   {['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][hoverRating || rating]}
                 </span>
               </div>
@@ -357,13 +357,13 @@ export default function ReviewsPage() {
 
             {/* Review text */}
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-2">Your Review</label>
+              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-2">Your Review</label>
               <textarea
                 value={reviewText}
                 onChange={(e) => setReviewText(e.target.value)}
                 rows={5}
                 placeholder="Share details about your experience..."
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
               />
               <p className="text-xs text-[#494F55] mt-1.5">{reviewText.length} characters</p>
             </div>

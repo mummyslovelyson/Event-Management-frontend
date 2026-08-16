@@ -91,8 +91,8 @@ export default function FAQPage() {
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-semibold uppercase tracking-wider">
               <HelpCircle className="w-3.5 h-3.5" /> Help Center
             </span>
-            <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EDF0F1]">Frequently Asked Questions</h1>
-            <p className="mt-4 text-lg text-[#8A9196]">
+            <h1 className="mt-5 text-4xl sm:text-5xl font-bold text-[#EFEFF1]">Frequently Asked Questions</h1>
+            <p className="mt-4 text-lg text-[#949599]">
               Find quick answers to common questions. Can't find what you're looking for?{' '}
               <Link to="/contact" className="text-[#D4AF37] hover:underline">Contact us</Link>.
             </p>
@@ -105,7 +105,7 @@ export default function FAQPage() {
                 placeholder="Search questions..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder:text-[#494F55] focus:outline-none focus:border-[#D4AF37]/50"
+                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-[#D4AF37]/50"
               />
             </div>
           </motion.div>
@@ -123,8 +123,8 @@ export default function FAQPage() {
                   onClick={() => { setActiveCategory(cat.id); setOpenFaq(null); }}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
                     activeCategory === cat.id
-                      ? 'bg-[#D4AF37] text-[#1E252B]'
-                      : 'bg-[#171A1D] border border-[#262B2F] text-[#8A9196] hover:text-[#EDF0F1] hover:border-[#494F55]'
+                      ? 'bg-[#D4AF37] text-[#1C232B]'
+                      : 'bg-[#171A1D] border border-[#262B2F] text-[#949599] hover:text-[#EFEFF1] hover:border-[#494F55]'
                   }`}
                 >
                   <cat.icon className="w-4 h-4" /> {cat.label}
@@ -143,9 +143,9 @@ export default function FAQPage() {
               <div className="w-16 h-16 rounded-2xl bg-[#171A1D] border border-[#262B2F] flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-[#494F55]" />
               </div>
-              <h3 className="text-lg font-semibold text-[#EDF0F1]">No results found</h3>
-              <p className="mt-2 text-sm text-[#8A9196]">Try a different search term or browse by category.</p>
-              <button onClick={() => setSearch('')} className="mt-4 px-4 py-2 rounded-lg border border-[#494F55]/40 text-sm text-[#EDF0F1] hover:text-[#D4AF37] hover:border-[#D4AF37]/50 transition">
+              <h3 className="text-lg font-semibold text-[#EFEFF1]">No results found</h3>
+              <p className="mt-2 text-sm text-[#949599]">Try a different search term or browse by category.</p>
+              <button onClick={() => setSearch('')} className="mt-4 px-4 py-2 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:text-[#D4AF37] hover:border-[#D4AF37]/50 transition">
                 Clear search
               </button>
             </div>
@@ -170,9 +170,9 @@ export default function FAQPage() {
                         {search && (
                           <span className="block text-xs text-[#D4AF37] mb-1">{faq.category}</span>
                         )}
-                        <span className="text-sm font-semibold text-[#EDF0F1]">{faq.q}</span>
+                        <span className="text-sm font-semibold text-[#EFEFF1]">{faq.q}</span>
                       </div>
-                      <ChevronDown className={`w-5 h-5 text-[#8A9196] shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-5 h-5 text-[#949599] shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                     </button>
                     <AnimatePresence>
                       {isOpen && (
@@ -182,7 +182,7 @@ export default function FAQPage() {
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.2 }}
                         >
-                          <p className="px-5 pb-4 text-sm text-[#8A9196] leading-relaxed">{faq.a}</p>
+                          <p className="px-5 pb-4 text-sm text-[#949599] leading-relaxed">{faq.a}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -203,13 +203,13 @@ export default function FAQPage() {
               <div className="w-14 h-14 rounded-xl bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center mx-auto mb-4">
                 <MessageSquare className="w-7 h-7" />
               </div>
-              <h2 className="text-2xl font-bold text-[#EDF0F1]">Still Have Questions?</h2>
-              <p className="mt-2 text-sm text-[#8A9196]">Our support team is here to help you 24/7.</p>
+              <h2 className="text-2xl font-bold text-[#EFEFF1]">Still Have Questions?</h2>
+              <p className="mt-2 text-sm text-[#949599]">Our support team is here to help you 24/7.</p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition">
+                <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition">
                   <Mail className="w-4 h-4" /> Contact Support
                 </Link>
-                <a href="mailto:support@tribescliqs.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EDF0F1] text-sm font-semibold hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition">
+                <a href="mailto:support@tribescliqs.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-[#D4AF37]/50 hover:text-[#D4AF37] transition">
                   <Sparkles className="w-4 h-4" /> support@tribescliqs.com
                 </a>
               </div>

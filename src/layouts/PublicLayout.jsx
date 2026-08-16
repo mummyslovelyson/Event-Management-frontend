@@ -34,7 +34,7 @@ export default function PublicLayout() {
     : '/attendee/dashboard';
 
   return (
-    <div className="min-h-screen bg-[#1E252B] text-[#EDF0F1] flex flex-col">
+    <div className="min-h-screen bg-[#1C232B] text-[#EFEFF1] flex flex-col">
       {/* Scroll reading bar — sits above the fixed navbar on every public page */}
       <ScrollProgressBar />
 
@@ -60,10 +60,10 @@ export default function PublicLayout() {
                 className="w-10 h-10 rounded-xl object-cover ring-1 ring-[#494F55]/40 group-hover:ring-[#D4AF37]/60 transition-all"
               />
               <div className="flex flex-col leading-tight">
-                <span className="text-[15px] font-bold tracking-wide text-[#EDF0F1]">
-                  TRIBES<span className="text-[#8A9196]">&amp;</span>CLIQS
+                <span className="text-[15px] font-bold tracking-wide text-[#EFEFF1]">
+                  TRIBES<span className="text-[#949599]">&amp;</span>CLIQS
                 </span>
-                <span className="text-[9px] text-[#8A9196] tracking-[0.2em] uppercase">Living The Moment</span>
+                <span className="text-[9px] text-[#949599] tracking-[0.2em] uppercase">Living The Moment</span>
               </div>
             </Link>
 
@@ -76,7 +76,7 @@ export default function PublicLayout() {
                   end={end}
                   className={({ isActive }) =>
                     `group px-4 py-2 rounded-lg text-[13px] font-medium transition-colors duration-200 ${
-                      isActive ? 'text-[#EDF0F1]' : 'text-[#8A9196] hover:text-[#EDF0F1]'
+                      isActive ? 'text-[#EFEFF1]' : 'text-[#949599] hover:text-[#EFEFF1]'
                     }`
                   }
                 >
@@ -100,7 +100,7 @@ export default function PublicLayout() {
               {isAuthenticated ? (
                 <Link
                   to={dashHref}
-                  className="px-5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-[13px] font-bold tracking-wide hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-sm"
+                  className="px-5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-[13px] font-bold tracking-wide hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-sm"
                 >
                   My Dashboard
                 </Link>
@@ -108,14 +108,14 @@ export default function PublicLayout() {
                 <>
                 <Link
                   to="/login"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-medium text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/20 transition"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20 transition"
                 >
                   <LogIn className="w-4 h-4" />
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="flex items-center gap-1.5 px-5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-[13px] font-bold tracking-wide hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-sm"
+                  className="flex items-center gap-1.5 px-5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-[13px] font-bold tracking-wide hover:bg-[#c4a030] hover:-translate-y-0.5 transition-all shadow-sm"
                 >
                   <UserPlus className="w-4 h-4" />
                   Get Started
@@ -127,7 +127,7 @@ export default function PublicLayout() {
             {/* Mobile toggle */}
             <button
               onClick={() => setMobileOpen((v) => !v)}
-              className="md:hidden p-2 rounded-lg text-[#EDF0F1] hover:bg-[#494F55]/30 transition"
+              className="md:hidden p-2 rounded-lg text-[#EFEFF1] hover:bg-[#494F55]/30 transition"
               aria-label="Toggle menu"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -146,7 +146,7 @@ export default function PublicLayout() {
                   end={end}
                   className={({ isActive }) =>
                     `flex items-center px-4 py-3 rounded-xl text-sm font-medium transition ${
-                      isActive ? 'text-[#EDF0F1] bg-[#494F55]/20' : 'text-[#8A9196] hover:text-[#EDF0F1] hover:bg-[#494F55]/20'
+                      isActive ? 'text-[#EFEFF1] bg-[#494F55]/20' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20'
                     }`
                   }
                 >
@@ -157,15 +157,15 @@ export default function PublicLayout() {
             <div className="pt-3 border-t border-[#262B2F] space-y-2">
               <CurrencyToggle className="w-full justify-center" />
               {isAuthenticated ? (
-                <Link to={dashHref} className="block w-full text-center px-4 py-3 rounded-xl bg-[#D4AF37] text-[#1E252B] text-sm font-bold">
+                <Link to={dashHref} className="block w-full text-center px-4 py-3 rounded-xl bg-[#D4AF37] text-[#1C232B] text-sm font-bold">
                   My Dashboard
                 </Link>
               ) : (
                 <>
-                  <Link to="/login" className="block w-full text-center px-4 py-3 rounded-xl border border-[#494F55]/50 text-[#EDF0F1] text-sm font-medium hover:border-[#D4AF37]/50 transition">
+                  <Link to="/login" className="block w-full text-center px-4 py-3 rounded-xl border border-[#494F55]/50 text-[#EFEFF1] text-sm font-medium hover:border-[#D4AF37]/50 transition">
                     Sign In
                   </Link>
-                  <Link to="/register" className="block w-full text-center px-4 py-3 rounded-xl bg-[#D4AF37] text-[#1E252B] text-sm font-bold">
+                  <Link to="/register" className="block w-full text-center px-4 py-3 rounded-xl bg-[#D4AF37] text-[#1C232B] text-sm font-bold">
                     Get Started Free
                   </Link>
                 </>
@@ -189,16 +189,16 @@ export default function PublicLayout() {
               <Link to="/" className="flex items-center gap-3 mb-4">
                 <img src="/assets/images/Logo copy.jpeg" alt="Tribes & Cliqs" className="w-10 h-10 rounded-xl object-cover" />
                 <div>
-                  <div className="text-[15px] font-bold text-[#EDF0F1]">TRIBES<span className="text-[#8A9196]">&amp;</span>CLIQS</div>
+                  <div className="text-[15px] font-bold text-[#EFEFF1]">TRIBES<span className="text-[#949599]">&amp;</span>CLIQS</div>
                   <div className="text-[9px] text-[#494F55] tracking-[0.2em] uppercase">Living The Moment</div>
                 </div>
               </Link>
-              <p className="text-sm text-[#8A9196] leading-relaxed max-w-xs">
+              <p className="text-sm text-[#949599] leading-relaxed max-w-xs">
                 Discover, create, and manage unforgettable events. Your gateway to live experiences across Africa and beyond.
               </p>
               <div className="flex items-center gap-3 mt-5">
                 {['Twitter', 'Instagram', 'Facebook', 'LinkedIn'].map((s) => (
-                  <a key={s} href="#" className="w-8 h-8 rounded-lg bg-[#1E252B] border border-[#494F55]/40 flex items-center justify-center text-[#8A9196] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition text-[10px] font-bold">
+                  <a key={s} href="#" className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-[#949599] hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition text-[10px] font-bold">
                     {s[0]}
                   </a>
                 ))}
@@ -212,11 +212,11 @@ export default function PublicLayout() {
               { title: 'Legal', links: [['Terms of Service', '#'], ['Privacy Policy', '#'], ['Cookie Policy', '#'], ['Refund Policy', '#']] },
             ].map(({ title, links }) => (
               <div key={title}>
-                <h4 className="text-xs font-semibold text-[#EDF0F1] uppercase tracking-widest mb-4">{title}</h4>
+                <h4 className="text-xs font-semibold text-[#EFEFF1] uppercase tracking-widest mb-4">{title}</h4>
                 <ul className="space-y-2.5">
                   {links.map(([label, href]) => (
                     <li key={label}>
-              <Link to={href} className="text-sm text-[#8A9196] hover:text-[#D4AF37] hover:underline underline-offset-4 decoration-[#D4AF37]/50 transition">
+              <Link to={href} className="text-sm text-[#949599] hover:text-[#D4AF37] hover:underline underline-offset-4 decoration-[#D4AF37]/50 transition">
                 {label}
               </Link>
                     </li>

@@ -43,13 +43,13 @@ export default function PageHeader({ title, subtitle, count, icon: Icon, accent 
             transition={{ duration: 0.35, delay: 0.05, ease: 'easeOut' }}
             className="flex items-center gap-2.5"
           >
-            <h1 className="text-xl font-semibold tracking-tight text-[#EDF0F1] truncate">{title}</h1>
+            <h1 className="text-xl font-semibold tracking-tight text-[#EFEFF1] truncate">{title}</h1>
             {count !== undefined && (
               <motion.span
                 initial={{ opacity: 0, scale: 0.7 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 0.15 }}
-                className="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-medium text-[#8A9196] bg-[#262B2F]"
+                className="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-medium text-[#949599] bg-[#262B2F]"
               >
                 {count.toLocaleString()}
               </motion.span>
@@ -60,7 +60,7 @@ export default function PageHeader({ title, subtitle, count, icon: Icon, accent 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.12, duration: 0.3 }}
-              className="mt-1 text-sm text-[#8A9196]"
+              className="mt-1 text-sm text-[#949599]"
             >
               {subtitle}
             </motion.p>

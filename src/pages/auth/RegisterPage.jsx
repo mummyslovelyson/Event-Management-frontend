@@ -47,12 +47,12 @@ export default function RegisterPage() {
   };
 
   const inputClass = (field) =>
-    `w-full pl-10 pr-3 py-3 rounded-lg bg-[#1E252B] border text-sm text-[#F2F4F5] placeholder:text-[#494F55] focus:outline-none transition-colors ${
+    `w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
       errors[field] ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-[#D4AF37]/50'
     }`;
 
   return (
-    <div className="min-h-screen bg-[#1E252B] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#1C232B] flex items-center justify-center px-4 py-12">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/5 blur-3xl" />
       </div>
@@ -68,20 +68,20 @@ export default function RegisterPage() {
           <div className="text-center mb-6">
             <Link to="/" className="inline-flex items-center gap-2 mb-2">
               <div className="w-11 h-11 rounded-xl bg-[#D4AF37] flex items-center justify-center shadow-lg">
-                <Ticket className="w-6 h-6 text-[#1E252B]" strokeWidth={2.5} />
+                <Ticket className="w-6 h-6 text-[#1C232B]" strokeWidth={2.5} />
               </div>
             </Link>
-            <h1 className="text-2xl font-bold text-[#F2F4F5]">Create Account</h1>
-            <p className="mt-1 text-sm text-[#7D8387]">Join the Tribes & Cliqs community</p>
+            <h1 className="text-2xl font-bold text-[#EFEFF1]">Create Account</h1>
+            <p className="mt-1 text-sm text-[#949599]">Join the Tribes & Cliqs community</p>
           </div>
 
           {/* Role tabs */}
-          <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-[#1E252B] border border-[#494F55]/30 mb-6">
+          <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-[#1C232B] border border-[#494F55]/30 mb-6">
             <button
               type="button"
               onClick={() => setRole('attendee')}
               className={`flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-medium transition ${
-                role === 'attendee' ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#7D8387] hover:text-[#F2F4F5]'
+                role === 'attendee' ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'
               }`}
             >
               <Users className="w-4 h-4" /> I'm an Attendee
@@ -90,7 +90,7 @@ export default function RegisterPage() {
               type="button"
               onClick={() => setRole('organizer')}
               className={`flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-medium transition ${
-                role === 'organizer' ? 'bg-[#D4AF37] text-[#1E252B]' : 'text-[#7D8387] hover:text-[#F2F4F5]'
+                role === 'organizer' ? 'bg-[#D4AF37] text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'
               }`}
             >
               <Building2 className="w-4 h-4" /> I'm an Organizer
@@ -109,7 +109,7 @@ export default function RegisterPage() {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Organization Name</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Organization Name</label>
                   <div className="relative">
                     <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                     <input
@@ -125,7 +125,7 @@ export default function RegisterPage() {
             </AnimatePresence>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Full Name</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Full Name</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                 <input
@@ -140,7 +140,7 @@ export default function RegisterPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Email</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Email</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
@@ -156,7 +156,7 @@ export default function RegisterPage() {
                 {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Phone</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Phone</label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
@@ -172,7 +172,7 @@ export default function RegisterPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Password</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
@@ -188,14 +188,14 @@ export default function RegisterPage() {
                     })}
                     className={inputClass('password')}
                   />
-                  <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#7D8387] transition">
+                  <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#949599] transition">
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
                 {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Confirm Password</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Confirm Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
@@ -207,7 +207,7 @@ export default function RegisterPage() {
                     })}
                     className={inputClass('confirmPassword')}
                   />
-                  <button type="button" onClick={() => setShowConfirm((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#7D8387] transition">
+                  <button type="button" onClick={() => setShowConfirm((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#494F55] hover:text-[#949599] transition">
                     {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
@@ -221,9 +221,9 @@ export default function RegisterPage() {
                 type="checkbox"
                 checked={agree}
                 onChange={(e) => setAgree(e.target.checked)}
-                className="w-4 h-4 rounded border-[#494F55] bg-[#1E252B] text-[#D4AF37] focus:ring-[#D4AF37]/40 mt-0.5"
+                className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] text-[#D4AF37] focus:ring-[#D4AF37]/40 mt-0.5"
               />
-              <span className="text-xs text-[#7D8387] leading-relaxed">
+              <span className="text-xs text-[#949599] leading-relaxed">
                 I agree to the{' '}
                 <Link to="/terms" className="text-[#D4AF37] hover:underline">Terms of Service</Link> and{' '}
                 <Link to="/privacy" className="text-[#D4AF37] hover:underline">Privacy Policy</Link>
@@ -233,13 +233,13 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating account...</> : <><UserPlus className="w-4 h-4" /> Create Account</>}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-[#7D8387]">
+          <p className="mt-6 text-center text-sm text-[#949599]">
             Already have an account?{' '}
             <Link to="/login" className="text-[#D4AF37] font-semibold hover:underline">Sign in</Link>
           </p>

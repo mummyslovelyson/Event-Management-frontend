@@ -120,7 +120,7 @@ export default function CategoriesPage() {
         actions={
           <button
             onClick={openAdd}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition"
           >
             <Plus className="w-4 h-4" /> Add Category
           </button>
@@ -160,20 +160,20 @@ export default function CategoriesPage() {
                     <Icon className="w-6 h-6" />
                   </div>
                   <div className="flex items-center gap-1">
-                    <button onClick={() => openEdit(cat)} className="p-1.5 rounded-md text-[#7D8387] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title="Edit">
+                    <button onClick={() => openEdit(cat)} className="p-1.5 rounded-md text-[#949599] hover:text-[#D4AF37] hover:bg-[#494F55]/30 transition" title="Edit">
                       <Pencil className="w-4 h-4" />
                     </button>
-                    <button onClick={() => setDeleteTarget(cat)} className="p-1.5 rounded-md text-[#7D8387] hover:text-red-400 hover:bg-red-500/15 transition" title="Delete">
+                    <button onClick={() => setDeleteTarget(cat)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition" title="Delete">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
-                <h3 className="font-semibold text-[#F2F4F5]">{cat.name}</h3>
-                <p className="text-xs text-[#7D8387] mt-0.5 font-mono">/{cat.slug}</p>
+                <h3 className="font-semibold text-[#EFEFF1]">{cat.name}</h3>
+                <p className="text-xs text-[#949599] mt-0.5 font-mono">/{cat.slug}</p>
                 <div className="mt-3 flex items-center justify-between">
                   <Badge variant="neutral" size="sm">{cat.eventCount ?? cat.events ?? 0} events</Badge>
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <span className="text-xs text-[#7D8387]">{cat.isActive === false ? 'Inactive' : 'Active'}</span>
+                    <span className="text-xs text-[#949599]">{cat.isActive === false ? 'Inactive' : 'Active'}</span>
                     <button
                       onClick={() => toggleActive(cat)}
                       className={`relative w-10 h-5 rounded-full transition-colors ${cat.isActive === false ? 'bg-[#494F55]/40' : 'bg-[#D4AF37]'}`}
@@ -195,11 +195,11 @@ export default function CategoriesPage() {
         title={editing ? 'Edit Category' : 'Add Category'}
         footer={
           <>
-            <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] transition disabled:opacity-50"
             >
               {saving ? 'Saving...' : 'Save'}
             </button>
@@ -208,27 +208,27 @@ export default function CategoriesPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Name</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Name</label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value, slug: slugify(e.target.value) }))}
               placeholder="e.g. Music & Concerts"
-              className="w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-1.5">Slug</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Slug</label>
             <input
               type="text"
               value={form.slug}
               onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
               placeholder="auto-generated"
-              className="w-full px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#F2F4F5] placeholder-[#494F55] font-mono focus:outline-none focus:border-[#D4AF37]/60 transition"
+              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] font-mono focus:outline-none focus:border-[#D4AF37]/60 transition"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#7D8387] mb-2">Icon</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">Icon</label>
             <div className="grid grid-cols-5 gap-2">
               {iconOptions.map(({ key, icon: Icon }) => (
                 <button
@@ -237,7 +237,7 @@ export default function CategoriesPage() {
                   className={`aspect-square rounded-lg flex items-center justify-center border transition ${
                     form.icon === key
                       ? 'bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/50'
-                      : 'bg-[#1E252B]/50 text-[#7D8387] border-[#494F55]/30 hover:border-[#494F55]/60'
+                      : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-[#494F55]/60'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -252,7 +252,7 @@ export default function CategoriesPage() {
             >
               <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${form.active ? 'translate-x-5' : 'translate-x-0'}`} />
             </button>
-            <span className="text-sm text-[#F2F4F5]">Active</span>
+            <span className="text-sm text-[#EFEFF1]">Active</span>
           </label>
         </div>
       </Modal>
@@ -264,7 +264,7 @@ export default function CategoriesPage() {
         title="Delete Category"
         footer={
           <>
-            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#7D8387] hover:text-[#F2F4F5] transition">Cancel</button>
+            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleDelete}
               disabled={deleting}
@@ -280,8 +280,8 @@ export default function CategoriesPage() {
             <Trash2 className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-[#F2F4F5]">Delete category <span className="font-semibold">{deleteTarget?.name}</span>?</p>
-            <p className="text-xs text-[#7D8387] mt-1">Events in this category will become uncategorized.</p>
+            <p className="text-sm text-[#EFEFF1]">Delete category <span className="font-semibold">{deleteTarget?.name}</span>?</p>
+            <p className="text-xs text-[#949599] mt-1">Events in this category will become uncategorized.</p>
           </div>
         </div>
       </Modal>

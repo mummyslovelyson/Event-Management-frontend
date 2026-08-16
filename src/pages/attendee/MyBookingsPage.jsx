@@ -155,8 +155,8 @@ export default function MyBookingsPage() {
     <motion.div variants={containerStagger} initial="hidden" animate="show" className="space-y-6">
       {/* Header */}
       <motion.div variants={itemFade}>
-        <h1 className="text-2xl font-bold text-[#EDF0F1]">My Bookings</h1>
-        <p className="text-sm text-[#8A9196] mt-1">View and manage your event bookings and orders.</p>
+        <h1 className="text-2xl font-bold text-[#EFEFF1]">My Bookings</h1>
+        <p className="text-sm text-[#949599] mt-1">View and manage your event bookings and orders.</p>
       </motion.div>
 
       {/* Search + tabs */}
@@ -168,8 +168,8 @@ export default function MyBookingsPage() {
               onClick={() => setTab(t.value)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 tab === t.value
-                  ? 'bg-[#D4AF37] text-[#1E252B]'
-                  : 'bg-[#171A1D] border border-[#262B2F] text-[#8A9196] hover:text-[#EDF0F1] hover:border-[#494F55]/50'
+                  ? 'bg-[#D4AF37] text-[#1C232B]'
+                  : 'bg-[#171A1D] border border-[#262B2F] text-[#949599] hover:text-[#EFEFF1] hover:border-[#494F55]/50'
               }`}
             >
               {t.label}
@@ -183,7 +183,7 @@ export default function MyBookingsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search bookings..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
+            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition"
           />
         </div>
       </motion.div>
@@ -234,7 +234,7 @@ export default function MyBookingsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <h3 className="text-base font-semibold text-[#EDF0F1] truncate">{event.title || order.eventName || 'Event'}</h3>
+                        <h3 className="text-base font-semibold text-[#EFEFF1] truncate">{event.title || order.eventName || 'Event'}</h3>
                         <p className="text-xs text-[#494F55] mt-0.5 font-mono">
                           Order #{(order.orderId || order.id).toString().slice(-8).toUpperCase()}
                         </p>
@@ -246,17 +246,17 @@ export default function MyBookingsPage() {
                     </div>
 
                     <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-                      <div className="flex items-center gap-1.5 text-[#8A9196]">
+                      <div className="flex items-center gap-1.5 text-[#949599]">
                         <Calendar className="w-4 h-4 text-[#494F55] shrink-0" />
                         <span className="truncate">
                           {eventDate ? new Date(eventDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBA'}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[#8A9196]">
+                      <div className="flex items-center gap-1.5 text-[#949599]">
                         <MapPin className="w-4 h-4 text-[#494F55] shrink-0" />
                         <span className="truncate">{event.venue || 'Venue TBA'}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[#8A9196]">
+                      <div className="flex items-center gap-1.5 text-[#949599]">
                         <TicketIcon className="w-4 h-4 text-[#494F55] shrink-0" />
                         <span>{ticketCount} ticket{ticketCount !== 1 ? 's' : ''}</span>
                       </div>
@@ -278,13 +278,13 @@ export default function MyBookingsPage() {
                     <div className="mt-4 flex flex-wrap gap-2">
                       <Link
                         to="/attendee/tickets"
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-[#EDF0F1] text-xs font-medium hover:border-[#D4AF37]/40 transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 transition"
                       >
                         <TicketIcon className="w-3.5 h-3.5" /> View Tickets
                       </Link>
                       <button
                         onClick={() => setExpanded(expanded === order.id ? null : order.id)}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-[#EDF0F1] text-xs font-medium hover:border-[#D4AF37]/40 transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 transition"
                       >
                         <Receipt className="w-3.5 h-3.5" /> Details
                         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expanded === order.id ? 'rotate-180' : ''}`} />
@@ -292,7 +292,7 @@ export default function MyBookingsPage() {
                       <button
                         onClick={() => handleExport(order)}
                         disabled={exporting === order.id}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-[#EDF0F1] text-xs font-medium hover:border-[#D4AF37]/40 disabled:opacity-50 transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-[#D4AF37]/40 disabled:opacity-50 transition"
                       >
                         <FileDown className="w-3.5 h-3.5" /> {exporting === order.id ? 'Exporting...' : 'Export PDF'}
                       </button>
@@ -326,21 +326,21 @@ export default function MyBookingsPage() {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden border-t border-[#262B2F]"
                     >
-                      <div className="p-4 sm:p-5 bg-[#1E252B]/50">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-[#8A9196] mb-3">Order Details</p>
+                      <div className="p-4 sm:p-5 bg-[#1C232B]/50">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-3">Order Details</p>
                         {Array.isArray(items) && items.length > 0 ? (
                           <div className="space-y-2">
                             {items.map((item, idx) => (
                               <div key={idx} className="flex items-center justify-between py-2 border-b border-[#262B2F] last:border-0">
                                 <div>
-                                  <p className="text-sm font-medium text-[#EDF0F1]">{item.ticketType || item.name || item.type || 'Ticket'}</p>
-                                  <p className="text-xs text-[#8A9196]">Qty: {item.quantity}</p>
+                                  <p className="text-sm font-medium text-[#EFEFF1]">{item.ticketType || item.name || item.type || 'Ticket'}</p>
+                                  <p className="text-xs text-[#949599]">Qty: {item.quantity}</p>
                                 </div>
                                 <div className="text-right">
-                                  <p className="text-sm text-[#8A9196]">
+                                  <p className="text-sm text-[#949599]">
                                     {format(item.price || 0)} each
                                   </p>
-                                  <p className="text-sm font-semibold text-[#EDF0F1]">
+                                  <p className="text-sm font-semibold text-[#EFEFF1]">
                                     {format((item.price || 0) * (item.quantity || 0))}
                                   </p>
                                 </div>
@@ -348,10 +348,10 @@ export default function MyBookingsPage() {
                             ))}
                           </div>
                         ) : (
-                          <p className="text-sm text-[#8A9196]">No detailed line items available for this order.</p>
+                          <p className="text-sm text-[#949599]">No detailed line items available for this order.</p>
                         )}
                         <div className="mt-3 pt-3 border-t border-[#262B2F] flex items-center justify-between">
-                          <span className="text-sm font-semibold text-[#EDF0F1]">Total</span>
+                          <span className="text-sm font-semibold text-[#EFEFF1]">Total</span>
                           <span className="text-base font-bold text-[#D4AF37]">
                             {format(order.totalAmount || order.total || 0)}
                           </span>
@@ -373,7 +373,7 @@ export default function MyBookingsPage() {
         title="Cancel Booking"
         footer={
           <>
-            <button onClick={() => { setCancelTarget(null); setCancelReason(''); }} className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] transition">
+            <button onClick={() => { setCancelTarget(null); setCancelReason(''); }} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
               Keep Booking
             </button>
             <button onClick={handleCancel} disabled={cancelling} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 disabled:opacity-50 transition">
@@ -387,18 +387,18 @@ export default function MyBookingsPage() {
           <div className="space-y-4">
             <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-3">
               <p className="text-sm text-red-400 font-medium">Are you sure you want to cancel this booking?</p>
-              <p className="text-xs text-[#8A9196] mt-1">
+              <p className="text-xs text-[#949599] mt-1">
                 {cancelTarget.event?.title || cancelTarget.eventName} • This action cannot be undone.
               </p>
             </div>
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-2">Reason (optional)</label>
+              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-2">Reason (optional)</label>
               <textarea
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
                 rows={3}
                 placeholder="Tell us why you're cancelling..."
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
               />
             </div>
           </div>
@@ -412,10 +412,10 @@ export default function MyBookingsPage() {
         title="Request Refund"
         footer={
           <>
-            <button onClick={() => { setRefundTarget(null); setRefundReason(''); }} className="px-4 py-2 rounded-lg text-sm font-medium text-[#8A9196] hover:text-[#EDF0F1] transition">
+            <button onClick={() => { setRefundTarget(null); setRefundReason(''); }} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
               Cancel
             </button>
-            <button onClick={handleRefund} disabled={refunding} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-[#1E252B] text-sm font-semibold hover:bg-amber-400 disabled:opacity-50 transition">
+            <button onClick={handleRefund} disabled={refunding} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-[#1C232B] text-sm font-semibold hover:bg-amber-400 disabled:opacity-50 transition">
               <RotateCcw className="w-4 h-4" />
               {refunding ? 'Submitting...' : 'Submit Request'}
             </button>
@@ -426,18 +426,18 @@ export default function MyBookingsPage() {
           <div className="space-y-4">
             <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
               <p className="text-sm text-amber-400 font-medium">Refund Request</p>
-              <p className="text-xs text-[#8A9196] mt-1">
+              <p className="text-xs text-[#949599] mt-1">
                 {refundTarget.event?.title || refundTarget.eventName} • We'll review your request and process the refund if eligible.
               </p>
             </div>
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-2">Reason for refund</label>
+              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-2">Reason for refund</label>
               <textarea
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
                 rows={3}
                 placeholder="Explain why you're requesting a refund..."
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 transition resize-none"
               />
             </div>
           </div>

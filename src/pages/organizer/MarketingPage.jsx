@@ -12,7 +12,7 @@ import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1E252B] border border-[#494F55]/40 text-sm text-[#EDF0F1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
+const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-[#D4AF37]/60 focus:ring-1 focus:ring-[#D4AF37]/40 transition';
 
 const TABS = [
   { key: 'email', label: 'Email Campaign', icon: Mail },
@@ -128,7 +128,7 @@ export default function MarketingPage() {
           <button
             key={key}
             onClick={() => setTab(key)}
-            className={`relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === key ? 'text-[#D4AF37]' : 'text-[#8A9196] hover:text-[#EDF0F1]'}`}
+            className={`relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === key ? 'text-[#D4AF37]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             <Icon className="w-4 h-4" />
             {label}
@@ -141,7 +141,7 @@ export default function MarketingPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Composer */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 space-y-4">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#EDF0F1]">
+          <div className="flex items-center gap-2 text-sm font-semibold text-[#EFEFF1]">
             {(() => { const I = TABS.find((x) => x.key === tab).icon; return <I className="w-5 h-5 text-[#D4AF37]" />; })()}
             {TABS.find((x) => x.key === tab).label}
           </div>
@@ -149,7 +149,7 @@ export default function MarketingPage() {
           {/* Event selector (email + sms) */}
           {(tab === 'email' || tab === 'sms') && (
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Event (optional)</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Event (optional)</label>
               <select
                 value={tab === 'email' ? emailForm.eventId : smsForm.eventId}
                 onChange={(e) => tab === 'email'
@@ -166,7 +166,7 @@ export default function MarketingPage() {
           {/* Push title */}
           {tab === 'push' && (
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Notification Title</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Notification Title</label>
               <input
                 value={pushForm.title}
                 onChange={(e) => setPushForm((f) => ({ ...f, title: e.target.value }))}
@@ -180,7 +180,7 @@ export default function MarketingPage() {
           {/* Email subject */}
           {tab === 'email' && (
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Subject</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Subject</label>
               <input
                 value={emailForm.subject}
                 onChange={(e) => setEmailForm((f) => ({ ...f, subject: e.target.value }))}
@@ -193,7 +193,7 @@ export default function MarketingPage() {
 
           {/* Message */}
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Message</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Message</label>
             <textarea
               value={tab === 'email' ? emailForm.message : tab === 'sms' ? smsForm.message : pushForm.message}
               onChange={(e) => {
@@ -214,7 +214,7 @@ export default function MarketingPage() {
                 {tab === 'push' && `${pushForm.message?.length || 0} characters`}
               </span>
               {tab === 'sms' && (
-                <span className={smsCount < 20 ? 'text-amber-400' : 'text-[#8A9196]'}>
+                <span className={smsCount < 20 ? 'text-amber-400' : 'text-[#949599]'}>
                   {smsCount} left
                 </span>
               )}
@@ -223,7 +223,7 @@ export default function MarketingPage() {
 
           {/* Audience */}
           <div>
-            <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Audience</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Audience</label>
             <select
               value={tab === 'email' ? emailForm.audience : tab === 'sms' ? smsForm.audience : pushForm.audience}
               onChange={(e) => {
@@ -243,7 +243,7 @@ export default function MarketingPage() {
             (tab === 'sms' && smsForm.audience === 'ticket_type') ||
             (tab === 'push' && pushForm.audience === 'ticket_type')) && (
             <div>
-              <label className="block text-xs font-medium text-[#8A9196] mb-1.5 uppercase tracking-wider">Ticket Type</label>
+              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Ticket Type</label>
               <input
                 value={tab === 'email' ? emailForm.ticketType : tab === 'sms' ? smsForm.ticketType : pushForm.ticketType}
                 onChange={(e) => {
@@ -263,14 +263,14 @@ export default function MarketingPage() {
             <button
               onClick={() => handleSend(tab)}
               disabled={sending}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1E252B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-60 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#D4AF37] text-[#1C232B] text-sm font-semibold hover:bg-[#c4a030] disabled:opacity-60 transition-colors"
             >
               <Send className="w-4 h-4" /> {sending ? 'Sending...' : 'Send Campaign'}
             </button>
             {tab === 'email' && (
               <button
                 onClick={() => setShowPreview((v) => !v)}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-[#8A9196] border border-[#494F55]/40 hover:text-[#EDF0F1] hover:bg-[#494F55]/20 transition"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] border border-[#494F55]/40 hover:text-[#EFEFF1] hover:bg-[#494F55]/20 transition"
               >
                 <Eye className="w-4 h-4" /> Preview
               </button>
@@ -280,15 +280,15 @@ export default function MarketingPage() {
 
         {/* Preview pane */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-          <p className="text-xs font-medium uppercase tracking-wider text-[#8A9196] mb-3">Preview</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-[#949599] mb-3">Preview</p>
           {tab === 'email' ? (
-            <div className="rounded-lg bg-[#1E252B] border border-[#262B2F] overflow-hidden">
+            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] overflow-hidden">
               <div className="px-4 py-3 border-b border-[#262B2F]">
-                <p className="text-xs text-[#8A9196]">From: Tribes & Cliqs &lt;noreply@tribesandcliqs.com&gt;</p>
-                <p className="text-sm font-semibold text-[#EDF0F1] mt-1">{emailForm.subject || '(no subject)'}</p>
+                <p className="text-xs text-[#949599]">From: Tribes & Cliqs &lt;noreply@tribesandcliqs.com&gt;</p>
+                <p className="text-sm font-semibold text-[#EFEFF1] mt-1">{emailForm.subject || '(no subject)'}</p>
               </div>
               <div className="p-4">
-                <p className="text-sm text-[#EDF0F1] whitespace-pre-wrap leading-relaxed min-h-[120px]">
+                <p className="text-sm text-[#EFEFF1] whitespace-pre-wrap leading-relaxed min-h-[120px]">
                   {emailForm.message || 'Your email content will appear here...'}
                 </p>
               </div>
@@ -296,22 +296,22 @@ export default function MarketingPage() {
           ) : tab === 'sms' ? (
             <div className="space-y-3">
               <div className="max-w-[280px] rounded-2xl rounded-bl-sm bg-[#D4AF37]/15 border border-[#D4AF37]/30 px-4 py-3">
-                <p className="text-sm text-[#EDF0F1] leading-relaxed">{smsForm.message || 'SMS preview...'}</p>
-                <p className="text-[10px] text-[#8A9196] mt-1.5 text-right">{new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
+                <p className="text-sm text-[#EFEFF1] leading-relaxed">{smsForm.message || 'SMS preview...'}</p>
+                <p className="text-[10px] text-[#949599] mt-1.5 text-right">{new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-[#8A9196]">
+              <div className="flex items-center gap-1.5 text-xs text-[#949599]">
                 <AlertCircle className="w-3.5 h-3.5" /> {smsForm.message?.length || 0}/160 chars · {Math.ceil((smsForm.message?.length || 0) / 160) || 1} SMS
               </div>
             </div>
           ) : (
-            <div className="rounded-lg bg-[#1E252B] border border-[#262B2F] p-4">
+            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4">
               <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-lg bg-[#D4AF37] flex items-center justify-center shrink-0">
-                  <Megaphone className="w-4 h-4 text-[#1E252B]" />
+                  <Megaphone className="w-4 h-4 text-[#1C232B]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[#EDF0F1]">{pushForm.title || 'Notification Title'}</p>
-                  <p className="text-sm text-[#8A9196] mt-0.5">{pushForm.message || 'Notification message...'}</p>
+                  <p className="text-sm font-semibold text-[#EFEFF1]">{pushForm.title || 'Notification Title'}</p>
+                  <p className="text-sm text-[#949599] mt-0.5">{pushForm.message || 'Notification message...'}</p>
                   <p className="text-[10px] text-[#494F55] mt-1">Tribes & Cliqs · now</p>
                 </div>
               </div>
@@ -322,7 +322,7 @@ export default function MarketingPage() {
 
       {/* Campaign History */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-[#EDF0F1]">Campaign History</h2>
+        <h2 className="text-lg font-semibold text-[#EFEFF1]">Campaign History</h2>
         {loadingCampaigns ? (
           <LoadingSpinner label="Loading campaigns..." className="py-12" />
         ) : campaigns.length === 0 ? (
@@ -349,14 +349,14 @@ export default function MarketingPage() {
                     <tr key={c.id} className="hover:bg-[#1D2124] transition-colors">
                       <td className="px-4 py-3">
                         <span className="inline-flex items-center gap-1.5">
-                          <meta.Icon className="w-4 h-4 text-[#8A9196]" />
-                          <span className="text-[#EDF0F1] font-medium">{meta.label}</span>
+                          <meta.Icon className="w-4 h-4 text-[#949599]" />
+                          <span className="text-[#EFEFF1] font-medium">{meta.label}</span>
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-[#8A9196] max-w-[160px] truncate">{c.eventTitle || c.event?.title || 'All events'}</td>
-                      <td className="px-4 py-3 text-[#8A9196] capitalize">{(c.audience || 'all').replace('_', ' ')}</td>
-                      <td className="px-4 py-3 text-right text-[#EDF0F1] font-medium">{c.audienceSize ?? c.recipients ?? '—'}</td>
-                      <td className="px-4 py-3 text-xs text-[#8A9196] whitespace-nowrap">
+                      <td className="px-4 py-3 text-[#949599] max-w-[160px] truncate">{c.eventTitle || c.event?.title || 'All events'}</td>
+                      <td className="px-4 py-3 text-[#949599] capitalize">{(c.audience || 'all').replace('_', ' ')}</td>
+                      <td className="px-4 py-3 text-right text-[#EFEFF1] font-medium">{c.audienceSize ?? c.recipients ?? '—'}</td>
+                      <td className="px-4 py-3 text-xs text-[#949599] whitespace-nowrap">
                         {c.sentAt || c.createdAt ? new Date(c.sentAt || c.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
                       </td>
                       <td className="px-4 py-3">

@@ -5,9 +5,9 @@ const variants = {
   warning: 'bg-amber-500/10 text-amber-400',
   pending: 'bg-amber-500/10 text-amber-400',
   info: 'bg-blue-500/10 text-blue-400',
-  neutral: 'bg-[#2A2F33] text-[#8A9196]',
+  neutral: 'bg-[#2A2F33] text-[#949599]',
   gold: 'bg-[#D4AF37]/10 text-[#D4AF37]',
-  default: 'bg-[#2A2F33] text-[#8A9196]',
+  default: 'bg-[#2A2F33] text-[#949599]',
 };
 
 export default function Badge({ variant = 'default', children, icon: CustomIcon, size = 'md', dot = false, className = '' }) {

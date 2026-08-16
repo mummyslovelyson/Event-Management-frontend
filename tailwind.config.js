@@ -4,11 +4,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        'tc-bg': '#1E252B',
+        'tc-bg': '#1C232B',
         'tc-sidebar': '#161D22',
         'tc-card': '#242B32',
-        'tc-text': '#F2F4F5',
-        'tc-muted': '#7D8387',
+        'tc-text': '#EFEFF1',
+        'tc-muted': '#949599',
         'tc-subtle': '#494F55',
         'tc-gold': '#D4AF37',
       },

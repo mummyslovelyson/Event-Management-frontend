@@ -11,13 +11,13 @@ export default function LoadingSpinner({ size = 'md', label, fullScreen = false,
   const content = (
     <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
       <Loader2 className={`${sizes[size]} text-[#D4AF37] animate-spin`} />
-      {label && <p className="text-sm text-[#7D8387]">{label}</p>}
+      {label && <p className="text-sm text-[#949599]">{label}</p>}
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1E252B]">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C232B]">
         {content}
       </div>
     );
