@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: #1E252B;
+    color: #F2F4F5;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #161D22;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #494F55;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #7D8387;
+  }
+  ::selection {
+    background: rgba(212, 175, 55, 0.25);
+  }
+
+  /* Hand-built tactile feel: buttons depress on click, links/inputs get a
+     visible keyboard focus ring. Disabled controls stay put. */
+  button:not(:disabled):active {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid rgba(212, 175, 55, 0.55);
+    outline-offset: 2px;
+  }
+
+  /* Little nudge for icon chips and other inline SVGs that sit in buttons. */
+  button svg {
+    transition: transform 150ms ease;
+  }
+  button:not(:disabled):active svg {
+    transform: scale(0.92);
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Print: only the selected ticket is sent to the printer, rendered as a
+   clean white card so the QR code scans properly. Everything else on the
+   page (dark UI, modals, overlays) is hidden. */
+.print-ticket-area {
+  display: none;
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-ticket-area,
+  .print-ticket-area * {
+    visibility: visible;
+  }
+  .print-ticket-area {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 24px;
+    margin: 0;
+  }
+  body {
+    background: #ffffff;
+  }
+}
