@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Building2, CreditCard, Shield, Palette, Save, Upload, Lock, LogOut,
   Facebook, Twitter, Instagram, Linkedin, Globe, Check, Smartphone, Eye, EyeOff,
+  Settings,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
