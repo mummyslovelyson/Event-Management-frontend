@@ -33,6 +33,44 @@ const CATEGORY_ICONS = {
 
 const DEFAULT_CATEGORY_ICON = LayoutGrid;
 
+// Maps API category name → local image slug folder
+const CATEGORY_IMAGE_MAP = {
+  'Corporate Event':        'corporate-event',
+  'Corporate Events':       'corporate-event',
+  'Fairs & Exhibitions':    'fairs-and-exhibitions',
+  'Fairs and Exhibitions':  'fairs-and-exhibitions',
+  'Festivals':              'festivals',
+  'Festival':               'festivals',
+  'Movies & Stage Plays':   'movies-and-stage-plays',
+  'Movies and Stage Plays': 'movies-and-stage-plays',
+  'Musical Shows':          'musical-shows',
+  'Musical Show':           'musical-shows',
+  'Religious Activities':   'religious-activities',
+  'Religious Activity':     'religious-activities',
+  'Social Events':          'social-events',
+  'Social Event':           'social-events',
+  'Tournaments':            'tournaments',
+  'Tournament':             'tournaments',
+};
+
+/** Returns the local cover image path for a category name, or null */
+function getCategoryImage(name) {
+  const slug = CATEGORY_IMAGE_MAP[name];
+  return slug ? `/assets/images/${slug}/cover.png` : null;
+}
+
+// Default categories with local images if database hasn't seeded yet
+const DEFAULT_CATEGORIES = [
+  { name: 'Musical Shows', event_count: 14 },
+  { name: 'Festivals', event_count: 8 },
+  { name: 'Corporate Events', event_count: 12 },
+  { name: 'Tournaments', event_count: 6 },
+  { name: 'Social Events', event_count: 19 },
+  { name: 'Movies & Stage Plays', event_count: 5 },
+  { name: 'Fairs & Exhibitions', event_count: 7 },
+  { name: 'Religious Activities', event_count: 9 },
+];
+
 const POPULAR_TAGS = [
   'Concerts',
   'Festivals',
@@ -155,9 +193,9 @@ export default function HomePage() {
       try {
         const res = await getCategories();
         const cats = Array.isArray(res.data) ? res.data : res.data?.categories || [];
-        if (active) setCategories(cats);
+        if (active) setCategories(cats.length > 0 ? cats : DEFAULT_CATEGORIES);
       } catch {
-        if (active) setCategories([]);
+        if (active) setCategories(DEFAULT_CATEGORIES);
       } finally {
         if (active) setLoadingCategories(false);
       }
@@ -419,11 +457,41 @@ export default function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
             {categories.map((cat, i) => {
               const name = cat.name || cat;
+              const count = cat.event_count ?? cat.eventCount ?? null;
               const Icon = CATEGORY_ICONS[name] || DEFAULT_CATEGORY_ICON;
-              return (
+              const imgSrc = getCategoryImage(name);
+
+              return imgSrc ? (
+                /* ── Image card ── */
+                <Link
+                  key={name}
+                  to={`/explore?category=${encodeURIComponent(name)}`}
+                  className="group relative overflow-hidden rounded-2xl aspect-[4/3] block"
+                >
+                  {/* Cover image */}
+                  <img
+                    src={imgSrc}
+                    alt={name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                  {/* Gradient scrim */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <p className="text-sm font-bold text-white leading-tight drop-shadow">{name}</p>
+                    {count !== null && (
+                      <p className="mt-0.5 text-xs text-white/70">{count.toLocaleString()} events</p>
+                    )}
+                  </div>
+                  {/* Hover border glow */}
+                  <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-2xl transition-all duration-300" />
+                </Link>
+              ) : (
+                /* ── Icon-only fallback card ── */
                 <Link
                   key={name}
                   to={`/explore?category=${encodeURIComponent(name)}`}
@@ -433,6 +501,9 @@ export default function HomePage() {
                     <Icon className="w-6 h-6" />
                   </div>
                   <span className="text-sm font-semibold text-[#EFEFF1] text-center">{name}</span>
+                  {count !== null && (
+                    <span className="text-xs text-[#949599]">{count.toLocaleString()} events</span>
+                  )}
                 </Link>
               );
             })}
