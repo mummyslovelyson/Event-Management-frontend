@@ -88,7 +88,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
             onClick={handleFav}
             disabled={loading}
             whileTap={{ scale: 0.8 }}
-            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#1C232B]/90 backdrop-blur-sm flex items-center justify-center text-[#EFEFF1] hover:scale-110 transition disabled:opacity-50"
+            className="absolute top-3 right-3 w-10 h-10 rounded-full bg-[#1C232B]/90 backdrop-blur-sm flex items-center justify-center text-[#EFEFF1] hover:scale-110 transition disabled:opacity-50"
             aria-label="Toggle favorite"
           >
             <motion.span
