@@ -47,7 +47,7 @@ export default function SupportPage() {
       const res = await getSupportTickets({ status: tab, page, limit: 10 });
       const d = res.data;
       setTickets(Array.isArray(d) ? d : d.tickets || d.data || []);
-      setTotalPages(d.totalPages || d.pages || 1);
+      setTotalPages(d.pagination?.totalPages || d.totalPages || d.pages || 1);
       if (d.stats) setStats(d.stats);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to load tickets');
@@ -59,13 +59,19 @@ export default function SupportPage() {
   useEffect(() => { fetchTickets(); }, [fetchTickets]);
   useEffect(() => { setPage(1); }, [tab]);
 
+  const normalizeDetail = (res, fallback) => {
+    const t = res.data.ticket || res.data;
+    const r = res.data.replies || [];
+    return { ...t, user: t.user || fallback?.user, responses: r.map((rp) => ({ ...rp, isAdmin: rp.is_staff || rp.author_role === 'admin', author: { name: rp.author_name, email: rp.author_email } })) };
+  };
+
   const openDetail = async (ticket) => {
     setDetailLoading(true);
-    setDetail(ticket);
+    setDetail({ ...ticket, responses: [] });
     setReply('');
     try {
       const res = await getSupportTicket(ticket.id);
-      setDetail(res.data);
+      setDetail(normalizeDetail(res, ticket));
     } catch {
       /* keep basic */
     } finally {
@@ -81,7 +87,7 @@ export default function SupportPage() {
       toast.success('Reply sent');
       setReply('');
       const res = await getSupportTicket(detail.id);
-      setDetail(res.data);
+      setDetail(normalizeDetail(res, detail));
       fetchTickets();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to send reply');
@@ -108,7 +114,7 @@ export default function SupportPage() {
       await respondToSupportTicket(detail.id, { message: '[ESCALATED] Ticket escalated to senior support', escalate: true });
       toast.success('Ticket escalated');
       const res = await getSupportTicket(detail.id);
-      setDetail(res.data);
+      setDetail(normalizeDetail(res, detail));
       fetchTickets();
     } catch {
       toast.error('Failed to escalate');
