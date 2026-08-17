@@ -144,7 +144,7 @@ export default function CheckInPage() {
       </div>
 
       {/* Attendance Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
           <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><Users className="w-4 h-4" /> Expected</div>
           <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{stats.total}</p>
@@ -176,10 +176,10 @@ export default function CheckInPage() {
 
       {/* Tabs */}
       <div className="flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#262B2F] w-fit">
-        <button onClick={() => setTab('scanner')} className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition ${tab === 'scanner' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
+        <button onClick={() => setTab('scanner')} className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition ${tab === 'scanner' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
           <ScanLine className="w-4 h-4" /> QR Scanner
         </button>
-        <button onClick={() => setTab('manual')} className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition ${tab === 'manual' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
+        <button onClick={() => setTab('manual')} className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition ${tab === 'manual' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
           <Search className="w-4 h-4" /> Manual Search
         </button>
       </div>
@@ -222,7 +222,7 @@ export default function CheckInPage() {
                     <QrCode className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                     <input value={qrInput} onChange={(e) => setQrInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleScan(qrInput)} placeholder="Enter ticket code..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition" />
                   </div>
-                  <button onClick={() => handleScan(qrInput)} disabled={!qrInput || scanning} className="px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition">
+                  <button onClick={() => handleScan(qrInput)} disabled={!qrInput || scanning} className="px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition">
                     {scanning ? 'Scanning...' : 'Verify'}
                   </button>
                 </div>
@@ -274,7 +274,7 @@ export default function CheckInPage() {
                         {checked ? (
                           <Badge variant="success" size="sm">Checked In</Badge>
                         ) : (
-                          <button onClick={() => handleManualCheckIn(a)} disabled={checkingIn === a.id} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white text-[#1C232B] text-xs font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition">
+                          <button onClick={() => handleManualCheckIn(a)} disabled={checkingIn === a.id} className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-md bg-white text-[#1C232B] text-xs font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition">
                             <UserCheck className="w-3.5 h-3.5" /> {checkingIn === a.id ? '...' : 'Check In'}
                           </button>
                         )}

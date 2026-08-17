@@ -19,7 +19,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange, sibl
   };
 
   const btnBase =
-    'min-w-[40px] h-10 px-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center select-none';
+    'min-w-[44px] h-11 px-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center select-none';
 
   return (
     <nav className="flex items-center justify-center gap-1.5" aria-label="Pagination">

@@ -85,7 +85,7 @@ export default function FAQPage() {
   return (
     <>
       {/* Hero */}
-      <section className="pt-28 pb-14 sm:pt-36 sm:pb-18 border-b border-[#262B2F] mb-8">
+      <section className="pt-28 pb-14 sm:pt-36 sm:pb-20 border-b border-[#262B2F] mb-8">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161D22] border border-[#494F55]/60 text-white text-xs font-semibold uppercase tracking-widest mb-6">
@@ -121,7 +121,7 @@ export default function FAQPage() {
                 <button
                   key={cat.id}
                   onClick={() => { setActiveCategory(cat.id); setOpenFaq(null); }}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                    className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition ${
                     activeCategory === cat.id
                       ? 'bg-white text-[#1C232B]'
                       : 'bg-[#171A1D] border border-[#262B2F] text-[#949599] hover:text-[#EFEFF1] hover:border-[#494F55]'
@@ -145,7 +145,7 @@ export default function FAQPage() {
               </div>
               <h3 className="text-lg font-semibold text-[#EFEFF1]">No results found</h3>
               <p className="mt-2 text-sm text-[#949599]">Try a different search term or browse by category.</p>
-              <button onClick={() => setSearch('')} className="mt-4 px-4 py-2 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:text-white hover:border-white/40 transition">
+              <button onClick={() => setSearch('')} className="mt-4 px-4 py-3 rounded-lg border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:text-white hover:border-white/40 transition">
                 Clear search
               </button>
             </div>

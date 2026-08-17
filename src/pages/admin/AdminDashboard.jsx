@@ -213,7 +213,7 @@ export default function AdminDashboard() {
             <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[#EFEFF1]">{greeting}{firstName ? `, ${firstName}` : ''}</h1>
             <p className="mt-1 text-sm text-[#949599]">Revenue, orders, and signups at a glance.</p>
           </div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <span className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium border ${
               attentionCount > 0
                 ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
@@ -297,7 +297,7 @@ export default function AdminDashboard() {
                 <p className="flex items-center gap-1.5 text-xs font-medium text-[#949599]">
                   <CircleDollarSign className="w-3.5 h-3.5" /> Revenue overview
                 </p>
-                <p className="mt-2 text-3xl sm:text-4xl font-bold text-[#EFEFF1] tabular-nums tracking-tight">
+                <p className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold text-[#EFEFF1] tabular-nums tracking-tight">
                   {format(o.totalRevenue)}
                 </p>
                 <div className="mt-2 flex items-center gap-2">
@@ -515,8 +515,8 @@ export default function AdminDashboard() {
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wider text-[#949599] border-b border-[#494F55]/20">
                   <th className="px-5 py-2.5 font-medium">Event</th>
-                  <th className="px-5 py-2.5 font-medium">Organizer</th>
-                  <th className="px-5 py-2.5 font-medium">Date</th>
+                  <th className="hidden md:table-cell px-5 py-2.5 font-medium">Organizer</th>
+                  <th className="hidden md:table-cell px-5 py-2.5 font-medium">Date</th>
                   <th className="px-5 py-2.5 font-medium text-right">Actions</th>
                 </tr>
               </thead>
@@ -535,21 +535,21 @@ export default function AdminDashboard() {
                         <span className="font-medium text-[#EFEFF1] break-words">{e.title}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-[#949599]">{e.organizer_name || '—'}</td>
-                    <td className="px-5 py-3 text-xs text-[#949599]">{e.start_date ? fmtDay(e.start_date) : '—'}</td>
+                    <td className="hidden md:table-cell px-5 py-3 text-[#949599]">{e.organizer_name || '—'}</td>
+                    <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599]">{e.start_date ? fmtDay(e.start_date) : '—'}</td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleApprove(e.id)}
                           disabled={actionLoading === `approve-${e.id}`}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
+                          className="inline-flex items-center gap-1 px-3 py-2.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" /> Approve
                         </button>
                         <button
                           onClick={() => handleReject(e.id)}
                           disabled={actionLoading === `reject-${e.id}`}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"
+                          className="inline-flex items-center gap-1 px-3 py-2.5 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"
                         >
                           <XCircle className="w-3.5 h-3.5" /> Reject
                         </button>

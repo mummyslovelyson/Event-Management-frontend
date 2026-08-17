@@ -458,7 +458,7 @@ export default function EventDetailPage() {
   return (
     <>
       {/* Banner */}
-      <div className="relative h-[42vh] min-h-[320px] w-full overflow-hidden">
+      <div className="relative h-[30vh] sm:h-[42vh] min-h-[200px] sm:min-h-[320px] w-full overflow-hidden">
         <motion.img
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
@@ -503,7 +503,7 @@ export default function EventDetailPage() {
                     onClick={() => setShareOpen((v) => !v)}
                     whileTap={{ scale: 0.88 }}
                     whileHover={{ y: -2 }}
-                    className="w-10 h-10 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EFEFF1] hover:text-[#9AA1A6] hover:border-[#494F55] transition"
+                    className="w-11 h-11 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EFEFF1] hover:text-[#9AA1A6] hover:border-[#494F55] transition"
                   >
                     <Share2 className="w-4 h-4" />
                   </motion.button>
@@ -524,7 +524,7 @@ export default function EventDetailPage() {
                           <button
                             key={s.id}
                             onClick={() => handleShare(s.id)}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#949599] hover:text-white hover:bg-[#494F55]/20 transition"
+                            className="w-full flex items-center gap-2 px-3 py-3 text-sm text-[#949599] hover:text-white hover:bg-[#494F55]/20 transition"
                           >
                             <s.icon className="w-4 h-4" /> {s.label}
                           </button>
@@ -538,7 +538,7 @@ export default function EventDetailPage() {
                   disabled={favLoading}
                   whileTap={{ scale: 0.88 }}
                   whileHover={{ y: -2 }}
-                  className="w-10 h-10 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EFEFF1] hover:border-[#494F55] transition disabled:opacity-50"
+                  className="w-11 h-11 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EFEFF1] hover:border-[#494F55] transition disabled:opacity-50"
                 >
                   <motion.span
                     key={isFav ? 'on' : 'off'}
@@ -722,7 +722,7 @@ export default function EventDetailPage() {
                                     <button
                                       onClick={() => setQty(ticket.id, -1)}
                                       disabled={qty <= 0}
-                                      className="w-9 h-9 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1] disabled:opacity-30 transition"
+                                      className="w-10 h-10 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1] disabled:opacity-30 transition"
                                     >
                                       <Minus className="w-4 h-4" />
                                     </button>
@@ -730,7 +730,7 @@ export default function EventDetailPage() {
                                     <button
                                       onClick={() => setQty(ticket.id, 1)}
                                       disabled={available !== null && qty >= available}
-                                      className="w-9 h-9 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1] disabled:opacity-30 transition"
+                                      className="w-10 h-10 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1] disabled:opacity-30 transition"
                                     >
                                       <Plus className="w-4 h-4" />
                                     </button>
@@ -738,7 +738,7 @@ export default function EventDetailPage() {
                                   <button
                                     onClick={() => openPurchase(ticket)}
                                     disabled={available !== null && available <= 0}
-                                    className="px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="px-5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-40 disabled:cursor-not-allowed"
                                   >
                                     Buy Now
                                   </button>
@@ -881,7 +881,7 @@ export default function EventDetailPage() {
                                     <button
                                       onClick={() => handleDeleteMeetup(m)}
                                       disabled={meetupBusy}
-                                      className="p-2 rounded-lg text-red-400 hover:bg-red-500/15 transition disabled:opacity-50"
+                                      className="p-2.5 rounded-lg text-red-400 hover:bg-red-500/15 transition disabled:opacity-50"
                                       title="Delete meet-up"
                                     >
                                       <Trash2 className="w-4 h-4" />
@@ -1114,14 +1114,14 @@ export default function EventDetailPage() {
                   <button
                     onClick={() => setQty(purchaseModal.id, -1)}
                     disabled={selectedQty <= 1}
-                    className="w-8 h-8 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1] disabled:opacity-30"
+                    className="w-10 h-10 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1] disabled:opacity-30"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
                   <span className="w-10 text-center text-sm font-semibold text-[#EFEFF1]">{selectedQty}</span>
                   <button
                     onClick={() => setQty(purchaseModal.id, 1)}
-                    className="w-8 h-8 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1]"
+                    className="w-10 h-10 flex items-center justify-center text-[#949599] hover:text-[#EFEFF1]"
                   >
                     <Plus className="w-4 h-4" />
                   </button>

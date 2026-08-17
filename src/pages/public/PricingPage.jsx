@@ -118,7 +118,7 @@ export default function PricingPage() {
   return (
     <>
       {/* Hero */}
-      <section className="pt-28 pb-14 sm:pt-36 sm:pb-18 border-b border-[#262B2F]">
+      <section className="pt-28 pb-14 sm:pt-36 sm:pb-20 border-b border-[#262B2F]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161D22] border border-[#494F55]/60 text-white text-xs font-semibold uppercase tracking-widest mb-6">
@@ -133,13 +133,13 @@ export default function PricingPage() {
             <div className="mt-8 inline-flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#494F55]/40">
               <button
                 onClick={() => setBillingCycle('monthly')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition ${billingCycle === 'monthly' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+                className={`px-4 py-3 rounded-md text-sm font-medium transition ${billingCycle === 'monthly' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
               >
                 Monthly
               </button>
               <button
                 onClick={() => setBillingCycle('yearly')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition flex items-center gap-1.5 ${billingCycle === 'yearly' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+                className={`px-4 py-3 rounded-md text-sm font-medium transition flex items-center gap-1.5 ${billingCycle === 'yearly' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
               >
                 Yearly <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">20% off</span>
               </button>

@@ -601,27 +601,27 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-5 pt-0">
           <button
             onClick={onDownload}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
           >
             <Download className="w-3.5 h-3.5" /> Download
           </button>
           <button
             onClick={onPrint}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
           >
             <Printer className="w-3.5 h-3.5" /> Print
           </button>
           <button
             onClick={onTransfer}
             disabled={isCancelled}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Send className="w-3.5 h-3.5" /> Transfer
           </button>
           <button
             onClick={onSell}
             disabled={isCancelled}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-semibold hover:bg-white hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-semibold hover:bg-white hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Tag className="w-3.5 h-3.5" /> Sell
           </button>

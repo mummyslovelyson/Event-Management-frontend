@@ -204,8 +204,8 @@ const StepCapacity = () => {
             <p className="text-xs text-[#949599]">Public events are searchable, private are invite-only</p>
           </div>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setValue('visibility', 'public')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${visibility === 'public' ? 'bg-white text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>Public</button>
-            <button type="button" onClick={() => setValue('visibility', 'private')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${visibility === 'private' ? 'bg-white text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>Private</button>
+            <button type="button" onClick={() => setValue('visibility', 'public')} className={`px-3 py-2.5 rounded-md text-xs font-medium transition ${visibility === 'public' ? 'bg-white text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>Public</button>
+            <button type="button" onClick={() => setValue('visibility', 'private')} className={`px-3 py-2.5 rounded-md text-xs font-medium transition ${visibility === 'private' ? 'bg-white text-[#1C232B]' : 'bg-[#494F55]/30 text-[#949599]'}`}>Private</button>
           </div>
         </label>
       </div>
@@ -465,19 +465,19 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
 
         {/* Navigation */}
         <div className="flex items-center justify-between">
-          <button type="button" onClick={back} disabled={step === 1 || submitting} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 disabled:opacity-30 disabled:cursor-not-allowed transition">
+          <button type="button" onClick={back} disabled={step === 1 || submitting} className="inline-flex items-center gap-1.5 px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 disabled:opacity-30 disabled:cursor-not-allowed transition">
             <ChevronLeft className="w-4 h-4" /> Back
           </button>
           {step < 6 ? (
-            <button type="button" onClick={next} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold bg-white text-[#1C232B] hover:bg-[#CBD5E1] disabled:opacity-60 transition">
+            <button type="button" onClick={next} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-3 rounded-lg text-sm font-semibold bg-white text-[#1C232B] hover:bg-[#CBD5E1] disabled:opacity-60 transition">
               Next <ChevronRight className="w-4 h-4" />
             </button>
           ) : (
-            <div className="flex items-center gap-3">
-              <button type="submit" disabled={submitting} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] border border-[#494F55]/40 hover:bg-[#494F55]/20 disabled:opacity-60 transition">
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <button type="submit" disabled={submitting} className="inline-flex items-center gap-1.5 px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] border border-[#494F55]/40 hover:bg-[#494F55]/20 disabled:opacity-60 transition">
                 <Save className="w-4 h-4" /> {submitting ? 'Saving...' : 'Save as Draft'}
               </button>
-              <button type="button" onClick={handleSubmit((d) => submit(d, 'published'))} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold bg-white text-[#1C232B] hover:bg-[#CBD5E1] disabled:opacity-60 transition">
+              <button type="button" onClick={handleSubmit((d) => submit(d, 'published'))} disabled={submitting} className="inline-flex items-center gap-1.5 px-5 py-3 rounded-lg text-sm font-semibold bg-white text-[#1C232B] hover:bg-[#CBD5E1] disabled:opacity-60 transition">
                 <Send className="w-4 h-4" /> {submitting ? 'Submitting...' : 'Submit for Review'}
               </button>
             </div>

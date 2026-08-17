@@ -140,7 +140,7 @@ export default function PaymentManagementPage() {
           <button
             key={t.key}
             onClick={() => { setTab(t.key); setPage(1); }}
-            className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
               tab === t.key ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
@@ -166,7 +166,7 @@ export default function PaymentManagementPage() {
                       <th className="px-4 py-3.5 font-medium">User</th>
                       <th className="px-4 py-3.5 font-medium">Event</th>
                       <th className="px-4 py-3.5 font-medium text-right">Amount</th>
-                      <th className="px-4 py-3.5 font-medium">Method</th>
+                      <th className="hidden md:table-cell px-4 py-3.5 font-medium">Method</th>
                       <th className="px-4 py-3.5 font-medium">Status</th>
                       <th className="hidden md:table-cell px-4 py-3.5 font-medium">Date</th>
                     </tr>
@@ -178,7 +178,7 @@ export default function PaymentManagementPage() {
                         <td className="px-5 py-3 text-[#EFEFF1]">{tx.user?.name || tx.userName || '—'}</td>
                         <td className="px-5 py-3 text-[#949599] max-w-[160px] truncate">{tx.event?.title || tx.eventTitle || '—'}</td>
                         <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(tx.amount)}</td>
-                        <td className="px-5 py-3 text-[#949599]">{tx.method || tx.paymentMethod || '—'}</td>
+                        <td className="hidden md:table-cell px-5 py-3 text-[#949599]">{tx.method || tx.paymentMethod || '—'}</td>
                         <td className="px-5 py-3"><Badge variant={txStatusVariant(tx.status)} size="sm" dot>{tx.status}</Badge></td>
                         <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599]">{fmtDate(tx.createdAt)}</td>
                       </tr>
@@ -223,14 +223,14 @@ export default function PaymentManagementPage() {
                               <button
                                 onClick={() => handleWithdrawal(wd.id, 'approve')}
                                 disabled={actionLoading === `approve-${wd.id}`}
-                                className="inline-flex items-center gap-1 px-3 py-2.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
+                                className="inline-flex items-center gap-1 px-3 py-3 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
                               >
                                 <CheckCircle2 className="w-3.5 h-3.5" /> Approve
                               </button>
                               <button
                                 onClick={() => handleWithdrawal(wd.id, 'reject')}
                                 disabled={actionLoading === `reject-${wd.id}`}
-                                className="inline-flex items-center gap-1 px-3 py-2.5 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"
+                                className="inline-flex items-center gap-1 px-3 py-3 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"
                               >
                                 <XCircle className="w-3.5 h-3.5" /> Reject
                               </button>
@@ -256,7 +256,7 @@ export default function PaymentManagementPage() {
                     <th className="px-4 py-3.5 font-medium">User</th>
                     <th className="px-4 py-3.5 font-medium">Event</th>
                     <th className="px-4 py-3.5 font-medium text-right">Amount</th>
-                    <th className="px-4 py-3.5 font-medium">Reason</th>
+                    <th className="hidden md:table-cell px-4 py-3.5 font-medium">Reason</th>
                     <th className="px-4 py-3.5 font-medium">Status</th>
                     <th className="px-4 py-3.5 font-medium text-right">Action</th>
                   </tr>
@@ -268,13 +268,13 @@ export default function PaymentManagementPage() {
                       <td className="px-5 py-3 text-[#EFEFF1]">{rf.user?.name || rf.userName || '—'}</td>
                       <td className="px-5 py-3 text-[#949599] max-w-[140px] truncate">{rf.event?.title || rf.eventTitle || '—'}</td>
                       <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(rf.amount)}</td>
-                      <td className="px-5 py-3 text-[#949599] max-w-[160px] truncate">{rf.reason || '—'}</td>
+                      <td className="hidden md:table-cell px-5 py-3 text-[#949599] max-w-[160px] truncate">{rf.reason || '—'}</td>
                       <td className="px-5 py-3"><Badge variant={txStatusVariant(rf.status)} size="sm" dot>{rf.status || 'pending'}</Badge></td>
                       <td className="px-5 py-3 text-right">
                         {rf.status === 'pending' && (
                           <button
                             onClick={() => { setRefundTarget(rf); setRefundReason(''); }}
-                            className="inline-flex items-center gap-1 px-3 py-2.5 rounded-md bg-white/10 text-white border border-white/20 text-xs font-semibold hover:bg-white/10 transition"
+                            className="inline-flex items-center gap-1 px-3 py-3 rounded-md bg-white/10 text-white border border-white/20 text-xs font-semibold hover:bg-white/10 transition"
                           >
                             <RotateCcw className="w-3.5 h-3.5" /> Process
                           </button>
@@ -296,11 +296,11 @@ export default function PaymentManagementPage() {
         title="Process Refund"
         footer={
           <>
-            <button onClick={() => setRefundTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
+            <button onClick={() => setRefundTarget(null)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleRefund}
               disabled={actionLoading === `refund-${refundTarget?.id}`}
-              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50"
+              className="px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50"
             >
               {actionLoading ? 'Processing...' : 'Process Refund'}
             </button>

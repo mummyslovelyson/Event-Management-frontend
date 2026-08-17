@@ -210,25 +210,25 @@ export default function OrganizerDashboard() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                    <th className="px-5 py-3 font-medium">Order ID</th>
-                    <th className="px-5 py-3 font-medium">Customer</th>
+                    <th className="hidden md:table-cell px-5 py-3 font-medium">Order ID</th>
+                    <th className="hidden md:table-cell px-5 py-3 font-medium">Customer</th>
                     <th className="px-5 py-3 font-medium">Event</th>
-                    <th className="px-5 py-3 font-medium text-center">Tickets</th>
+                    <th className="hidden md:table-cell px-5 py-3 font-medium text-center">Tickets</th>
                     <th className="px-5 py-3 font-medium text-right">Amount</th>
                     <th className="px-5 py-3 font-medium">Status</th>
-                    <th className="px-5 py-3 font-medium">Date</th>
+                    <th className="hidden md:table-cell px-5 py-3 font-medium">Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {recentOrders.map((o) => (
                     <tr key={o.id} className="hover:bg-[#1D2124] transition-colors">
-                      <td className="px-5 py-3 font-mono text-xs text-[#EFEFF1]">#{o.reference || o.id?.slice(-6)}</td>
-                      <td className="px-5 py-3 text-[#EFEFF1]">{o.customerName || o.user?.name || '—'}</td>
+                      <td className="hidden md:table-cell px-5 py-3 font-mono text-xs text-[#EFEFF1]">#{o.reference || o.id?.slice(-6)}</td>
+                      <td className="hidden md:table-cell px-5 py-3 text-[#EFEFF1]">{o.customerName || o.user?.name || '—'}</td>
                       <td className="px-5 py-3 text-[#949599] max-w-[140px] truncate">{o.eventTitle || o.event?.title || '—'}</td>
-                      <td className="px-5 py-3 text-center text-[#949599]">{o.quantity || o.ticketCount || 0}</td>
+                      <td className="hidden md:table-cell px-5 py-3 text-center text-[#949599]">{o.quantity || o.ticketCount || 0}</td>
                       <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(o.amount || o.total)}</td>
                       <td className="px-5 py-3"><Badge variant={orderStatusVariant(o.status)} size="sm">{o.status}</Badge></td>
-                      <td className="px-5 py-3 text-xs text-[#949599]">{o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'}</td>
+                      <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599]">{o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'}</td>
                     </tr>
                   ))}
                 </tbody>

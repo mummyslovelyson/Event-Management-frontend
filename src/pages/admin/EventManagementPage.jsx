@@ -341,7 +341,7 @@ export default function EventManagementPage() {
                         <button
                           onClick={() => handleToggleFeatured(ev)}
                           disabled={actionLoading === `feature-${ev.id}`}
-                          className={`p-1.5 rounded-md transition disabled:opacity-50 ${ev.is_featured ? 'text-white hover:bg-white/10' : 'text-[#949599] hover:text-white hover:bg-[#494F55]/30'}`}
+                          className={`p-2.5 rounded-md transition disabled:opacity-50 ${ev.is_featured ? 'text-white hover:bg-white/10' : 'text-[#949599] hover:text-white hover:bg-[#494F55]/30'}`}
                           title={ev.is_featured ? 'Remove from featured' : 'Feature on homepage'}
                         >
                           <Star className="w-4 h-4" fill={ev.is_featured ? 'currentColor' : 'none'} />

@@ -336,7 +336,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── FEATURED EVENTS ─── */}
-      <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-8">
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Curated Selection</span>
@@ -371,7 +371,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── TRENDING EVENTS ─── */}
-      <section className="py-14 sm:py-18 bg-[#161D22] border-y border-[#262B2F]">
+      <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-8">
             <div>
@@ -402,7 +402,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── CATEGORIES ─── */}
-      <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Browse by Experience</span>
           <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Find Events by Category</h2>
@@ -441,7 +441,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section className="py-14 sm:py-18 bg-[#161D22] border-y border-[#262B2F]">
+      <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Simple &amp; Fast</span>
@@ -481,7 +481,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── FEATURED ORGANIZERS ─── */}
-      <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Event Creators</span>
           <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Event Organizers</h2>
@@ -536,7 +536,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── PLATFORM STATS ─── */}
-      <section className="py-14 sm:py-18 bg-[#161D22] border-y border-[#262B2F]">
+      <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Trusted Across Africa</h2>

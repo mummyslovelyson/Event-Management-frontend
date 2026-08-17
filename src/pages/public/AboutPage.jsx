@@ -82,7 +82,7 @@ export default function AboutPage() {
             {[mission, vision].map((item) => (
               <div
                 key={item.title}
-                className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-8"
+                className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-5 sm:p-8"
               >
                 <div className="w-12 h-12 rounded-xl bg-[#161D22] border border-[#262B2F] text-white flex items-center justify-center mb-5">
                   <item.icon className="w-6 h-6" />
@@ -133,7 +133,7 @@ export default function AboutPage() {
                 <div className="w-10 h-10 rounded-lg bg-[#161D22] text-white flex items-center justify-center mx-auto mb-3">
                   <s.icon className="w-5 h-5" />
                 </div>
-                <p className="text-3xl font-extrabold text-[#EFEFF1]">{s.value}</p>
+                <p className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">{s.value}</p>
                 <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#949599]">{s.label}</p>
               </div>
             ))}

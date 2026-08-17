@@ -418,7 +418,7 @@ export default function ExplorePage() {
           >
             <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-[#262B2F] bg-[#171A1D]">
               <h3 className="text-sm font-semibold text-[#EFEFF1]">Filters</h3>
-              <button onClick={() => setShowFiltersMobile(false)} className="p-1.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30">
+              <button onClick={() => setShowFiltersMobile(false)} className="p-3 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -449,7 +449,7 @@ function FilterChip({ icon: Icon, label, onRemove }) {
     >
       {Icon && <Icon className="w-3 h-3" />}
       {label}
-      <button onClick={onRemove} className="hover:text-[#EFEFF1] transition-colors">
+      <button onClick={onRemove} className="p-1 -m-1 hover:text-[#EFEFF1] transition-colors">
         <X className="w-3 h-3" />
       </button>
     </motion.span>

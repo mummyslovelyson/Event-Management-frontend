@@ -137,14 +137,14 @@ export default function AttendeesPage() {
             <button
               onClick={handleExportCSV}
               disabled={!selectedEvent}
-              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 disabled:opacity-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 disabled:opacity-50 transition-colors"
             >
               <Download className="w-4 h-4" /> Export CSV
             </button>
             <button
               onClick={handleExportPDF}
               disabled={!selectedEvent}
-              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors"
             >
               <FileText className="w-4 h-4" /> Export PDF
             </button>
@@ -271,17 +271,17 @@ export default function AttendeesPage() {
         <EmptyState icon={UserX} title="No attendees found" description={search ? "Try adjusting your search." : "No registrations for this event yet."} className="py-16" />
       ) : (
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden overflow-x-auto">
-          <table className="w-full text-sm min-w-[960px]">
+          <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
                 <th className="px-4 py-3 font-medium">Name</th>
                 <th className="px-4 py-3 font-medium">Email</th>
-                <th className="px-4 py-3 font-medium">Phone</th>
-                <th className="px-4 py-3 font-medium">Ticket Type</th>
-                <th className="px-4 py-3 font-medium">Order ID</th>
+                <th className="hidden md:table-cell px-4 py-3 font-medium">Phone</th>
+                <th className="hidden md:table-cell px-4 py-3 font-medium">Ticket Type</th>
+                <th className="hidden md:table-cell px-4 py-3 font-medium">Order ID</th>
                 <th className="px-4 py-3 font-medium">Check-in</th>
-                <th className="px-4 py-3 font-medium">Check-in Time</th>
-                <th className="px-4 py-3 font-medium">Seat</th>
+                <th className="hidden md:table-cell px-4 py-3 font-medium">Check-in Time</th>
+                <th className="hidden md:table-cell px-4 py-3 font-medium">Seat</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#262B2F]/70">
@@ -303,18 +303,18 @@ export default function AttendeesPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-[#949599]">{a.email || '—'}</td>
-                    <td className="px-4 py-3 text-[#949599]">{a.phone || a.phoneNumber || '—'}</td>
-                    <td className="px-4 py-3 text-[#949599]">{a.ticketType || a.ticket?.type || '—'}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-[#949599]">#{a.orderId || a.orderReference || (a.order?.reference || '—')}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.phone || a.phoneNumber || '—'}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.ticketType || a.ticket?.type || '—'}</td>
+                    <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#949599]">#{a.orderId || a.orderReference || (a.order?.reference || '—')}</td>
                     <td className="px-4 py-3">
                       <Badge variant={isCheckedIn ? 'success' : 'pending'} size="sm">
                         {isCheckedIn ? 'Checked In' : 'Not Arrived'}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-xs text-[#949599]">
+                    <td className="hidden md:table-cell px-4 py-3 text-xs text-[#949599]">
                       {isCheckedIn ? (a.checkInTime ? new Date(a.checkInTime).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—') : '—'}
                     </td>
-                    <td className="px-4 py-3 text-[#949599]">{a.seatNumber || a.seat || '—'}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.seatNumber || a.seat || '—'}</td>
                   </tr>
                 );
               })}

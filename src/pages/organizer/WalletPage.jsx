@@ -235,14 +235,14 @@ export default function WalletPage() {
               </div>
             ) : (
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden overflow-x-auto">
-                <table className="w-full text-sm min-w-[720px]">
+                <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
                       <th className="px-4 py-3 font-medium">Type</th>
-                      <th className="px-4 py-3 font-medium">Description</th>
+                      <th className="hidden md:table-cell px-4 py-3 font-medium">Description</th>
                       <th className="px-4 py-3 font-medium text-right">Amount</th>
                       <th className="px-4 py-3 font-medium">Status</th>
-                      <th className="px-4 py-3 font-medium">Date</th>
+                      <th className="hidden md:table-cell px-4 py-3 font-medium">Date</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#262B2F]/70">
@@ -259,7 +259,7 @@ export default function WalletPage() {
                               <span className="text-[#EFEFF1] font-medium capitalize">{t.type || 'Transaction'}</span>
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-[#949599] max-w-[200px] truncate">{t.description || t.eventTitle || '—'}</td>
+                          <td className="hidden md:table-cell px-4 py-3 text-[#949599] max-w-[200px] truncate">{t.description || t.eventTitle || '—'}</td>
                           <td className={`px-4 py-3 text-right font-semibold tabular-nums ${meta.color}`}>
                             {meta.sign}{format(t.amount)}
                           </td>
@@ -268,7 +268,7 @@ export default function WalletPage() {
                               {t.status || 'completed'}
                             </Badge>
                           </td>
-                          <td className="px-4 py-3 text-xs text-[#949599] whitespace-nowrap">
+                          <td className="hidden md:table-cell px-4 py-3 text-xs text-[#949599] whitespace-nowrap">
                             {t.date || t.createdAt ? new Date(t.date || t.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
                           </td>
                         </tr>
@@ -291,21 +291,21 @@ export default function WalletPage() {
               </div>
             ) : (
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden overflow-x-auto">
-                <table className="w-full text-sm min-w-[760px]">
+                <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
                       <th className="px-4 py-3 font-medium">Amount</th>
-                      <th className="px-4 py-3 font-medium">Bank</th>
+                      <th className="hidden md:table-cell px-4 py-3 font-medium">Bank</th>
                       <th className="px-4 py-3 font-medium">Status</th>
                       <th className="px-4 py-3 font-medium">Date</th>
-                      <th className="px-4 py-3 font-medium">Reference</th>
+                      <th className="hidden md:table-cell px-4 py-3 font-medium">Reference</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#262B2F]/70">
                     {withdrawals.map((w, i) => (
                       <tr key={w.id || i} className="hover:bg-[#1D2124] transition-colors">
                         <td className="px-4 py-3 font-semibold text-[#EFEFF1] tabular-nums">{format(w.amount)}</td>
-                        <td className="px-4 py-3">
+                        <td className="hidden md:table-cell px-4 py-3">
                           <span className="inline-flex items-center gap-2 text-[#949599]">
                             <Building2 className="w-4 h-4 text-[#494F55]" />
                             {w.bankName || '—'}
@@ -317,7 +317,7 @@ export default function WalletPage() {
                         <td className="px-4 py-3 text-xs text-[#949599] whitespace-nowrap">
                           {w.requestedAt || w.createdAt ? new Date(w.requestedAt || w.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
                         </td>
-                        <td className="px-4 py-3 font-mono text-xs text-[#949599]">{w.reference || w.id?.slice(-8).toUpperCase() || '—'}</td>
+                        <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#949599]">{w.reference || w.id?.slice(-8).toUpperCase() || '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -336,8 +336,8 @@ export default function WalletPage() {
         size="md"
         footer={
           <>
-            <button onClick={() => setWithdrawModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={submitWithdraw} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">
+            <button onClick={() => setWithdrawModal(false)} className="px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={submitWithdraw} disabled={submitting} className="px-4 py-2.5 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">
               {submitting ? 'Processing...' : 'Request Withdrawal'}
             </button>
           </>

@@ -50,7 +50,7 @@ export default function ContactPage() {
   return (
     <>
       {/* Hero */}
-      <section className="pt-28 pb-14 sm:pt-36 sm:pb-18 border-b border-[#262B2F] mb-8">
+      <section className="pt-28 pb-14 sm:pt-36 sm:pb-20 border-b border-[#262B2F] mb-8">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161D22] border border-[#494F55]/60 text-white text-xs font-semibold uppercase tracking-widest mb-6">
@@ -188,7 +188,7 @@ export default function ContactPage() {
                     <a
                       key={s.label}
                       href={s.href}
-                      className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#262B2F] text-sm text-[#949599] hover:text-white hover:border-white/40 transition"
+                      className="flex items-center gap-2 px-3 py-3 rounded-lg bg-[#1C232B] border border-[#262B2F] text-sm text-[#949599] hover:text-white hover:border-white/40 transition"
                     >
                       <s.icon className="w-4 h-4" /> {s.label}
                     </a>

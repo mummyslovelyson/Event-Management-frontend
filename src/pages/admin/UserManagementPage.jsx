@@ -299,7 +299,7 @@ export default function UserManagementPage() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+            className={`px-4 py-3 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
               tab === t.key
                 ? 'bg-white text-[#1C232B]'
                 : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
@@ -356,7 +356,7 @@ export default function UserManagementPage() {
               <button
                 onClick={bulkSuspend}
                 disabled={actionLoading === 'bulk'}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30 text-xs font-semibold hover:bg-amber-500/25 transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30 text-xs font-semibold hover:bg-amber-500/25 transition disabled:opacity-50"
               >
                 <Ban className="w-3.5 h-3.5" /> Bulk Suspend
               </button>
@@ -365,7 +365,7 @@ export default function UserManagementPage() {
               <button
                 onClick={bulkUnsuspend}
                 disabled={actionLoading === 'bulk'}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
               >
                 <UserCheck className="w-3.5 h-3.5" /> Bulk Unsuspend
               </button>
@@ -583,7 +583,7 @@ export default function UserManagementPage() {
                   </div>
                   <button
                     onClick={() => setRevealHash((v) => !v)}
-                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#949599] hover:text-[#EFEFF1] hover:border-white/40 transition"
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#949599] hover:text-[#EFEFF1] hover:border-white/40 transition"
                   >
                     {revealHash ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                     {revealHash ? 'Hide Hash' : 'View Hash'}
@@ -595,7 +595,7 @@ export default function UserManagementPage() {
                       <code className="flex-1 min-w-0 break-all rounded-lg bg-[#171A1D] border border-[#494F55]/30 px-3 py-2 text-[11px] text-[#9AA1A6] font-mono">{profile.passwordHash}</code>
                       <button
                         onClick={() => copyToClipboard(profile.passwordHash)}
-                        className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-white/10 transition"
+                        className="p-2.5 rounded-lg text-[#949599] hover:text-white hover:bg-white/10 transition"
                         title="Copy hash"
                       >
                         <Copy className="w-4 h-4" />
@@ -606,7 +606,7 @@ export default function UserManagementPage() {
                 )}
                 <button
                   onClick={() => openReset(profile)}
-                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white border border-white/20 text-xs font-semibold hover:bg-white/10 transition"
+                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-white/10 text-white border border-white/20 text-xs font-semibold hover:bg-white/10 transition"
                 >
                   <KeyRound className="w-3.5 h-3.5" /> Reset Password
                 </button>
@@ -632,11 +632,11 @@ export default function UserManagementPage() {
         title={`Edit User — ${editTarget?.name || ''}`}
         footer={
           <>
-            <button onClick={() => setEditTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
+            <button onClick={() => setEditTarget(null)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleSubmit(handleEdit)}
               disabled={actionLoading === editTarget?.id}
-              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
+              className="px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
             >
               {actionLoading === editTarget?.id ? 'Saving...' : 'Save Changes'}
             </button>
@@ -694,11 +694,11 @@ export default function UserManagementPage() {
         title="Reject Organizer Application"
         footer={
           <>
-            <button onClick={() => setRejectTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
+            <button onClick={() => setRejectTarget(null)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleReject}
               disabled={actionLoading === rejectTarget?.id}
-              className="px-4 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition disabled:opacity-50"
+              className="px-4 py-3 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition disabled:opacity-50"
             >
               Reject Application
             </button>
@@ -723,11 +723,11 @@ export default function UserManagementPage() {
         title={isSuspendedUser(suspendTarget) ? 'Unsuspend User' : 'Suspend User'}
         footer={
           <>
-            <button onClick={() => setSuspendTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
+            <button onClick={() => setSuspendTarget(null)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleSuspend}
               disabled={actionLoading === suspendTarget?.id}
-              className="px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 transition disabled:opacity-50"
+              className="px-4 py-3 rounded-lg bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 transition disabled:opacity-50"
             >
               {isSuspendedUser(suspendTarget) ? 'Unsuspend' : 'Suspend'}
             </button>
@@ -761,11 +761,11 @@ export default function UserManagementPage() {
         title="Delete User"
         footer={
           <>
-            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
+            <button onClick={() => setDeleteTarget(null)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
             <button
               onClick={handleDelete}
               disabled={actionLoading === deleteTarget?.id}
-              className="px-4 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition disabled:opacity-50"
+              className="px-4 py-3 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition disabled:opacity-50"
             >
               Delete
             </button>
@@ -792,7 +792,7 @@ export default function UserManagementPage() {
           resetResult ? (
             <button
               onClick={() => { setResetTarget(null); setResetResult(null); }}
-              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition"
+              className="px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition"
             >
               Done
             </button>
@@ -800,14 +800,14 @@ export default function UserManagementPage() {
             <>
               <button
                 onClick={() => { setResetTarget(null); setResetResult(null); }}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
+                className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleResetPassword}
                 disabled={actionLoading === `reset-${resetTarget?.id}`}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#E0C25A] transition disabled:opacity-50"
               >
                 {actionLoading === `reset-${resetTarget?.id}` ? (
                   <LoadingSpinner size="sm" />
@@ -861,7 +861,7 @@ export default function UserManagementPage() {
                 />
                 <button
                   onClick={fillRandomPassword}
-                  className="px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#949599] hover:text-[#EFEFF1] hover:border-white/40 transition whitespace-nowrap"
+                  className="px-3 py-3 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs text-[#949599] hover:text-[#EFEFF1] hover:border-white/40 transition whitespace-nowrap"
                 >
                   Random
                 </button>

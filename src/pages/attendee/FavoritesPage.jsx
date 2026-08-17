@@ -124,7 +124,7 @@ export default function FavoritesPage() {
               <EventCard event={{ ...event, isFavorite: true }} />
               <button
                 onClick={() => handleRemove(event.id)}
-                className="absolute top-2 left-2 z-10 w-9 h-9 rounded-lg bg-red-500/90 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500"
+                className="absolute top-2 left-2 z-10 w-11 h-11 rounded-lg bg-red-500/90 backdrop-blur-sm text-white flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-red-500"
                 aria-label="Remove from favorites"
                 title="Remove from favorites"
               >
