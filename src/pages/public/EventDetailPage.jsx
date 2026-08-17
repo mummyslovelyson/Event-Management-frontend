@@ -556,7 +556,7 @@ export default function EventDetailPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24 lg:pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2">
@@ -602,7 +602,7 @@ export default function EventDetailPage() {
             )}
 
             {/* Tabs */}
-            <div className="flex items-center gap-1 border-b border-[#262B2F] mb-6">
+            <div id="event-tabs-section" className="flex items-center gap-1 border-b border-[#262B2F] mb-6 overflow-x-auto no-scrollbar">
               {TABS.map((tab) => (
                 <button
                   key={tab}
@@ -1219,6 +1219,37 @@ export default function EventDetailPage() {
           </div>
         )}
       </Modal>
+
+      {/* Mobile Sticky Bottom Ticket Bar */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-[#161D22]/95 backdrop-blur-xl border-t border-[#262B2F] px-4 py-3 shadow-2xl flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-[10px] uppercase tracking-wider text-[#949599] font-medium truncate">
+            {tickets.length > 0 && Math.min(...tickets.map((t) => Number(t.price) || 0)) === 0
+              ? 'Admission'
+              : tickets.length > 0
+              ? 'Tickets from'
+              : 'Tickets'}
+          </p>
+          <p className="text-base sm:text-lg font-bold text-white truncate">
+            {tickets.length > 0 && Math.min(...tickets.map((t) => Number(t.price) || 0)) === 0
+              ? 'Free'
+              : tickets.length > 0
+              ? format(Math.min(...tickets.map((t) => Number(t.price) || 0)))
+              : 'Select Ticket'}
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            setActiveTab('Tickets');
+            const el = document.getElementById('event-tabs-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="px-5 py-2.5 rounded-xl bg-white text-[#1C232B] text-xs sm:text-sm font-bold shadow-lg hover:bg-[#CBD5E1] transition active:scale-95 flex items-center gap-1.5 shrink-0"
+        >
+          <Ticket className="w-4 h-4" />
+          Get Tickets
+        </button>
+      </div>
     </>
   );
 }
