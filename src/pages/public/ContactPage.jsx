@@ -9,8 +9,8 @@ import toast from 'react-hot-toast';
 import api from '@/api/axios';
 
 const contactInfo = [
-  { icon: Mail, label: 'Email Us', value: 'support@tribescliqs.com', href: 'mailto:support@tribescliqs.com' },
-  { icon: Phone, label: 'Call Us', value: '+233 30 000 0000', href: 'tel:+233300000000' },
+  { icon: Mail, label: 'Email Us', value: 'ask@tribesandcliqs.app', href: 'mailto:ask@tribesandcliqs.app' },
+  { icon: Phone, label: 'Call Us', value: '+233 574 555559', href: 'tel:+233 574 555559' },
   { icon: MapPin, label: 'Visit Us', value: 'Accra, Ghana', href: null },
   { icon: Clock, label: 'Hours', value: 'Mon - Fri, 9am - 6pm GMT', href: null },
 ];
