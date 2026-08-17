@@ -116,7 +116,7 @@ export default function PublicLayout() {
             {/* Mobile toggle */}
             <button
               onClick={() => setMobileOpen((v) => !v)}
-              className="md:hidden p-2 rounded-lg text-[#EFEFF1] hover:bg-[#494F55]/30 transition"
+              className="md:hidden p-3 rounded-lg text-[#EFEFF1] hover:bg-[#494F55]/30 transition"
               aria-label="Toggle menu"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -126,7 +126,7 @@ export default function PublicLayout() {
 
         {/* Mobile drawer */}
         {mobileOpen && (
-          <div className="md:hidden bg-[#171A1D]/98 backdrop-blur-xl border-t border-[#262B2F] px-4 pb-5 pt-3">
+          <div className="md:hidden bg-[#171A1D] backdrop-blur-xl border-t border-[#262B2F] px-4 pb-5 pt-3 max-h-[calc(100vh-4rem)] overflow-y-auto">
             <nav className="space-y-1 mb-4">
               {navLinks.map(({ to, label, end }) => (
                 <NavLink
@@ -183,7 +183,7 @@ export default function PublicLayout() {
               </p>
               <div className="flex items-center gap-3 mt-5">
                 {['Twitter', 'Instagram', 'Facebook', 'LinkedIn'].map((s) => (
-                  <a key={s} href="#" className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-[#949599] hover:text-white hover:border-white/40 transition text-[10px] font-bold">
+                  <a key={s} href="#" className="w-10 h-10 rounded-lg bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-[#949599] hover:text-white hover:border-white/40 transition text-xs font-bold">
                     {s[0]}
                   </a>
                 ))}
@@ -201,7 +201,7 @@ export default function PublicLayout() {
                 <ul className="space-y-2.5">
                   {links.map(([label, href]) => (
                     <li key={label}>
-              <Link to={href} className="text-sm text-[#949599] hover:text-white hover:underline underline-offset-4 decoration-white/ transition">
+              <Link to={href} className="text-sm text-[#949599] hover:text-white hover:underline underline-offset-4 decoration-white/ transition py-1.5 inline-block">
                 {label}
               </Link>
                     </li>

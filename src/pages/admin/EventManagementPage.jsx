@@ -268,14 +268,14 @@ export default function EventManagementPage() {
             <button
               onClick={bulkApprove}
               disabled={bulkLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
             >
               <CheckCircle2 className="w-3.5 h-3.5" /> Approve All
             </button>
             <button
               onClick={bulkReject}
               disabled={bulkLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"
             >
               <XCircle className="w-3.5 h-3.5" /> Reject All
             </button>
@@ -295,15 +295,15 @@ export default function EventManagementPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                  <th className="px-4 py-3.5 font-medium w-10">
+                  <th className="hidden md:table-cell px-4 py-3.5 font-medium w-10">
                     <input type="checkbox" checked={selected.size === events.length && events.length > 0} onChange={toggleSelectAll} className="w-4 h-4 rounded border-[#3A4045] bg-[#111417] accent-[#EFEFF1]" />
                   </th>
                   <th className="px-4 py-3.5 font-medium">Event</th>
-                  <th className="px-4 py-3.5 font-medium">Organizer</th>
-                  <th className="px-4 py-3.5 font-medium">Category</th>
-                  <th className="px-4 py-3.5 font-medium">Date</th>
-                  <th className="px-4 py-3.5 font-medium text-center">Tickets</th>
-                  <th className="px-4 py-3.5 font-medium text-right">Revenue</th>
+                  <th className="hidden md:table-cell px-4 py-3.5 font-medium">Organizer</th>
+                  <th className="hidden md:table-cell px-4 py-3.5 font-medium">Category</th>
+                  <th className="hidden md:table-cell px-4 py-3.5 font-medium">Date</th>
+                  <th className="hidden md:table-cell px-4 py-3.5 font-medium text-center">Tickets</th>
+                  <th className="hidden md:table-cell px-4 py-3.5 font-medium text-right">Revenue</th>
                   <th className="px-4 py-3.5 font-medium">Status</th>
                   <th className="px-4 py-3.5 font-medium text-right">Actions</th>
                 </tr>
@@ -311,7 +311,7 @@ export default function EventManagementPage() {
               <tbody className="divide-y divide-[#262B2F]/70">
                 {events.map((ev) => (
                   <tr key={ev.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(ev.id) ? 'bg-white/10' : ''}`}>
-                    <td className="px-4 py-3">
+                    <td className="hidden md:table-cell px-4 py-3">
                       <input type="checkbox" checked={selected.has(ev.id)} onChange={() => toggleSelect(ev.id)} className="w-4 h-4 rounded border-[#3A4045] bg-[#111417] accent-[#EFEFF1]" />
                     </td>
                     <td className="px-4 py-3">
@@ -327,15 +327,15 @@ export default function EventManagementPage() {
                         {ev.is_featured && <Badge variant="gold" size="sm" className="ml-2 shrink-0">Featured</Badge>}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-[#949599] max-w-[140px] truncate">{ev.organizerName || ev.organizer || '—'}</td>
-                    <td className="px-4 py-3"><Badge variant="neutral" size="sm">{ev.category || '—'}</Badge></td>
-                    <td className="px-4 py-3 text-xs text-[#949599]">{fmtDate(ev.startDate || ev.date)}</td>
-                    <td className="px-4 py-3 text-center text-[#949599]">{ev.ticketsSold ?? ev.tickets ?? 0}</td>
-                    <td className="px-4 py-3 text-right font-medium text-[#EFEFF1]">{format(ev.revenue)}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-[#949599] max-w-[140px] truncate">{ev.organizerName || ev.organizer || '—'}</td>
+                    <td className="hidden md:table-cell px-4 py-3"><Badge variant="neutral" size="sm">{ev.category || '—'}</Badge></td>
+                    <td className="hidden md:table-cell px-4 py-3 text-xs text-[#949599]">{fmtDate(ev.startDate || ev.date)}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-center text-[#949599]">{ev.ticketsSold ?? ev.tickets ?? 0}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-right font-medium text-[#EFEFF1]">{format(ev.revenue)}</td>
                     <td className="px-4 py-3"><Badge variant={statusVariant(ev.status)} size="sm" dot>{ev.status || 'pending'}</Badge></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1.5">
-                        <Link to={`/events/${ev.id}`} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View">
+                        <Link to={`/events/${ev.id}`} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View">
                           <Eye className="w-4 h-4" />
                         </Link>
                         <button
@@ -350,7 +350,7 @@ export default function EventManagementPage() {
                           <button
                             onClick={() => handleApprove(ev.id)}
                             disabled={actionLoading === `approve-${ev.id}`}
-                            className="p-1.5 rounded-md text-emerald-400 hover:bg-emerald-500/15 transition disabled:opacity-50"
+                            className="p-2.5 rounded-md text-emerald-400 hover:bg-emerald-500/15 transition disabled:opacity-50"
                             title="Approve"
                           >
                             <CheckCircle2 className="w-4 h-4" />
@@ -359,7 +359,7 @@ export default function EventManagementPage() {
                         {ev.status !== 'rejected' && (
                           <button
                             onClick={() => { setRejectTarget(ev); setRejectReason(''); }}
-                            className="p-1.5 rounded-md text-red-400 hover:bg-red-500/15 transition"
+                            className="p-2.5 rounded-md text-red-400 hover:bg-red-500/15 transition"
                             title="Reject"
                           >
                             <XCircle className="w-4 h-4" />
@@ -369,7 +369,7 @@ export default function EventManagementPage() {
                           <button
                             onClick={() => handleSuspend(ev)}
                             disabled={actionLoading === `suspend-${ev.id}`}
-                            className="p-1.5 rounded-md text-amber-400 hover:bg-amber-500/15 transition disabled:opacity-50"
+                            className="p-2.5 rounded-md text-amber-400 hover:bg-amber-500/15 transition disabled:opacity-50"
                             title="Suspend"
                           >
                             <Ban className="w-4 h-4" />
@@ -379,7 +379,7 @@ export default function EventManagementPage() {
                           <button
                             onClick={() => handleRestore(ev)}
                             disabled={actionLoading === `restore-${ev.id}`}
-                            className="p-1.5 rounded-md text-emerald-400 hover:bg-emerald-500/15 transition disabled:opacity-50"
+                            className="p-2.5 rounded-md text-emerald-400 hover:bg-emerald-500/15 transition disabled:opacity-50"
                             title="Restore"
                           >
                             <RotateCcw className="w-4 h-4" />
@@ -387,7 +387,7 @@ export default function EventManagementPage() {
                         )}
                         <button
                           onClick={() => setDeleteTarget(ev)}
-                          className="p-1.5 rounded-md text-red-400 hover:bg-red-500/15 transition"
+                          className="p-2.5 rounded-md text-red-400 hover:bg-red-500/15 transition"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />

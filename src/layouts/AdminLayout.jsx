@@ -115,7 +115,7 @@ export default function AdminLayout() {
             <div className="flex items-center gap-2">
               <label className="hidden md:flex items-center gap-2 px-3 h-9 rounded-lg bg-[#171A1D] border border-[#262B2F] focus-within:border-[#3A4045] transition">
                 <Search className="w-4 h-4 text-[#6B7278]" />
-                <input type="text" placeholder="Search…" className="w-48 bg-transparent text-sm text-[#EFEFF1] placeholder-[#6B7278] focus:outline-none" />
+                <input type="text" placeholder="Search…" className="w-full max-w-48 bg-transparent text-sm text-[#EFEFF1] placeholder-[#6B7278] focus:outline-none" />
               </label>
 
               <CurrencyToggle />
@@ -133,7 +133,7 @@ export default function AdminLayout() {
                 </button>
                 <AnimatePresence>
                   {profileOpen && (
-                    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }} transition={{ duration: 0.15 }} className="absolute right-0 mt-2 w-60 rounded-xl bg-[#171A1D] border border-[#262B2F] shadow-xl shadow-black/40 py-1.5 overflow-hidden">
+                    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }} transition={{ duration: 0.15 }} className="absolute right-0 mt-2 w-60 rounded-xl max-w-[calc(100vw-2rem)] bg-[#171A1D] border border-[#262B2F] shadow-xl shadow-black/40 py-1.5 overflow-hidden">
                       <div className="px-4 py-3 border-b border-[#262B2F]">
                         <p className="text-sm font-medium text-[#EFEFF1] truncate">{user?.name || 'Admin'}</p>
                         <p className="text-xs text-[#949599] truncate">{user?.email}</p>
@@ -189,7 +189,7 @@ function SidebarContent({ user, initials, onNavigate }) {
                   end={end}
                   onClick={onNavigate}
                   className={({ isActive }) =>
-                    `group flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] font-medium transition-all ${
+                    `group flex items-center gap-2.5 px-3 py-3 rounded-md text-sm font-medium transition-all ${
                       isActive
                         ? 'text-[#EFEFF1] bg-[#262B2F]'
                         : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#1D2124]'

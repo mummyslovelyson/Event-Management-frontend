@@ -135,12 +135,12 @@ export default function PaymentManagementPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap">
         {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => { setTab(t.key); setPage(1); }}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
               tab === t.key ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
             }`}
           >
@@ -162,25 +162,25 @@ export default function PaymentManagementPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                      <th className="px-4 py-3.5 font-medium">Order ID</th>
+                      <th className="hidden md:table-cell px-4 py-3.5 font-medium">Order ID</th>
                       <th className="px-4 py-3.5 font-medium">User</th>
                       <th className="px-4 py-3.5 font-medium">Event</th>
                       <th className="px-4 py-3.5 font-medium text-right">Amount</th>
                       <th className="px-4 py-3.5 font-medium">Method</th>
                       <th className="px-4 py-3.5 font-medium">Status</th>
-                      <th className="px-4 py-3.5 font-medium">Date</th>
+                      <th className="hidden md:table-cell px-4 py-3.5 font-medium">Date</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#262B2F]/70">
                     {data.transactions.map((tx) => (
                       <tr key={tx.id} className="hover:bg-[#1D2124] transition-colors">
-                        <td className="px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{tx.reference || tx.id?.slice(-6)}</td>
+                        <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{tx.reference || tx.id?.slice(-6)}</td>
                         <td className="px-5 py-3 text-[#EFEFF1]">{tx.user?.name || tx.userName || '—'}</td>
                         <td className="px-5 py-3 text-[#949599] max-w-[160px] truncate">{tx.event?.title || tx.eventTitle || '—'}</td>
                         <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(tx.amount)}</td>
                         <td className="px-5 py-3 text-[#949599]">{tx.method || tx.paymentMethod || '—'}</td>
                         <td className="px-5 py-3"><Badge variant={txStatusVariant(tx.status)} size="sm" dot>{tx.status}</Badge></td>
-                        <td className="px-5 py-3 text-xs text-[#949599]">{fmtDate(tx.createdAt)}</td>
+                        <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599]">{fmtDate(tx.createdAt)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -202,8 +202,8 @@ export default function PaymentManagementPage() {
                   <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
                     <th className="px-4 py-3.5 font-medium">Organizer</th>
                     <th className="px-4 py-3.5 font-medium text-right">Amount</th>
-                    <th className="px-4 py-3.5 font-medium">Bank</th>
-                    <th className="px-4 py-3.5 font-medium">Date</th>
+                    <th className="hidden md:table-cell px-4 py-3.5 font-medium">Bank</th>
+                    <th className="hidden md:table-cell px-4 py-3.5 font-medium">Date</th>
                     <th className="px-4 py-3.5 font-medium">Status</th>
                     <th className="px-4 py-3.5 font-medium text-right">Actions</th>
                   </tr>
@@ -213,8 +213,8 @@ export default function PaymentManagementPage() {
                     <tr key={wd.id} className="hover:bg-[#1D2124] transition-colors">
                       <td className="px-5 py-3 text-[#EFEFF1]">{wd.organizerName || wd.organizer || '—'}</td>
                       <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(wd.amount)}</td>
-                      <td className="px-5 py-3 text-[#949599]"><span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" />{wd.bank || wd.bankName || '—'}</span></td>
-                      <td className="px-5 py-3 text-xs text-[#949599]">{fmtDate(wd.createdAt || wd.requestedAt)}</td>
+                      <td className="hidden md:table-cell px-5 py-3 text-[#949599]"><span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" />{wd.bank || wd.bankName || '—'}</span></td>
+                      <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599]">{fmtDate(wd.createdAt || wd.requestedAt)}</td>
                       <td className="px-5 py-3"><Badge variant={txStatusVariant(wd.status)} size="sm" dot>{wd.status || 'pending'}</Badge></td>
                       <td className="px-5 py-3">
                         <div className="flex items-center justify-end gap-2">
@@ -223,14 +223,14 @@ export default function PaymentManagementPage() {
                               <button
                                 onClick={() => handleWithdrawal(wd.id, 'approve')}
                                 disabled={actionLoading === `approve-${wd.id}`}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
+                                className="inline-flex items-center gap-1 px-3 py-2.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
                               >
                                 <CheckCircle2 className="w-3.5 h-3.5" /> Approve
                               </button>
                               <button
                                 onClick={() => handleWithdrawal(wd.id, 'reject')}
                                 disabled={actionLoading === `reject-${wd.id}`}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"
+                                className="inline-flex items-center gap-1 px-3 py-2.5 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"
                               >
                                 <XCircle className="w-3.5 h-3.5" /> Reject
                               </button>
@@ -252,7 +252,7 @@ export default function PaymentManagementPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                    <th className="px-4 py-3.5 font-medium">Order</th>
+                    <th className="hidden md:table-cell px-4 py-3.5 font-medium">Order</th>
                     <th className="px-4 py-3.5 font-medium">User</th>
                     <th className="px-4 py-3.5 font-medium">Event</th>
                     <th className="px-4 py-3.5 font-medium text-right">Amount</th>
@@ -264,7 +264,7 @@ export default function PaymentManagementPage() {
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {data.refunds.map((rf) => (
                     <tr key={rf.id} className="hover:bg-[#1D2124] transition-colors">
-                      <td className="px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{rf.reference || rf.orderId || rf.id?.slice(-6)}</td>
+                      <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{rf.reference || rf.orderId || rf.id?.slice(-6)}</td>
                       <td className="px-5 py-3 text-[#EFEFF1]">{rf.user?.name || rf.userName || '—'}</td>
                       <td className="px-5 py-3 text-[#949599] max-w-[140px] truncate">{rf.event?.title || rf.eventTitle || '—'}</td>
                       <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(rf.amount)}</td>
@@ -274,7 +274,7 @@ export default function PaymentManagementPage() {
                         {rf.status === 'pending' && (
                           <button
                             onClick={() => { setRefundTarget(rf); setRefundReason(''); }}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-white/10 text-white border border-white/20 text-xs font-semibold hover:bg-white/10 transition"
+                            className="inline-flex items-center gap-1 px-3 py-2.5 rounded-md bg-white/10 text-white border border-white/20 text-xs font-semibold hover:bg-white/10 transition"
                           >
                             <RotateCcw className="w-3.5 h-3.5" /> Process
                           </button>

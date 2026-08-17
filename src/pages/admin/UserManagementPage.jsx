@@ -326,7 +326,7 @@ export default function UserManagementPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition"
+            className="px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -336,7 +336,7 @@ export default function UserManagementPage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition"
+            className="px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition"
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -391,7 +391,7 @@ export default function UserManagementPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                  <th className="px-4 py-3 font-medium w-10">
+                  <th className="hidden md:table-cell px-4 py-3 font-medium w-10">
                     <input
                       type="checkbox"
                       checked={selected.size === users.length && users.length > 0}
@@ -400,11 +400,11 @@ export default function UserManagementPage() {
                     />
                   </th>
                   <th className="px-4 py-3 font-medium">User</th>
-                  <th className="px-4 py-3 font-medium">Role</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium">Role</th>
                   <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium text-center">Events</th>
-                  <th className="px-4 py-3 font-medium text-center">Tickets</th>
-                  <th className="px-4 py-3 font-medium">Joined</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium text-center">Events</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium text-center">Tickets</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium">Joined</th>
                   <th className="px-4 py-3 font-medium text-right">Actions</th>
                 </tr>
               </thead>
@@ -415,7 +415,7 @@ export default function UserManagementPage() {
                   const isPendingOrg = u.role === 'organizer' && u.is_approved !== 1 && u.status !== 'rejected';
                   return (
                     <tr key={u.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(u.id) ? 'bg-white/10' : ''}`}>
-                      <td className="px-4 py-3">
+                      <td className="hidden md:table-cell px-4 py-3">
                         <input
                           type="checkbox"
                           checked={selected.has(u.id)}
@@ -437,25 +437,25 @@ export default function UserManagementPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3"><Badge variant={roleVariant(u.role)} size="sm">{u.role}</Badge></td>
+                      <td className="hidden md:table-cell px-4 py-3"><Badge variant={roleVariant(u.role)} size="sm">{u.role}</Badge></td>
                       <td className="px-4 py-3">
                         <Badge variant={userStatus(u).variant} size="sm" dot>
                           {userStatus(u).label}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-center text-[#949599]">{u.eventsCount ?? u.events ?? 0}</td>
-                      <td className="px-4 py-3 text-center text-[#949599]">{u.ticketsCount ?? u.tickets ?? 0}</td>
-                      <td className="px-4 py-3 text-xs text-[#949599]">{fmtDate(u.createdAt)}</td>
+                      <td className="hidden md:table-cell px-4 py-3 text-center text-[#949599]">{u.eventsCount ?? u.events ?? 0}</td>
+                      <td className="hidden md:table-cell px-4 py-3 text-center text-[#949599]">{u.ticketsCount ?? u.tickets ?? 0}</td>
+                      <td className="hidden md:table-cell px-4 py-3 text-xs text-[#949599]">{fmtDate(u.createdAt)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1.5">
-                          <button onClick={() => openProfile(u.id)} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View Profile">
+                          <button onClick={() => openProfile(u.id)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View Profile">
                             <Eye className="w-4 h-4" />
                           </button>
                           {!isAdmin && (
                             <button
                               onClick={() => setEditTarget(u)}
                               disabled={actionLoading === u.id}
-                              className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition disabled:opacity-50"
+                              className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition disabled:opacity-50"
                               title="Edit User"
                             >
                               <Pencil className="w-4 h-4" />
@@ -464,7 +464,7 @@ export default function UserManagementPage() {
                           {!isAdmin && (
                             <button
                               onClick={() => openReset(u)}
-                              className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-white/10 transition"
+                              className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-white/10 transition"
                               title="Reset Password"
                             >
                               <KeyRound className="w-4 h-4" />
@@ -475,7 +475,7 @@ export default function UserManagementPage() {
                               <button
                                 onClick={() => handleVerify(u)}
                                 disabled={actionLoading === `verify-${u.id}`}
-                                className="p-1.5 rounded-md text-white hover:bg-white/10 transition disabled:opacity-50"
+                                className="p-2.5 rounded-md text-white hover:bg-white/10 transition disabled:opacity-50"
                                 title="Approve Organizer"
                               >
                                 <CheckCircle2 className="w-4 h-4" />
@@ -483,7 +483,7 @@ export default function UserManagementPage() {
                               <button
                                 onClick={() => setRejectTarget(u)}
                                 disabled={actionLoading === u.id}
-                                className="p-1.5 rounded-md text-red-400 hover:bg-red-500/15 transition disabled:opacity-50"
+                                className="p-2.5 rounded-md text-red-400 hover:bg-red-500/15 transition disabled:opacity-50"
                                 title="Reject Organizer"
                               >
                                 <XCircle className="w-4 h-4" />
@@ -493,7 +493,7 @@ export default function UserManagementPage() {
                           {!isAdmin && (
                             <button
                               onClick={() => setSuspendTarget(u)}
-                              className="p-1.5 rounded-md text-amber-400 hover:bg-amber-500/15 transition"
+                              className="p-2.5 rounded-md text-amber-400 hover:bg-amber-500/15 transition"
                               title={isSuspendedUser(u) ? 'Unsuspend' : 'Suspend'}
                             >
                               <Ban className="w-4 h-4" />
@@ -502,7 +502,7 @@ export default function UserManagementPage() {
                           {!isAdmin && (
                             <button
                               onClick={() => setDeleteTarget(u)}
-                              className="p-1.5 rounded-md text-red-400 hover:bg-red-500/15 transition"
+                              className="p-2.5 rounded-md text-red-400 hover:bg-red-500/15 transition"
                               title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
