@@ -9,50 +9,22 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
 
-const navGroups = [
-  {
-    title: 'Overview',
-    items: [{ to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true }],
-  },
-  {
-    title: 'People',
-    items: [
-      { to: '/admin/users', label: 'User Management', icon: Users },
-      { to: '/admin/organizer-approvals', label: 'Organizer Approvals', icon: UserCheck },
-    ],
-  },
-  {
-    title: 'Events',
-    items: [
-      { to: '/admin/events', label: 'Event Management', icon: CalendarDays },
-      { to: '/admin/categories', label: 'Categories', icon: Layers },
-    ],
-  },
-  {
-    title: 'Money',
-    items: [
-      { to: '/admin/payments', label: 'Payments', icon: CreditCard },
-      { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
-    ],
-  },
-  {
-    title: 'Content',
-    items: [
-      { to: '/admin/content', label: 'Content', icon: FileText },
-      { to: '/admin/notifications', label: 'Notifications', icon: Bell },
-      { to: '/admin/support', label: 'Support', icon: LifeBuoy },
-    ],
-  },
-  {
-    title: 'System',
-    items: [
-      { to: '/admin/settings', label: 'Settings', icon: Settings },
-      { to: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText },
-    ],
-  },
+const nav = [
+  { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/admin/users', label: 'User Management', icon: Users },
+  { to: '/admin/organizer-approvals', label: 'Organizer Approvals', icon: UserCheck },
+  { to: '/admin/events', label: 'Event Management', icon: CalendarDays },
+  { to: '/admin/categories', label: 'Categories', icon: Layers },
+  { to: '/admin/payments', label: 'Payments', icon: CreditCard },
+  { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
+  { to: '/admin/content', label: 'Content', icon: FileText },
+  { to: '/admin/notifications', label: 'Notifications', icon: Bell },
+  { to: '/admin/support', label: 'Support', icon: LifeBuoy },
+  { to: '/admin/settings', label: 'Settings', icon: Settings },
+  { to: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText },
 ];
 
-const flatNav = navGroups.flatMap((g) => g.items);
+const flatNav = nav;
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
@@ -177,35 +149,28 @@ function SidebarContent({ user, initials, onNavigate }) {
         {onNavigate && <button onClick={onNavigate} className="lg:hidden p-2.5 text-[#949599]"><X className="w-5 h-5" /></button>}
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
-        {navGroups.map((group) => (
-          <div key={group.title}>
-            <p className="px-2.5 mb-1.5 text-[11px] font-medium text-[#5A6166]">{group.title}</p>
-            <div className="space-y-0.5">
-              {group.items.map(({ to, label, icon: Icon, end }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  end={end}
-                  onClick={onNavigate}
-                  className={({ isActive }) =>
-                    `group flex items-center gap-2.5 px-3 py-3 rounded-md text-sm font-medium transition-all ${
-                      isActive
-                        ? 'text-[#EFEFF1] bg-[#262B2F]'
-                        : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#1D2124]'
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <Icon className={`w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-[1.5px] ${isActive ? 'text-white' : 'text-[#6B7278] group-hover:text-[#949599]'}`} />
-                      {label}
-                    </>
-                  )}
-                </NavLink>
-              ))}
-            </div>
-          </div>
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+        {nav.map(({ to, label, icon: Icon, end }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            onClick={onNavigate}
+            className={({ isActive }) =>
+              `group flex items-center gap-2.5 px-3 py-3 rounded-md text-sm font-medium transition-all ${
+                isActive
+                  ? 'text-[#EFEFF1] bg-[#262B2F]'
+                  : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#1D2124]'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Icon className={`w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-[1.5px] ${isActive ? 'text-white' : 'text-[#6B7278] group-hover:text-[#949599]'}`} />
+                {label}
+              </>
+            )}
+          </NavLink>
         ))}
       </nav>
 
