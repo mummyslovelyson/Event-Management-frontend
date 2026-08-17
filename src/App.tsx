@@ -1,7 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 
 import PublicLayout from '@/layouts/PublicLayout';
@@ -75,8 +75,11 @@ import SystemSettingsPage from '@/pages/admin/SystemSettingsPage';
 import AuditLogsPage from '@/pages/admin/AuditLogsPage';
 
 function MaintenanceWrapper() {
-  const [maintenance, setMaintenance] = useState(null);
-  const [message, setMessage] = useState('');
+  const [maintenance, setMaintenance] = useState<boolean | null>(null);
+  const [message, setMessage] = useState<string>('');
+  const auth = useAuth() as { user?: { role?: string } | null } | null;
+  const user = auth?.user;
+  const location = useLocation();
 
   useEffect(() => {
     const check = async () => {
@@ -90,12 +93,20 @@ function MaintenanceWrapper() {
       }
     };
     check();
-    const interval = setInterval(check, 30000);
+    const interval = setInterval(check, 15000);
     return () => clearInterval(interval);
   }, []);
 
   if (maintenance === null) return null;
-  if (maintenance) return <MaintenancePage message={message} />;
+
+  // If maintenance is active, allow admins and admin login portal through
+  const isAdmin = user?.role === 'admin';
+  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname === '/admin-login';
+
+  if (maintenance && !isAdmin && !isAdminRoute) {
+    return <MaintenancePage message={message} />;
+  }
+
   return <AppRoutes />;
 }
 
@@ -127,7 +138,7 @@ function AppRoutes() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/admin-login" element={<AdminLoginPage />} />
-          <Route path="/maintenance" element={<MaintenancePage />} />
+          <Route path="/maintenance" element={<MaintenancePage message="" />} />
 
           {/* ── Attendee dashboard ── */}
           <Route

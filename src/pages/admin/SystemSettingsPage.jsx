@@ -30,6 +30,7 @@ const DB_KEYS = {
     supportEmail: 'support_email',
     logoUrl: 'logo_url',
     maintenanceMode: 'maintenance_mode',
+    maintenanceMessage: 'maintenance_message',
   },
   payment: {
     paystackSecretKey: 'paystack_secret_key',
@@ -190,7 +191,56 @@ export default function SystemSettingsPage() {
                       <div><label className={labelCls}>Support Email</label><input className={inputCls} value={settings.general?.supportEmail || settings.supportEmail || ''} onChange={(e) => update('supportEmail', e.target.value)} placeholder="support@tribescliqs.com" /></div>
                     </div>
                     <div><label className={labelCls}>Logo URL</label><input className={inputCls} value={settings.general?.logoUrl || settings.logoUrl || ''} onChange={(e) => update('logoUrl', e.target.value)} placeholder="https://..." /></div>
-                    <ToggleRow label="Maintenance Mode" desc="Temporarily disable access to the platform" value={settings.general?.maintenanceMode ?? settings.maintenanceMode ?? false} onChange={(v) => update('maintenanceMode', v)} />
+                    {/* Maintenance Mode Card */}
+                    <div className="rounded-xl bg-[#14171A] border border-[#262B2F] p-5 space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-semibold text-[#EFEFF1]">Maintenance Mode</h4>
+                            {settings.general?.maintenanceMode ? (
+                              <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
+                                Active • Site Blocked
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                                Live • Public Access Normal
+                              </span>
+                            )}
+                          </div>
+                          <p className="mt-1 text-xs text-[#949599]">
+                            When active, public visitors see a maintenance screen. Admins can still sign in and access the dashboard.
+                          </p>
+                        </div>
+                        <div className="shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => update('maintenanceMode', !settings.general?.maintenanceMode)}
+                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                              settings.general?.maintenanceMode ? 'bg-amber-500' : 'bg-[#262B2F]'
+                            }`}
+                          >
+                            <span
+                              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                settings.general?.maintenanceMode ? 'translate-x-5' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
+                        </div>
+                      </div>
+
+                      {settings.general?.maintenanceMode && (
+                        <div className="pt-3 border-t border-[#262B2F] space-y-2">
+                          <label className={labelCls}>Custom Maintenance Message (Shown to Visitors)</label>
+                          <textarea
+                            rows={2}
+                            className={inputCls}
+                            value={settings.general?.maintenanceMessage || ''}
+                            onChange={(e) => update('maintenanceMessage', e.target.value)}
+                            placeholder="We are currently performing scheduled maintenance to upgrade system performance. We'll be back shortly!"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
