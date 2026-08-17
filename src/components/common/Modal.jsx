@@ -50,7 +50,7 @@ export default function Modal({ open, onClose, title, children, size = 'md', foo
                 {!hideClose && (
                   <button
                     onClick={onClose}
-                    className="p-1.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition"
+                    className="p-2.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition"
                     aria-label="Close"
                   >
                     <X className="w-5 h-5" />

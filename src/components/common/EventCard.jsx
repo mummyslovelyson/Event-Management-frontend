@@ -122,7 +122,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
               <span className="text-xs text-[#494F55]">From</span>
               <span className="text-lg font-bold text-white">{priceLabel}</span>
             </div>
-            <span className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-semibold group-hover:bg-white group-hover:text-[#1C232B] transition">
+            <span className="px-3 py-2.5 rounded-lg bg-white/10 text-white text-xs font-semibold group-hover:bg-white group-hover:text-[#1C232B] transition">
               View Details
             </span>
           </div>
