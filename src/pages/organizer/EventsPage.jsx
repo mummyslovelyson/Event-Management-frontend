@@ -112,7 +112,7 @@ export default function EventsPage() {
         actions={
           <Link
             to="/organizer/events/create"
-            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0"
+            className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" /> Create Event
           </Link>
@@ -223,12 +223,12 @@ export default function EventsPage() {
                     <td className="px-5 py-3"><Badge variant={statusVariant(e.status)} size="sm">{e.status}</Badge></td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-1" onClick={(ev) => ev.stopPropagation()}>
-                        <button onClick={() => navigate(`/organizer/events/${e.id}/edit`)} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit"><Edit2 className="w-4 h-4" /></button>
-                        <button onClick={() => navigate(`/events/${e.id}`)} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View"><Eye className="w-4 h-4" /></button>
-                        <button onClick={() => togglePublish(e)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title={e.status === 'published' ? 'Unpublish' : 'Submit for Review'}>
+                        <button onClick={() => navigate(`/organizer/events/${e.id}/edit`)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit"><Edit2 className="w-4 h-4" /></button>
+                        <button onClick={() => navigate(`/events/${e.id}`)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View"><Eye className="w-4 h-4" /></button>
+                        <button onClick={() => togglePublish(e)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title={e.status === 'published' ? 'Unpublish' : 'Submit for Review'}>
                           {e.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Send className="w-4 h-4" />}
                         </button>
-                        <button onClick={() => setDeleteTarget(e)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                        <button onClick={() => setDeleteTarget(e)} className="p-2.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete"><Trash2 className="w-4 h-4" /></button>
                       </div>
                     </td>
                   </tr>
@@ -250,8 +250,8 @@ export default function EventsPage() {
         title="Delete Event"
         footer={
           <>
-            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={handleDelete} disabled={deleting} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 disabled:opacity-60 transition">{deleting ? 'Deleting...' : 'Delete'}</button>
+            <button onClick={() => setDeleteTarget(null)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={handleDelete} disabled={deleting} className="px-4 py-3 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 disabled:opacity-60 transition">{deleting ? 'Deleting...' : 'Delete'}</button>
           </>
         }
       >
@@ -281,14 +281,14 @@ function EventCard({ event, onEdit, onView, onTogglePublish, onDelete }) {
         <div className="absolute top-3 left-3"><Badge variant={statusVariant(event.status)} size="sm">{event.status}</Badge></div>
         <div className="absolute top-3 right-3">
           <div className="relative">
-            <button onClick={(e) => { e.stopPropagation(); setMenu((v) => !v); }} className="p-1.5 rounded-md bg-black/40 text-white hover:bg-black/60 transition"><MoreVertical className="w-4 h-4" /></button>
+            <button onClick={(e) => { e.stopPropagation(); setMenu((v) => !v); }} className="p-2.5 rounded-md bg-black/40 text-white hover:bg-black/60 transition"><MoreVertical className="w-4 h-4" /></button>
             <AnimatePresence>
               {menu && (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="absolute right-0 mt-1 w-40 rounded-lg bg-[#171A1D] border border-[#494F55]/40 shadow-xl py-1 z-10">
-                  <button onClick={() => { setMenu(false); onEdit(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Edit2 className="w-4 h-4" /> Edit</button>
-                  <button onClick={() => { setMenu(false); onView(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Eye className="w-4 h-4" /> View</button>
-                  <button onClick={() => { setMenu(false); onTogglePublish(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Send className="w-4 h-4" /> {event.status === 'published' ? 'Unpublish' : 'Submit for Review'}</button>
-                  <button onClick={() => { setMenu(false); onDelete(); }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[#949599] hover:text-red-400 hover:bg-red-500/10"><Trash2 className="w-4 h-4" /> Delete</button>
+                  <button onClick={() => { setMenu(false); onEdit(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Edit2 className="w-4 h-4" /> Edit</button>
+                  <button onClick={() => { setMenu(false); onView(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Eye className="w-4 h-4" /> View</button>
+                  <button onClick={() => { setMenu(false); onTogglePublish(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Send className="w-4 h-4" /> {event.status === 'published' ? 'Unpublish' : 'Submit for Review'}</button>
+                  <button onClick={() => { setMenu(false); onDelete(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-red-400 hover:bg-red-500/10"><Trash2 className="w-4 h-4" /> Delete</button>
                 </motion.div>
               )}
             </AnimatePresence>

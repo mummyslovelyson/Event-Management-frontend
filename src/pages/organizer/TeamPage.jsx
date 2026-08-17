@@ -15,7 +15,7 @@ import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
+const inputCls = 'w-full px-4 py-3.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
 
 const ROLES = {
   Manager: {
@@ -157,7 +157,7 @@ export default function TeamPage() {
         title="Team"
         subtitle="Manage team members, roles, and permissions."
         actions={
-          <button onClick={() => setInviteModal(true)} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0">
+          <button onClick={() => setInviteModal(true)} className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0">
             <UserPlus className="w-4 h-4" /> Invite Member
           </button>
         }
@@ -250,7 +250,7 @@ export default function TeamPage() {
                           {!m.isOwner && (
                             <button
                               onClick={() => setRemoveTarget(m)}
-                              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#949599] border border-[#262B2F] hover:text-red-400 hover:border-red-500/30 transition"
+                              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-medium text-[#949599] border border-[#262B2F] hover:text-red-400 hover:border-red-500/30 transition"
                             >
                               <Trash2 className="w-3.5 h-3.5" /> Remove
                             </button>
@@ -289,10 +289,10 @@ export default function TeamPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge variant="pending" size="sm" dot>Awaiting</Badge>
-                        <button onClick={() => handleResend(inv)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title="Resend">
+                        <button onClick={() => handleResend(inv)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title="Resend">
                           <Mail className="w-4 h-4" />
                         </button>
-                        <button onClick={() => handleCancelInvite(inv)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Cancel">
+                        <button onClick={() => handleCancelInvite(inv)} className="p-2.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Cancel">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
@@ -313,8 +313,8 @@ export default function TeamPage() {
         size="lg"
         footer={
           <>
-            <button onClick={() => setInviteModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={submitInvite} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">
+            <button onClick={() => setInviteModal(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={submitInvite} disabled={submitting} className="px-4 py-3 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">
               {submitting ? 'Sending...' : 'Send Invitation'}
             </button>
           </>
@@ -390,8 +390,8 @@ export default function TeamPage() {
         title="Remove Team Member"
         footer={
           <>
-            <button onClick={() => setRemoveTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={handleRemove} disabled={removing} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 disabled:opacity-60 transition">
+            <button onClick={() => setRemoveTarget(null)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={handleRemove} disabled={removing} className="px-4 py-3 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 disabled:opacity-60 transition">
               {removing ? 'Removing...' : 'Remove'}
             </button>
           </>

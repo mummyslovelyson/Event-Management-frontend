@@ -148,10 +148,10 @@ export default function ReportsPage() {
         subtitle="Track revenue, attendance, and sales performance."
         actions={
           <>
-            <button onClick={handleExportCSV} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 transition-colors">
+            <button onClick={handleExportCSV} className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 transition-colors">
               <Download className="w-4 h-4" /> Download CSV
             </button>
-            <button onClick={handleExportPDF} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors">
+            <button onClick={handleExportPDF} className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors">
               <FileText className="w-4 h-4" /> Download PDF
             </button>
           </>

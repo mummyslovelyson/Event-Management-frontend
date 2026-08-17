@@ -433,7 +433,7 @@ function PaymentMethodsTab({ profile }) {
         <button
           onClick={handleAdd}
           disabled={adding}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
+          className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
         >
           <Plus className="w-4 h-4" />
           {adding ? 'Adding...' : 'Add Payment Method'}

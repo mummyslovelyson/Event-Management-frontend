@@ -101,11 +101,11 @@ export default function OrdersPage() {
         actions={
           <>
             {selected.size > 0 && (
-              <button onClick={() => exportCSV(orders.filter((o) => selected.has(o.id)))} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 transition">
+              <button onClick={() => exportCSV(orders.filter((o) => selected.has(o.id)))} className="inline-flex items-center gap-2 px-3.5 py-3 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 transition">
                 <Download className="w-4 h-4" /> Export Selected ({selected.size})
               </button>
             )}
-            <button onClick={() => exportCSV()} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition">
+            <button onClick={() => exportCSV()} className="inline-flex items-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition">
               <Download className="w-4 h-4" /> Export All
             </button>
           </>

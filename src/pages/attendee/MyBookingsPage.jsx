@@ -166,7 +166,7 @@ export default function MyBookingsPage() {
             <button
               key={t.value}
               onClick={() => setTab(t.value)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                 tab === t.value
                   ? 'bg-white text-[#1C232B]'
                   : 'bg-[#171A1D] border border-[#262B2F] text-[#949599] hover:text-[#EFEFF1] hover:border-[#494F55]/50'
@@ -284,7 +284,7 @@ export default function MyBookingsPage() {
                       </Link>
                       <button
                         onClick={() => setExpanded(expanded === order.id ? null : order.id)}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 transition"
                       >
                         <Receipt className="w-3.5 h-3.5" /> Details
                         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expanded === order.id ? 'rotate-180' : ''}`} />
@@ -292,14 +292,14 @@ export default function MyBookingsPage() {
                       <button
                         onClick={() => handleExport(order)}
                         disabled={exporting === order.id}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 disabled:opacity-50 transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 disabled:opacity-50 transition"
                       >
                         <FileDown className="w-3.5 h-3.5" /> {exporting === order.id ? 'Exporting...' : 'Export PDF'}
                       </button>
                       {isUpcoming && (
                         <button
                           onClick={() => setCancelTarget(order)}
-                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium hover:bg-red-500/20 transition"
+                          className="inline-flex items-center gap-1.5 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium hover:bg-red-500/20 transition"
                         >
                           <XCircle className="w-3.5 h-3.5" /> Cancel Booking
                         </button>
@@ -307,7 +307,7 @@ export default function MyBookingsPage() {
                       {!isUpcoming && !isCancelled && (
                         <button
                           onClick={() => setRefundTarget(order)}
-                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-medium hover:bg-amber-500/20 transition"
+                          className="inline-flex items-center gap-1.5 px-3 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-medium hover:bg-amber-500/20 transition"
                         >
                           <RotateCcw className="w-3.5 h-3.5" /> Request Refund
                         </button>
@@ -373,10 +373,10 @@ export default function MyBookingsPage() {
         title="Cancel Booking"
         footer={
           <>
-            <button onClick={() => { setCancelTarget(null); setCancelReason(''); }} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
+            <button onClick={() => { setCancelTarget(null); setCancelReason(''); }} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
               Keep Booking
             </button>
-            <button onClick={handleCancel} disabled={cancelling} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 disabled:opacity-50 transition">
+            <button onClick={handleCancel} disabled={cancelling} className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 disabled:opacity-50 transition">
               <XCircle className="w-4 h-4" />
               {cancelling ? 'Cancelling...' : 'Confirm Cancellation'}
             </button>
@@ -412,10 +412,10 @@ export default function MyBookingsPage() {
         title="Request Refund"
         footer={
           <>
-            <button onClick={() => { setRefundTarget(null); setRefundReason(''); }} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
+            <button onClick={() => { setRefundTarget(null); setRefundReason(''); }} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
               Cancel
             </button>
-            <button onClick={handleRefund} disabled={refunding} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-[#1C232B] text-sm font-semibold hover:bg-amber-400 disabled:opacity-50 transition">
+            <button onClick={handleRefund} disabled={refunding} className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500 text-[#1C232B] text-sm font-semibold hover:bg-amber-400 disabled:opacity-50 transition">
               <RotateCcw className="w-4 h-4" />
               {refunding ? 'Submitting...' : 'Submit Request'}
             </button>

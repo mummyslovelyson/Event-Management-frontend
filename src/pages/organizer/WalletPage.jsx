@@ -137,7 +137,7 @@ export default function WalletPage() {
           <button
             onClick={() => setWithdrawModal(true)}
             disabled={loading || balance.available <= 0}
-            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors shrink-0"
+            className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors shrink-0"
           >
             <ArrowDownToLine className="w-4 h-4" /> Withdraw Funds
           </button>

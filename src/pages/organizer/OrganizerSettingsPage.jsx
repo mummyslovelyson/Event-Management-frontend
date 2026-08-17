@@ -392,7 +392,7 @@ export default function OrganizerSettingsPage() {
                           {!s.current && (
                             <button
                               onClick={() => handleRevokeSession(s.id)}
-                              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#949599] border border-[#262B2F] hover:text-red-400 hover:border-red-500/30 transition"
+                              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-medium text-[#949599] border border-[#262B2F] hover:text-red-400 hover:border-red-500/30 transition"
                             >
                               <LogOut className="w-3.5 h-3.5" /> Revoke
                             </button>

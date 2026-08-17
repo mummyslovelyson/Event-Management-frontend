@@ -17,7 +17,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
+const inputCls = 'w-full px-4 py-3.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
 
 const genCode = () => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -249,11 +249,11 @@ export default function PromotionsPage() {
         subtitle="Create discount codes and flash sales to boost ticket sales."
         actions={
           tab === 'Discount Codes' ? (
-            <button onClick={openCreateCoupon} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0">
+            <button onClick={openCreateCoupon} className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0">
               <Plus className="w-4 h-4" /> Create Discount Code
             </button>
           ) : (
-            <button onClick={() => setFlashModal(true)} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0">
+            <button onClick={() => setFlashModal(true)} className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0">
               <Zap className="w-4 h-4" /> Create Flash Sale
             </button>
           )
@@ -266,7 +266,7 @@ export default function PromotionsPage() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === t ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+            className={`relative px-4 py-3.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === t ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
           >
             {t}
             {tab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-white" />}
@@ -319,7 +319,7 @@ export default function PromotionsPage() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <span className="font-mono font-semibold text-white tracking-wider">{c.code}</span>
-                            <button onClick={() => copyCode(c.code)} className="p-1 rounded text-[#949599] hover:text-[#EFEFF1] transition" title="Copy">
+                            <button onClick={() => copyCode(c.code)} className="p-2 rounded text-[#949599] hover:text-[#EFEFF1] transition" title="Copy">
                               {copied === c.code ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                             </button>
                           </div>
@@ -355,13 +355,13 @@ export default function PromotionsPage() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-end gap-1">
-                            <button onClick={() => openEditCoupon(c)} className="p-1.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit">
+                            <button onClick={() => openEditCoupon(c)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit">
                               <Edit2 className="w-4 h-4" />
                             </button>
-                            <button onClick={() => toggleCouponActive(c)} className="p-1.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title={active ? 'Deactivate' : 'Activate'}>
+                            <button onClick={() => toggleCouponActive(c)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title={active ? 'Deactivate' : 'Activate'}>
                               <RefreshCw className="w-4 h-4" />
                             </button>
-                            <button onClick={() => setDeleteCouponTarget(c)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete">
+                            <button onClick={() => setDeleteCouponTarget(c)} className="p-2.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -431,7 +431,7 @@ export default function PromotionsPage() {
                     </div>
                     <button
                       onClick={() => setDeleteFlashTarget(f)}
-                      className="mt-4 w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-[#949599] border border-[#262B2F] hover:text-red-400 hover:border-red-500/30 transition"
+                      className="mt-4 w-full inline-flex items-center justify-center gap-1.5 px-3 py-3 rounded-lg text-xs font-medium text-[#949599] border border-[#262B2F] hover:text-red-400 hover:border-red-500/30 transition"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Delete
                     </button>
@@ -451,8 +451,8 @@ export default function PromotionsPage() {
         size="lg"
         footer={
           <>
-            <button onClick={() => setCouponModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={submitCoupon} disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">
+            <button onClick={() => setCouponModal(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={submitCoupon} disabled={submitting} className="px-4 py-3 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">
               {submitting ? 'Saving...' : editingCoupon ? 'Update' : 'Create'}
             </button>
           </>
@@ -572,8 +572,8 @@ export default function PromotionsPage() {
         title="Create Flash Sale"
         footer={
           <>
-            <button onClick={() => setFlashModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={submitFlash} disabled={flashSubmitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">
+            <button onClick={() => setFlashModal(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={submitFlash} disabled={flashSubmitting} className="px-4 py-3 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">
               {flashSubmitting ? 'Creating...' : 'Create Flash Sale'}
             </button>
           </>
@@ -631,8 +631,8 @@ export default function PromotionsPage() {
         title="Delete Discount Code"
         footer={
           <>
-            <button onClick={() => setDeleteCouponTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={handleDeleteCoupon} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 transition">Delete</button>
+            <button onClick={() => setDeleteCouponTarget(null)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={handleDeleteCoupon} className="px-4 py-3 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 transition">Delete</button>
           </>
         }
       >
@@ -648,8 +648,8 @@ export default function PromotionsPage() {
         title="Delete Flash Sale"
         footer={
           <>
-            <button onClick={() => setDeleteFlashTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={handleDeleteFlash} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 transition">Delete</button>
+            <button onClick={() => setDeleteFlashTarget(null)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
+            <button onClick={handleDeleteFlash} className="px-4 py-3 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 transition">Delete</button>
           </>
         }
       >

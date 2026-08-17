@@ -224,7 +224,7 @@ export default function SystemSettingsPage() {
                       <div><label className={labelCls}>From Email</label><input className={inputCls} value={settings.email?.fromEmail || ''} onChange={(e) => update('fromEmail', e.target.value)} placeholder="noreply@tribescliqs.com" /></div>
                       <div><label className={labelCls}>From Name</label><input className={inputCls} value={settings.email?.fromName || ''} onChange={(e) => update('fromName', e.target.value)} placeholder="Tribes & Cliqs" /></div>
                     </div>
-                    <button disabled title="Coming Soon" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#949599] cursor-not-allowed opacity-60">
+                    <button disabled title="Coming Soon" className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#949599] cursor-not-allowed opacity-60">
                       <Send className="w-4 h-4" /> Send Test Email
                     </button>
                   </div>
@@ -235,7 +235,7 @@ export default function SystemSettingsPage() {
                     <SectionTitle icon={Smartphone} title="SMS Settings" desc="SMSOnlineGH key and the sender name users see." />
                     <SecretInput label="SMSOnlineGH API Key" value={settings.sms?.apiKey || ''} show={showSecrets.smsApiKey} onToggle={() => toggleSecret('smsApiKey')} onChange={(v) => update('apiKey', v)} placeholder="••••••••••••" />
                     <div><label className={labelCls}>Sender ID</label><input className={inputCls} value={settings.sms?.senderId || ''} onChange={(e) => update('senderId', e.target.value)} placeholder="TRIBES" maxLength={11} /></div>
-                    <button disabled title="Coming Soon" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#949599] cursor-not-allowed opacity-60">
+                    <button disabled title="Coming Soon" className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#949599] cursor-not-allowed opacity-60">
                       <Send className="w-4 h-4" /> Send Test SMS
                     </button>
                   </div>
@@ -313,7 +313,7 @@ function SecretInput({ label, value, show, onToggle, onChange, placeholder }) {
       <label className={labelCls}>{label}</label>
       <div className="relative">
         <input type="text" value={displayValue} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className={inputCls} />
-        <button onClick={onToggle} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[#949599] hover:text-[#EFEFF1] transition">
+        <button onClick={onToggle} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#949599] hover:text-[#EFEFF1] transition">
           {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>
       </div>

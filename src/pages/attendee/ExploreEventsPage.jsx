@@ -286,7 +286,7 @@ export default function ExploreEventsPage() {
             </button>
             <button
               onClick={() => setShowFilters(false)}
-              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
+              className="px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
             >
               Apply
             </button>

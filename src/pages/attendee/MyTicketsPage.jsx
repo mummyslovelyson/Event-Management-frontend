@@ -223,7 +223,7 @@ export default function MyTicketsPage() {
             <button
               key={t.value}
               onClick={() => setTab(t.value)}
-              className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`relative px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                 tab === t.value ? 'text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'
               }`}
             >
@@ -333,7 +333,7 @@ export default function MyTicketsPage() {
                           <button
                             onClick={() => handleCancelListing(listing)}
                             disabled={cancellingId === listing.id}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#949599] text-xs font-medium hover:text-red-400 hover:border-red-400/40 disabled:opacity-50 transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#949599] text-xs font-medium hover:text-red-400 hover:border-red-400/40 disabled:opacity-50 transition-colors"
                           >
                             {cancellingId === listing.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
                             Remove
@@ -358,14 +358,14 @@ export default function MyTicketsPage() {
           <>
             <button
               onClick={() => { setSellTarget(null); setSellPrice(''); }}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
+              className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
             >
               Cancel
             </button>
             <button
               onClick={handleSell}
               disabled={selling}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
             >
               <Tag className="w-4 h-4" />
               {selling ? 'Listing...' : 'List for Sale'}
@@ -411,14 +411,14 @@ export default function MyTicketsPage() {
           <>
             <button
               onClick={() => { setTransferTarget(null); setTransferEmail(''); }}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
+              className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
             >
               Cancel
             </button>
             <button
               onClick={handleTransfer}
               disabled={transferring}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
             >
               <Send className="w-4 h-4" />
               {transferring ? 'Sending...' : 'Transfer Ticket'}
@@ -463,13 +463,13 @@ export default function MyTicketsPage() {
           <>
             <button
               onClick={() => setPrintTicket(null)}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
+              className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
             >
               Close
             </button>
             <button
               onClick={() => window.print()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
+              className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
             >
               <Printer className="w-4 h-4" /> Print
             </button>

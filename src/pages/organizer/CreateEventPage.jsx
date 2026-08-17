@@ -146,7 +146,7 @@ const StepMedia = () => {
           ) : bannerUrl ? (
             <div className="relative">
               <img src={bannerUrl} alt="banner" className="w-full h-48 object-cover rounded-lg" />
-              <button onClick={(e) => { e.stopPropagation(); setValue('bannerImage', ''); }} className="absolute top-2 right-2 p-1 rounded-md bg-black/60 text-white hover:bg-black/80"><X className="w-4 h-4" /></button>
+              <button onClick={(e) => { e.stopPropagation(); setValue('bannerImage', ''); }} className="absolute top-2 right-2 p-2 rounded-md bg-black/60 text-white hover:bg-black/80"><X className="w-4 h-4" /></button>
             </div>
           ) : (
             <>
@@ -165,7 +165,7 @@ const StepMedia = () => {
           {additional.map((url, i) => (
             <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-[#242B32]">
               <img src={url} alt="" className="w-full h-full object-cover" />
-              <button onClick={() => removeExtra(i)} className="absolute top-1 right-1 p-1 rounded-md bg-black/60 text-white hover:bg-black/80"><X className="w-3.5 h-3.5" /></button>
+              <button onClick={() => removeExtra(i)} className="absolute top-1 right-1 p-2 rounded-md bg-black/60 text-white hover:bg-black/80"><X className="w-3.5 h-3.5" /></button>
             </div>
           ))}
           {additional.length < 5 && (
@@ -237,7 +237,7 @@ const StepTickets = () => {
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-white">Ticket Type {i + 1}</span>
               {fields.length > 1 && (
-                <button type="button" onClick={() => remove(i)} className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition"><Trash2 className="w-4 h-4" /></button>
+                <button type="button" onClick={() => remove(i)} className="p-2.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition"><Trash2 className="w-4 h-4" /></button>
               )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -424,7 +424,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
           title={eventId ? 'Edit Event' : 'Create New Event'}
           subtitle="Complete all steps to publish your event."
           actions={
-            <button type="button" onClick={() => navigate(-1)} className="px-3.5 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition sm:self-start">Cancel</button>
+            <button type="button" onClick={() => navigate(-1)} className="px-3.5 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition sm:self-start">Cancel</button>
           }
         />
 

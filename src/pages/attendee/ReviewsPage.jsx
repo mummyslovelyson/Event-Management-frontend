@@ -219,7 +219,7 @@ export default function ReviewsPage() {
                 </div>
                 <button
                   onClick={() => openReviewModal(event)}
-                  className="mt-3 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors"
+                  className="mt-3 inline-flex items-center justify-center gap-2 px-3 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors"
                 >
                   <Pencil className="w-4 h-4" /> Write a Review
                 </button>
@@ -296,13 +296,13 @@ export default function ReviewsPage() {
         title="Write a Review"
         footer={
           <>
-            <button onClick={() => setReviewModal(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
+            <button onClick={() => setReviewModal(null)} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
               Cancel
             </button>
             <button
               onClick={handleSubmitReview}
               disabled={submitting}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
             >
               <Pencil className="w-4 h-4" />
               {submitting ? 'Submitting...' : 'Submit Review'}
