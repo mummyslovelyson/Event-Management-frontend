@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   LayoutDashboard, Users, CalendarDays, Layers, CreditCard, BarChart3,
   FileText, Bell, LifeBuoy, Settings, ScrollText, Menu, X, LogOut,
-  Search, ChevronDown, UserCheck,
+  Search, ChevronDown, UserCheck, AlertTriangle,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
@@ -32,9 +32,26 @@ export default function AdminLayout() {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [isMaintenance, setIsMaintenance] = useState(false);
   const profileRef = useRef(null);
 
-  useEffect(() => { setSidebarOpen(false); setProfileOpen(false); }, [location.pathname]);
+  const checkMaintenance = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/public/maintenance`);
+      const data = await res.json();
+      setIsMaintenance(!!data.maintenance);
+    } catch {
+      // ignore
+    }
+  };
+
+  useEffect(() => {
+    checkMaintenance();
+    const interval = setInterval(checkMaintenance, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => { setSidebarOpen(false); setProfileOpen(false); checkMaintenance(); }, [location.pathname]);
 
   useEffect(() => {
     document.body.style.overflow = sidebarOpen ? 'hidden' : '';
@@ -70,6 +87,22 @@ export default function AdminLayout() {
       </AnimatePresence>
 
       <div className="lg:pl-64">
+        {/* Maintenance Banner */}
+        {isMaintenance && (
+          <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-2.5 text-xs font-semibold text-amber-300 flex items-center justify-between gap-3 shadow-md">
+            <div className="flex items-center gap-2 min-w-0">
+              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
+              <span className="truncate">Maintenance Mode is Active — Public visitors cannot access the site.</span>
+            </div>
+            <Link
+              to="/admin/settings"
+              className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-200 hover:bg-amber-500/30 transition underline shrink-0"
+            >
+              Turn Off in Settings &rarr;
+            </Link>
+          </div>
+        )}
+
         {/* Topbar */}
         <header className="sticky top-0 z-30 bg-[#111417]/90 backdrop-blur-md border-b border-[#262B2F]">
           <div className="flex items-center justify-between h-14 px-4 sm:px-6">
