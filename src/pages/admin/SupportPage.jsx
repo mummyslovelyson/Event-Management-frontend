@@ -199,7 +199,7 @@ export default function SupportPage() {
       <Modal
         open={!!detail}
         onClose={() => setDetail(null)}
-        title={`Ticket #${detail?.id?.slice(-6) || detail?.reference || ''}`}
+        title={`Ticket #${String(detail?.id ?? '').slice(-6) || detail?.reference || ''}`}
         size="xl"
         footer={
           detail && detail.status !== 'closed' && detail.status !== 'resolved' ? (

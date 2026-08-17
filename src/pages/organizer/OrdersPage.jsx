@@ -195,7 +195,7 @@ export default function OrdersPage() {
       {!loading && orders.length > 0 && <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />}
 
       {/* Detail Modal */}
-      <Modal open={!!detailOrder} onClose={() => setDetailOrder(null)} title={`Order #${detailOrder?.reference || detailOrder?.id?.slice(-6)}`} size="lg">
+      <Modal open={!!detailOrder} onClose={() => setDetailOrder(null)} title={`Order #${detailOrder?.reference || String(detailOrder?.id ?? '').slice(-6)}`} size="lg">
         {detailOrder && (
           <div className="space-y-5">
             <div className="flex items-center justify-between">
