@@ -53,6 +53,11 @@ export default function AttendeeLayout() {
   useEffect(() => { setSidebarOpen(false); setProfileOpen(false); }, [location.pathname]);
 
   useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [sidebarOpen]);
+
+  useEffect(() => {
     const onClick = (e) => { if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false); };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
@@ -73,7 +78,7 @@ export default function AttendeeLayout() {
         {sidebarOpen && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
-            <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} transition={{ type: 'tween', duration: 0.2 }} className="fixed inset-y-0 left-0 w-64 bg-[#171A1D] border-r border-[#262B2F] flex flex-col z-50 lg:hidden">
+            <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} transition={{ type: 'tween', duration: 0.2 }} className="fixed inset-y-0 left-0 w-[min(256px,80vw)] bg-[#171A1D] border-r border-[#262B2F] flex flex-col z-50 lg:hidden">
               <SidebarContent user={user} initials={initials} onNavigate={() => setSidebarOpen(false)} />
             </motion.aside>
           </>
@@ -85,7 +90,7 @@ export default function AttendeeLayout() {
         <header className="sticky top-0 z-30 bg-[#111417]/90 backdrop-blur-md border-b border-[#262B2F]">
           <div className="flex items-center justify-between h-14 px-4 sm:px-6">
             <div className="flex items-center gap-3 min-w-0">
-              <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg text-[#EFEFF1] hover:bg-[#262B2F] transition">
+              <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-3 rounded-lg text-[#EFEFF1] hover:bg-[#262B2F] transition">
                 <Menu className="w-5 h-5" />
               </button>
               <div className="hidden sm:flex items-baseline gap-2 min-w-0">
