@@ -118,13 +118,13 @@ export default function OrganizerLayout() {
 
               <CurrencyToggle />
 
-              <button className="relative p-2 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
+              <button aria-label="Notifications" className="relative p-2.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-white rounded-full ring-2 ring-[#111417]" />
               </button>
 
               <div className="relative" ref={profileRef}>
-                <button onClick={() => setProfileOpen((v) => !v)} className="flex items-center gap-2.5 p-1 pr-2 rounded-lg hover:bg-[#262B2F] transition">
+                <button onClick={() => setProfileOpen((v) => !v)} className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-[#262B2F] transition">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2A2F33] to-[#1D2124] border border-[#3A4045] flex items-center justify-center text-[#C4C9CC] text-xs font-semibold">{initials}</div>
                   <span className="hidden sm:block text-sm text-[#EFEFF1] max-w-[120px] truncate">{user?.name || 'Organizer'}</span>
                   <ChevronDown className="w-4 h-4 text-[#6B7278]" />
