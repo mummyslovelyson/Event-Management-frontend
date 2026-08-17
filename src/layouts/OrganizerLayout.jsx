@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   LayoutDashboard, CalendarDays, Ticket as TicketIcon, ShoppingBag, ScanLine,
   Users, Tag, BarChart3, Megaphone, UsersRound, Wallet, Settings, Menu, X,
-  LogOut, Search, ChevronDown, Bell,
+  LogOut, Search, ChevronDown, Bell, LifeBuoy,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
@@ -21,6 +21,7 @@ const nav = [
   { to: '/organizer/reports', label: 'Reports', icon: BarChart3 },
   { to: '/organizer/wallet', label: 'Wallet', icon: Wallet },
   { to: '/organizer/team', label: 'Team', icon: UsersRound },
+  { to: '/organizer/support', label: 'Help & Support', icon: LifeBuoy },
   { to: '/organizer/settings', label: 'Settings', icon: Settings },
 ];
 

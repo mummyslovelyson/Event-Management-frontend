@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/context/AuthContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
@@ -18,6 +19,7 @@ import AboutPage from '@/pages/public/AboutPage';
 import ContactPage from '@/pages/public/ContactPage';
 import PricingPage from '@/pages/public/PricingPage';
 import FAQPage from '@/pages/public/FAQPage';
+import MaintenancePage from '@/pages/public/MaintenancePage';
 
 // Auth pages
 import LoginPage from '@/pages/auth/LoginPage';
@@ -64,31 +66,38 @@ import PlatformReportsPage from '@/pages/admin/PlatformReportsPage';
 import ContentManagementPage from '@/pages/admin/ContentManagementPage';
 import NotificationCenterPage from '@/pages/admin/NotificationCenterPage';
 import SupportPage from '@/pages/admin/SupportPage';
+import UserSupportPage from '@/pages/attendee/SupportPage';
 import SystemSettingsPage from '@/pages/admin/SystemSettingsPage';
 import AuditLogsPage from '@/pages/admin/AuditLogsPage';
 
-export default function App() {
+function MaintenanceWrapper() {
+  const [maintenance, setMaintenance] = useState(null);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/public/maintenance`);
+        const data = await res.json();
+        setMaintenance(!!data.maintenance);
+        setMessage(data.message || '');
+      } catch {
+        setMaintenance(false);
+      }
+    };
+    check();
+    const interval = setInterval(check, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (maintenance === null) return null;
+  if (maintenance) return <MaintenancePage message={message} />;
+  return <AppRoutes />;
+}
+
+function AppRoutes() {
   return (
-    <AuthProvider>
-      <CurrencyProvider>
-        <BrowserRouter>
-        <Toaster
-          position="top-right"
-          gutter={8}
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#242B32',
-              color: '#F2F4F5',
-              border: '1px solid rgba(73,79,85,0.5)',
-              borderRadius: '10px',
-              fontSize: '14px',
-            },
-            success: { iconTheme: { primary: '#EFEFF1', secondary: '#1E252B' } },
-            error: { iconTheme: { primary: '#EF4444', secondary: '#1E252B' } },
-          }}
-        />
-        <Routes>
+    <Routes>
           {/* ── Public ── */}
           <Route element={<PublicLayout />}>
             <Route path="/" element={<HomePage />} />
@@ -109,8 +118,8 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
-          {/* Admin login is completely hidden from public — no link to it anywhere on the site */}
           <Route path="/admin-login" element={<AdminLoginPage />} />
+          <Route path="/maintenance" element={<MaintenancePage />} />
 
           {/* ── Attendee dashboard ── */}
           <Route
@@ -130,6 +139,8 @@ export default function App() {
             <Route path="/attendee/notifications" element={<NotificationsPage />} />
             <Route path="/attendee/reviews" element={<ReviewsPage />} />
             <Route path="/attendee/profile" element={<ProfilePage />} />
+            <Route path="/attendee/support" element={<UserSupportPage />} />
+            <Route path="/attendee/support/:id" element={<UserSupportPage />} />
           </Route>
 
           {/* ── Organizer dashboard ── */}
@@ -154,6 +165,7 @@ export default function App() {
             <Route path="/organizer/marketing" element={<MarketingPage />} />
             <Route path="/organizer/team" element={<TeamPage />} />
             <Route path="/organizer/wallet" element={<WalletPage />} />
+            <Route path="/organizer/support" element={<UserSupportPage />} />
             <Route path="/organizer/settings" element={<OrganizerSettingsPage />} />
           </Route>
 
@@ -183,6 +195,31 @@ export default function App() {
           {/* ── Catch-all ── */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <CurrencyProvider>
+        <BrowserRouter>
+        <Toaster
+          position="top-right"
+          gutter={8}
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#242B32',
+              color: '#F2F4F5',
+              border: '1px solid rgba(73,79,85,0.5)',
+              borderRadius: '10px',
+              fontSize: '14px',
+            },
+            success: { iconTheme: { primary: '#EFEFF1', secondary: '#1E252B' } },
+            error: { iconTheme: { primary: '#EF4444', secondary: '#1E252B' } },
+          }}
+        />
+        <MaintenanceWrapper />
       </BrowserRouter>
       </CurrencyProvider>
     </AuthProvider>

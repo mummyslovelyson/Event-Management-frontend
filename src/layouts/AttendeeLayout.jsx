@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   LayoutDashboard, Compass, Ticket as TicketIcon, CalendarCheck, Bookmark,
-  Bell, Star, User, Menu, X, LogOut, Search, ChevronDown,
+  Bell, Star, User, Menu, X, LogOut, Search, ChevronDown, LifeBuoy,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
@@ -16,6 +16,7 @@ const nav = [
   { to: '/attendee/favorites', label: 'Favorites', icon: Bookmark },
   { to: '/attendee/reviews', label: 'Reviews', icon: Star },
   { to: '/attendee/notifications', label: 'Notifications', icon: Bell },
+  { to: '/attendee/support', label: 'Help & Support', icon: LifeBuoy },
   { to: '/attendee/profile', label: 'Profile', icon: User },
 ];
 
