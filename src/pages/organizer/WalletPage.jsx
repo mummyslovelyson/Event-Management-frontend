@@ -317,7 +317,7 @@ export default function WalletPage() {
                         <td className="px-4 py-3 text-xs text-[#949599] whitespace-nowrap">
                           {w.requestedAt || w.createdAt ? new Date(w.requestedAt || w.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
                         </td>
-                        <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#949599]">{w.reference || w.id?.slice(-8).toUpperCase() || '—'}</td>
+                        <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#949599]">{w.reference || String(w.id ?? '').slice(-8).toUpperCase() || '—'}</td>
                       </tr>
                     ))}
                   </tbody>

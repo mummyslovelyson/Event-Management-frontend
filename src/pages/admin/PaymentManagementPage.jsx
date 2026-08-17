@@ -174,7 +174,7 @@ export default function PaymentManagementPage() {
                   <tbody className="divide-y divide-[#262B2F]/70">
                     {data.transactions.map((tx) => (
                       <tr key={tx.id} className="hover:bg-[#1D2124] transition-colors">
-                        <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{tx.reference || tx.id?.slice(-6)}</td>
+                        <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{tx.reference || String(tx.id ?? '').slice(-6)}</td>
                         <td className="px-5 py-3 text-[#EFEFF1]">{tx.user?.name || tx.userName || '—'}</td>
                         <td className="px-5 py-3 text-[#949599] max-w-[160px] truncate">{tx.event?.title || tx.eventTitle || '—'}</td>
                         <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(tx.amount)}</td>
@@ -264,7 +264,7 @@ export default function PaymentManagementPage() {
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {data.refunds.map((rf) => (
                     <tr key={rf.id} className="hover:bg-[#1D2124] transition-colors">
-                      <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{rf.reference || rf.orderId || rf.id?.slice(-6)}</td>
+                      <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{rf.reference || rf.orderId || String(rf.id ?? '').slice(-6)}</td>
                       <td className="px-5 py-3 text-[#EFEFF1]">{rf.user?.name || rf.userName || '—'}</td>
                       <td className="px-5 py-3 text-[#949599] max-w-[140px] truncate">{rf.event?.title || rf.eventTitle || '—'}</td>
                       <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(rf.amount)}</td>

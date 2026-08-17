@@ -171,7 +171,7 @@ export default function OrdersPage() {
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         <input type="checkbox" checked={selected.has(o.id)} onChange={() => toggleSelect(o.id)} className="w-4 h-4 rounded accent-[#EFEFF1] cursor-pointer" />
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{o.reference || o.id?.slice(-6)}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{o.reference || String(o.id ?? '').slice(-6)}</td>
                       <td className="px-4 py-3">
                         <p className="text-[#EFEFF1] font-medium">{o.customerName || o.user?.name || '—'}</p>
                         <p className="text-xs text-[#949599]">{o.customerEmail || o.user?.email || ''}</p>

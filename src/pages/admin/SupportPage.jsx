@@ -172,7 +172,7 @@ export default function SupportPage() {
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {tickets.map((t) => (
                     <tr key={t.id} className="hover:bg-[#1D2124] transition-colors cursor-pointer" onClick={() => openDetail(t)}>
-                      <td className="px-5 py-3 font-mono text-xs text-[#EFEFF1]">#{t.id?.slice(-6) || t.reference}</td>
+                      <td className="px-5 py-3 font-mono text-xs text-[#EFEFF1]">#{String(t.id ?? '').slice(-6) || t.reference}</td>
                       <td className="px-5 py-3 text-[#EFEFF1]">{t.user?.name || t.userName || '—'}</td>
                       <td className="px-5 py-3 text-[#EFEFF1] max-w-[200px] truncate">{t.subject}</td>
                       <td className="px-5 py-3"><Badge variant="neutral" size="sm">{t.category || '—'}</Badge></td>

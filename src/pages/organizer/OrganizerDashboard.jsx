@@ -222,7 +222,7 @@ export default function OrganizerDashboard() {
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {recentOrders.map((o) => (
                     <tr key={o.id} className="hover:bg-[#1D2124] transition-colors">
-                      <td className="hidden md:table-cell px-5 py-3 font-mono text-xs text-[#EFEFF1]">#{o.reference || o.id?.slice(-6)}</td>
+                      <td className="hidden md:table-cell px-5 py-3 font-mono text-xs text-[#EFEFF1]">#{o.reference || String(o.id ?? '').slice(-6)}</td>
                       <td className="hidden md:table-cell px-5 py-3 text-[#EFEFF1]">{o.customerName || o.user?.name || '—'}</td>
                       <td className="px-5 py-3 text-[#949599] max-w-[140px] truncate">{o.eventTitle || o.event?.title || '—'}</td>
                       <td className="hidden md:table-cell px-5 py-3 text-center text-[#949599]">{o.quantity || o.ticketCount || 0}</td>

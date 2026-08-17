@@ -189,7 +189,7 @@ export default function AuditLogsPage() {
                           <Badge variant={cfg.badge} size="sm"><ActionIcon className="w-3 h-3" /> {log.action}</Badge>
                         </td>
                         <td className="px-4 py-3 text-[#949599] capitalize">{log.entityType || '—'}</td>
-                        <td className="px-4 py-3 font-mono text-xs text-[#949599]">{log.entityId ? `#${log.entityId.slice(-8)}` : '—'}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-[#949599]">{log.entityId ? `#${String(log.entityId).slice(-8)}` : '—'}</td>
                         <td className="px-4 py-3 font-mono text-xs text-[#949599]">{log.ip || log.ipAddress || '—'}</td>
                       </tr>
                       <AnimatePresence>
