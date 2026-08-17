@@ -20,6 +20,10 @@ import ContactPage from '@/pages/public/ContactPage';
 import PricingPage from '@/pages/public/PricingPage';
 import FAQPage from '@/pages/public/FAQPage';
 import MaintenancePage from '@/pages/public/MaintenancePage';
+import TermsOfServicePage from '@/pages/public/TermsOfServicePage';
+import PrivacyPolicyPage from '@/pages/public/PrivacyPolicyPage';
+import CookiePolicyPage from '@/pages/public/CookiePolicyPage';
+import RefundPolicyPage from '@/pages/public/RefundPolicyPage';
 
 // Auth pages
 import LoginPage from '@/pages/auth/LoginPage';
@@ -107,6 +111,10 @@ function AppRoutes() {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/faq" element={<FAQPage />} />
+            <Route path="/terms" element={<TermsOfServicePage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/cookies" element={<CookiePolicyPage />} />
+            <Route path="/refund" element={<RefundPolicyPage />} />
           </Route>
 
           {/* ── Payment (standalone, no layout wrapper — Paystack redirects here) ── */}

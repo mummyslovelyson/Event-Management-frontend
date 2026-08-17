@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Menu, X, LogIn, UserPlus, ChevronDown } from 'lucide-react';
+import { Menu, X, LogIn, UserPlus, Twitter, Instagram, Facebook, Linkedin } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import ScrollProgressBar from '@/components/common/ScrollProgressBar';
 import ScrollToTopButton from '@/components/common/ScrollToTopButton';
@@ -182,9 +182,19 @@ export default function PublicLayout() {
                 Discover, create, and manage unforgettable events. Your gateway to live experiences across Africa and beyond.
               </p>
               <div className="flex items-center gap-3 mt-5">
-                {['Twitter', 'Instagram', 'Facebook', 'LinkedIn'].map((s) => (
-                  <a key={s} href="#" className="w-10 h-10 rounded-lg bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-[#949599] hover:text-white hover:border-white/40 transition text-xs font-bold">
-                    {s[0]}
+                {[
+                  { icon: Twitter,   label: 'Twitter',   href: '#' },
+                  { icon: Instagram, label: 'Instagram', href: '#' },
+                  { icon: Facebook,  label: 'Facebook',  href: '#' },
+                  { icon: Linkedin,  label: 'LinkedIn',  href: '#' },
+                ].map(({ icon: Icon, label, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    className="w-10 h-10 rounded-lg bg-[#1C232B] border border-[#494F55]/40 flex items-center justify-center text-[#949599] hover:text-white hover:border-white/40 transition"
+                  >
+                    <Icon className="w-4 h-4" />
                   </a>
                 ))}
               </div>
@@ -194,7 +204,7 @@ export default function PublicLayout() {
             {[
               { title: 'Company', links: [['About Us', '/about'], ['Contact', '/contact'], ['Careers', '#'], ['Blog', '#']] },
               { title: 'Product', links: [['Explore Events', '/explore'], ['Pricing', '/pricing'], ['FAQ', '/faq'], ['How It Works', '#']] },
-              { title: 'Legal', links: [['Terms of Service', '#'], ['Privacy Policy', '#'], ['Cookie Policy', '#'], ['Refund Policy', '#']] },
+              { title: 'Legal', links: [['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Cookie Policy', '/cookies'], ['Refund Policy', '/refund']] },
             ].map(({ title, links }) => (
               <div key={title}>
                 <h4 className="text-xs font-semibold text-[#EFEFF1] uppercase tracking-widest mb-4">{title}</h4>
