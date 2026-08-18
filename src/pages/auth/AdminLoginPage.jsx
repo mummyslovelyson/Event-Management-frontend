@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
       toast.success('Welcome to the Administration Portal');
       navigate('/admin/dashboard', { replace: true });
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Invalid admin credentials');
+      toast.error(err.friendlyMessage || err.response?.data?.message || 'Invalid admin credentials');
     }
   };
 
@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   autoComplete="current-password"
-                  {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 characters' } })}
+                  {...register('password', { required: 'Password is required', minLength: { value: 10, message: 'Min 10 characters' } })}
                   className={`w-full pl-10 pr-10 py-3 rounded-lg bg-[#1C232B] border text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none transition-colors ${
                     errors.password ? 'border-red-500/50 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/50'
                   }`}

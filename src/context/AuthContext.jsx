@@ -1,5 +1,9 @@
-import { createContext, useContext, useState } from 'react';
-import { loginUser, loginAdmin, logoutUser } from '@/api/auth';
+import { createContext, useContext, useState, useCallback } from 'react';
+import {
+  loginUser, loginAdmin, logoutUser, changePassword as apiChangePassword,
+  getSessions as apiGetSessions, revokeSession as apiRevokeSession,
+  logoutAll as apiLogoutAll,
+} from '@/api/auth';
 
 const AuthContext = createContext(null);
 
@@ -11,17 +15,28 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('tc_token'));
   const [loading, setLoading] = useState(false);
 
+  const persistAuth = useCallback((accessToken, refreshToken, userData) => {
+    localStorage.setItem('tc_token', accessToken);
+    localStorage.setItem('tc_refresh', refreshToken);
+    localStorage.setItem('tc_user', JSON.stringify(userData));
+    setToken(accessToken);
+    setUser(userData);
+  }, []);
+
+  const clearAuth = useCallback(() => {
+    localStorage.removeItem('tc_token');
+    localStorage.removeItem('tc_refresh');
+    localStorage.removeItem('tc_user');
+    setToken(null);
+    setUser(null);
+  }, []);
+
   const login = async (email, password, website = '') => {
     setLoading(true);
     try {
       const res = await loginUser({ email, password, website });
-      const t = res.data.accessToken || res.data.token;
-      const u = res.data.user;
-      localStorage.setItem('tc_token', t);
-      localStorage.setItem('tc_user', JSON.stringify(u));
-      setToken(t);
-      setUser(u);
-      return u;
+      persistAuth(res.data.accessToken, res.data.refreshToken, res.data.user);
+      return res.data.user;
     } finally {
       setLoading(false);
     }
@@ -31,13 +46,8 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       const res = await loginAdmin({ email, password, website });
-      const t = res.data.accessToken || res.data.token;
-      const u = res.data.user;
-      localStorage.setItem('tc_token', t);
-      localStorage.setItem('tc_user', JSON.stringify(u));
-      setToken(t);
-      setUser(u);
-      return u;
+      persistAuth(res.data.accessToken, res.data.refreshToken, res.data.user);
+      return res.data.user;
     } finally {
       setLoading(false);
     }
@@ -45,14 +55,37 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      await logoutUser();
-    } catch {
-      // Token may already be invalid — proceed with local cleanup
+      const refreshToken = localStorage.getItem('tc_refresh');
+      await logoutUser(refreshToken);
+    } catch { /* token may already be invalid */ }
+    clearAuth();
+  };
+
+  const logoutAll = async () => {
+    try {
+      await apiLogoutAll();
+    } catch { /* proceed with local cleanup */ }
+    clearAuth();
+  };
+
+  const changePassword = async (currentPassword, newPassword) => {
+    const res = await apiChangePassword({ currentPassword, newPassword });
+    // If backend returns a new refresh token (other sessions revoked), update it
+    if (res.data.refreshToken) {
+      const refreshToken = localStorage.getItem('tc_refresh');
+      localStorage.setItem('tc_refresh', res.data.refreshToken);
     }
-    localStorage.removeItem('tc_token');
-    localStorage.removeItem('tc_user');
-    setToken(null);
-    setUser(null);
+    return res.data;
+  };
+
+  const getSessions = async () => {
+    const res = await apiGetSessions();
+    return res.data.sessions;
+  };
+
+  const revokeSession = async (sessionId) => {
+    const res = await apiRevokeSession(sessionId);
+    return res.data;
   };
 
   const isAuthenticated = !!token && !!user;
@@ -61,7 +94,12 @@ export function AuthProvider({ children }) {
   const isAttendee = user?.role === 'attendee';
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, adminLogin, logout, isAuthenticated, isAdmin, isOrganizer, isAttendee, setUser }}>
+    <AuthContext.Provider value={{
+      user, token, loading,
+      login, adminLogin, logout, logoutAll,
+      changePassword, getSessions, revokeSession,
+      isAuthenticated, isAdmin, isOrganizer, isAttendee, setUser,
+    }}>
       {children}
     </AuthContext.Provider>
   );
