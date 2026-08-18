@@ -46,3 +46,8 @@ export const getActiveSessions = () => api.get('/organizer/settings/sessions');
 export const revokeSession = (id) => api.delete(`/organizer/settings/sessions/${id}`);
 export const getBranding = () => api.get('/organizer/settings/branding');
 export const updateBranding = (data) => api.put('/organizer/settings/branding', data);
+
+export const getCategories = () => api.get('/organizer/categories');
+export const createCategory = (data) => api.post('/organizer/categories', data);
+export const updateCategory = (id, data) => api.put(`/organizer/categories/${id}`, data);
+export const deleteCategory = (id) => api.delete(`/organizer/categories/${id}`);
