@@ -101,8 +101,11 @@ export default function UserManagementPage() {
   const fetchStats = useCallback(async () => {
     try {
       const res = await getUserManagementStats();
-      setStats(res.data.stats || {});
-    } catch { /* stats optional */ }
+      const s = res.data?.stats || res.data;
+      if (s && typeof s === 'object') setStats(s);
+    } catch (err) {
+      console.error('[UserManagement] Failed to load stats:', err.response?.data || err.message);
+    }
   }, []);
 
   const fetchUsers = useCallback(async () => {
