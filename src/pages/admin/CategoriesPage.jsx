@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
 import {
   Layers, Plus, Music, Trophy, Code2, Briefcase, Palette,
   Dumbbell, Utensils, Camera, BookOpen, MoreVertical, Pencil, Trash2,
@@ -128,7 +127,6 @@ export default function CategoriesPage() {
         }
       />
 
-      {/* Grid */}
       {loading ? (
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F]">
           <LoadingSpinner label="Loading categories..." className="py-16" />
@@ -145,48 +143,63 @@ export default function CategoriesPage() {
           />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {categories.map((cat, i) => {
-            const Icon = getIcon(cat.icon);
-            const active = cat.is_active !== 0 && cat.is_active !== false;
-            return (
-              <motion.div
-                key={cat.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
-                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/40 transition-all group"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-white/10 text-white flex items-center justify-center">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => openEdit(cat)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title="Edit">
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => setDeleteTarget(cat)} className="p-2.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition" title="Delete">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-                <h3 className="font-semibold text-[#EFEFF1]">{cat.name}</h3>
-                <p className="text-xs text-[#949599] mt-0.5 font-mono">/{cat.slug}</p>
-                <div className="mt-3 flex items-center justify-between">
-                  <Badge variant="neutral" size="sm">{cat.eventCount ?? cat.events ?? 0} events</Badge>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <span className="text-xs text-[#949599]">{active ? 'Active' : 'Inactive'}</span>
-                    <button
-                      onClick={() => toggleActive(cat)}
-                      className={`relative w-10 h-5 rounded-full transition-colors ${active ? 'bg-white' : 'bg-[#494F55]/40'}`}
-                    >
-                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${active ? 'translate-x-5' : 'translate-x-0'}`} />
-                    </button>
-                  </label>
-                </div>
-              </motion.div>
-            );
-          })}
+        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
+                  <th className="px-5 py-3 font-medium">Category</th>
+                  <th className="hidden sm:table-cell px-5 py-3 font-medium">Slug</th>
+                  <th className="px-5 py-3 font-medium text-center">Events</th>
+                  <th className="px-5 py-3 font-medium text-right">Status</th>
+                  <th className="px-5 py-3 font-medium text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#262B2F]/70">
+                {categories.map((cat) => {
+                  const Icon = getIcon(cat.icon);
+                  const active = cat.is_active !== 0 && cat.is_active !== false;
+                  return (
+                    <tr key={cat.id} className="hover:bg-[#1D2124] transition-colors">
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-white/10 text-white flex items-center justify-center shrink-0">
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <span className="font-medium text-[#EFEFF1]">{cat.name}</span>
+                        </div>
+                      </td>
+                      <td className="hidden sm:table-cell px-5 py-3 font-mono text-xs text-[#949599]">/{cat.slug}</td>
+                      <td className="px-5 py-3 text-center">
+                        <Badge variant="neutral" size="sm">{cat.eventCount ?? cat.events ?? 0}</Badge>
+                      </td>
+                      <td className="px-5 py-3 text-right">
+                        <label className="inline-flex items-center gap-2 cursor-pointer">
+                          <span className="text-xs text-[#949599]">{active ? 'Active' : 'Inactive'}</span>
+                          <button
+                            onClick={() => toggleActive(cat)}
+                            className={`relative w-10 h-5 rounded-full transition-colors ${active ? 'bg-white' : 'bg-[#494F55]/40'}`}
+                          >
+                            <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${active ? 'translate-x-5' : 'translate-x-0'}`} />
+                          </button>
+                        </label>
+                      </td>
+                      <td className="px-5 py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <button onClick={() => openEdit(cat)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title="Edit">
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => setDeleteTarget(cat)} className="p-2.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition" title="Delete">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
