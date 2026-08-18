@@ -10,6 +10,18 @@ export const unsuspendUser = (id) => api.post(`/admin/users/${id}/unsuspend`);
 export const verifyUser = (id) => api.post(`/admin/users/${id}/verify`);
 export const resetUserPassword = (id, data) => api.post(`/admin/users/${id}/reset-password`, data);
 
+export const getUserManagementStats = () => api.get('/admin/users/stats');
+export const getUserActivity = (id, params) => api.get(`/admin/users/${id}/activity`, { params });
+export const getUserSessions = (id) => api.get(`/admin/users/${id}/sessions`);
+export const getUserStats = (id) => api.get(`/admin/users/${id}/stats`);
+export const forceLogoutUser = (id) => api.post(`/admin/users/${id}/force-logout`);
+export const addAdminNote = (id, data) => api.post(`/admin/users/${id}/notes`, data);
+export const getAdminNotes = (id) => api.get(`/admin/users/${id}/notes`);
+export const deleteAdminNote = (noteId) => api.delete(`/admin/users/notes/${noteId}`);
+export const exportUsersCSV = (params) => api.get('/admin/users/export/csv', { params, responseType: 'blob' });
+export const bulkRoleChange = (data) => api.post('/admin/users/bulk/role', data);
+export const bulkDeleteUsers = (data) => api.post('/admin/users/bulk/delete', data);
+
 export const approveOrganizer = (id) => api.post(`/admin/organizers/${id}/approve`);
 export const rejectOrganizer = (id, data) => api.post(`/admin/organizers/${id}/reject`, data);
 
