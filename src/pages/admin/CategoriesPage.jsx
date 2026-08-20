@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   Layers, Plus, Music, Trophy, Code2, Briefcase, Palette,
-  Dumbbell, Utensils, Camera, BookOpen, MoreVertical, Pencil, Trash2,
+  Dumbbell, Utensils, Camera, BookOpen, Pencil, Trash2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
@@ -136,9 +136,7 @@ export default function CategoriesPage() {
           <EmptyState
             icon={Layers}
             title="No categories yet"
-            description="Nothing here yet — add the first category."
-            action={openAdd}
-            actionLabel="Add Category"
+            description="No categories yet. Use the Add Category button above to create one."
             className="py-16"
           />
         </div>
@@ -169,7 +167,7 @@ export default function CategoriesPage() {
                           <span className="font-medium text-[#EFEFF1]">{cat.name}</span>
                         </div>
                       </td>
-                      <td className="hidden sm:table-cell px-5 py-3 font-mono text-xs text-[#949599]">/{cat.slug}</td>
+                      <td className="hidden sm:table-cell px-5 py-3 font-mono text-xs text-[#949599]">{cat.slug}</td>
                       <td className="px-5 py-3 text-center">
                         <Badge variant="neutral" size="sm">{cat.eventCount ?? cat.events ?? 0}</Badge>
                       </td>

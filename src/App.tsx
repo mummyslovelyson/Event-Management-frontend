@@ -58,7 +58,6 @@ import MarketingPage from '@/pages/organizer/MarketingPage';
 import TeamPage from '@/pages/organizer/TeamPage';
 import WalletPage from '@/pages/organizer/WalletPage';
 import OrganizerSettingsPage from '@/pages/organizer/OrganizerSettingsPage';
-import OrganizerCategoriesPage from '@/pages/organizer/OrganizerCategoriesPage';
 
 // Admin pages
 import AdminDashboard from '@/pages/admin/AdminDashboard';
@@ -186,7 +185,6 @@ function AppRoutes() {
             <Route path="/organizer/team" element={<TeamPage />} />
             <Route path="/organizer/wallet" element={<WalletPage />} />
             <Route path="/organizer/support" element={<UserSupportPage />} />
-            <Route path="/organizer/categories" element={<OrganizerCategoriesPage />} />
             <Route path="/organizer/settings" element={<OrganizerSettingsPage />} />
           </Route>
 

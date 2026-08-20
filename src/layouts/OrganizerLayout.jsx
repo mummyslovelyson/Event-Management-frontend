@@ -12,7 +12,6 @@ import CurrencyToggle from '@/components/common/CurrencyToggle';
 const nav = [
   { to: '/organizer/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/organizer/events', label: 'Events', icon: CalendarDays },
-  { to: '/organizer/categories', label: 'Categories', icon: Layers },
   { to: '/organizer/tickets', label: 'Ticket Management', icon: TicketIcon },
   { to: '/organizer/orders', label: 'Orders', icon: ShoppingBag },
   { to: '/organizer/check-in', label: 'Check-in', icon: ScanLine },
