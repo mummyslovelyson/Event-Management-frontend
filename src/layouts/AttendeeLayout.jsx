@@ -3,13 +3,14 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   LayoutDashboard, Compass, Ticket as TicketIcon, CalendarCheck, Bookmark,
-  Bell, Star, User, Menu, X, LogOut, Search, ChevronDown, LifeBuoy,
+  Bell, Star, User, Menu, X, LogOut, Search, ChevronDown, LifeBuoy, Globe,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
 
 const nav = [
   { to: '/attendee/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/', label: 'Public Website', icon: Globe },
   { to: '/attendee/explore', label: 'Explore Events', icon: Compass },
   { to: '/attendee/tickets', label: 'My Tickets', icon: TicketIcon },
   { to: '/attendee/bookings', label: 'My Bookings', icon: CalendarCheck },
@@ -112,6 +113,9 @@ export default function AttendeeLayout() {
                       </Link>
                       <Link to="/attendee/tickets" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
                         <TicketIcon className="w-4 h-4" /> My Tickets
+                      </Link>
+                      <Link to="/" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
+                        <Globe className="w-4 h-4" /> Visit Public Website
                       </Link>
                       <div className="border-t border-[#262B2F] mt-1 pt-1">
                         <button onClick={handleLogout} className="flex items-center gap-2.5 w-full px-4 py-2 text-sm text-[#949599] hover:text-red-300 hover:bg-red-500/10 transition">

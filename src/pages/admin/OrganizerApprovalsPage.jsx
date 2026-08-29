@@ -225,30 +225,54 @@ export default function OrganizerApprovalsPage() {
               </div>
             </div>
 
-            {/* Details */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Details Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
-                { label: 'Organization', value: reviewApp.organizationName || reviewApp.organization_name || reviewApp.organization?.name || '—' },
-                { label: 'Phone', value: reviewApp.phone || '—' },
-                { label: 'Location', value: reviewApp.city || reviewApp.location || '—' },
-                { label: 'Applied', value: fmtDate(reviewApp.createdAt || reviewApp.created_at) },
+                { label: 'Organization / Brand', value: reviewApp.organizationName || reviewApp.organization_name || reviewApp.organization?.name || '—' },
+                { label: 'Event Category', value: reviewApp.category || reviewApp.organization?.category || reviewApp.org_category || 'General Events' },
+                { label: 'Primary Contact Person', value: reviewApp.name || '—' },
+                { label: 'City / Region', value: reviewApp.city || reviewApp.location || reviewApp.organization?.city || '—' },
+                { label: 'Work Email', value: reviewApp.email || '—', isEmail: true, isVerified: reviewApp.emailVerified ?? reviewApp.email_verified },
+                { label: 'Phone Number', value: reviewApp.phone || '—', isPhone: true, isVerified: !!reviewApp.phone },
+                { label: 'Website / Social Link', value: reviewApp.website || reviewApp.organization?.website || '—', isLink: true },
+                { label: 'Date Registered', value: fmtDate(reviewApp.createdAt || reviewApp.created_at) },
               ].map((f) => (
-                <div key={f.label} className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-3">
-                  <p className="text-xs text-[#949599]">{f.label}</p>
-                  <p className="mt-1 text-sm font-medium text-[#EFEFF1]">{f.value}</p>
+                <div key={f.label} className="rounded-lg bg-[#1C232B]/60 border border-[#494F55]/25 p-3.5">
+                  <p className="text-xs font-medium text-[#949599]">{f.label}</p>
+                  {f.isLink && f.value !== '—' ? (
+                    <a
+                      href={f.value.startsWith('http') ? f.value : `https://${f.value}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1 text-sm font-medium text-blue-400 hover:underline truncate block"
+                    >
+                      {f.value}
+                    </a>
+                  ) : (
+                    <div className="mt-1 flex items-center justify-between gap-2">
+                      <p className="text-sm font-medium text-[#EFEFF1] truncate">{f.value}</p>
+                      {f.isVerified && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shrink-0">
+                          Verified
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
 
-            {(reviewApp.organization?.description || reviewApp.bio) && (
-              <div className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">About</p>
-                <p className="text-sm text-[#EFEFF1] leading-relaxed">{reviewApp.organization?.description || reviewApp.bio}</p>
+            {(reviewApp.organization?.description || reviewApp.bio || reviewApp.description) && (
+              <div className="rounded-lg bg-[#1C232B]/60 border border-[#494F55]/25 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">Organization Bio &amp; Event Scope</p>
+                <p className="text-sm text-[#EFEFF1] leading-relaxed whitespace-pre-wrap">
+                  {reviewApp.organization?.description || reviewApp.bio || reviewApp.description}
+                </p>
               </div>
             )}
 
             {reviewApp.organization?.documentUrl && (
-              <div className="flex items-center gap-3 rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-3">
+              <div className="flex items-center gap-3 rounded-lg bg-[#1C232B]/60 border border-[#494F55]/25 p-3.5">
                 <FileText className="w-5 h-5 text-white" />
                 <a href={reviewApp.organization.documentUrl} target="_blank" rel="noreferrer" className="text-sm text-white hover:underline">View verification document</a>
               </div>

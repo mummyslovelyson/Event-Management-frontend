@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 
 import EventCard from '@/components/common/EventCard';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
-import { getFeaturedEvents, getTrendingEvents, getCategories, getFeaturedOrganizers } from '@/api/events';
+import { getFeaturedEvents, getTrendingEvents, getRecommendedEvents, getCategories, getFeaturedOrganizers } from '@/api/events';
 import { getCategoryImage } from '@/utils/categoryImages';
 
 const HERO_IMAGE = 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg';
@@ -90,10 +90,12 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [featured, setFeatured] = useState([]);
   const [trending, setTrending] = useState([]);
+  const [recommended, setRecommended] = useState([]);
   const [categories, setCategories] = useState([]);
   const [featuredOrganizers, setFeaturedOrganizers] = useState([]);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
   const [loadingTrending, setLoadingTrending] = useState(true);
+  const [loadingRecommended, setLoadingRecommended] = useState(true);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [loadingOrganizers, setLoadingOrganizers] = useState(true);
   const [search, setSearch] = useState({ query: '', city: '', category: '', date: '' });
@@ -120,6 +122,16 @@ export default function HomePage() {
         if (active) setLoadingTrending(false);
       }
     };
+    const loadRecommended = async () => {
+      try {
+        const res = await getRecommendedEvents({ limit: 8 });
+        if (active) setRecommended(res.data?.events || res.data?.data || res.data || []);
+      } catch {
+        // fail gracefully
+      } finally {
+        if (active) setLoadingRecommended(false);
+      }
+    };
     const loadCategories = async () => {
       try {
         const res = await getCategories();
@@ -143,6 +155,7 @@ export default function HomePage() {
     };
     loadFeatured();
     loadTrending();
+    loadRecommended();
     loadCategories();
     loadOrganizers();
     return () => { active = false; };
@@ -338,6 +351,30 @@ export default function HomePage() {
           )}
         </div>
       </section>
+
+      {/* ─── RECOMMENDED FOR YOU ─── */}
+      {recommended.length > 0 && (
+        <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#262B2F]">
+          <div className="flex items-end justify-between mb-8">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-white">
+                <Sparkles className="w-3.5 h-3.5" /> Tailored Picks
+              </span>
+              <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Recommended For You</h2>
+              <p className="mt-1 text-xs sm:text-sm text-[#949599]">Personalized events matched to your favorite categories, city, and attendance history.</p>
+            </div>
+            <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
+              Explore more <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {recommended.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ─── CATEGORIES ─── */}
       <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

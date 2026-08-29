@@ -237,6 +237,50 @@ export default function ExploreEventsPage() {
         </button>
       </motion.div>
 
+      {/* Discover by Artists, Sports Teams & Keynote Speakers */}
+      <motion.div variants={itemFade} className="space-y-2.5">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#949599] flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Discover Performers, Teams & Keynote Speakers
+          </p>
+          <span className="text-[11px] text-[#494F55]">1-tap filter</span>
+        </div>
+        <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-none snap-x">
+          {[
+            { label: 'Afrobeats & Live Concerts', icon: '🎤', category: 'Musical Shows' },
+            { label: 'Football & Sports Games', icon: '⚽', category: 'Tournaments' },
+            { label: 'Festivals & Carnivals', icon: '🎪', category: 'Festivals' },
+            { label: 'Tech Summits & Keynotes', icon: '💡', category: 'Corporate Events' },
+            { label: 'Standup Comedy & Theatre', icon: '🎭', category: 'Movies & Stage Plays' },
+            { label: 'Food, Drinks & Parties', icon: '🍹', category: 'Social Events' },
+            { label: 'Fairs & Fashion Expos', icon: '🎨', category: 'Fairs & Exhibitions' },
+          ].map((p) => {
+            const isActive = filters.category === p.category;
+            return (
+              <button
+                key={p.label}
+                type="button"
+                onClick={() => {
+                  if (isActive) {
+                    updateFilter('category', '');
+                  } else {
+                    updateFilter('category', p.category);
+                  }
+                }}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-semibold shrink-0 transition-all snap-start ${
+                  isActive
+                    ? 'bg-white text-[#1C232B] border-white shadow-lg'
+                    : 'bg-[#171A1D] border-[#262B2F] text-[#EFEFF1] hover:border-white/40 hover:bg-[#1F2429]'
+                }`}
+              >
+                <span className="text-sm">{p.icon}</span>
+                <span>{p.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </motion.div>
+
       {/* Filters panel */}
       {showFilters && (
         <motion.div

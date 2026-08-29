@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Search, SlidersHorizontal, X, MapPin, Calendar, Tag, ChevronDown,
-  ArrowUpDown, Inbox, Heart,
+  ArrowUpDown, Inbox, Heart, Sparkles,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import EventCard from '@/components/common/EventCard';
@@ -309,6 +309,50 @@ export default function ExplorePage() {
             <SlidersHorizontal className="w-4 h-4" />
             Filters{activeFilterCount > 0 && <span className="ml-1 px-1.5 py-0.5 rounded bg-white text-[#1C232B] text-xs font-bold">{activeFilterCount}</span>}
           </button>
+        </div>
+
+        {/* Discover by Artists, Sports Teams & Keynote Speakers */}
+        <div className="mb-6 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#949599] flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Discover Performers, Teams & Keynote Speakers
+            </p>
+            <span className="text-[11px] text-[#494F55]">Tap to discover shows</span>
+          </div>
+          <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-none snap-x">
+            {[
+              { label: 'Afrobeats & Live Concerts', q: 'Music', icon: '🎤', category: 'Musical Shows' },
+              { label: 'Football & Sports Games', q: 'Tournament', icon: '⚽', category: 'Tournaments' },
+              { label: 'Festivals & Carnivals', q: 'Festival', icon: '🎪', category: 'Festivals' },
+              { label: 'Tech Summits & Keynotes', q: 'Conference', icon: '💡', category: 'Corporate Events' },
+              { label: 'Standup Comedy & Theatre', q: 'Comedy', icon: '🎭', category: 'Movies & Stage Plays' },
+              { label: 'Food, Drinks & Parties', q: 'Party', icon: '🍹', category: 'Social Events' },
+              { label: 'Fairs & Fashion Expos', q: 'Exhibition', icon: '🎨', category: 'Fairs & Exhibitions' },
+            ].map((p) => {
+              const isActive = filters.search === p.q || filters.categories.includes(p.category);
+              return (
+                <button
+                  key={p.label}
+                  type="button"
+                  onClick={() => {
+                    if (isActive) {
+                      setFilters((prev) => ({ ...prev, search: '', categories: [] }));
+                    } else {
+                      setFilters((prev) => ({ ...prev, search: '', categories: [p.category], page: 1 }));
+                    }
+                  }}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-semibold shrink-0 transition-all snap-start ${
+                    isActive
+                      ? 'bg-white text-[#1C232B] border-white shadow-lg'
+                      : 'bg-[#171A1D] border-[#262B2F] text-[#EFEFF1] hover:border-white/40 hover:bg-[#1F2429]'
+                  }`}
+                >
+                  <span className="text-sm">{p.icon}</span>
+                  <span>{p.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Visual Category Thumbnails Strip */}

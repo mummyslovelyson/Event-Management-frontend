@@ -7,6 +7,8 @@ import {
   CheckCircle2, Facebook, Twitter, Linkedin, Link2, CreditCard,
   Smartphone, Wallet, ShieldCheck, Loader2, User, AlertCircle,
   UserPlus, UserCheck, UsersRound, CalendarClock, Trash2,
+  Bell, BellRing, CalendarPlus, MessageCircle, Send as TelegramIcon,
+  MessageSquare, Car, Sparkles, Send,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import EventCard from '@/components/common/EventCard';
@@ -14,16 +16,21 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import EmptyState from '@/components/common/EmptyState';
 import Badge from '@/components/common/Badge';
 import Modal from '@/components/common/Modal';
-import { getEvent, getTrendingEvents } from '@/api/events';
+import SocialShareModal from '@/components/common/SocialShareModal';
+import { getEvent, getTrendingEvents, toggleEventReminder, getEventReminderStatus } from '@/api/events';
+import { getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '@/utils/calendar';
 import { getTicketTypes } from '@/api/tickets';
 import { toggleFavorite, followOrganizer, unfollowOrganizer } from '@/api/users';
-import { getEventMeetups, createMeetup, joinMeetup, leaveMeetup, deleteMeetup } from '@/api/meetups';
+import {
+  getEventMeetups, createMeetup, joinMeetup, leaveMeetup, deleteMeetup,
+  getEventAttendees, getEventDiscussions, postEventDiscussion,
+} from '@/api/meetups';
 import { getEventResale, purchaseResaleListing } from '@/api/resale';
 import { applyCoupon, createOrder, initiatePayment } from '@/api/orders';
 import { useAuth } from '@/context/AuthContext';
 import { useCurrency } from '@/context/CurrencyContext';
 
-const TABS = ['Overview', 'Tickets', 'Meet-ups', 'FAQs'];
+const TABS = ['Overview', 'Tickets', 'Squads & Group Outings', 'Community & Attendees', 'FAQs'];
 
 const PAYMENT_METHODS = [
   { id: 'paystack', label: 'Paystack', icon: ShieldCheck },
@@ -58,6 +65,11 @@ export default function EventDetailPage() {
   const [isFav, setIsFav] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [socialModalOpen, setSocialModalOpen] = useState(false);
+  const [socialTargetMeetup, setSocialTargetMeetup] = useState(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [isReminded, setIsReminded] = useState(false);
+  const [reminderLoading, setReminderLoading] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [followLoading, setFollowLoading] = useState(false);
@@ -66,8 +78,17 @@ export default function EventDetailPage() {
   const [meetups, setMeetups] = useState([]);
   const [meetupsLoading, setMeetupsLoading] = useState(true);
   const [createMeetupOpen, setCreateMeetupOpen] = useState(false);
-  const [meetupForm, setMeetupForm] = useState({ title: '', description: '', meetingSpot: '', meetAt: '', maxMembers: '' });
+  const [meetupForm, setMeetupForm] = useState({ title: '', description: '', meetingSpot: '', meetAt: '', maxMembers: '', type: 'general' });
   const [meetupBusy, setMeetupBusy] = useState(false);
+
+  // Community / Attendees / Discussion state
+  const [attendees, setAttendees] = useState([]);
+  const [totalAttendees, setTotalAttendees] = useState(0);
+  const [attendeesLoading, setAttendeesLoading] = useState(true);
+  const [discussions, setDiscussions] = useState([]);
+  const [discussionsLoading, setDiscussionsLoading] = useState(true);
+  const [discussionMessage, setDiscussionMessage] = useState('');
+  const [postingDiscussion, setPostingDiscussion] = useState(false);
 
   // Purchase modal state
   const [quantities, setQuantities] = useState({});
@@ -85,6 +106,32 @@ export default function EventDetailPage() {
 
   // FAQ accordion
   const [openFaq, setOpenFaq] = useState(null);
+
+  useEffect(() => {
+    if (isAuthenticated && id) {
+      getEventReminderStatus(id)
+        .then((res) => setIsReminded(!!res.data?.isReminded))
+        .catch(() => {});
+    }
+  }, [isAuthenticated, id]);
+
+  const handleToggleReminder = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to set event reminders');
+      navigate('/login');
+      return;
+    }
+    setReminderLoading(true);
+    try {
+      const res = await toggleEventReminder(id);
+      setIsReminded(!!res.data?.isReminded);
+      toast.success(res.data?.message || 'Reminder updated!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not update reminder');
+    } finally {
+      setReminderLoading(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -160,23 +207,42 @@ export default function EventDetailPage() {
     return () => { active = false; };
   }, [id]);
 
-  // Meet-ups for this event.
+  // Meet-ups & Community for this event
   useEffect(() => {
     let active = true;
-    const load = async () => {
+    const loadCommunityData = async () => {
       setMeetupsLoading(true);
+      setAttendeesLoading(true);
+      setDiscussionsLoading(true);
       try {
-        const res = await getEventMeetups(id);
+        const [mRes, aRes, dRes] = await Promise.allSettled([
+          getEventMeetups(id),
+          getEventAttendees(id),
+          getEventDiscussions(id),
+        ]);
         if (!active) return;
-        const data = res.data?.meetups ?? res.data?.data ?? [];
-        setMeetups(Array.isArray(data) ? data : []);
+        if (mRes.status === 'fulfilled') {
+          const data = mRes.value.data?.meetups ?? mRes.value.data?.data ?? [];
+          setMeetups(Array.isArray(data) ? data : []);
+        }
+        if (aRes.status === 'fulfilled') {
+          setAttendees(aRes.value.data?.attendees || []);
+          setTotalAttendees(aRes.value.data?.totalAttendees || 0);
+        }
+        if (dRes.status === 'fulfilled') {
+          setDiscussions(dRes.value.data?.discussions || []);
+        }
       } catch {
-        if (active) setMeetups([]);
+        // fail gracefully
       } finally {
-        if (active) setMeetupsLoading(false);
+        if (active) {
+          setMeetupsLoading(false);
+          setAttendeesLoading(false);
+          setDiscussionsLoading(false);
+        }
       }
     };
-    load();
+    if (id) loadCommunityData();
     return () => { active = false; };
   }, [id]);
 
@@ -220,12 +286,12 @@ export default function EventDetailPage() {
 
   const handleCreateMeetup = async () => {
     if (!isAuthenticated) {
-      toast.error('Please log in to create a meet-up');
+      toast.error('Please log in to create a group outing');
       navigate('/login');
       return;
     }
     if (!meetupForm.title.trim()) {
-      toast.error('Give your meet-up a title');
+      toast.error('Give your group outing a title');
       return;
     }
     setMeetupBusy(true);
@@ -236,15 +302,39 @@ export default function EventDetailPage() {
         meetingSpot: meetupForm.meetingSpot || undefined,
         meetAt: meetupForm.meetAt ? new Date(meetupForm.meetAt).toISOString() : undefined,
         maxMembers: meetupForm.maxMembers ? Number(meetupForm.maxMembers) : undefined,
+        type: meetupForm.type || 'general',
       });
-      toast.success('Meet-up created!');
+      toast.success('Group Outing created! Invite your squad now.');
       setCreateMeetupOpen(false);
-      setMeetupForm({ title: '', description: '', meetingSpot: '', meetAt: '', maxMembers: '' });
+      setMeetupForm({ title: '', description: '', meetingSpot: '', meetAt: '', maxMembers: '', type: 'general' });
       refreshMeetups();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not create meet-up');
     } finally {
       setMeetupBusy(false);
+    }
+  };
+
+  const handlePostDiscussion = async (e) => {
+    if (e) e.preventDefault();
+    if (!isAuthenticated) {
+      toast.error('Please sign in to join the conversation');
+      navigate('/login');
+      return;
+    }
+    if (!discussionMessage.trim()) return;
+    setPostingDiscussion(true);
+    try {
+      const res = await postEventDiscussion(id, { message: discussionMessage.trim() });
+      if (res.data?.discussion) {
+        setDiscussions((prev) => [...prev, res.data.discussion]);
+      }
+      setDiscussionMessage('');
+      toast.success('Message posted to event wall!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not post message');
+    } finally {
+      setPostingDiscussion(false);
     }
   };
 
@@ -307,10 +397,16 @@ export default function EventDetailPage() {
 
   const handleShare = (platform) => {
     const url = window.location.href;
-    const text = `Check out this event: ${event?.title}`;
+    const title = event?.title || 'Event';
+    const date = event?.startDate ? new Date(event.startDate).toLocaleDateString() : '';
+    const venue = event?.venue || '';
+    const squadMsg = `🔥 Hey! Check out "${title}" on Tribes & Cliqs! Happening ${date ? `on ${date}` : ''} ${venue ? `at ${venue}` : ''}.\nGet tickets or join the squad here: ${url}`;
+
     const shareUrls = {
+      whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(squadMsg)}`,
+      telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`🔥 Join me at ${title}!`)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Going to ${title} on Tribes & Cliqs! Get your tickets: `)}&url=${encodeURIComponent(url)}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
     };
     if (platform === 'copy') {
@@ -498,46 +594,96 @@ export default function EventDetailPage() {
 
               {/* Action buttons */}
               <div className="flex items-center gap-2">
+                {/* Event Reminder Toggle */}
+                <motion.button
+                  onClick={handleToggleReminder}
+                  disabled={reminderLoading}
+                  whileTap={{ scale: 0.88 }}
+                  whileHover={{ y: -2 }}
+                  title={isReminded ? 'Event reminder active (click to remove)' : 'Set event reminder'}
+                  className={`w-11 h-11 rounded-lg backdrop-blur border flex items-center justify-center transition disabled:opacity-50 ${
+                    isReminded
+                      ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
+                      : 'bg-[#171A1D]/90 border-[#494F55]/40 text-[#EFEFF1] hover:text-white hover:border-[#494F55]'
+                  }`}
+                >
+                  {reminderLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : isReminded ? (
+                    <BellRing className="w-4 h-4" />
+                  ) : (
+                    <Bell className="w-4 h-4" />
+                  )}
+                </motion.button>
+
+                {/* Add to Calendar Dropdown */}
                 <div className="relative">
                   <motion.button
-                    onClick={() => setShareOpen((v) => !v)}
+                    onClick={() => setCalendarOpen((v) => !v)}
                     whileTap={{ scale: 0.88 }}
                     whileHover={{ y: -2 }}
-                    className="w-11 h-11 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EFEFF1] hover:text-[#9AA1A6] hover:border-[#494F55] transition"
+                    title="Add to Calendar"
+                    className="w-11 h-11 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EFEFF1] hover:text-white hover:border-[#494F55] transition"
                   >
-                    <Share2 className="w-4 h-4" />
+                    <CalendarPlus className="w-4 h-4" />
                   </motion.button>
                   <AnimatePresence>
-                    {shareOpen && (
+                    {calendarOpen && (
                       <motion.div
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 8 }}
-                        className="absolute right-0 mt-2 w-44 rounded-lg bg-[#171A1D] border border-[#494F55]/40 shadow-xl py-1 z-20"
+                        className="absolute right-0 mt-2 w-52 rounded-xl bg-[#171A1D] border border-[#494F55]/40 shadow-2xl py-2 z-30"
                       >
-                        {[
-                          { id: 'facebook', label: 'Facebook', icon: Facebook },
-                          { id: 'twitter', label: 'Twitter', icon: Twitter },
-                          { id: 'linkedin', label: 'LinkedIn', icon: Linkedin },
-                          { id: 'copy', label: 'Copy Link', icon: Link2 },
-                        ].map((s) => (
-                          <button
-                            key={s.id}
-                            onClick={() => handleShare(s.id)}
-                            className="w-full flex items-center gap-2 px-3 py-3 text-sm text-[#949599] hover:text-white hover:bg-[#494F55]/20 transition"
-                          >
-                            <s.icon className="w-4 h-4" /> {s.label}
-                          </button>
-                        ))}
+                        <p className="px-3.5 py-1 text-[10px] font-bold text-[#949599] uppercase tracking-wider">Sync Calendar</p>
+                        <a
+                          href={getGoogleCalendarUrl(event)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setCalendarOpen(false)}
+                          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-medium text-[#EFEFF1] hover:bg-white/10 transition"
+                        >
+                          <Calendar className="w-3.5 h-3.5 text-blue-400" /> Google Calendar
+                        </a>
+                        <a
+                          href={getOutlookCalendarUrl(event)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setCalendarOpen(false)}
+                          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-medium text-[#EFEFF1] hover:bg-white/10 transition"
+                        >
+                          <Calendar className="w-3.5 h-3.5 text-sky-400" /> Outlook Calendar
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => { downloadIcsFile(event); setCalendarOpen(false); toast.success('Apple iCal / .ics file downloaded'); }}
+                          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-medium text-[#EFEFF1] hover:bg-white/10 transition text-left"
+                        >
+                          <Calendar className="w-3.5 h-3.5 text-emerald-400" /> Apple Calendar (.ics)
+                        </button>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
+
+                {/* Social Share & Squad Hub */}
+                <motion.button
+                  onClick={() => { setSocialTargetMeetup(null); setSocialModalOpen(true); }}
+                  whileTap={{ scale: 0.88 }}
+                  whileHover={{ y: -2 }}
+                  title="Share Event & Invite Friends"
+                  className="w-11 h-11 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EFEFF1] hover:text-white hover:border-[#494F55] transition"
+                >
+                  <Share2 className="w-4 h-4" />
+                </motion.button>
+
+                {/* Favorite Toggle */}
                 <motion.button
                   onClick={handleFavorite}
                   disabled={favLoading}
                   whileTap={{ scale: 0.88 }}
                   whileHover={{ y: -2 }}
+                  title="Favorite Event"
                   className="w-11 h-11 rounded-lg bg-[#171A1D]/90 backdrop-blur border border-[#494F55]/40 flex items-center justify-center text-[#EFEFF1] hover:border-[#494F55] transition disabled:opacity-50"
                 >
                   <motion.span
@@ -807,102 +953,349 @@ export default function EventDetailPage() {
                   </div>
                 )}
 
-                {/* MEET-UPS */}
-                {activeTab === 'Meet-ups' && (
-                  <div>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                {/* SQUADS & GROUP OUTINGS */}
+                {activeTab === 'Squads & Group Outings' && (
+                  <div className="space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-[#161D22] border border-[#262B2F]">
                       <div>
-                        <h3 className="text-lg font-semibold text-[#EFEFF1]">Meet-ups & Group Outings</h3>
-                        <p className="text-sm text-[#949599] mt-0.5">Gather with other attendees before the event.</p>
+                        <div className="flex items-center gap-2">
+                          <span className="p-1.5 rounded-lg bg-white/10 text-white">
+                            <UsersRound className="w-4 h-4" />
+                          </span>
+                          <h3 className="text-base font-bold text-[#EFEFF1]">Squads & Group Outings</h3>
+                        </div>
+                        <p className="text-xs text-[#949599] mt-1">
+                          Don't go solo! Join a pre-party, carpool, or squad meetup organized by verified attendees.
+                        </p>
                       </div>
                       <button
                         onClick={() => setCreateMeetupOpen(true)}
-                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition w-fit"
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] transition shrink-0 shadow-sm"
                       >
-                        <Plus className="w-4 h-4" /> Create Meet-up
+                        <Plus className="w-4 h-4" /> Create Group Outing
                       </button>
                     </div>
 
                     {meetupsLoading ? (
                       <div className="flex justify-center py-12">
-                        <LoadingSpinner label="Loading meet-ups..." />
+                        <LoadingSpinner label="Loading group outings..." />
                       </div>
                     ) : meetups.length === 0 ? (
-                      <EmptyState
-                        icon={UsersRound}
-                        title="No meet-ups yet"
-                        description="Be the first to plan a group outing for this event."
-                        action={() => setCreateMeetupOpen(true)}
-                        actionLabel="Create a Meet-up"
-                      />
+                      <div className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-8 text-center">
+                        <div className="w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center mx-auto mb-3">
+                          <UsersRound className="w-6 h-6" />
+                        </div>
+                        <h4 className="text-sm font-bold text-[#EFEFF1]">No squads formed yet</h4>
+                        <p className="text-xs text-[#949599] max-w-sm mx-auto mt-1">
+                          Be the first to gather your crew! Create a pre-event meetup, carpool, or afterparty squad.
+                        </p>
+                        <button
+                          onClick={() => setCreateMeetupOpen(true)}
+                          className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] transition"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> Start a Squad
+                        </button>
+                      </div>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {meetups.map((m) => {
                           const full = m.maxMembers > 0 && m.memberCount >= m.maxMembers;
+                          const squadTypeLabels = {
+                            carpool: { label: '🚗 Carpool / Ride Share', bg: 'bg-blue-500/15 text-blue-300 border-blue-500/30' },
+                            preparty: { label: '🎉 Pre-Event Party', bg: 'bg-purple-500/15 text-purple-300 border-purple-500/30' },
+                            vip: { label: '🥂 VIP Lounge Crew', bg: 'bg-amber-500/15 text-amber-300 border-amber-500/30' },
+                            food: { label: '🍹 Drinks & Bites', bg: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
+                            general: { label: '👥 Squad Hangout', bg: 'bg-white/10 text-white border-white/20' },
+                          };
+                          const typeInfo = squadTypeLabels[m.type] || squadTypeLabels.general;
+
                           return (
                             <motion.div
                               key={m.id}
                               whileHover={{ y: -2 }}
-                              className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/40 transition-colors"
+                              className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-5 hover:border-white/40 transition-colors flex flex-col justify-between"
                             >
-                              <div className="flex items-start justify-between gap-4">
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <h4 className="text-base font-semibold text-[#EFEFF1]">{m.title}</h4>
-                                    <Badge variant="gold" size="sm">
-                                      {m.memberCount}/{m.maxMembers > 0 ? m.maxMembers : '∞'} going
-                                    </Badge>
-                                    {m.isPublic ? null : <Badge variant="neutral" size="sm">Private</Badge>}
-                                  </div>
-                                  {m.description && (
-                                    <p className="mt-1.5 text-sm text-[#949599] leading-relaxed line-clamp-2">{m.description}</p>
-                                  )}
-                                  <div className="mt-3 space-y-1.5 text-xs text-[#949599]">
-                                    {m.host && (
-                                      <p className="flex items-center gap-1.5">
-                                        <User className="w-3.5 h-3.5 text-[#494F55]" /> Hosted by {m.host.name}
-                                      </p>
-                                    )}
-                                    {m.meetingSpot && (
-                                      <p className="flex items-center gap-1.5">
-                                        <MapPin className="w-3.5 h-3.5 text-[#494F55]" /> Meet at {m.meetingSpot}
-                                      </p>
-                                    )}
-                                    {m.meetAt && (
-                                      <p className="flex items-center gap-1.5">
-                                        <CalendarClock className="w-3.5 h-3.5 text-[#494F55]" />
-                                        {new Date(m.meetAt).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                                      </p>
-                                    )}
-                                  </div>
+                              <div>
+                                <div className="flex items-start justify-between gap-3 mb-2">
+                                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${typeInfo.bg}`}>
+                                    {typeInfo.label}
+                                  </span>
+                                  <span className="text-[11px] font-semibold text-[#949599]">
+                                    {m.memberCount}{m.maxMembers > 0 ? ` / ${m.maxMembers}` : ''} squad members
+                                  </span>
                                 </div>
-                                <div className="flex items-center gap-2 shrink-0">
+
+                                <h4 className="text-base font-bold text-[#EFEFF1] line-clamp-1">{m.title}</h4>
+                                {m.description && (
+                                  <p className="mt-1.5 text-xs text-[#949599] line-clamp-2 leading-relaxed">
+                                    {m.description}
+                                  </p>
+                                )}
+
+                                <div className="mt-3 space-y-1.5 text-xs text-[#949599]">
+                                  {m.meetingSpot && (
+                                    <p className="flex items-center gap-1.5 truncate">
+                                      <MapPin className="w-3.5 h-3.5 text-[#494F55] shrink-0" />
+                                      <span>Meet at <strong className="text-[#EFEFF1]">{m.meetingSpot}</strong></span>
+                                    </p>
+                                  )}
+                                  {m.meetAt && (
+                                    <p className="flex items-center gap-1.5">
+                                      <CalendarClock className="w-3.5 h-3.5 text-[#494F55] shrink-0" />
+                                      <span>{new Date(m.meetAt).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                                    </p>
+                                  )}
+                                </div>
+
+                                {/* Member Avatars Stack */}
+                                {m.members && m.members.length > 0 && (
+                                  <div className="mt-4 pt-3 border-t border-[#262B2F] flex items-center justify-between">
+                                    <div className="flex items-center -space-x-2 overflow-hidden">
+                                      {m.members.map((member) => (
+                                        <div
+                                          key={member.id}
+                                          title={member.name}
+                                          className="w-7 h-7 rounded-full bg-[#242B32] border-2 border-[#161D22] text-[10px] font-bold text-white flex items-center justify-center overflow-hidden shrink-0"
+                                        >
+                                          {member.avatar ? (
+                                            <img src={member.avatar} alt={member.name} className="w-full h-full object-cover" />
+                                          ) : (
+                                            member.name?.[0] || 'U'
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                    <span className="text-[11px] text-[#949599]">
+                                      Hosted by <strong className="text-[#EFEFF1]">{m.host?.name || 'Organizer'}</strong>
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Squad Action Buttons */}
+                              <div className="mt-4 pt-3 border-t border-[#262B2F] flex items-center justify-between gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => { setSocialTargetMeetup(m); setSocialModalOpen(true); }}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-semibold hover:bg-white/20 transition"
+                                >
+                                  <Share2 className="w-3.5 h-3.5" /> Invite
+                                </button>
+                                <div className="flex items-center gap-2">
                                   {m.hostId === currentUser?.id && (
                                     <button
+                                      type="button"
                                       onClick={() => handleDeleteMeetup(m)}
                                       disabled={meetupBusy}
-                                      className="p-2.5 rounded-lg text-red-400 hover:bg-red-500/15 transition disabled:opacity-50"
-                                      title="Delete meet-up"
+                                      className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/15 transition disabled:opacity-50"
+                                      title="Delete outing"
                                     >
                                       <Trash2 className="w-4 h-4" />
                                     </button>
                                   )}
                                   <button
+                                    type="button"
                                     onClick={() => handleToggleJoin(m)}
                                     disabled={meetupBusy || (full && !m.joined)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed ${
+                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition disabled:opacity-50 disabled:cursor-not-allowed ${
                                       m.joined
-                                        ? 'bg-white/10 text-white border border-white/20 hover:bg-white/10'
+                                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/30'
                                         : 'bg-white text-[#1C232B] hover:bg-[#CBD5E1]'
                                     }`}
                                   >
-                                    {m.joined ? 'Joined' : full ? 'Full' : 'Join'}
+                                    {m.joined ? 'In Squad ✓' : full ? 'Squad Full' : 'Join Squad'}
                                   </button>
                                 </div>
                               </div>
                             </motion.div>
                           );
                         })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* COMMUNITY & ATTENDEES */}
+                {activeTab === 'Community & Attendees' && (
+                  <div className="space-y-8">
+                    {/* Verified Attendees Wall */}
+                    <div className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-5 sm:p-6">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-[#262B2F]">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                            <h3 className="text-base font-bold text-[#EFEFF1]">Who's Pulling Up?</h3>
+                          </div>
+                          <p className="text-xs text-[#949599] mt-0.5">
+                            Verified ticket holders attending this event. Connect and plan together!
+                          </p>
+                        </div>
+                        <div className="px-3.5 py-1.5 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-bold shrink-0">
+                          {totalAttendees} Event-Goer{totalAttendees !== 1 ? 's' : ''} Confirmed
+                        </div>
+                      </div>
+
+                      {attendeesLoading ? (
+                        <div className="flex justify-center py-6">
+                          <LoadingSpinner label="Loading attendees..." />
+                        </div>
+                      ) : attendees.length === 0 ? (
+                        <p className="text-xs text-[#949599] text-center py-4">
+                          Be the first to secure your ticket and join the attendee wall!
+                        </p>
+                      ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                          {attendees.map((att) => (
+                            <div
+                              key={att.id}
+                              className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-[#1C232B] border border-[#262B2F] text-center group hover:border-white/40 transition"
+                            >
+                              <div className="w-10 h-10 rounded-full bg-[#242B32] border border-[#494F55]/40 text-white font-bold flex items-center justify-center overflow-hidden">
+                                {att.avatar ? (
+                                  <img src={att.avatar} alt={att.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  att.name?.[0] || 'U'
+                                )}
+                              </div>
+                              <span className="text-xs font-semibold text-[#EFEFF1] truncate max-w-full">
+                                {att.name}
+                              </span>
+                              <span className="text-[9px] uppercase tracking-wider text-[#949599] font-bold">
+                                {att.role === 'organizer' ? 'Host' : 'Going'}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Community Discussion Board & Chat */}
+                    <div className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-5 sm:p-6 space-y-4">
+                      <div className="flex items-center justify-between pb-3 border-b border-[#262B2F]">
+                        <div>
+                          <h3 className="text-base font-bold text-[#EFEFF1]">Event Discussion & Q&A</h3>
+                          <p className="text-xs text-[#949599] mt-0.5">Chat with fellow attendees, ask questions, or share tips.</p>
+                        </div>
+                        <span className="text-xs text-[#949599]">
+                          {discussions.length} message{discussions.length !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+
+                      {/* Discussion Message Thread */}
+                      <div className="max-h-[360px] overflow-y-auto space-y-3 pr-1">
+                        {discussionsLoading ? (
+                          <div className="flex justify-center py-8">
+                            <LoadingSpinner label="Loading messages..." />
+                          </div>
+                        ) : discussions.length === 0 ? (
+                          <div className="text-center py-8 space-y-2">
+                            <MessageSquare className="w-8 h-8 text-[#494F55] mx-auto" />
+                            <p className="text-xs text-[#949599]">No messages yet. Start the conversation!</p>
+                          </div>
+                        ) : (
+                          discussions.map((d) => (
+                            <div key={d.id} className="flex items-start gap-3 p-3 rounded-xl bg-[#1C232B] border border-[#262B2F]">
+                              <div className="w-8 h-8 rounded-full bg-[#242B32] border border-white/10 text-white text-xs font-bold flex items-center justify-center shrink-0 overflow-hidden">
+                                {d.user_avatar ? (
+                                  <img src={d.user_avatar} alt={d.user_name} className="w-full h-full object-cover" />
+                                ) : (
+                                  d.user_name?.[0] || 'U'
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className="text-xs font-bold text-[#EFEFF1]">{d.user_name || 'Attendee'}</span>
+                                  <span className="text-[10px] text-[#949599]">
+                                    {d.created_at ? new Date(d.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-[#CBD5E1] mt-1 whitespace-pre-wrap leading-relaxed">
+                                  {d.message}
+                                </p>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+
+                      {/* Discussion Input Form */}
+                      <form onSubmit={handlePostDiscussion} className="space-y-2 pt-2 border-t border-[#262B2F]">
+                        {/* Quick Prompts */}
+                        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                          {[
+                            '🚗 Anyone carpooling?',
+                            '👗 What is the dress code vibe?',
+                            '🍹 Who wants to grab drinks before?',
+                            '🎟️ Anyone got spare VIP tickets?',
+                          ].map((prompt, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => setDiscussionMessage(prompt)}
+                              className="px-2.5 py-1 rounded-lg bg-[#1C232B] border border-[#262B2F] text-[11px] text-[#949599] hover:text-white hover:border-white/30 transition shrink-0"
+                            >
+                              {prompt}
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={discussionMessage}
+                            onChange={(e) => setDiscussionMessage(e.target.value)}
+                            placeholder={isAuthenticated ? "Write a message to event-goers..." : "Sign in to join the conversation..."}
+                            disabled={postingDiscussion}
+                            className="flex-1 px-4 py-2.5 rounded-xl bg-[#1C232B] border border-[#262B2F] text-xs text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/40 transition"
+                          />
+                          <button
+                            type="submit"
+                            disabled={postingDiscussion || !discussionMessage.trim()}
+                            className="px-4 py-2.5 rounded-xl bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0 flex items-center gap-1.5"
+                          >
+                            {postingDiscussion ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                            <span>Send</span>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+
+                {/* FAQs */}
+                {activeTab === 'FAQs' && (
+                  <div>
+                    {faqs.length === 0 ? (
+                      <EmptyState
+                        icon={AlertCircle}
+                        title="No FAQs yet"
+                        description="FAQs for this event will appear here once the organizer adds them."
+                      />
+                    ) : (
+                      <div className="space-y-3">
+                        {faqs.map((faq, i) => (
+                          <div key={i} className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden hover:border-white/40 transition-colors">
+                            <button
+                              onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                              className="w-full flex items-center justify-between px-5 py-4 text-left"
+                            >
+                              <span className="text-sm font-semibold text-[#EFEFF1] pr-4">{faq.question}</span>
+                              <ChevronDown className={`w-5 h-5 text-[#949599] shrink-0 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
+                            </button>
+                            <AnimatePresence>
+                              {openFaq === i && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  <p className="px-5 pb-4 text-sm text-[#949599] leading-relaxed">{faq.answer}</p>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -1030,6 +1423,31 @@ export default function EventDetailPage() {
         }
       >
         <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5">Outing Type</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {[
+                { id: 'general', label: '👥 Squad Hangout' },
+                { id: 'carpool', label: '🚗 Carpool / Ride' },
+                { id: 'preparty', label: '🎉 Pre-Party' },
+                { id: 'vip', label: '🥂 VIP Lounge' },
+                { id: 'food', label: '🍹 Drinks & Food' },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setMeetupForm((f) => ({ ...f, type: t.id }))}
+                  className={`p-2.5 rounded-xl border text-xs font-semibold transition text-left ${
+                    (meetupForm.type || 'general') === t.id
+                      ? 'bg-white text-[#1C232B] border-white shadow-sm'
+                      : 'bg-[#1C232B] border-[#494F55]/40 text-[#EFEFF1] hover:border-white/30'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div>
             <label className="block text-xs font-medium text-[#949599] mb-1.5">Title *</label>
             <input
@@ -1250,6 +1668,14 @@ export default function EventDetailPage() {
           Get Tickets
         </button>
       </div>
+
+      {/* Social Share & Squad Outings Hub Modal */}
+      <SocialShareModal
+        open={socialModalOpen}
+        onClose={() => { setSocialModalOpen(false); setSocialTargetMeetup(null); }}
+        event={event}
+        meetup={socialTargetMeetup}
+      />
     </>
   );
 }

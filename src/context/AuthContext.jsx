@@ -4,6 +4,7 @@ import {
   getSessions as apiGetSessions, revokeSession as apiRevokeSession,
   logoutAll as apiLogoutAll,
 } from '@/api/auth';
+import { getProfile } from '@/api/users';
 
 const AuthContext = createContext(null);
 
@@ -29,6 +30,23 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('tc_user');
     setToken(null);
     setUser(null);
+  }, []);
+
+  const refreshProfile = useCallback(async () => {
+    try {
+      const res = await getProfile();
+      if (res.data?.user) {
+        setUser((prev) => {
+          const updated = { ...prev, ...res.data.user };
+          localStorage.setItem('tc_user', JSON.stringify(updated));
+          return updated;
+        });
+        return res.data.user;
+      }
+    } catch (err) {
+      console.warn('Failed to refresh user profile:', err.message);
+    }
+    return null;
   }, []);
 
   const login = async (email, password, website = '') => {
@@ -99,7 +117,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider value={{
       user, token, loading,
       login, adminLogin, logout, logoutAll,
-      changePassword, getSessions, revokeSession,
+      changePassword, getSessions, revokeSession, refreshProfile,
       isAuthenticated, isSystemAdmin, isAdmin, isStaffAdmin, isOrganizer, isAttendee, setUser,
       persistAuth,
     }}>
@@ -126,6 +144,7 @@ export const useAuth = () => {
       changePassword: async () => {},
       getSessions: async () => [],
       revokeSession: async () => {},
+      refreshProfile: async () => null,
       setUser: () => {},
       persistAuth: () => {},
     };

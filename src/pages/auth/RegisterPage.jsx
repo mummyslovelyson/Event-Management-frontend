@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mail, Lock, User, Phone, Eye, EyeOff, Loader2,
-  UserPlus, Building2, Check, Users,
+  UserPlus, Building2, Check, Users, MapPin, Tag, Globe, AlignLeft,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { registerUser } from '@/api/auth';
@@ -36,7 +36,13 @@ export default function RegisterPage() {
         role,
         website: data.website,
       };
-      if (role === 'organizer') payload.organizationName = data.organizationName;
+      if (role === 'organizer') {
+        payload.organizationName = data.organizationName;
+        payload.category = data.category;
+        payload.city = data.city;
+        payload.description = data.description;
+        payload.websiteUrl = data.websiteUrl;
+      }
       const res = await registerUser(payload);
       toast.success(
         res.data?.message || (data.phone
@@ -69,7 +75,7 @@ export default function RegisterPage() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative w-full max-w-lg"
+        className="relative w-full max-w-xl"
       >
         <div className="rounded-2xl bg-[#161D22] border border-[#494F55]/40 shadow-2xl shadow-black/40 p-6 sm:p-8">
           {/* Logo */}
@@ -106,6 +112,7 @@ export default function RegisterPage() {
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <input type="text" {...register('website')} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
+
             <AnimatePresence mode="popLayout">
               {role === 'organizer' && (
                 <motion.div
@@ -113,30 +120,99 @@ export default function RegisterPage() {
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="overflow-hidden"
+                  className="space-y-4 overflow-hidden"
                 >
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Organization Name</label>
-                  <div className="relative">
-                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-                    <input
-                      type="text"
-                      placeholder="Organization name"
-                      {...register('organizationName', { required: 'Organization name is required' })}
-                      className={inputClass('organizationName')}
-                    />
+                  <div className="p-3.5 rounded-xl bg-white/[0.03] border border-[#494F55]/30 mb-2">
+                    <p className="text-xs text-[#949599] leading-relaxed">
+                      💡 Organizer accounts require administrator review and approval before publishing events. Please provide accurate details.
+                    </p>
                   </div>
-                  {errors.organizationName && <p className="mt-1 text-xs text-red-400">{errors.organizationName.message}</p>}
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Organization / Brand Name *</label>
+                    <div className="relative">
+                      <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+                      <input
+                        type="text"
+                        placeholder="e.g. AfroVibes Entertainment"
+                        {...register('organizationName', { required: 'Organization name is required' })}
+                        className={inputClass('organizationName')}
+                      />
+                    </div>
+                    {errors.organizationName && <p className="mt-1 text-xs text-red-400">{errors.organizationName.message}</p>}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Event Category *</label>
+                      <div className="relative">
+                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+                        <select
+                          {...register('category', { required: 'Please select a category' })}
+                          className="w-full pl-10 pr-3 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition-colors"
+                        >
+                          <option value="Music & Concerts">Music &amp; Concerts</option>
+                          <option value="Nightlife & Parties">Nightlife &amp; Parties</option>
+                          <option value="Corporate & Conferences">Corporate &amp; Conferences</option>
+                          <option value="Festivals & Cultural">Festivals &amp; Cultural</option>
+                          <option value="Sports & Fitness">Sports &amp; Fitness</option>
+                          <option value="Theatre & Arts">Theatre &amp; Arts</option>
+                          <option value="Community & Lifestyle">Community &amp; Lifestyle</option>
+                          <option value="Other">Other Events</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">City / Location *</label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+                        <input
+                          type="text"
+                          placeholder="e.g. Accra, Kumasi, Lagos"
+                          {...register('city', { required: 'City is required' })}
+                          className={inputClass('city')}
+                        />
+                      </div>
+                      {errors.city && <p className="mt-1 text-xs text-red-400">{errors.city.message}</p>}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Organization Bio / Summary</label>
+                    <div className="relative">
+                      <textarea
+                        rows={2}
+                        placeholder="Brief summary of your organization and the types of events you host..."
+                        {...register('description')}
+                        className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/50 transition-colors resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Website or Social Link</label>
+                    <div className="relative">
+                      <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+                      <input
+                        type="text"
+                        placeholder="https://instagram.com/yourhandle or website"
+                        {...register('websiteUrl')}
+                        className={inputClass('websiteUrl')}
+                      />
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Full Name</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">{role === 'organizer' ? 'Contact Person / Representative Name *' : 'Full Name *'}</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                 <input
                   type="text"
-                  placeholder="Full name"
+                  placeholder={role === 'organizer' ? 'Primary contact full name' : 'Full name'}
                   {...register('name', { required: 'Full name is required' })}
                   className={inputClass('name')}
                 />

@@ -4,13 +4,15 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   LayoutDashboard, CalendarDays, Ticket as TicketIcon, ShoppingBag, ScanLine,
   Users, Tag, BarChart3, Megaphone, UsersRound, Wallet, Settings, Menu, X,
-  LogOut, Search, ChevronDown, Bell, LifeBuoy, Layers,
+  LogOut, Search, ChevronDown, Bell, LifeBuoy, Layers, Globe, Clock,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
+import OrganizerPendingApproval from '@/components/organizer/OrganizerPendingApproval';
 
 const nav = [
   { to: '/organizer/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/', label: 'Public Website', icon: Globe },
   { to: '/organizer/events', label: 'Events', icon: CalendarDays },
   { to: '/organizer/categories', label: 'Categories', icon: Layers },
   { to: '/organizer/tickets', label: 'Ticket Management', icon: TicketIcon },
@@ -36,6 +38,8 @@ export default function OrganizerLayout() {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
 
+  const isApproved = user?.is_approved === true || user?.is_approved === 1 || user?.isApproved === true;
+
   useEffect(() => { setSidebarOpen(false); setProfileOpen(false); }, [location.pathname]);
 
   useEffect(() => {
@@ -52,12 +56,14 @@ export default function OrganizerLayout() {
   const handleLogout = () => { logout(); navigate('/login'); };
 
   const initials = (user?.name || user?.email || 'O').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase();
-  const pageLabel = flatNav.find((i) => (i.end ? location.pathname === i.to : location.pathname.startsWith(i.to)))?.label || 'Dashboard';
+  const pageLabel = !isApproved
+    ? 'Application Status'
+    : flatNav.find((i) => (i.end ? location.pathname === i.to : location.pathname.startsWith(i.to)))?.label || 'Dashboard';
 
   return (
     <div className="min-h-screen bg-[#111417] text-[#EFEFF1]">
       <aside className="hidden lg:flex fixed inset-y-0 left-0 w-64 bg-[#171A1D] border-r border-[#262B2F] flex-col z-40">
-        <SidebarContent user={user} initials={initials} />
+        <SidebarContent user={user} initials={initials} isApproved={isApproved} />
       </aside>
 
       <AnimatePresence>
@@ -65,7 +71,7 @@ export default function OrganizerLayout() {
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
             <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} transition={{ type: 'tween', duration: 0.2 }} className="fixed inset-y-0 left-0 w-[min(256px,80vw)] bg-[#171A1D] border-r border-[#262B2F] flex flex-col z-50 lg:hidden">
-              <SidebarContent user={user} initials={initials} onNavigate={() => setSidebarOpen(false)} />
+              <SidebarContent user={user} initials={initials} isApproved={isApproved} onNavigate={() => setSidebarOpen(false)} />
             </motion.aside>
           </>
         )}
@@ -111,13 +117,24 @@ export default function OrganizerLayout() {
                       <div className="px-4 py-3 border-b border-[#262B2F]">
                         <p className="text-sm font-medium text-[#EFEFF1] truncate">{user?.name || 'Organizer'}</p>
                         <p className="text-xs text-[#949599] truncate">{user?.email}</p>
-                        <span className="inline-block mt-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium text-white bg-white/10">Organizer</span>
+                        <span className={`inline-block mt-1.5 px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                          isApproved ? 'bg-white/10 text-white' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                        }`}>
+                          {isApproved ? 'Organizer' : 'Pending Review'}
+                        </span>
                       </div>
-                      <Link to="/organizer/settings" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
-                        <Settings className="w-4 h-4" /> Settings
-                      </Link>
-                      <Link to="/organizer/wallet" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
-                        <Wallet className="w-4 h-4" /> Wallet
+                      {isApproved && (
+                        <>
+                          <Link to="/organizer/settings" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
+                            <Settings className="w-4 h-4" /> Settings
+                          </Link>
+                          <Link to="/organizer/wallet" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
+                            <Wallet className="w-4 h-4" /> Wallet
+                          </Link>
+                        </>
+                      )}
+                      <Link to="/" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
+                        <Globe className="w-4 h-4" /> Visit Public Website
                       </Link>
                       <div className="border-t border-[#262B2F] mt-1 pt-1">
                         <button onClick={handleLogout} className="flex items-center gap-2.5 w-full px-4 py-2 text-sm text-[#949599] hover:text-red-300 hover:bg-red-500/10 transition">
@@ -133,14 +150,23 @@ export default function OrganizerLayout() {
         </header>
 
         <main className="p-4 sm:p-6 lg:p-8 max-w-screen-2xl mx-auto">
-          <Outlet />
+          {!isApproved ? <OrganizerPendingApproval /> : <Outlet />}
         </main>
       </div>
     </div>
   );
 }
 
-function SidebarContent({ user, initials, onNavigate }) {
+function SidebarContent({ user, initials, isApproved, onNavigate }) {
+  const visibleNav = isApproved
+    ? nav
+    : [
+        { to: '/organizer/dashboard', label: 'Application Status', icon: LayoutDashboard, end: true },
+        { to: '/', label: 'Public Website', icon: Globe },
+        { to: '/organizer/support', label: 'Help & Support', icon: LifeBuoy },
+        { to: '/organizer/settings', label: 'Settings', icon: Settings },
+      ];
+
   return (
     <>
       <div className="flex items-center justify-between h-14 px-4 border-b border-[#262B2F] shrink-0">
@@ -155,7 +181,7 @@ function SidebarContent({ user, initials, onNavigate }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-        {nav.map(({ to, label, icon: Icon, end }) => (
+        {visibleNav.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}
@@ -184,7 +210,7 @@ function SidebarContent({ user, initials, onNavigate }) {
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2A2F33] to-[#1D2124] border border-[#3A4045] flex items-center justify-center text-[#C4C9CC] text-xs font-semibold shrink-0">{initials}</div>
           <div className="min-w-0">
             <p className="text-[13px] font-medium text-[#EFEFF1] truncate">{user?.name || 'Organizer'}</p>
-            <p className="text-[11px] text-[#6B7278] truncate">Organizer</p>
+            <p className="text-[11px] text-[#6B7278] truncate">{isApproved ? 'Organizer' : 'Pending Approval'}</p>
           </div>
         </div>
       </div>

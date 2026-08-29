@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { Lock, Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Lock, Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2, ShieldCheck, KeyRound, Mail } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { resetPassword } from '@/api/auth';
 import Logo from '@/components/common/Logo';
@@ -10,27 +10,39 @@ import Logo from '@/components/common/Logo';
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
+  const initialToken = searchParams.get('token') || '';
+  const initialCode = searchParams.get('code') || initialToken;
+  const initialEmail = searchParams.get('email') || '';
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+    defaultValues: {
+      email: initialEmail,
+      code: initialCode,
+    },
+  });
   const password = watch('password');
 
   const onSubmit = async (data) => {
-    if (!token) {
-      toast.error('Invalid or missing reset token. Please request a new reset link.');
-      return;
-    }
     setSubmitting(true);
     try {
-      await resetPassword({ token, password: data.password, website: data.website });
+      const payload = {
+        email: data.email,
+        code: data.code,
+        token: data.code,
+        password: data.password,
+        website: data.website,
+      };
+      await resetPassword(payload);
       setSuccess(true);
-      toast.success('Password reset successfully!');
-      setTimeout(() => navigate('/login'), 2500);
+      toast.success('🎉 Password reset successfully! You can now log in.', { duration: 5000 });
+      setTimeout(() => navigate('/login'), 2200);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Could not reset password. The link may have expired.');
+      toast.error(err.response?.data?.message || 'Could not reset password. Invalid or expired 6-digit code.');
     } finally {
       setSubmitting(false);
     }
@@ -59,8 +71,8 @@ export default function ResetPasswordPage() {
             <div className="flex justify-center mb-3">
               <Logo size="lg" showText={false} />
             </div>
-            <h1 className="text-2xl font-bold text-[#EFEFF1]">Reset Password</h1>
-            <p className="mt-1 text-sm text-[#949599]">Enter your new password below</p>
+            <h1 className="text-2xl font-bold text-[#EFEFF1]">Create New Password</h1>
+            <p className="mt-1 text-sm text-[#949599]">Enter your 6-digit reset code and your new password</p>
           </div>
 
           {success ? (
@@ -68,27 +80,57 @@ export default function ResetPasswordPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
-              className="text-center py-4"
+              className="text-center py-4 space-y-4"
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto mb-5">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto mb-2">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-semibold text-[#EFEFF1]">Password Reset!</h3>
-              <p className="mt-2 text-sm text-[#949599]">
-                Your password has been changed successfully. Redirecting you to login...
+              <h3 className="text-lg font-semibold text-[#EFEFF1]">Password Reset Complete!</h3>
+              <p className="text-sm text-[#949599]">
+                Your account password has been updated. Redirecting you to sign in...
               </p>
-              <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-[#494F55]">
-                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Redirecting
+              <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-white font-medium">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Redirecting to Login
               </div>
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <input type="text" {...register('website')} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
-              {!token && (
-                <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-3 text-xs text-red-400">
-                  No reset token found in the URL. Please use the link from your email.
+
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+                  <input
+                    type="email"
+                    placeholder="name@domain.com"
+                    {...register('email', {
+                      required: 'Email is required',
+                      pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },
+                    })}
+                    className={inputClass('email')}
+                  />
                 </div>
-              )}
+                {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">6-Digit Reset Code (from SMS / Email)</label>
+                <div className="relative">
+                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+                  <input
+                    type="text"
+                    maxLength={6}
+                    placeholder="123456"
+                    {...register('code', {
+                      required: '6-digit reset code is required',
+                      minLength: { value: 6, message: 'Code must be 6 digits' },
+                    })}
+                    className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-base font-mono tracking-widest text-[#EFEFF1] placeholder:text-[#494F55] placeholder:tracking-normal focus:outline-none focus:border-white/50 transition-colors"
+                  />
+                </div>
+                {errors.code && <p className="mt-1 text-xs text-red-400">{errors.code.message}</p>}
+              </div>
 
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">New Password</label>
@@ -115,7 +157,7 @@ export default function ResetPasswordPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Confirm Password</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Confirm New Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
@@ -136,17 +178,17 @@ export default function ResetPasswordPage() {
 
               {/* Password strength hint */}
               <div className="rounded-lg bg-[#1C232B] border border-[#494F55]/30 p-3">
-                <p className="text-xs text-[#494F55] flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5" /> Use at least 8 characters with a mix of letters and numbers.
+                <p className="text-xs text-[#949599] flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Use at least 8 characters with letters and numbers.
                 </p>
               </div>
 
               <button
                 type="submit"
-                disabled={submitting || !token}
-                className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-60 flex items-center justify-center gap-2"
+                disabled={submitting}
+                className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm"
               >
-                {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Resetting...</> : 'Reset Password'}
+                {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Updating Password...</> : 'Save & Update Password'}
               </button>
             </form>
           )}

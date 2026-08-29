@@ -48,3 +48,6 @@ export const publishEvent = (id) => api.patch(`/events/${id}/publish`);
 export const unpublishEvent = (id) => api.patch(`/events/${id}/unpublish`);
 export const getOrganizerEvents = (params) => api.get('/events/organizer/mine', { params });
 export const getFeaturedOrganizers = (params) => api.get('/events/featured-organizers', { params });
+export const toggleEventReminder = (id) => api.post(`/events/${id}/reminders`);
+export const getEventReminderStatus = (id) => api.get(`/events/${id}/reminders`);
+export const getUserReminders = () => api.get('/events/reminders/mine');

@@ -6,11 +6,15 @@ import { QRCodeSVG } from 'qrcode.react';
 import {
   Ticket as TicketIcon, Search, Download, Send, Calendar, MapPin, Armchair,
   X, Printer, CheckCircle2, Clock, XCircle, QrCode, Tag, Store, BadgeDollarSign,
-  ChevronDown, Loader2,
+  ChevronDown, Loader2, CalendarPlus, Share2, Bell, BellRing, ExternalLink,
+  Info, Sparkles, ShieldCheck,
 } from 'lucide-react';
 import { getUserTickets, transferTicket, downloadTicket } from '@/api/tickets';
 import { getMyResale, createResaleListing, cancelResaleListing } from '@/api/resale';
+import { getUserReminders, toggleEventReminder } from '@/api/events';
+import { getGoogleCalendarUrl, downloadIcsFile } from '@/utils/calendar';
 import Modal from '@/components/common/Modal';
+import SocialShareModal from '@/components/common/SocialShareModal';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import EmptyState from '@/components/common/EmptyState';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -20,6 +24,7 @@ const TABS = [
   { value: 'all', label: 'All Tickets' },
   { value: 'upcoming', label: 'Upcoming' },
   { value: 'past', label: 'Past' },
+  { value: 'reminders', label: 'Event Reminders 🔔' },
   { value: 'cancelled', label: 'Cancelled' },
 ];
 
@@ -31,11 +36,14 @@ const normalizeTicket = (t) => ({
   ticketType: t.ticketType || t.type || t.ticket_type_name || t.ticketTypeName || 'General',
   seat: t.seat || t.seatNumber || t.seat_number || t.seatInfo,
   event: {
+    id: t.event_id || t.event?.id,
     title: t.event?.title || t.event_title || t.event_name || t.eventName || 'Event',
     venue: t.event?.venue || t.event_venue || t.venue || 'Venue TBA',
     startDate: t.event?.startDate || t.event?.start_date || t.startDate || t.start_date || t.eventDate,
     startTime: t.event?.startTime || t.event?.start_time || t.startTime || t.start_time,
     image: t.event?.image || t.banner_image || t.event?.banner_image || t.image,
+    category: t.event?.category || t.category,
+    city: t.event?.city || t.city,
   },
 });
 
@@ -58,6 +66,13 @@ export default function MyTicketsPage() {
   const [transferEmail, setTransferEmail] = useState('');
   const [transferring, setTransferring] = useState(false);
   const [printTicket, setPrintTicket] = useState(null);
+  const [shareTicket, setShareTicket] = useState(null);
+  const [previewEvent, setPreviewEvent] = useState(null);
+
+  // Reminders state
+  const [reminders, setReminders] = useState([]);
+  const [remindersLoading, setRemindersLoading] = useState(false);
+  const [togglingReminderId, setTogglingReminderId] = useState(null);
 
   // Resale marketplace state
   const [listings, setListings] = useState([]);
@@ -95,10 +110,37 @@ export default function MyTicketsPage() {
     }
   };
 
+  const loadReminders = async () => {
+    setRemindersLoading(true);
+    try {
+      const res = await getUserReminders();
+      const data = res.data?.reminders ?? [];
+      setReminders(Array.isArray(data) ? data : []);
+    } catch {
+      setReminders([]);
+    } finally {
+      setRemindersLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadTickets();
     loadListings();
+    loadReminders();
   }, []);
+
+  const handleRemoveReminder = async (eventId) => {
+    setTogglingReminderId(eventId);
+    try {
+      await toggleEventReminder(eventId);
+      toast.success('Event reminder removed');
+      setReminders((prev) => prev.filter((r) => r.id !== eventId));
+    } catch {
+      toast.error('Failed to remove reminder');
+    } finally {
+      setTogglingReminderId(null);
+    }
+  };
 
   const filtered = useMemo(() => {
     const now = new Date();
@@ -250,8 +292,110 @@ export default function MyTicketsPage() {
         </div>
       </motion.div>
 
-      {/* Tickets list */}
-      {filtered.length === 0 ? (
+      {/* Tab Contents: Reminders vs Regular Tickets */}
+      {tab === 'reminders' ? (
+        remindersLoading ? (
+          <LoadingSpinner size="lg" label="Loading your event reminders..." className="py-24" />
+        ) : reminders.length === 0 ? (
+          <EmptyState
+            icon={BellRing}
+            title="No event reminders set yet"
+            description="Set reminders on upcoming concerts, festivals, and games to receive pre-sale notifications, ticket availability alerts, and countdown reminders."
+            action={() => (window.location.href = '/attendee/explore')}
+            actionLabel="Discover Upcoming Shows"
+          />
+        ) : (
+          <motion.div variants={containerStagger} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {reminders.map((ev) => {
+              const startDate = ev.start_date ? new Date(ev.start_date) : null;
+              const formattedDate = startDate
+                ? startDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+                : 'TBA';
+              const daysLeft = startDate
+                ? Math.ceil((startDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+                : null;
+
+              return (
+                <motion.div
+                  key={ev.id}
+                  variants={itemFade}
+                  className="rounded-2xl bg-[#171A1D] border border-[#262B2F] overflow-hidden hover:border-white/40 transition-all flex flex-col justify-between p-5 space-y-4"
+                >
+                  <div className="flex gap-4 items-start">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-[#242B32] shrink-0">
+                      {ev.banner_image ? (
+                        <img src={ev.banner_image} alt={ev.title} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <TicketIcon className="w-8 h-8 text-[#494F55]" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        {ev.category && (
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">
+                            {ev.category}
+                          </span>
+                        )}
+                        {daysLeft !== null && daysLeft >= 0 && (
+                          <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded">
+                            {daysLeft === 0 ? 'Today' : `${daysLeft} days away`}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-base font-bold text-[#EFEFF1] line-clamp-1 hover:text-white transition">
+                        <Link to={`/events/${ev.id}`}>{ev.title}</Link>
+                      </h3>
+                      <p className="text-xs text-[#949599] flex items-center gap-1.5 truncate">
+                        <Calendar className="w-3.5 h-3.5 text-[#494F55] shrink-0" /> {formattedDate} {ev.start_time ? `• ${ev.start_time}` : ''}
+                      </p>
+                      <p className="text-xs text-[#949599] flex items-center gap-1.5 truncate">
+                        <MapPin className="w-3.5 h-3.5 text-[#494F55] shrink-0" /> {ev.venue || ev.city || 'Venue TBA'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Pre-sale & ticket alert info */}
+                  <div className="p-3 rounded-xl bg-[#14171A] border border-[#262B2F] flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2 text-[#EFEFF1]">
+                      <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                      <span>{ev.min_price != null ? `Tickets from ${format(ev.min_price)}` : 'Tickets available'}</span>
+                    </div>
+                    <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                      <BellRing className="w-3 h-3 animate-pulse" /> Reminder Active
+                    </span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#262B2F]">
+                    <Link
+                      to={`/events/${ev.id}`}
+                      className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] transition"
+                    >
+                      <TicketIcon className="w-3.5 h-3.5" /> Get Tickets
+                    </Link>
+                    <button
+                      onClick={() => setShareTicket({ event: ev })}
+                      className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 transition"
+                    >
+                      <Share2 className="w-3.5 h-3.5" /> Share
+                    </button>
+                    <button
+                      onClick={() => handleRemoveReminder(ev.id)}
+                      disabled={togglingReminderId === ev.id}
+                      className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#949599] text-xs font-medium hover:text-red-400 hover:border-red-500/40 transition disabled:opacity-50"
+                    >
+                      {togglingReminderId === ev.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Bell className="w-3.5 h-3.5" />}
+                      Remove
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        )
+      ) : filtered.length === 0 ? (
         <EmptyState
           icon={TicketIcon}
           title={search ? "No tickets match your search" : "No tickets yet"}
@@ -268,6 +412,8 @@ export default function MyTicketsPage() {
                 onDownload={() => handleDownload(ticket)}
                 onTransfer={() => setTransferTarget(ticket)}
                 onPrint={() => setPrintTicket(ticket)}
+                onShare={() => setShareTicket(ticket)}
+                onViewEvent={() => setPreviewEvent(ticket.event)}
                 onSell={() => { setSellTarget(ticket); setSellPrice(''); }}
               />
             </motion.div>
@@ -486,11 +632,86 @@ export default function MyTicketsPage() {
           <PrintableTicket ticket={printTicket} />
         </div>
       )}
+      {/* Quick Event Details Modal */}
+      <Modal
+        open={!!previewEvent}
+        onClose={() => setPreviewEvent(null)}
+        title={previewEvent?.title || 'Event Details'}
+        size="md"
+        footer={
+          <div className="flex items-center justify-between w-full">
+            <button
+              onClick={() => setPreviewEvent(null)}
+              className="px-4 py-2.5 rounded-lg text-sm text-[#949599] hover:text-[#EFEFF1]"
+            >
+              Close
+            </button>
+            {previewEvent?.id && (
+              <Link
+                to={`/events/${previewEvent.id}`}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-[#1C232B] text-xs sm:text-sm font-bold hover:bg-[#CBD5E1] transition"
+              >
+                Go to Event Page <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+            )}
+          </div>
+        }
+      >
+        {previewEvent && (
+          <div className="space-y-4">
+            <div className="h-44 rounded-xl overflow-hidden bg-[#242B32] relative">
+              {previewEvent.image ? (
+                <img src={previewEvent.image} alt={previewEvent.title} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <TicketIcon className="w-12 h-12 text-[#494F55]" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1C232B] via-transparent to-transparent" />
+              {previewEvent.category && (
+                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#1C232B]/90 text-white backdrop-blur">
+                  {previewEvent.category}
+                </span>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-lg font-bold text-[#EFEFF1]">{previewEvent.title}</h3>
+              <p className="text-sm text-[#949599] flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#494F55]" />
+                <span>
+                  {previewEvent.startDate ? new Date(previewEvent.startDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) : 'Date TBA'}
+                  {previewEvent.startTime ? ` at ${previewEvent.startTime}` : ''}
+                </span>
+              </p>
+              <p className="text-sm text-[#949599] flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#494F55]" />
+                <span>{previewEvent.venue || previewEvent.city || 'Venue location TBA'}</span>
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-[#14171A] border border-[#262B2F] flex items-center justify-between text-xs text-[#949599]">
+              <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                <ShieldCheck className="w-4 h-4" /> Verified Ticket Pass
+              </span>
+              <span>Need help? Contact support</span>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Social Share & Squad Outings Modal */}
+      <SocialShareModal
+        open={!!shareTicket}
+        onClose={() => setShareTicket(null)}
+        event={shareTicket?.event}
+        ticket={shareTicket}
+      />
     </motion.div>
   );
 }
 
-function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
+function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell, onShare, onViewEvent }) {
   const event = ticket.event || {};
   const eventDate = event.startDate || ticket.eventDate || ticket.startDate;
   const status = (ticket.status || 'valid').toLowerCase();
@@ -524,9 +745,13 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
       className={`group relative rounded-2xl overflow-hidden bg-[#171A1D] border shadow-[0_0_0_0_rgba(212,175,55,0)] hover:shadow-[0_14px_36px_-16px_rgba(0,0,0,0.7),0_0_0_1px_rgba(212,175,55,0.15)] ${isCancelled ? 'border-red-500/30 opacity-70' : 'border-[#262B2F] hover:border-white/40'} transition-[border-color,box-shadow,opacity]`}
     >
       {/* Banner */}
-      <div className="relative h-24 overflow-hidden bg-[#242B32]">
+      <div
+        onClick={onViewEvent}
+        className="relative h-24 overflow-hidden bg-[#242B32] cursor-pointer group/banner"
+        title="Click to view event details"
+      >
         {event.image ? (
-          <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
+          <img src={event.image} alt={event.title} className="w-full h-full object-cover group-hover/banner:scale-105 transition-transform duration-300" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <TicketIcon className="w-10 h-10 text-[#494F55]" />
@@ -556,7 +781,14 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
               <span className="text-[10px] font-semibold uppercase tracking-wide text-white">
                 {ticket.ticketType || ticket.type || 'General'}
               </span>
-              <h3 className="text-base font-bold text-[#EFEFF1] line-clamp-2">{event.title || ticket.eventName || 'Event'}</h3>
+              <h3
+                onClick={onViewEvent}
+                className="text-base font-bold text-[#EFEFF1] line-clamp-2 hover:text-white cursor-pointer transition flex items-center gap-1.5"
+                title="Click to view event details"
+              >
+                <span>{event.title || ticket.eventName || 'Event'}</span>
+                <Info className="w-3.5 h-3.5 text-[#949599] shrink-0 hover:text-white" />
+              </h3>
             </div>
             <div className="space-y-1.5 text-sm">
               <p className="text-[#949599] flex items-center gap-1.5">
@@ -598,30 +830,42 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell }) {
         </div>
 
         {/* Actions */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-5 pt-0">
+        <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 p-5 pt-0">
           <button
             onClick={onDownload}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
+            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
           >
             <Download className="w-3.5 h-3.5" /> Download
           </button>
           <button
             onClick={onPrint}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
+            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
           >
             <Printer className="w-3.5 h-3.5" /> Print
           </button>
           <button
+            onClick={() => { downloadIcsFile(event); toast.success('Event added to calendar (.ics download)'); }}
+            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
+          >
+            <CalendarPlus className="w-3.5 h-3.5" /> Calendar
+          </button>
+          <button
+            onClick={onShare}
+            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-emerald-400 text-xs font-medium hover:border-emerald-500/40 hover:bg-emerald-500/10 transition-colors"
+          >
+            <Share2 className="w-3.5 h-3.5" /> Share
+          </button>
+          <button
             onClick={onTransfer}
             disabled={isCancelled}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Send className="w-3.5 h-3.5" /> Transfer
           </button>
           <button
             onClick={onSell}
             disabled={isCancelled}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-semibold hover:bg-white hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-semibold hover:bg-white hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Tag className="w-3.5 h-3.5" /> Sell
           </button>

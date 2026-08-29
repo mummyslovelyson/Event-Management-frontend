@@ -109,15 +109,6 @@ export default function OrganizerDashboard() {
             {data?.organization?.name || user?.name || 'Your Event Hub'} · Live analytics, ticket sales, and event operations.
           </p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <Link
-            to="/organizer/events/create"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] font-semibold text-sm hover:bg-[#CBD5E1] transition shadow-md"
-          >
-            <PlusCircle className="w-4 h-4" /> Create New Event
-          </Link>
-        </div>
       </motion.div>
 
       {/* Key Metrics */}
@@ -149,12 +140,7 @@ export default function OrganizerDashboard() {
             </p>
             <div className="mt-2 flex items-center justify-between">
               <span className="text-[11px] text-[#949599]">Pending: {format(wallet.pending ?? 0)}</span>
-              <Link
-                to="/organizer/wallet"
-                className="text-xs font-semibold text-white hover:underline flex items-center gap-0.5"
-              >
-                Withdraw <ArrowRight className="w-3 h-3" />
-              </Link>
+              <span className="text-xs text-emerald-400 font-medium">Ready for payout</span>
             </div>
           </div>
         </div>
@@ -165,28 +151,6 @@ export default function OrganizerDashboard() {
           trend={metrics.activeEventsTrend ?? 0}
           trendLabel="vs last month"
         />
-      </div>
-
-      {/* Quick Actions Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          { label: 'Create Event', icon: PlusCircle, to: '/organizer/events/create' },
-          { label: 'QR Scanner', icon: ScanLine, to: '/organizer/check-in' },
-          { label: 'Manage Guests', icon: Users, to: '/organizer/attendees' },
-          { label: 'Sales Reports', icon: BarChart3, to: '/organizer/reports' },
-        ].map(({ label, icon: Icon, to }) => (
-          <Link
-            key={label}
-            to={to}
-            className="flex items-center gap-3 p-4 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/40 transition-colors group"
-          >
-            <div className="p-2 rounded-lg bg-[#242B32] text-[#949599] group-hover:text-white transition-colors shrink-0">
-              <Icon className="w-4 h-4" />
-            </div>
-            <span className="text-sm font-medium text-[#EFEFF1] transition-colors">{label}</span>
-            <ArrowRight className="w-4 h-4 text-[#494F55] ml-auto group-hover:text-white transition-colors" />
-          </Link>
-        ))}
       </div>
 
       {/* Charts Section */}
@@ -261,7 +225,6 @@ export default function OrganizerDashboard() {
               <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Top Events by Ticket Sales</h2>
               <p className="text-xs text-[#949599]">Your most popular events</p>
             </div>
-            <Link to="/organizer/events" className="text-xs text-white hover:underline">View all</Link>
           </div>
           {topEvents.length > 0 ? (
             <ResponsiveContainer width="100%" height={260}>
@@ -287,14 +250,9 @@ export default function OrganizerDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Orders Table */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#262B2F]">
-            <div>
-              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Recent Ticket Purchases</h2>
-              <p className="text-xs text-[#949599]">Real-time orders received</p>
-            </div>
-            <Link to="/organizer/orders" className="text-xs font-medium text-white hover:underline flex items-center gap-1">
-              All orders <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+          <div className="px-5 py-4 border-b border-[#262B2F]">
+            <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Recent Ticket Purchases</h2>
+            <p className="text-xs text-[#949599]">Real-time orders received</p>
           </div>
           {recentOrders.length > 0 ? (
             <div className="overflow-x-auto">
@@ -341,14 +299,9 @@ export default function OrganizerDashboard() {
 
         {/* Upcoming Events Management */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#262B2F]">
-            <div>
-              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Upcoming Events</h2>
-              <p className="text-xs text-[#949599]">Schedule & ticket capacity status</p>
-            </div>
-            <Link to="/organizer/events" className="text-xs font-medium text-white hover:underline flex items-center gap-1">
-              Manage all <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+          <div className="px-5 py-4 border-b border-[#262B2F]">
+            <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Upcoming Events</h2>
+            <p className="text-xs text-[#949599]">Schedule & ticket capacity status</p>
           </div>
           {upcomingEvents.length > 0 ? (
             <div className="p-5 space-y-3.5">
@@ -359,16 +312,13 @@ export default function OrganizerDashboard() {
                 return (
                   <div
                     key={e.id}
-                    className="p-3.5 rounded-lg bg-[#1D2124] border border-[#262B2F] hover:border-white/30 transition flex flex-col gap-2.5"
+                    className="p-3.5 rounded-lg bg-[#1D2124] border border-[#262B2F] flex flex-col gap-2.5"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <Link
-                          to={`/events/${e.id}`}
-                          className="text-sm font-semibold text-[#EFEFF1] hover:text-white truncate block"
-                        >
+                        <span className="text-sm font-semibold text-[#EFEFF1] truncate block">
                           {e.title}
-                        </Link>
+                        </span>
                         <p className="text-xs text-[#949599] flex items-center gap-1.5 mt-0.5">
                           <Calendar className="w-3 h-3 text-[#494F55]" />
                           {e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
@@ -391,28 +341,6 @@ export default function OrganizerDashboard() {
                         <div className="h-full bg-white rounded-full transition-all" style={{ width: `${pct}%` }} />
                       </div>
                     </div>
-
-                    {/* Quick Action Shortcuts */}
-                    <div className="pt-2 border-t border-[#262B2F]/60 flex items-center justify-between text-xs">
-                      <Link
-                        to={`/organizer/check-in?eventId=${e.id}`}
-                        className="inline-flex items-center gap-1 text-[#949599] hover:text-white transition"
-                      >
-                        <ScanLine className="w-3.5 h-3.5" /> Scan QR
-                      </Link>
-                      <Link
-                        to={`/organizer/attendees?eventId=${e.id}`}
-                        className="inline-flex items-center gap-1 text-[#949599] hover:text-white transition"
-                      >
-                        <Users className="w-3.5 h-3.5" /> Guestlist
-                      </Link>
-                      <Link
-                        to={`/organizer/events/${e.id}/edit`}
-                        className="inline-flex items-center gap-1 text-[#949599] hover:text-white transition"
-                      >
-                        Edit Event <ArrowRight className="w-3 h-3" />
-                      </Link>
-                    </div>
                   </div>
                 );
               })}
@@ -421,9 +349,7 @@ export default function OrganizerDashboard() {
             <EmptyState
               icon={CalendarDays}
               title="No upcoming events"
-              description="Create your first event and start selling tickets today."
-              action={() => navigate('/organizer/events/create')}
-              actionLabel="Create Event"
+              description="Your upcoming events and ticket capacities will be tracked here."
               className="py-10"
             />
           )}

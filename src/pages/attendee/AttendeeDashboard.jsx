@@ -137,24 +137,8 @@ export default function AttendeeDashboard() {
             </h1>
             <p className="mt-1 text-sm text-[#949599] flex items-center gap-1.5">
               <MapPin className="w-4 h-4 text-[#494F55]" />
-              What's happening near you?
+              Attendee Overview
             </p>
-          </div>
-          <div className="hidden sm:flex flex-col gap-2 shrink-0">
-            <Link
-              to="/attendee/explore"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] hover:-translate-y-0.5 transition-all"
-            >
-              <Compass className="w-4 h-4" />
-              Explore Events
-            </Link>
-            <Link
-              to="/attendee/tickets"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium hover:border-white/40 hover:-translate-y-0.5 transition-all"
-            >
-              <TicketIcon className="w-4 h-4" />
-              My Tickets
-            </Link>
           </div>
         </div>
       </motion.div>
@@ -166,34 +150,19 @@ export default function AttendeeDashboard() {
         ))}
       </motion.div>
 
-      {/* Quick actions (mobile) */}
-      <motion.div variants={itemFade} className="flex sm:hidden gap-3">
-        <Link to="/attendee/explore" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold">
-          <Compass className="w-4 h-4" /> Browse
-        </Link>
-        <Link to="/attendee/tickets" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium">
-          <TicketIcon className="w-4 h-4" /> Tickets
-        </Link>
-        <Link to="/attendee/favorites" className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-[#EFEFF1] text-sm font-medium">
-          <Heart className="w-4 h-4" /> Favorites
-        </Link>
-      </motion.div>
-
       {/* Upcoming events - horizontal scroll */}
       <motion.div variants={itemFade}>
-        <SectionHeader title="Upcoming Live Events" subtitle="Concerts, festivals, and parties coming up" link="/attendee/explore" linkLabel="Explore all" />
+        <SectionHeader title="Upcoming Live Events" subtitle="Concerts, festivals, and parties coming up" />
         {upcomingEvents.length === 0 ? (
           <EmptyState
             icon={CalendarDays}
             title="No upcoming events listed"
-            description="New events are added daily. Check back soon or explore trending shows."
-            action={() => (window.location.href = '/attendee/explore')}
-            actionLabel="Explore Events"
+            description="New events are added daily. Check back soon for trending shows."
           />
         ) : (
           <div className="flex gap-4 overflow-x-auto pb-3 -mx-1 px-1 snap-x scroll-pl-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
             {upcomingEvents.map((event) => (
-              <div key={event.id} className="snap-start shrink-0 w-72">
+              <div key={event.id} className="snap-start shrink-0 w-72 pointer-events-none">
                 <EventCard event={event} />
               </div>
             ))}
@@ -203,13 +172,15 @@ export default function AttendeeDashboard() {
 
       {/* Recommended for you */}
       <motion.div variants={itemFade}>
-        <SectionHeader title="Recommended For You" subtitle="Based on your preferences" link="/attendee/explore" linkLabel="See more" />
+        <SectionHeader title="Recommended For You" subtitle="Personalized recommendations based on your activity" />
         {recommended.length === 0 ? (
-          <EmptyState icon={Sparkles} title="No recommendations yet" description="Check back soon for personalized event recommendations." />
+          <EmptyState icon={Sparkles} title="No recommendations yet" description="Personalized event recommendations will appear here." />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {recommended.map((event) => (
-              <EventCard key={event.id} event={event} />
+              <div key={event.id} className="pointer-events-none">
+                <EventCard event={event} />
+              </div>
             ))}
           </div>
         )}
@@ -218,10 +189,12 @@ export default function AttendeeDashboard() {
       {/* From organizers you follow */}
       {followingEvents.length > 0 && (
         <motion.div variants={itemFade}>
-          <SectionHeader title="From Organizers You Follow" subtitle="New events from your favorite organizers" link="/attendee/explore" linkLabel="Explore all" />
+          <SectionHeader title="From Organizers You Follow" subtitle="New events from your favorite organizers" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {followingEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
+              <div key={event.id} className="pointer-events-none">
+                <EventCard event={event} />
+              </div>
             ))}
           </div>
         </motion.div>
@@ -230,13 +203,15 @@ export default function AttendeeDashboard() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Trending near you */}
         <motion.div variants={itemFade} className="lg:col-span-2">
-          <SectionHeader title="Trending Near You" subtitle="Hot events in your area" link="/attendee/explore" linkLabel="Explore all" />
+          <SectionHeader title="Trending Near You" subtitle="Hot events in your area" />
           {trending.length === 0 ? (
             <EmptyState icon={TrendingUp} title="No trending events" description="Trending events will appear here." />
           ) : (
             <div className="grid sm:grid-cols-2 gap-4">
               {trending.map((event) => (
-                <EventCard key={event.id} event={event} variant="compact" />
+                <div key={event.id} className="pointer-events-none">
+                  <EventCard event={event} variant="compact" />
+                </div>
               ))}
             </div>
           )}
@@ -244,7 +219,7 @@ export default function AttendeeDashboard() {
 
         {/* Recent activity */}
         <motion.div variants={itemFade}>
-          <SectionHeader title="Recent Activity" subtitle="Your latest bookings" link="/attendee/bookings" linkLabel="View all" />
+          <SectionHeader title="Recent Activity" subtitle="Your latest bookings" />
           <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4 space-y-3">
             {activity.length === 0 ? (
               <div className="py-10 text-center">
@@ -253,7 +228,7 @@ export default function AttendeeDashboard() {
               </div>
             ) : (
               activity.map((a) => (
-                <div key={a.id} className="group flex gap-3 items-start p-2 -m-2 rounded-lg hover:bg-[#1D2124] transition-colors">
+                <div key={a.id} className="group flex gap-3 items-start p-2 -m-2 rounded-lg bg-[#171A1D]">
                   <div className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center shrink-0">
                     <TicketIcon className="w-4 h-4" />
                   </div>
@@ -274,18 +249,13 @@ export default function AttendeeDashboard() {
   );
 }
 
-function SectionHeader({ title, subtitle, link, linkLabel }) {
+function SectionHeader({ title, subtitle }) {
   return (
     <div className="flex items-end justify-between mb-4">
       <div>
         <h2 className="text-lg font-bold text-[#EFEFF1]">{title}</h2>
         {subtitle && <p className="text-sm text-[#949599]">{subtitle}</p>}
       </div>
-      {link && (
-        <Link to={link} className="inline-flex items-center gap-1 text-sm font-medium text-white hover:gap-2 transition-all">
-          {linkLabel} <ArrowRight className="w-4 h-4" />
-        </Link>
-      )}
     </div>
   );
 }

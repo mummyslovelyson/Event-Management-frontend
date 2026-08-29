@@ -217,33 +217,9 @@ export default function AdminDashboard() {
               Platform financial pulse, pending requests, and user activity.
             </p>
           </div>
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <span className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium border ${
-              attentionCount > 0
-                ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-            }`}>
-              <ShieldAlert className="w-3.5 h-3.5" />
-              {attentionCount > 0 ? `${attentionCount} item${attentionCount > 1 ? 's' : ''} awaiting review` : 'All queues clear'}
-            </span>
-            <button
-              onClick={() => fetchDashboard(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm font-medium text-[#EFEFF1] hover:border-white/40 transition"
-              title="Refresh dashboard metrics"
-            >
-              <RefreshCw className="w-4 h-4" /> Refresh
-            </button>
-            <button
-              onClick={() => navigate('/admin/reports')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-sm"
-            >
-              <FileBarChart className="w-4 h-4" /> Platform Reports
-            </button>
-          </div>
         </div>
       </motion.div>
 
-      {/* ── KPI stat cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <KpiCard
           icon={CircleDollarSign}
@@ -292,7 +268,6 @@ export default function AdminDashboard() {
         />
       </div>
 
-      {/* ── Revenue chart + needs attention ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <CardShell className="lg:col-span-2 overflow-hidden">
           <div className="p-5 pb-1">
@@ -344,7 +319,6 @@ export default function AdminDashboard() {
           </div>
         </CardShell>
 
-        {/* Needs attention */}
         <CardShell className="p-5">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-[#EFEFF1]">Pending Administrative Actions</h2>
@@ -356,30 +330,21 @@ export default function AdminDashboard() {
               icon={CalendarDays}
               count={o.pendingEvents ?? 0}
               label="Event Listings Awaiting Review"
-              to="/admin/events"
             />
             <AttentionRow
               icon={UserCheck}
               count={o.pendingOrganizers ?? 0}
               label="Organizer Verification Applications"
-              to="/admin/organizer-approvals"
             />
             <AttentionRow
               icon={Wallet}
               count={o.pendingWithdrawals ?? 0}
               label="Pending Payout Requests"
-              to="/admin/payments"
             />
-          </div>
-          <div className="mt-5 pt-4 border-t border-[#494F55]/30">
-            <Link to="/admin/audit-logs" className="flex items-center justify-between text-xs text-[#949599] hover:text-[#EFEFF1] transition">
-              View system audit logs <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
           </div>
         </CardShell>
       </div>
 
-      {/* ── User growth + platform snapshot ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <CardShell className="lg:col-span-2">
           <SectionHeader
@@ -410,13 +375,9 @@ export default function AdminDashboard() {
           </div>
         </CardShell>
 
-        {/* Platform snapshot */}
         <CardShell className="p-5">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-[#EFEFF1]">Operational Status</h2>
-            <Link to="/admin/payments" className="text-xs font-medium text-white hover:underline flex items-center gap-1">
-              Payments <ArrowRight className="w-3 h-3" />
-            </Link>
           </div>
           <p className="text-xs text-[#949599] mt-0.5">Live transaction and queue summary.</p>
           <div className="mt-4 grid grid-cols-2 gap-3">
@@ -425,25 +386,14 @@ export default function AdminDashboard() {
             <SnapshotTile icon={Wallet} label="Payouts Pending" value={(o.pendingWithdrawals ?? 0).toLocaleString()} tone="text-amber-400" />
             <SnapshotTile icon={UserCheck} label="KYC Applications" value={(o.pendingOrganizers ?? 0).toLocaleString()} tone="text-white" />
           </div>
-          <div className="mt-5 pt-4 border-t border-[#494F55]/30">
-            <Link to="/admin/reports" className="flex items-center justify-between text-xs text-[#949599] hover:text-[#EFEFF1] transition">
-              View platform analytics <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
         </CardShell>
       </div>
 
-      {/* ── Latest events + newest members ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <CardShell className="lg:col-span-2 overflow-hidden">
           <SectionHeader
             title="Recent Event Submissions"
             hint="Newest events published or submitted for moderation"
-            action={
-              <Link to="/admin/events" className="pr-5 text-xs font-medium text-white hover:underline flex items-center gap-1">
-                All events <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            }
           />
           {recentEvents?.length ? (
             <div className="overflow-x-auto">
@@ -462,9 +412,6 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-5 py-3 hidden sm:table-cell text-xs text-[#949599]">
                           {e.start_date ? fmtDay(e.start_date) : '—'}
-                        </td>
-                        <td className="px-5 py-3 text-right">
-                          <Link to={`/admin/events`} className="text-xs text-[#949599] hover:text-white transition">View</Link>
                         </td>
                       </tr>
                     );
@@ -502,17 +449,11 @@ export default function AdminDashboard() {
         </CardShell>
       </div>
 
-      {/* ── Pending approvals quick action ── */}
       {pendingEvents?.length > 0 && (
         <CardShell className="overflow-hidden">
           <SectionHeader
             title="Event Moderation Queue"
-            hint="Review and approve or reject submissions"
-            action={
-              <Link to="/admin/events" className="pr-5 text-xs font-medium text-white hover:underline flex items-center gap-1">
-                All events <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            }
+            hint="Submissions currently awaiting review"
           />
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -521,43 +462,21 @@ export default function AdminDashboard() {
                   <th className="px-5 py-2.5 font-medium">Event</th>
                   <th className="hidden md:table-cell px-5 py-2.5 font-medium">Organizer</th>
                   <th className="hidden md:table-cell px-5 py-2.5 font-medium">Date</th>
-                  <th className="px-5 py-2.5 font-medium text-right">Actions</th>
+                  <th className="px-5 py-2.5 font-medium text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#494F55]/15">
-                {pendingEvents.map((e) => (
-                  <tr key={e.id} className="hover:bg-[#1C232B]/50 transition-colors">
+                {pendingEvents.map((ev) => (
+                  <tr key={ev.id} className="hover:bg-[#1C232B]/50 transition-colors">
                     <td className="px-5 py-3">
-                      <div className="flex items-center gap-3">
-                        {e.thumbnail ? (
-                          <img src={e.thumbnail} alt="" className="w-9 h-9 rounded-lg object-cover" />
-                        ) : (
-                          <div className="w-9 h-9 rounded-lg bg-[#1C232B] border border-[#494F55]/30 text-[#949599] flex items-center justify-center">
-                            <CalendarDays className="w-4 h-4" />
-                          </div>
-                        )}
-                        <span className="font-medium text-[#EFEFF1] break-words">{e.title}</span>
-                      </div>
+                      <p className="font-medium text-[#EFEFF1] break-words">{ev.title}</p>
                     </td>
-                    <td className="hidden md:table-cell px-5 py-3 text-[#949599]">{e.organizer_name || '—'}</td>
-                    <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599]">{e.start_date ? fmtDay(e.start_date) : '—'}</td>
-                    <td className="px-5 py-3">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleApprove(e.id)}
-                          disabled={actionLoading === `approve-${e.id}`}
-                          className="inline-flex items-center gap-1 px-3 py-2.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5" /> Approve
-                        </button>
-                        <button
-                          onClick={() => handleReject(e.id)}
-                          disabled={actionLoading === `reject-${e.id}`}
-                          className="inline-flex items-center gap-1 px-3 py-2.5 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"
-                        >
-                          <XCircle className="w-3.5 h-3.5" /> Reject
-                        </button>
-                      </div>
+                    <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599] break-words">{ev.organizer_name || '—'}</td>
+                    <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599]">{ev.start_date ? fmtDay(ev.start_date) : '—'}</td>
+                    <td className="px-5 py-3 text-right">
+                      <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/15 text-amber-300">
+                        Pending Review
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -567,26 +486,15 @@ export default function AdminDashboard() {
         </CardShell>
       )}
 
-      {/* ── Recent activity ── */}
       <CardShell className="overflow-hidden">
-        <SectionHeader
-          title="Recent activity"
-          hint="Across the whole platform"
-          action={
-            <div className="pr-5 flex items-center gap-1.5 text-xs text-[#949599]">
-              <ActivityIcon className="w-3.5 h-3.5" /> Live feed
-            </div>
-          }
-        />
+        <SectionHeader title="System Activity Log" hint="Real-time events and user actions" />
         {activity?.length ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1 px-5 py-4">
+          <div className="divide-y divide-[#494F55]/15">
             {activity.map((a, i) => (
-              <div key={i} className="flex items-start gap-3 py-2">
-                <div className="shrink-0 w-7 h-7 rounded-full bg-[#1C232B] border border-[#494F55]/30 text-[#949599] flex items-center justify-center">
-                  {a.type === 'event' ? <CalendarDays className="w-3.5 h-3.5" /> : <Users className="w-3.5 h-3.5" />}
-                </div>
+              <div key={i} className="flex items-start gap-3.5 px-5 py-3 hover:bg-[#1C232B]/50 transition-colors">
+                <div className="w-2 h-2 rounded-full bg-white mt-1.5 shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm text-[#EFEFF1]">
+                  <p className="text-sm text-[#EFEFF1] break-words">
                     {a.type === 'event' ? (
                       <>New event <span className="font-medium">“{a.label}”</span></>
                     ) : (
@@ -608,20 +516,16 @@ export default function AdminDashboard() {
   );
 }
 
-function AttentionRow({ icon: Icon, count, label, to }) {
+function AttentionRow({ icon: Icon, count, label }) {
   return (
-    <Link
-      to={to}
-      className="flex items-center gap-3 p-3 rounded-lg bg-[#1C232B]/60 border border-[#494F55]/20 hover:border-[#494F55]/50 transition group"
-    >
-      <Icon className="w-4 h-4 text-[#494F55] shrink-0 group-hover:text-[#9AA1A6] transition" />
+    <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1C232B]/60 border border-[#494F55]/20">
+      <Icon className="w-4 h-4 text-[#949599] shrink-0" />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium text-[#EFEFF1] truncate">{label}</p>
       </div>
       <span className={`text-sm font-bold tabular-nums ${count > 0 ? 'text-amber-400' : 'text-[#494F55]'}`}>
         {count}
       </span>
-      <ArrowRight className="w-3.5 h-3.5 text-[#494F55] group-hover:text-[#9AA1A6] transition" />
-    </Link>
+    </div>
   );
 }

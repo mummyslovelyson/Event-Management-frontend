@@ -4,13 +4,14 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   LayoutDashboard, Users, CalendarDays, Layers, CreditCard, BarChart3,
   FileText, Bell, LifeBuoy, Settings, ScrollText, Menu, X, LogOut,
-  Search, ChevronDown, UserCheck, AlertTriangle,
+  Search, ChevronDown, UserCheck, AlertTriangle, Globe,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
 
 const nav = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/', label: 'Public Website', icon: Globe },
   { to: '/admin/users', label: 'User Management', icon: Users },
   { to: '/admin/organizer-approvals', label: 'Organizer Approvals', icon: UserCheck },
   { to: '/admin/events', label: 'Event Management', icon: CalendarDays },
@@ -158,6 +159,9 @@ export default function AdminLayout() {
                           <Settings className="w-4 h-4" /> System Settings
                         </Link>
                       )}
+                      <Link to="/" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
+                        <Globe className="w-4 h-4" /> Visit Public Website
+                      </Link>
                       <div className="border-t border-[#262B2F] mt-1 pt-1">
                         <button onClick={handleLogout} className="flex items-center gap-2.5 w-full px-4 py-2 text-sm text-[#949599] hover:text-red-300 hover:bg-red-500/10 transition">
                           <LogOut className="w-4 h-4" /> Logout
