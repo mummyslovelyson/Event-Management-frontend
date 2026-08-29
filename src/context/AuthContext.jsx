@@ -106,4 +106,27 @@ export function AuthProvider({ children }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    return {
+      user: null,
+      token: null,
+      loading: false,
+      isAuthenticated: false,
+      isAdmin: false,
+      isOrganizer: false,
+      isAttendee: false,
+      login: async () => {},
+      adminLogin: async () => {},
+      logout: async () => {},
+      logoutAll: async () => {},
+      changePassword: async () => {},
+      getSessions: async () => [],
+      revokeSession: async () => {},
+      setUser: () => {},
+      persistAuth: () => {},
+    };
+  }
+  return context;
+};

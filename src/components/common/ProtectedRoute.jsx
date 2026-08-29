@@ -3,7 +3,10 @@ import { useAuth } from '@/context/AuthContext';
 import LoadingSpinner from './LoadingSpinner';
 
 export default function ProtectedRoute({ children, roles, redirectTo = '/login' }) {
-  const { isAuthenticated, user, loading } = useAuth();
+  const auth = useAuth();
+  const isAuthenticated = auth?.isAuthenticated ?? false;
+  const user = auth?.user ?? null;
+  const loading = auth?.loading ?? false;
   const location = useLocation();
 
   if (loading) return <LoadingSpinner />;

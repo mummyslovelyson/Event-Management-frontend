@@ -61,5 +61,9 @@ export const closeSupportTicket = (id) => api.post(`/admin/support/${id}/close`)
 
 export const getSettings = () => api.get('/admin/settings');
 export const updateSettings = (data) => api.put('/admin/settings', data);
+export const sendTestEmail = (data) => api.post('/admin/settings/test-email', data);
+export const sendTestSms = (data) => api.post('/admin/settings/test-sms', data);
+export const getSmsBalance = () => api.get('/admin/settings/sms-balance');
+export const testPaystack = () => api.post('/admin/settings/test-paystack');
 
 export const getAuditLogs = (params) => api.get('/admin/audit-logs', { params });
