@@ -173,17 +173,6 @@ export default function HomePage() {
         </div>
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* Tagline Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161D22]/90 border border-[#494F55]/60 text-xs font-semibold uppercase tracking-widest text-[#EFEFF1] mb-6 shadow-md"
-          >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            Live Events &amp; Self-Ticketing
-          </motion.div>
-
           {/* Main Title */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -281,26 +270,6 @@ export default function HomePage() {
               ))}
             </div>
           </motion.form>
-
-          {/* Human Trust & Feature Badges */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-[#949599]">
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>100% Verified Tickets</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CreditCard className="w-4 h-4 text-white shrink-0" />
-              <span>MoMo &amp; Card Payments</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <QrCode className="w-4 h-4 text-white shrink-0" />
-              <span>Instant QR Entry</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Ticket className="w-4 h-4 text-white shrink-0" />
-              <span>Free Organizer Setup</span>
-            </div>
-          </div>
         </div>
       </section>
 
