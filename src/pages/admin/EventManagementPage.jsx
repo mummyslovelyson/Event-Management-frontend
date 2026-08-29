@@ -204,8 +204,8 @@ export default function EventManagementPage() {
       <PageHeader
         icon={CalendarDays}
         accent="gold"
-        title="Event Management"
-        subtitle="Review, approve, and moderate every event."
+        title="Event Management &amp; Moderation"
+        subtitle="Review event submissions, feature top shows, moderate listings, and monitor sales capacity."
         count={total}
       />
 

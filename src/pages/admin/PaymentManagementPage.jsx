@@ -114,8 +114,8 @@ export default function PaymentManagementPage() {
       <PageHeader
         icon={CreditCard}
         accent="emerald"
-        title="Payments"
-        subtitle="Sales, payouts, and refunds in one place."
+        title="Financials &amp; Settlements"
+        subtitle="Transaction ledgers, organizer payout authorizations, refunds, and platform fee tracking."
         actions={
           <button
             onClick={() => exportCSV(data[tab] || [], `${tab}.csv`)}

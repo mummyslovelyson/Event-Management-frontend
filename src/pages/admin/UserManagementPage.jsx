@@ -324,8 +324,8 @@ export default function UserManagementPage() {
       <PageHeader
         icon={Users}
         accent="sky"
-        title="Users"
-        subtitle="Manage accounts, approvals, suspensions, and staff."
+        title="User Management &amp; Permissions"
+        subtitle="User directory, role assignments, organizer verifications, and account security controls."
         count={total}
         actions={
           <div className="flex items-center gap-2">

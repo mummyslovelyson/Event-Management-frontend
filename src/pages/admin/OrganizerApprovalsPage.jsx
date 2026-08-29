@@ -100,7 +100,7 @@ export default function OrganizerApprovalsPage() {
         icon={UserCheck}
         accent="gold"
         title="Organizer Approvals"
-        subtitle="Approve or turn down organizer applications."
+        subtitle="Review KYC submissions, organization credentials, and verify event creator accounts."
         count={stats.pending}
       />
 
