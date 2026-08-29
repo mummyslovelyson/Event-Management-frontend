@@ -9,6 +9,7 @@ import {
 import toast from 'react-hot-toast';
 import { registerUser } from '@/api/auth';
 import Logo from '@/components/common/Logo';
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -320,6 +321,25 @@ export default function RegisterPage() {
               {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating account...</> : <><UserPlus className="w-4 h-4" /> Create Account</>}
             </button>
           </form>
+
+          {/* Divider */}
+          <div className="my-5 flex items-center gap-3">
+            <div className="flex-1 h-px bg-[#494F55]/30" />
+            <span className="text-xs text-[#494F55] uppercase tracking-wider">or sign up with</span>
+            <div className="flex-1 h-px bg-[#494F55]/30" />
+          </div>
+
+          {/* Google Sign-up */}
+          <GoogleAuthButton
+            role={role}
+            organizerData={{
+              organizationName: watch('organizationName'),
+              category: watch('category'),
+              city: watch('city'),
+              phone: watch('phone'),
+            }}
+            text={`Sign up as ${role === 'organizer' ? 'Organizer' : 'Attendee'} with Google`}
+          />
 
           <p className="mt-6 text-center text-sm text-[#949599]">
             Already have an account?{' '}
