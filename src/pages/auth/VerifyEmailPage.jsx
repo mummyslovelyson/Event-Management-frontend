@@ -8,11 +8,13 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { verifyEmail, resendVerification } from '@/api/auth';
+import { useAuth } from '@/context/AuthContext';
 import Logo from '@/components/common/Logo';
 
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { persistAuth } = useAuth() || {};
 
   const tokenParam = searchParams.get('token');
   const emailParam = searchParams.get('email') || '';
@@ -27,6 +29,7 @@ export default function VerifyEmailPage() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [status, setStatus] = useState(tokenParam ? 'verifying_token' : 'idle'); // 'idle' | 'verifying_token' | 'verifying_otp' | 'success' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
+  const [verifiedUser, setVerifiedUser] = useState(null);
   const [resending, setResending] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
@@ -39,9 +42,13 @@ export default function VerifyEmailPage() {
     (async () => {
       setStatus('verifying_token');
       try {
-        await verifyEmail({ token: tokenParam });
+        const res = await verifyEmail({ token: tokenParam });
         if (!cancelled) {
           setStatus('success');
+          if (res.data?.user) setVerifiedUser(res.data.user);
+          if (res.data?.accessToken && persistAuth) {
+            persistAuth(res.data.accessToken, res.data.refreshToken, res.data.user);
+          }
           toast.success('Account verified successfully! 🎉');
         }
       } catch (err) {
@@ -54,7 +61,7 @@ export default function VerifyEmailPage() {
       }
     })();
     return () => { cancelled = true; };
-  }, [tokenParam]);
+  }, [tokenParam, persistAuth]);
 
   // Resend cooldown countdown
   useEffect(() => {
@@ -170,6 +177,10 @@ export default function VerifyEmailPage() {
 
       const res = await verifyEmail(payload);
       setStatus('success');
+      if (res.data?.user) setVerifiedUser(res.data.user);
+      if (res.data?.accessToken && persistAuth) {
+        persistAuth(res.data.accessToken, res.data.refreshToken, res.data.user);
+      }
       toast.success(res.data?.message || 'Account verified and created successfully! 🎉');
     } catch (err) {
       setStatus('idle');
@@ -271,14 +282,27 @@ export default function VerifyEmailPage() {
               </div>
               <h3 className="text-lg font-semibold text-[#EFEFF1]">Awesome! You’re Verified</h3>
               <p className="mt-2 text-sm text-[#949599]">
-                Your account is confirmed. You can now sign in to browse events and manage tickets.
+                Your account is confirmed and activated.
               </p>
-              <Link
-                to="/login"
+              <button
+                type="button"
+                onClick={() => {
+                  const target = verifiedUser?.role === 'organizer'
+                    ? '/organizer'
+                    : verifiedUser?.role === 'admin'
+                      ? '/admin'
+                      : '/explore';
+                  navigate(target);
+                }}
                 className="mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-lg shadow-white/5"
               >
-                Sign In to Your Account <ArrowRight className="w-4 h-4" />
-              </Link>
+                Continue to Dashboard <ArrowRight className="w-4 h-4" />
+              </button>
+              <div className="mt-3">
+                <Link to="/login" className="text-xs text-[#949599] hover:text-[#EFEFF1] transition">
+                  Sign in with another account
+                </Link>
+              </div>
             </motion.div>
           )}
 

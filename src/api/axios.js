@@ -115,6 +115,11 @@ api.interceptors.response.use(
 );
 
 function redirectToLogin() {
+  const path = window.location.pathname;
+  const publicAuthPaths = ['/login', '/register', '/verify-email', '/forgot-password', '/reset-password', '/admin-login'];
+  if (publicAuthPaths.some((p) => path.startsWith(p))) {
+    return;
+  }
   localStorage.removeItem('tc_token');
   localStorage.removeItem('tc_refresh');
   localStorage.removeItem('tc_user');
@@ -123,7 +128,7 @@ function redirectToLogin() {
     const stored = localStorage.getItem('tc_user');
     role = stored ? JSON.parse(stored)?.role : null;
   } catch { /* ignore */ }
-  const adminContext = role === 'admin' || window.location.pathname.startsWith('/admin');
+  const adminContext = role === 'admin' || path.startsWith('/admin');
   window.location.href = adminContext ? '/admin-login' : '/login';
 }
 

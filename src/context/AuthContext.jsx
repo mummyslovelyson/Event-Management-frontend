@@ -99,6 +99,7 @@ export function AuthProvider({ children }) {
       login, adminLogin, logout, logoutAll,
       changePassword, getSessions, revokeSession,
       isAuthenticated, isAdmin, isOrganizer, isAttendee, setUser,
+      persistAuth,
     }}>
       {children}
     </AuthContext.Provider>
