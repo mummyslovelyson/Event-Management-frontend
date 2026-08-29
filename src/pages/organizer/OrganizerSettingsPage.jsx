@@ -315,7 +315,7 @@ export default function OrganizerSettingsPage() {
                   </div>
                   <div>
                     <label className={labelCls}>Account Name</label>
-                    <input value={payment.accountName} onChange={(e) => setPayment((p) => ({ ...p, accountName: e.target.value }))} placeholder="John Doe" className={inputCls} />
+                    <input value={payment.accountName} onChange={(e) => setPayment((p) => ({ ...p, accountName: e.target.value }))} placeholder="Account holder name" className={inputCls} />
                   </div>
                 </div>
                 <div>

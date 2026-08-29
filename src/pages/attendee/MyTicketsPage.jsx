@@ -442,7 +442,7 @@ export default function MyTicketsPage() {
                 type="email"
                 value={transferEmail}
                 onChange={(e) => setTransferEmail(e.target.value)}
-                placeholder="friend@example.com"
+                placeholder="Enter recipient email"
                 className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
               />
               <p className="text-xs text-[#494F55] mt-2">

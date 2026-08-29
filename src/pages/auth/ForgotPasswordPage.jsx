@@ -83,7 +83,7 @@ export default function ForgotPasswordPage() {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder="Email address"
                     {...register('email', {
                       required: 'Email is required',
                       pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },

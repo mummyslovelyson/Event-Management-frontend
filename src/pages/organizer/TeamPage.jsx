@@ -327,7 +327,7 @@ export default function TeamPage() {
               type="email"
               value={iForm.email}
               onChange={(e) => setIForm((f) => ({ ...f, email: e.target.value }))}
-              placeholder="colleague@example.com"
+              placeholder="Enter teammate email"
               className={inputCls}
             />
           </div>

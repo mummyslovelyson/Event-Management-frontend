@@ -98,50 +98,6 @@ const steps = [
   },
 ];
 
-const stats = [
-  { icon: CalendarCheck, label: 'Events Hosted', value: 12450, suffix: '+' },
-  { icon: Ticket, label: 'Tickets Sold', value: 890000, suffix: '+' },
-  { icon: Users, label: 'Active Attendees', value: 560000, suffix: '+' },
-  { icon: Building2, label: 'Cities Covered', value: 120, suffix: '+' },
-];
-
-function StatCounter({ stat }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-50px' });
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    let frame;
-    const duration = 1600;
-    const start = performance.now();
-    const tick = (now) => {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * stat.value));
-      if (progress < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [inView, stat.value]);
-
-  const format = (n) => {
-    if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
-    if (n >= 1000) return `${(n / 1000).toFixed(0)}K`;
-    return n.toLocaleString();
-  };
-
-  return (
-    <div ref={ref} className="group rounded-2xl bg-[#161D22] border border-[#262B2F] p-6 text-center hover:border-white/20 transition-all duration-300">
-      <stat.icon className="w-6 h-6 text-[#949599] mx-auto mb-3 group-hover:text-white group-hover:scale-110 transition-all duration-300" />
-      <p className="text-3xl sm:text-4xl font-extrabold text-[#EFEFF1] tracking-tight">
-        {format(count)}{stat.suffix}
-      </p>
-      <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#949599]">{stat.label}</p>
-    </div>
-  );
-}
-
 function SkeletonCard() {
   return (
     <div className="w-[280px] shrink-0 rounded-2xl overflow-hidden bg-[#161D22] border border-[#262B2F]">
@@ -604,19 +560,6 @@ export default function HomePage() {
             })}
           </div>
         )}
-      </section>
-
-      {/* ─── PLATFORM STATS ─── */}
-      <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Trusted Across Africa</h2>
-            <p className="mt-2 text-sm text-[#949599]">Empowering attendees and organizers with simple self-ticketing.</p>
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((stat) => <StatCounter key={stat.label} stat={stat} />)}
-          </div>
-        </div>
       </section>
 
       {/* ─── NEWSLETTER ─── */}

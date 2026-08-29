@@ -120,8 +120,8 @@ export default function RegisterPage() {
                     <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                     <input
                       type="text"
-                      placeholder="Your organization"
-                      {...register('organizationName', role === 'organizer' ? { required: 'Organization name is required' } : {})}
+                      placeholder="Organization name"
+                      {...register('organizationName', { required: 'Organization name is required' })}
                       className={inputClass('organizationName')}
                     />
                   </div>
@@ -136,7 +136,7 @@ export default function RegisterPage() {
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                 <input
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="Full name"
                   {...register('name', { required: 'Full name is required' })}
                   className={inputClass('name')}
                 />
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder="Email address"
                     {...register('email', {
                       required: 'Email is required',
                       pattern: { value: /^\S+@\S+\.\S+$/, message: 'Enter a valid email' },
@@ -167,7 +167,7 @@ export default function RegisterPage() {
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
                   <input
                     type="tel"
-                    placeholder="+233 00 000 0000"
+                    placeholder="Phone number"
                     {...register('phone', { required: 'Phone number is required' })}
                     className={inputClass('phone')}
                   />

@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import {
-  Target, Eye, Users, Ticket, CalendarCheck, Building2,
-  Heart, ShieldCheck, Zap, Sparkles, MapPin, CheckCircle2,
+  Target, Eye, Users, Heart, ShieldCheck, Zap, Sparkles, MapPin, CheckCircle2,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -38,13 +37,6 @@ const values = [
     title: 'Organizer Friendly',
     desc: 'Transparent fees, fast payouts, real-time sales dashboards, and simple check-in tools that make running events stress-free.',
   },
-];
-
-const stats = [
-  { icon: CalendarCheck, label: 'Events Hosted', value: '12,450+' },
-  { icon: Ticket, label: 'Tickets Issued', value: '890,000+' },
-  { icon: Users, label: 'Attendees Reached', value: '560,000+' },
-  { icon: Building2, label: 'Cities Covered', value: '120+' },
 ];
 
 export default function AboutPage() {
@@ -114,30 +106,6 @@ export default function AboutPage() {
               <p className="mt-2 text-sm text-[#949599] leading-relaxed">{v.desc}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* ─── Stats ─── */}
-      <section className="py-16 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Our Impact in Numbers</h2>
-            <p className="mt-2 text-sm text-[#949599]">Real events, real attendees, real communities.</p>
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((s) => (
-              <div
-                key={s.label}
-                className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-6 text-center"
-              >
-                <div className="w-10 h-10 rounded-lg bg-[#161D22] text-white flex items-center justify-center mx-auto mb-3">
-                  <s.icon className="w-5 h-5" />
-                </div>
-                <p className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">{s.value}</p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#949599]">{s.label}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 

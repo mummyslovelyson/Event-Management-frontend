@@ -384,7 +384,7 @@ export default function WalletPage() {
             <input
               value={wForm.accountName}
               onChange={(e) => setWForm((f) => ({ ...f, accountName: e.target.value }))}
-              placeholder="John Doe"
+              placeholder="Account holder name"
               className={inputCls}
             />
           </div>

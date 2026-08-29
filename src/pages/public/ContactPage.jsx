@@ -122,7 +122,7 @@ export default function ContactPage() {
                       <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Full Name</label>
                       <input
                         type="text"
-                        placeholder="John Doe"
+                        placeholder="Your full name"
                         {...register('name', { required: 'Name is required' })}
                         className={inputClass('name')}
                       />
@@ -132,7 +132,7 @@ export default function ContactPage() {
                       <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Email</label>
                       <input
                         type="email"
-                        placeholder="john@example.com"
+                        placeholder="Your email address"
                         {...register('email', {
                           required: 'Email is required',
                           pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email' },
