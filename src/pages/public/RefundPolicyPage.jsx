@@ -57,15 +57,11 @@ export default function RefundPolicyPage() {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#1C232B] border border-[#494F55]/40 mb-5">
             <RotateCcw className="w-6 h-6 text-[#949599]" />
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#EFEFF1] tracking-tight">
-            Refund Policy
-          </h1>
           <p className="mt-3 text-[#949599] text-sm">
             Last updated: <span className="text-[#EFEFF1] font-medium">{LAST_UPDATED}</span>
           </p>
           <p className="mt-4 text-[#949599] text-sm leading-relaxed max-w-xl mx-auto">
-            We want every experience on Tribes &amp; Cliqs to be seamless. Here's how
-            refunds work when things don't go as planned.
+            We want buying and selling tickets on Tribes &amp; Cliqs to be clear and transparent. Here is how refunds work when an event is cancelled, postponed, or when you need assistance.
           </p>
         </div>
       </motion.div>

@@ -6,36 +6,36 @@ import { Link } from 'react-router-dom';
 
 const mission = {
   icon: Target,
-  title: 'Our Mission',
-  desc: 'To make event discovery and self-ticketing effortless across Africa. We empower organizers to launch and sell tickets in minutes while giving attendees a reliable, instant checkout experience.',
+  title: 'Our Purpose',
+  desc: 'To make finding and ticketing live events simple, safe, and transparent across Ghana and Africa. We give creators fast self-service tools to publish events and get paid directly, while fans get authentic tickets they can trust.',
 };
 
 const vision = {
   icon: Eye,
-  title: 'Our Vision',
-  desc: 'To be the home for live culture, concerts, nightlife, and community gatherings on the continent—connecting people with the moments that matter to them.',
+  title: 'What We Are Building',
+  desc: 'The most reliable home for live experiences in Africa—from underground DJ sets and community meetups to stadium music festivals and conferences.',
 };
 
 const values = [
   {
     icon: Heart,
-    title: 'Built for the Community',
-    desc: 'Events bring people together. Whether it is 50 people at a workshop or 15,000 at a music festival, we build for real human connection.',
+    title: 'Rooted in Culture & Community',
+    desc: 'Live events are about bringing people together. We build tools that make it easy for creators to pack rooms and for friends to share unforgettable nights.',
   },
   {
     icon: ShieldCheck,
-    title: 'Verified & Secure',
-    desc: 'No fake tickets. Secure mobile money and card processing via Paystack, instant QR confirmation, and dedicated support for every order.',
+    title: '100% Genuine Tickets',
+    desc: 'No duplicate codes, no scalping scams. Every purchase generates a unique encrypted QR code backed by secure MoMo and Card payments via Paystack.',
   },
   {
     icon: Zap,
-    title: 'Frictionless Ticketing',
-    desc: 'Buy tickets in under 30 seconds without creating complicated accounts. Scan in at the venue doors smoothly with zero delays.',
+    title: 'Fast & Simple',
+    desc: 'Buy tickets in under 30 seconds without jumping through hoops. Walk into the venue with a fast gate scan on your phone.',
   },
   {
     icon: Users,
-    title: 'Organizer Friendly',
-    desc: 'Transparent fees, fast payouts, real-time sales dashboards, and simple check-in tools that make running events stress-free.',
+    title: 'Built for Event Creators',
+    desc: 'Clear pricing, same-day or fast event payouts, live attendee lists, and a reliable scanner that works even with spotty internet.',
   },
 ];
 
@@ -54,14 +54,14 @@ export default function AboutPage() {
               About Tribes &amp; Cliqs
             </span>
             <h1 className="text-4xl sm:text-5xl font-extrabold text-[#EFEFF1] leading-tight tracking-tight">
-              Connecting People Through <br className="hidden sm:block" />
-              <span className="text-white">Live Experiences</span>
+              Live Events &amp; Tickets, <br className="hidden sm:block" />
+              <span className="text-white">Made Simple for Africa</span>
             </h1>
             <p className="mt-5 text-base sm:text-lg text-[#949599] leading-relaxed">
-              Tribes &amp; Cliqs is a self-service event ticketing platform built for creators, organizers, and event lovers across Africa.
+              Tribes &amp; Cliqs is a modern event discovery and ticketing platform built for creators, organizers, and event lovers.
             </p>
             <p className="mt-3 text-base text-[#949599] leading-relaxed">
-              From concerts and festivals to conferences, workshops, and sports, our goal is simple: make it fast and easy to discover great events, buy authentic tickets, and fill rooms.
+              We started with a clear goal: remove the frustration of buying tickets, eliminate fake passes, and give event hosts a straightforward way to sell out their events and withdraw their earnings via Mobile Money or Bank.
             </p>
           </motion.div>
         </div>

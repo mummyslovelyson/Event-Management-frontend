@@ -58,18 +58,18 @@ const POPULAR_TAGS = [
 const steps = [
   {
     icon: Compass,
-    title: '1. Discover Events',
-    desc: 'Explore upcoming live shows, festivals, parties, and conferences happening in your city or online.',
+    title: '1. Discover What’s Happening',
+    desc: 'Find live concerts, festivals, parties, comedy shows, and conferences across Accra, Lagos, and top African cities.',
   },
   {
     icon: CreditCard,
-    title: '2. Book in Seconds',
-    desc: 'Select your tickets and checkout securely with Mobile Money (MTN, Telecel, AT) or Card via Paystack.',
+    title: '2. Pay in Seconds',
+    desc: 'Choose your ticket tier and pay instantly with MTN MoMo, Telecel Cash, AT Money, or Visa/Mastercard via Paystack.',
   },
   {
     icon: QrCode,
-    title: '3. Scan & Enjoy',
-    desc: 'Get your QR e-ticket sent straight to your email and dashboard. Simply show it at the door for fast entry.',
+    title: '3. Walk In With Your QR Code',
+    desc: 'Your verified ticket goes straight to your phone and email. Gate staff scan your code in 1 second and you’re in.',
   },
 ];
 
@@ -438,14 +438,14 @@ export default function HomePage() {
           {/* Organizer Callout */}
           <div className="mt-12 rounded-2xl bg-[#1C232B] border border-[#494F55]/40 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
             <div>
-              <h3 className="text-xl font-bold text-[#EFEFF1]">Planning an event of your own?</h3>
-              <p className="mt-1 text-sm text-[#949599]">Create ticket tiers, track real-time sales, and check in guests with our scanner.</p>
+              <h3 className="text-xl font-bold text-[#EFEFF1]">Hosting a concert, party, or conference?</h3>
+              <p className="mt-1 text-sm text-[#949599]">Set up ticket tiers (VIP, Regular, Tables), track sales live, and scan guests at the door with our organizer tools.</p>
             </div>
             <Link
               to="/register"
               className="px-6 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] transition shadow-md shrink-0"
             >
-              Host an Event
+              List Your Event
             </Link>
           </div>
         </div>

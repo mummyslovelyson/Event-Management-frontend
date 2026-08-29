@@ -178,7 +178,7 @@ export default function PublicLayout() {
                 <Logo size="md" />
               </div>
               <p className="text-sm text-[#949599] leading-relaxed max-w-xs">
-                Discover, create, and manage unforgettable events. Your gateway to live experiences across Africa and beyond.
+                The trusted ticketing platform for concerts, festivals, nightlife, conferences, and community experiences across Africa.
               </p>
               <div className="flex items-center gap-3 mt-5">
                 {[
@@ -202,7 +202,7 @@ export default function PublicLayout() {
             {/* Links */}
             {[
               { title: 'Company', links: [['About Us', '/about'], ['Contact', '/contact'], ['Careers', '#'], ['Blog', '#']] },
-              { title: 'Product', links: [['Explore Events', '/explore'], ['FAQ', '/faq'], ['How It Works', '#']] },
+              { title: 'Product', links: [['Explore Events', '/explore'], ['FAQ', '/faq'], ['Pricing', '/pricing']] },
               { title: 'Legal', links: [['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Cookie Policy', '/cookies'], ['Refund Policy', '/refund']] },
             ].map(({ title, links }) => (
               <div key={title}>
@@ -210,7 +210,7 @@ export default function PublicLayout() {
                 <ul className="space-y-2.5">
                   {links.map(([label, href]) => (
                     <li key={label}>
-              <Link to={href} className="text-sm text-[#949599] hover:text-white hover:underline underline-offset-4 decoration-white/ transition py-1.5 inline-block">
+              <Link to={href} className="text-sm text-[#949599] hover:text-white hover:underline underline-offset-4 decoration-white/30 transition py-1.5 inline-block">
                 {label}
               </Link>
                     </li>
@@ -222,7 +222,7 @@ export default function PublicLayout() {
 
           <div className="pt-6 border-t border-[#262B2F] flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-xs text-[#494F55]">© {new Date().getFullYear()} Tribes &amp; Cliqs. All rights reserved.</p>
-            <p className="text-xs text-[#494F55]">Where Every Event Is a Success</p>
+            <p className="text-xs text-[#949599]">Live events, real connections.</p>
           </div>
         </div>
       </footer>

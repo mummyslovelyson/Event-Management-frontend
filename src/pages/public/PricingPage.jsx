@@ -270,14 +270,14 @@ export default function PricingPage() {
           <div className="inline-flex w-14 h-14 rounded-xl bg-white/10 text-white items-center justify-center mb-4">
             <Zap className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Ready to Start Hosting?</h2>
-          <p className="mt-3 text-sm text-[#949599]">Join thousands of organizers creating unforgettable events with Tribes & Cliqs.</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#EFEFF1]">Ready to Sell Out Your Event?</h2>
+          <p className="mt-3 text-sm text-[#949599]">Join event creators across Ghana &amp; Africa managing ticketing, guest check-in, and payouts with Tribes &amp; Cliqs.</p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link to="/register" className="px-6 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition">
               Create an Account
             </Link>
             <Link to="/contact" className="px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-white/40 hover:text-white transition">
-              Talk to Sales
+              Talk to Our Team
             </Link>
           </div>
         </div>

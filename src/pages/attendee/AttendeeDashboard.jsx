@@ -181,14 +181,14 @@ export default function AttendeeDashboard() {
 
       {/* Upcoming events - horizontal scroll */}
       <motion.div variants={itemFade}>
-        <SectionHeader title="Upcoming Events" subtitle="Events you have tickets for" link="/attendee/tickets" linkLabel="View all" />
+        <SectionHeader title="Upcoming Live Events" subtitle="Concerts, festivals, and parties coming up" link="/attendee/explore" linkLabel="Explore all" />
         {upcomingEvents.length === 0 ? (
           <EmptyState
             icon={CalendarDays}
-            title="No upcoming events"
-            description="You don't have any tickets for upcoming events yet. Browse events to get started."
+            title="No upcoming events listed"
+            description="New events are added daily. Check back soon or explore trending shows."
             action={() => (window.location.href = '/attendee/explore')}
-            actionLabel="Browse Events"
+            actionLabel="Explore Events"
           />
         ) : (
           <div className="flex gap-4 overflow-x-auto pb-3 -mx-1 px-1 snap-x scroll-pl-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
