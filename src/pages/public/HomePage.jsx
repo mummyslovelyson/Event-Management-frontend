@@ -36,14 +36,14 @@ const DEFAULT_CATEGORY_ICON = LayoutGrid;
 
 // Default categories with local images if database hasn't seeded yet
 const DEFAULT_CATEGORIES = [
-  { name: 'Musical Shows', event_count: 14 },
-  { name: 'Festivals', event_count: 8 },
-  { name: 'Corporate Events', event_count: 12 },
-  { name: 'Tournaments', event_count: 6 },
-  { name: 'Social Events', event_count: 19 },
-  { name: 'Movies & Stage Plays', event_count: 5 },
-  { name: 'Fairs & Exhibitions', event_count: 7 },
-  { name: 'Religious Activities', event_count: 9 },
+  { name: 'Musical Shows' },
+  { name: 'Festivals' },
+  { name: 'Corporate Events' },
+  { name: 'Tournaments' },
+  { name: 'Social Events' },
+  { name: 'Movies & Stage Plays' },
+  { name: 'Fairs & Exhibitions' },
+  { name: 'Religious Activities' },
 ];
 
 const POPULAR_TAGS = [
@@ -383,7 +383,7 @@ export default function HomePage() {
                   {/* Content */}
                   <div className="absolute bottom-0 left-0 right-0 p-4">
                     <p className="text-sm font-bold text-white leading-tight drop-shadow">{name}</p>
-                    {count !== null && (
+                    {Number(count) > 0 && (
                       <p className="mt-0.5 text-xs text-white/70">{count.toLocaleString()} events</p>
                     )}
                   </div>
@@ -401,7 +401,7 @@ export default function HomePage() {
                     <Icon className="w-6 h-6" />
                   </div>
                   <span className="text-sm font-semibold text-[#EFEFF1] text-center">{name}</span>
-                  {count !== null && (
+                  {Number(count) > 0 && (
                     <span className="text-xs text-[#949599]">{count.toLocaleString()} events</span>
                   )}
                 </Link>
