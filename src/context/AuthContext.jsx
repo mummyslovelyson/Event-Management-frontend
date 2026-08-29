@@ -60,6 +60,11 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const loginWithOAuth = useCallback((accessToken, refreshToken, userData) => {
+    persistAuth(accessToken, refreshToken, userData);
+    return userData;
+  }, [persistAuth]);
+
   const adminLogin = async (email, password, website = '') => {
     setLoading(true);
     try {
@@ -116,7 +121,7 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={{
       user, token, loading,
-      login, adminLogin, logout, logoutAll,
+      login, loginWithOAuth, adminLogin, logout, logoutAll,
       changePassword, getSessions, revokeSession, refreshProfile,
       isAuthenticated, isSystemAdmin, isAdmin, isStaffAdmin, isOrganizer, isAttendee, setUser,
       persistAuth,
@@ -138,6 +143,7 @@ export const useAuth = () => {
       isOrganizer: false,
       isAttendee: false,
       login: async () => {},
+      loginWithOAuth: () => {},
       adminLogin: async () => {},
       logout: async () => {},
       logoutAll: async () => {},

@@ -5,6 +5,12 @@ import { Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { googleLogin } from '@/api/auth';
 import { useAuth } from '@/context/AuthContext';
+import {
+  signInWithGoogleViaFirebase,
+  signInWithGoogleViaRedirect,
+  checkFirebaseRedirectResult,
+  isFirebaseConfigured,
+} from '@/config/firebase';
 
 export default function GoogleAuthButton({
   role = 'attendee',
@@ -14,9 +20,22 @@ export default function GoogleAuthButton({
   onSuccess,
 }) {
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { persistAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Check if returning from a Firebase Google Auth Redirect
+  useEffect(() => {
+    if (isFirebaseConfigured) {
+      checkFirebaseRedirectResult()
+        .then((result) => {
+          if (result?.idToken) {
+            handleGoogleResponse(result);
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   const handleGoogleResponse = async (credentialOrToken) => {
     setLoading(true);
@@ -24,7 +43,7 @@ export default function GoogleAuthButton({
       const payload = {
         role,
         ...(typeof credentialOrToken === 'string'
-          ? { credential: credentialOrToken }
+          ? { credential: credentialOrToken, idToken: credentialOrToken }
           : credentialOrToken),
         ...(role === 'organizer' && {
           organizationName: organizerData.organizationName,
@@ -35,10 +54,11 @@ export default function GoogleAuthButton({
       };
 
       const res = await googleLogin(payload);
-      const { token, user, pendingApproval, message } = res.data;
+      const { token, accessToken, refreshToken, user, pendingApproval, message } = res.data;
+      const authToken = accessToken || token;
 
-      if (token && user) {
-        login(user, token);
+      if (authToken && user) {
+        persistAuth(authToken, refreshToken || '', user);
       }
 
       if (pendingApproval) {
@@ -69,10 +89,66 @@ export default function GoogleAuthButton({
     }
   };
 
-  const handleInitiateGoogleSignIn = () => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const handleInitiateGoogleSignIn = async () => {
+    // 1. Try Firebase Authentication
+    if (isFirebaseConfigured) {
+      setLoading(true);
+      try {
+        const firebaseResult = await signInWithGoogleViaFirebase();
+        if (firebaseResult?.idToken) {
+          await handleGoogleResponse({
+            idToken: firebaseResult.idToken,
+            credential: firebaseResult.idToken,
+            email: firebaseResult.email,
+            name: firebaseResult.name,
+            picture: firebaseResult.photoURL,
+            uid: firebaseResult.uid,
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn('[Firebase Google Auth] popup error:', err);
+        if (err.code === 'auth/popup-closed-by-user') {
+          setLoading(false);
+          return;
+        }
 
-    // If Google Identity Services SDK is available on window
+        // Browser blocked the popup window — seamlessly switch to full redirect
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
+          toast.loading('Popup blocked by browser. Redirecting to Google Sign-in...');
+          try {
+            await signInWithGoogleViaRedirect();
+            return;
+          } catch (redirectErr) {
+            console.warn('[Firebase Redirect Error]', redirectErr);
+          }
+        }
+
+        // Check for Firebase Console setup errors
+        if (
+          err.code === 'auth/configuration-not-found' ||
+          err.code === 'auth/operation-not-allowed' ||
+          err.message?.includes('CONFIGURATION_NOT_FOUND')
+        ) {
+          toast.error(
+            'Google Sign-in is not enabled yet in your Firebase Console (Build > Authentication > Sign-in method). Switching to direct login...',
+            { duration: 6000 },
+          );
+          setLoading(false);
+          // Fallback to direct demo / GIS sign-in
+          promptDemoGoogleSignIn();
+          return;
+        }
+
+        toast.error(err.message || 'Firebase Google authentication failed');
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // 2. Google Identity Services fallback if GIS client ID configured
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
     if (window.google?.accounts?.id && clientId) {
       try {
         window.google.accounts.id.initialize({
@@ -85,7 +161,6 @@ export default function GoogleAuthButton({
         });
         window.google.accounts.id.prompt((notification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            // If One Tap is skipped or blocked, fallback to token client / interactive popup
             fallbackOAuthPopup(clientId);
           }
         });
@@ -95,7 +170,7 @@ export default function GoogleAuthButton({
       }
     }
 
-    // Standard OAuth2 Popup fallback or simulated demo flow if no client ID set
+    // 3. Fallback OAuth popup or simulated local demo prompt
     fallbackOAuthPopup(clientId);
   };
 

@@ -13,6 +13,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "axios": "^1.19.0",
+    "firebase": "^12.18.0",
     "framer-motion": "^12.43.0",
     "lucide-react": "^0.446.0",
     "qrcode.react": "^4.2.0",

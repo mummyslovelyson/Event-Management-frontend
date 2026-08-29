@@ -15,6 +15,7 @@ import { getUserReminders, toggleEventReminder } from '@/api/events';
 import { getGoogleCalendarUrl, downloadIcsFile } from '@/utils/calendar';
 import Modal from '@/components/common/Modal';
 import SocialShareModal from '@/components/common/SocialShareModal';
+import InvoiceModal from '@/components/tickets/InvoiceModal';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import EmptyState from '@/components/common/EmptyState';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -82,6 +83,8 @@ export default function MyTicketsPage() {
   const [selling, setSelling] = useState(false);
   const [showListings, setShowListings] = useState(false);
   const [cancellingId, setCancellingId] = useState(null);
+
+  const [invoiceTicket, setInvoiceTicket] = useState(null);
 
   const loadTickets = async () => {
     setLoading(true);
@@ -414,6 +417,7 @@ export default function MyTicketsPage() {
                 onPrint={() => setPrintTicket(ticket)}
                 onShare={() => setShareTicket(ticket)}
                 onViewEvent={() => setPreviewEvent(ticket.event)}
+                onInvoice={() => setInvoiceTicket(ticket)}
                 onSell={() => { setSellTarget(ticket); setSellPrice(''); }}
               />
             </motion.div>
@@ -707,11 +711,18 @@ export default function MyTicketsPage() {
         event={shareTicket?.event}
         ticket={shareTicket}
       />
+
+      {/* Invoice & Tax Receipt Modal */}
+      <InvoiceModal
+        open={!!invoiceTicket}
+        onClose={() => setInvoiceTicket(null)}
+        ticket={invoiceTicket}
+      />
     </motion.div>
   );
 }
 
-function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell, onShare, onViewEvent }) {
+function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, onViewEvent, onInvoice }) {
   const event = ticket.event || {};
   const eventDate = event.startDate || ticket.eventDate || ticket.startDate;
   const status = (ticket.status || 'valid').toLowerCase();
@@ -830,7 +841,7 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell, onShare, 
         </div>
 
         {/* Actions */}
-        <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 p-5 pt-0">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 p-5 pt-0">
           <button
             onClick={onDownload}
             className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
@@ -842,6 +853,12 @@ function TicketCard({ ticket, onDownload, onTransfer, onPrint, onSell, onShare, 
             className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
           >
             <Printer className="w-3.5 h-3.5" /> Print
+          </button>
+          <button
+            onClick={onInvoice}
+            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 hover:bg-[#242B32] transition-colors"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-blue-400" /> Receipt
           </button>
           <button
             onClick={() => { downloadIcsFile(event); toast.success('Event added to calendar (.ics download)'); }}

@@ -29,8 +29,9 @@ import { getEventResale, purchaseResaleListing } from '@/api/resale';
 import { applyCoupon, createOrder, initiatePayment } from '@/api/orders';
 import { useAuth } from '@/context/AuthContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import InteractiveSeatMap from '@/components/events/InteractiveSeatMap';
 
-const TABS = ['Overview', 'Tickets', 'Squads & Group Outings', 'Community & Attendees', 'FAQs'];
+const TABS = ['Overview', 'Tickets', 'Seating & VIP Sections 🗺️', 'Squads & Group Outings', 'Community & Attendees', 'FAQs'];
 
 const PAYMENT_METHODS = [
   { id: 'paystack', label: 'Paystack', icon: ShieldCheck },
@@ -950,6 +951,17 @@ export default function EventDetailPage() {
                         </div>
                       </div>
                     ) : null}
+                  </div>
+                )}
+
+                {/* SEATING & VIP SECTIONS */}
+                {activeTab === 'Seating & VIP Sections 🗺️' && (
+                  <div className="space-y-6">
+                    <InteractiveSeatMap
+                      ticketTypes={tickets}
+                      currency={event?.currency || 'GHS'}
+                      onSelectTicket={(ticket) => openPurchase(ticket)}
+                    />
                   </div>
                 )}
 

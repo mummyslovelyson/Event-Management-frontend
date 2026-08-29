@@ -240,23 +240,54 @@ const StepTickets = () => {
                 <button type="button" onClick={() => remove(i)} className="p-2.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition"><Trash2 className="w-4 h-4" /></button>
               )}
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div>
                 <label className={labelCls}>Name</label>
-                <input {...register(`ticketTypes.${i}.name`, { required: true })} placeholder="VIP, General..." className={inputCls} />
+                <input {...register(`ticketTypes.${i}.name`, { required: true })} placeholder="VIP, Regular, Table..." className={inputCls} />
               </div>
               <div>
-                <label className={labelCls}>Price (GHS)</label>
+                <label className={labelCls}>Section / Layout Zone</label>
+                <select {...register(`ticketTypes.${i}.section_type`)} className={inputCls}>
+                  <option value="general">🎟️ General Admission Floor</option>
+                  <option value="golden_circle">🌟 Golden Circle (Front Pit)</option>
+                  <option value="vip">👑 Diamond VIP Lounge & Tables</option>
+                  <option value="balcony">🏛️ Mezzanine & Elevated Suites</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelCls}>Regular Price (GHS)</label>
                 <input type="number" step="0.01" {...register(`ticketTypes.${i}.price`, { required: true, min: 0 })} placeholder="100" className={inputCls} />
               </div>
               <div>
-                <label className={labelCls}>Quantity</label>
+                <label className={labelCls}>Total Quantity</label>
                 <input type="number" {...register(`ticketTypes.${i}.quantity`, { required: true, min: 1 })} placeholder="50" className={inputCls} />
               </div>
             </div>
+
+            {/* Optional Early Bird Rules */}
+            <div className="p-3.5 rounded-xl bg-[#14181C] border border-[#2E363E] space-y-3">
+              <p className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                ⚡ Optional Early-Bird Pricing Rules
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className={labelCls}>Early-Bird Price (GHS)</label>
+                  <input type="number" step="0.01" {...register(`ticketTypes.${i}.early_bird_price`)} placeholder="e.g. 70" className={inputCls} />
+                </div>
+                <div>
+                  <label className={labelCls}>Early-Bird Deadline</label>
+                  <input type="date" {...register(`ticketTypes.${i}.early_bird_deadline`)} className={inputCls} />
+                </div>
+                <div>
+                  <label className={labelCls}>Early-Bird Cap (Max Tickets)</label>
+                  <input type="number" {...register(`ticketTypes.${i}.early_bird_max_qty`)} placeholder="e.g. 20" className={inputCls} />
+                </div>
+              </div>
+            </div>
+
             <div>
-              <label className={labelCls}>Description</label>
-              <textarea {...register(`ticketTypes.${i}.description`)} rows={2} placeholder="What's included..." className={inputCls} />
+              <label className={labelCls}>Description & Perks (What's included)</label>
+              <textarea {...register(`ticketTypes.${i}.description`)} rows={2} placeholder="e.g. Fast-track entry, welcome cocktail, backstage access..." className={inputCls} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
