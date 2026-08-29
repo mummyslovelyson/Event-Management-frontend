@@ -36,7 +36,7 @@ const categories = [
     icon: Users,
     faqs: [
       { q: 'How do I create an event?', a: 'Register as an organizer, then go to your dashboard and click "Create Event." Fill in the event details, add ticket types, and publish when ready.' },
-      { q: 'How much does it cost to host an event?', a: 'We offer three plans: Starter (free), Professional ($49/mo), and Enterprise ($199/mo). A small processing fee also applies per ticket sold.' },
+      { q: 'How much does it cost to host an event?', a: 'Creating and publishing events on Tribes & Cliqs is completely free. A standard ticketing processing fee is applied per paid ticket sold.' },
       { q: 'When do I get paid for my ticket sales?', a: 'Payouts are processed within 2-3 business days after the event concludes. You can track your balance and request withdrawals from your wallet.' },
       { q: 'Can I manage my attendees?', a: 'Yes! Your dashboard includes tools to view attendee lists, export data, manage check-ins, and communicate with your attendees.' },
       { q: 'Can I offer different ticket types?', a: 'Absolutely. You can create VIP, VVIP, General, Early Bird, and any custom ticket type with different prices and quantities.' },

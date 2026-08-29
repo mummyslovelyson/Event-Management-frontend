@@ -17,7 +17,6 @@ import ExplorePage from '@/pages/public/ExplorePage';
 import EventDetailPage from '@/pages/public/EventDetailPage';
 import AboutPage from '@/pages/public/AboutPage';
 import ContactPage from '@/pages/public/ContactPage';
-import PricingPage from '@/pages/public/PricingPage';
 import FAQPage from '@/pages/public/FAQPage';
 import MaintenancePage from '@/pages/public/MaintenancePage';
 import TermsOfServicePage from '@/pages/public/TermsOfServicePage';
@@ -121,7 +120,6 @@ function AppRoutes() {
             <Route path="/events/:id" element={<EventDetailPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/terms" element={<TermsOfServicePage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
