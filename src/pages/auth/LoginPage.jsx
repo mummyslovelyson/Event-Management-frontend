@@ -17,7 +17,7 @@ export default function LoginPage() {
   const onSubmit = async (data) => {
     try {
       const user = await login(data.email, data.password, data.website);
-      toast.success(`Welcome back, ${user.name || user.email}!`);
+      toast.success(`Welcome back, ${user.name || user.email}! 👋`, { duration: 4000 });
       const from = location.state?.from?.pathname;
       if (from && !from.startsWith('/admin')) {
         navigate(from, { replace: true });
@@ -29,6 +29,13 @@ export default function LoginPage() {
         navigate('/attendee/dashboard', { replace: true });
       }
     } catch (err) {
+      if (err.response?.data?.requiresVerification) {
+        toast.error(err.response.data.message || 'Please verify your account first', { duration: 6000 });
+        const emailParam = encodeURIComponent(err.response.data.email || data.email || '');
+        const phoneParam = err.response.data.phone ? `&phone=${encodeURIComponent(err.response.data.phone)}` : '';
+        navigate(`/verify-email?email=${emailParam}${phoneParam}`);
+        return;
+      }
       toast.error(err.friendlyMessage || err.response?.data?.message || 'Invalid email or password');
     }
   };

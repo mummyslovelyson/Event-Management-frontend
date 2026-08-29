@@ -38,8 +38,15 @@ export default function RegisterPage() {
       };
       if (role === 'organizer') payload.organizationName = data.organizationName;
       const res = await registerUser(payload);
-      toast.success(res.data?.message || 'Account created! Please check your email to verify your account.');
-      navigate('/login');
+      toast.success(
+        res.data?.message || (data.phone
+          ? `🎉 Verification code sent to your phone (${data.phone}) via SMS and email! Enter code to create account.`
+          : `🎉 Verification code sent to your email (${data.email})! Enter code to create account.`),
+        { duration: 6000 }
+      );
+      const regIdParam = res.data?.registrationId ? `&regId=${encodeURIComponent(res.data.registrationId)}` : '';
+      const phoneParam = data.phone ? `&phone=${encodeURIComponent(data.phone)}` : '';
+      navigate(`/verify-email?email=${encodeURIComponent(data.email)}${phoneParam}${regIdParam}`);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
