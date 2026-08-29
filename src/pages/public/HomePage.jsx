@@ -13,6 +13,7 @@ import toast from 'react-hot-toast';
 import EventCard from '@/components/common/EventCard';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { getFeaturedEvents, getTrendingEvents, getCategories, getFeaturedOrganizers } from '@/api/events';
+import { getCategoryImage } from '@/utils/categoryImages';
 
 const HERO_IMAGE = 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg';
 
@@ -32,32 +33,6 @@ const CATEGORY_ICONS = {
 };
 
 const DEFAULT_CATEGORY_ICON = LayoutGrid;
-
-// Maps API category name → local image slug folder
-const CATEGORY_IMAGE_MAP = {
-  'Corporate Event':        'corporate-event',
-  'Corporate Events':       'corporate-event',
-  'Fairs & Exhibitions':    'fairs-and-exhibitions',
-  'Fairs and Exhibitions':  'fairs-and-exhibitions',
-  'Festivals':              'festivals',
-  'Festival':               'festivals',
-  'Movies & Stage Plays':   'movies-and-stage-plays',
-  'Movies and Stage Plays': 'movies-and-stage-plays',
-  'Musical Shows':          'musical-shows',
-  'Musical Show':           'musical-shows',
-  'Religious Activities':   'religious-activities',
-  'Religious Activity':     'religious-activities',
-  'Social Events':          'social-events',
-  'Social Event':           'social-events',
-  'Tournaments':            'tournaments',
-  'Tournament':             'tournaments',
-};
-
-/** Returns the local cover image path for a category name, or null */
-function getCategoryImage(name) {
-  const slug = CATEGORY_IMAGE_MAP[name];
-  return slug ? `/assets/images/${slug}/cover.png` : null;
-}
 
 // Default categories with local images if database hasn't seeded yet
 const DEFAULT_CATEGORIES = [

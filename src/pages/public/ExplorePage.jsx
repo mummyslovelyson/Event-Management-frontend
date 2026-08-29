@@ -11,10 +11,11 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import EmptyState from '@/components/common/EmptyState';
 import Pagination from '@/components/common/Pagination';
 import { getEvents } from '@/api/events';
+import { getCategoryImage, POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 
 const CATEGORIES = [
-  'Concert', 'Sports', 'Festival', 'Conference', 'Seminar',
-  'Workshop', 'Theatre', 'Church', 'Wedding', 'Fashion',
+  'Musical Shows', 'Festivals', 'Corporate Events', 'Tournaments',
+  'Social Events', 'Movies & Stage Plays', 'Fairs & Exhibitions', 'Religious Activities',
 ];
 
 const SORT_OPTIONS = [
@@ -308,6 +309,41 @@ export default function ExplorePage() {
             <SlidersHorizontal className="w-4 h-4" />
             Filters{activeFilterCount > 0 && <span className="ml-1 px-1.5 py-0.5 rounded bg-white text-[#1C232B] text-xs font-bold">{activeFilterCount}</span>}
           </button>
+        </div>
+
+        {/* Visual Category Thumbnails Strip */}
+        <div className="flex gap-3 overflow-x-auto pb-3 mb-6 scrollbar-none snap-x">
+          {POPULAR_CATEGORY_LIST.map((cat) => {
+            const isSelected = filters.categories.includes(cat.name);
+            return (
+              <button
+                key={cat.name}
+                type="button"
+                onClick={() => toggleCategory(cat.name)}
+                className={`relative flex-shrink-0 w-28 sm:w-32 h-20 rounded-xl overflow-hidden group snap-start border transition-all text-left ${
+                  isSelected ? 'border-white ring-2 ring-white/20' : 'border-[#262B2F] hover:border-white/40'
+                }`}
+              >
+                <img
+                  src={cat.image}
+                  alt={cat.name}
+                  className={`w-full h-full object-cover transition-transform duration-300 ${
+                    isSelected ? 'scale-105' : 'group-hover:scale-110 opacity-70 group-hover:opacity-90'
+                  }`}
+                />
+                <div className={`absolute inset-0 transition-colors ${
+                  isSelected ? 'bg-black/40' : 'bg-gradient-to-t from-black/85 via-black/40 to-transparent'
+                }`} />
+                <div className="absolute inset-0 p-2 flex flex-col justify-end">
+                  <span className={`text-[11px] font-bold leading-tight line-clamp-2 ${
+                    isSelected ? 'text-white' : 'text-[#EFEFF1]'
+                  }`}>
+                    {cat.name}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         {/* Sort + active filters */}
