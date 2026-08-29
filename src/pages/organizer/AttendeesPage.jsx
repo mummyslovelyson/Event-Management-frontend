@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, Search, Download, FileText, CheckCircle2, Clock, UserX,
@@ -26,11 +27,13 @@ const downloadBlob = (blob, filename) => {
 };
 
 export default function AttendeesPage() {
+  const [searchParams] = useSearchParams();
+  const paramEventId = searchParams.get('eventId') || searchParams.get('event');
   const { format } = useCurrency();
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [eventOpen, setEventOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState(paramEventId || '');
 
   const [attendees, setAttendees] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -47,14 +50,14 @@ export default function AttendeesPage() {
         const payload = res.data;
         const list = Array.isArray(payload) ? payload : payload.events || payload.data || [];
         setEvents(list);
-        if (list.length) setSelectedEvent(list[0].id);
+        if (list.length && !selectedEvent) setSelectedEvent(paramEventId || list[0].id);
       } catch (err) {
         toast.error(err.response?.data?.message || 'Failed to load events');
       } finally {
         setLoadingEvents(false);
       }
     })();
-  }, []);
+  }, [paramEventId, selectedEvent]);
 
   const fetchAttendees = useCallback(async () => {
     if (!selectedEvent) return;

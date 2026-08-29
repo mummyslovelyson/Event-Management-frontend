@@ -8,11 +8,13 @@ import {
 import {
   CalendarDays, Ticket as TicketIcon, Activity, ArrowRight,
   PlusCircle, BarChart3, UsersRound, Wallet, Calendar,
+  ScanLine, Users, CheckCircle2, TrendingUp, DollarSign,
+  Clock, ShieldAlert,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
 import { useCurrency } from '@/context/CurrencyContext';
-import { getDashboard, getRevenue } from '@/api/organizer';
+import { getDashboard, getRevenue, getWalletBalance } from '@/api/organizer';
 import StatCard from '@/components/common/StatCard';
 import Badge from '@/components/common/Badge';
 import EmptyState from '@/components/common/EmptyState';
@@ -26,29 +28,56 @@ const orderStatusVariant = (s) => {
   return map[(s || '').toLowerCase()] || 'neutral';
 };
 
+const TIMEFRAMES = [
+  { key: '7d', label: '7 Days' },
+  { key: '30d', label: '30 Days' },
+  { key: '90d', label: '90 Days' },
+  { key: '1y', label: '1 Year' },
+];
+
 export default function OrganizerDashboard() {
   const { user } = useAuth();
   const { format, currency } = useCurrency();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [timeframe, setTimeframe] = useState('30d');
   const [data, setData] = useState(null);
   const [revenueData, setRevenueData] = useState([]);
+  const [wallet, setWallet] = useState({ available: 0, pending: 0, totalRevenue: 0 });
+  const [revenueLoading, setRevenueLoading] = useState(false);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [dashRes, revRes] = await Promise.all([
+      const [dashRes, revRes, wallRes] = await Promise.all([
         getDashboard(),
-        getRevenue({ range: '30d' }).catch(() => ({ data: [] })),
+        getRevenue({ range: timeframe }).catch(() => ({ data: [] })),
+        getWalletBalance().catch(() => ({ data: { available: 0, pending: 0 } })),
       ]);
       setData(dashRes.data);
-      setRevenueData(Array.isArray(revRes.data) ? revRes.data : revRes.data?.data || []);
+      const rev = revRes.data;
+      setRevenueData(Array.isArray(rev) ? rev : rev?.data || []);
+      if (wallRes.data) setWallet(wallRes.data);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
   }, []);
+
+  const handleTimeframeChange = async (newRange) => {
+    setTimeframe(newRange);
+    setRevenueLoading(true);
+    try {
+      const res = await getRevenue({ range: newRange });
+      const rev = res.data;
+      setRevenueData(Array.isArray(rev) ? rev : rev?.data || []);
+    } catch (err) {
+      console.error('[Dashboard] Failed to change revenue range:', err);
+    } finally {
+      setRevenueLoading(false);
+    }
+  };
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
@@ -70,34 +99,29 @@ export default function OrganizerDashboard() {
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-xl font-semibold tracking-tight text-[#EFEFF1]">
-              {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening'}, {user?.name?.split(' ')[0] || 'there'}
+              {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening'}, {user?.name?.split(' ')[0] || 'Organizer'} 👋
             </h1>
             {data?.organization?.isApproved
-              ? <Badge variant="success" size="sm" dot>Approved</Badge>
-              : <Badge variant="pending" size="sm" dot>Pending approval</Badge>}
+              ? <Badge variant="success" size="sm" dot>Verified Organizer</Badge>
+              : <Badge variant="pending" size="sm" dot>Pending Verification</Badge>}
           </div>
           <p className="mt-1 text-sm text-[#949599]">
-            {data?.organization?.name || 'Your organization'} · sales, tickets, and what's coming up.
+            {data?.organization?.name || user?.name || 'Your Event Hub'} · Live analytics, ticket sales, and event operations.
           </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Link
+            to="/organizer/events/create"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] font-semibold text-sm hover:bg-[#CBD5E1] transition shadow-md"
+          >
+            <PlusCircle className="w-4 h-4" /> Create New Event
+          </Link>
         </div>
       </motion.div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatCard
-          icon={CalendarDays}
-          label="Total Events"
-          value={metrics.totalEvents ?? 0}
-          trend={metrics.totalEventsTrend ?? 0}
-          trendLabel="vs last month"
-        />
-        <StatCard
-          icon={TicketIcon}
-          label="Tickets Sold"
-          value={metrics.ticketsSold?.toLocaleString() ?? 0}
-          trend={metrics.ticketsSoldTrend ?? 0}
-          trendLabel="vs last month"
-        />
         <StatCard
           label="Total Revenue"
           value={format(metrics.totalRevenue ?? 0)}
@@ -106,7 +130,36 @@ export default function OrganizerDashboard() {
           accent
         />
         <StatCard
-          icon={Activity}
+          icon={TicketIcon}
+          label="Tickets Sold"
+          value={metrics.ticketsSold?.toLocaleString() ?? 0}
+          trend={metrics.ticketsSoldTrend ?? 0}
+          trendLabel="vs last month"
+        />
+        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-[#949599]">Available Balance</span>
+            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+              <Wallet className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <p className="text-2xl font-bold text-[#EFEFF1] tabular-nums">
+              {format(wallet.available ?? metrics.availableBalance ?? 0)}
+            </p>
+            <div className="mt-2 flex items-center justify-between">
+              <span className="text-[11px] text-[#949599]">Pending: {format(wallet.pending ?? 0)}</span>
+              <Link
+                to="/organizer/wallet"
+                className="text-xs font-semibold text-white hover:underline flex items-center gap-0.5"
+              >
+                Withdraw <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+          </div>
+        </div>
+        <StatCard
+          icon={CalendarDays}
           label="Active Events"
           value={metrics.activeEvents ?? 0}
           trend={metrics.activeEventsTrend ?? 0}
@@ -114,47 +167,79 @@ export default function OrganizerDashboard() {
         />
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* Quick Actions Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Create Event', icon: PlusCircle, to: '/organizer/events/create' },
-          { label: 'View Reports', icon: BarChart3, to: '/organizer/reports' },
-          { label: 'Manage Team', icon: UsersRound, to: '/organizer/team' },
-          { label: 'Withdraw Earnings', icon: Wallet, to: '/organizer/wallet' },
+          { label: 'QR Scanner', icon: ScanLine, to: '/organizer/check-in' },
+          { label: 'Manage Guests', icon: Users, to: '/organizer/attendees' },
+          { label: 'Sales Reports', icon: BarChart3, to: '/organizer/reports' },
         ].map(({ label, icon: Icon, to }) => (
           <Link
             key={label}
             to={to}
             className="flex items-center gap-3 p-4 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/40 transition-colors group"
           >
-            <Icon className="w-5 h-5 text-[#5A6166] shrink-0 group-hover:text-white transition-colors" />
+            <div className="p-2 rounded-lg bg-[#242B32] text-[#949599] group-hover:text-white transition-colors shrink-0">
+              <Icon className="w-4 h-4" />
+            </div>
             <span className="text-sm font-medium text-[#EFEFF1] transition-colors">{label}</span>
-            <ArrowRight className="w-4 h-4 text-[#5A6166] ml-auto group-hover:text-white transition-colors" />
+            <ArrowRight className="w-4 h-4 text-[#494F55] ml-auto group-hover:text-white transition-colors" />
           </Link>
         ))}
       </div>
 
-      {/* Charts */}
+      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Revenue Performance Chart */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div>
-              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Revenue</h2>
-              <p className="text-xs text-[#949599]">Daily revenue, last 30 days</p>
+              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Revenue Trend</h2>
+              <p className="text-xs text-[#949599]">Earnings over time ({timeframe.toUpperCase()})</p>
             </div>
-            <Badge variant="gold">{currency}</Badge>
+            <div className="flex items-center gap-1 bg-[#1C232B] p-1 rounded-lg border border-[#494F55]/30">
+              {TIMEFRAMES.map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => handleTimeframeChange(t.key)}
+                  className={`px-2.5 py-1 rounded text-xs font-medium transition ${
+                    timeframe === t.key
+                      ? 'bg-white text-[#1C232B] shadow-sm font-semibold'
+                      : 'text-[#949599] hover:text-[#EFEFF1]'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
           </div>
-          {revenueData.length > 0 ? (
+
+          {revenueLoading ? (
+            <div className="h-[260px] flex items-center justify-center">
+              <LoadingSpinner label="Updating chart..." />
+            </div>
+          ) : revenueData.length > 0 ? (
             <ResponsiveContainer width="100%" height={260}>
               <AreaChart data={revenueData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#EFEFF1" stopOpacity={0.4} />
+                    <stop offset="0%" stopColor="#EFEFF1" stopOpacity={0.35} />
                     <stop offset="100%" stopColor="#EFEFF1" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} vertical={false} />
-                <XAxis dataKey="date" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
+                <XAxis
+                  dataKey="date"
+                  stroke="#949599"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(d) => {
+                    const date = new Date(d);
+                    return isNaN(date.getTime()) ? d : date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                  }}
+                />
                 <YAxis stroke="#949599" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => format(v, { compact: true })} />
                 <Tooltip
                   contentStyle={{ background: '#171A1D', border: '1px solid #494F55', borderRadius: 8, color: '#EFEFF1', fontSize: 12 }}
@@ -165,23 +250,25 @@ export default function OrganizerDashboard() {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <EmptyState icon={Activity} title="No revenue data yet" description="Revenue will appear here once you start selling tickets." className="py-10" />
+            <EmptyState icon={Activity} title="No revenue data yet" description="Revenue will show here once tickets are sold in this timeframe." className="py-10" />
           )}
         </div>
 
+        {/* Best Selling Events Bar Chart */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Ticket Sales by Event</h2>
-              <p className="text-xs text-[#949599]">Your five best sellers</p>
+              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Top Events by Ticket Sales</h2>
+              <p className="text-xs text-[#949599]">Your most popular events</p>
             </div>
+            <Link to="/organizer/events" className="text-xs text-white hover:underline">View all</Link>
           </div>
           {topEvents.length > 0 ? (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={topEvents} layout="vertical" margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.2} horizontal={false} />
                 <XAxis type="number" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="name" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} width={100} />
+                <YAxis type="category" dataKey="name" stroke="#949599" fontSize={11} tickLine={false} axisLine={false} width={110} />
                 <Tooltip
                   contentStyle={{ background: '#171A1D', border: '1px solid #494F55', borderRadius: 8, color: '#EFEFF1', fontSize: 12 }}
                   cursor={{ fill: '#494F55', fillOpacity: 0.1 }}
@@ -191,18 +278,22 @@ export default function OrganizerDashboard() {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <EmptyState icon={TicketIcon} title="No sales yet" description="Your top selling events will show here." className="py-10" />
+            <EmptyState icon={TicketIcon} title="No sales yet" description="Your top selling events will be ranked here." className="py-10" />
           )}
         </div>
       </div>
 
-      {/* Recent Orders + Upcoming Events */}
+      {/* Orders & Upcoming Events Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Orders Table */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#262B2F]">
-            <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Recent Orders</h2>
+            <div>
+              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Recent Ticket Purchases</h2>
+              <p className="text-xs text-[#949599]">Real-time orders received</p>
+            </div>
             <Link to="/organizer/orders" className="text-xs font-medium text-white hover:underline flex items-center gap-1">
-              View all <ArrowRight className="w-3.5 h-3.5" />
+              All orders <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
           {recentOrders.length > 0 ? (
@@ -210,71 +301,131 @@ export default function OrganizerDashboard() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                    <th className="hidden md:table-cell px-5 py-3 font-medium">Order ID</th>
-                    <th className="hidden md:table-cell px-5 py-3 font-medium">Customer</th>
-                    <th className="px-5 py-3 font-medium">Event</th>
-                    <th className="hidden md:table-cell px-5 py-3 font-medium text-center">Tickets</th>
+                    <th className="hidden md:table-cell px-5 py-3 font-medium">Ref</th>
+                    <th className="px-5 py-3 font-medium">Customer</th>
+                    <th className="hidden sm:table-cell px-5 py-3 font-medium">Event</th>
                     <th className="px-5 py-3 font-medium text-right">Amount</th>
-                    <th className="px-5 py-3 font-medium">Status</th>
-                    <th className="hidden md:table-cell px-5 py-3 font-medium">Date</th>
+                    <th className="px-5 py-3 font-medium text-right">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {recentOrders.map((o) => (
                     <tr key={o.id} className="hover:bg-[#1D2124] transition-colors">
-                      <td className="hidden md:table-cell px-5 py-3 font-mono text-xs text-[#EFEFF1]">#{o.reference || String(o.id ?? '').slice(-6)}</td>
-                      <td className="hidden md:table-cell px-5 py-3 text-[#EFEFF1]">{o.customerName || o.user?.name || '—'}</td>
-                      <td className="px-5 py-3 text-[#949599] max-w-[140px] truncate">{o.eventTitle || o.event?.title || '—'}</td>
-                      <td className="hidden md:table-cell px-5 py-3 text-center text-[#949599]">{o.quantity || o.ticketCount || 0}</td>
-                      <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(o.amount || o.total)}</td>
-                      <td className="px-5 py-3"><Badge variant={orderStatusVariant(o.status)} size="sm">{o.status}</Badge></td>
-                      <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599]">{o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'}</td>
+                      <td className="hidden md:table-cell px-5 py-3 font-mono text-xs text-[#EFEFF1]">
+                        #{o.reference ? o.reference.slice(-6) : String(o.id ?? '').slice(-6)}
+                      </td>
+                      <td className="px-5 py-3">
+                        <p className="font-medium text-[#EFEFF1] text-xs truncate max-w-[120px]">
+                          {o.customerName || o.user?.name || 'Customer'}
+                        </p>
+                        <p className="text-[10px] text-[#949599]">{o.quantity || o.ticketCount || 1} ticket(s)</p>
+                      </td>
+                      <td className="hidden sm:table-cell px-5 py-3 text-xs text-[#949599] max-w-[130px] truncate">
+                        {o.eventTitle || o.event?.title || '—'}
+                      </td>
+                      <td className="px-5 py-3 text-right font-medium text-xs text-[#EFEFF1]">
+                        {format(o.amount || o.total)}
+                      </td>
+                      <td className="px-5 py-3 text-right">
+                        <Badge variant={orderStatusVariant(o.status)} size="sm">{o.status}</Badge>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : (
-            <EmptyState icon={Activity} title="No orders yet" description="Orders will appear here once tickets are purchased." className="py-10" />
+            <EmptyState icon={Activity} title="No orders yet" description="Orders will appear here once attendees purchase tickets." className="py-10" />
           )}
         </div>
 
+        {/* Upcoming Events Management */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#262B2F]">
-            <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Upcoming Events</h2>
+            <div>
+              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Upcoming Events</h2>
+              <p className="text-xs text-[#949599]">Schedule & ticket capacity status</p>
+            </div>
             <Link to="/organizer/events" className="text-xs font-medium text-white hover:underline flex items-center gap-1">
-              View all <ArrowRight className="w-3.5 h-3.5" />
+              Manage all <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
           {upcomingEvents.length > 0 ? (
-            <div className="p-5 space-y-4">
+            <div className="p-5 space-y-3.5">
               {upcomingEvents.map((e) => {
                 const sold = e.ticketsSold || 0;
-                const cap = e.totalCapacity || e.capacity || 1;
+                const cap = e.totalCapacity || e.capacity || 100;
                 const pct = Math.min(100, Math.round((sold / cap) * 100));
                 return (
-                  <Link
+                  <div
                     key={e.id}
-                    to={`/events/${e.id}`}
-                    className="flex items-center gap-4 p-3 rounded-lg bg-[#1D2124] hover:bg-[#23272A] border border-[#262B2F] transition-colors"
+                    className="p-3.5 rounded-lg bg-[#1D2124] border border-[#262B2F] hover:border-white/30 transition flex flex-col gap-2.5"
                   >
-                    <Calendar className="w-5 h-5 text-[#494F55] shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-[#EFEFF1] truncate">{e.title}</p>
-                      <p className="text-xs text-[#949599]">{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'} · {e.venue || e.city || '—'}</p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <div className="flex-1 h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
-                          <div className="h-full bg-white rounded-full transition-all" style={{ width: `${pct}%` }} />
-                        </div>
-                        <span className="text-[10px] font-medium text-[#949599] tabular-nums">{sold}/{cap}</span>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <Link
+                          to={`/events/${e.id}`}
+                          className="text-sm font-semibold text-[#EFEFF1] hover:text-white truncate block"
+                        >
+                          {e.title}
+                        </Link>
+                        <p className="text-xs text-[#949599] flex items-center gap-1.5 mt-0.5">
+                          <Calendar className="w-3 h-3 text-[#494F55]" />
+                          {e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                          <span>·</span>
+                          <span className="truncate">{e.venue || e.city || 'Accra'}</span>
+                        </p>
+                      </div>
+                      <Badge variant={e.status === 'published' ? 'success' : 'pending'} size="sm">
+                        {e.status}
+                      </Badge>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-[11px] text-[#949599]">
+                        <span>Capacity ({pct}%)</span>
+                        <span className="font-semibold text-[#EFEFF1]">{sold} / {cap} tickets</span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
+                        <div className="h-full bg-white rounded-full transition-all" style={{ width: `${pct}%` }} />
                       </div>
                     </div>
-                  </Link>
+
+                    {/* Quick Action Shortcuts */}
+                    <div className="pt-2 border-t border-[#262B2F]/60 flex items-center justify-between text-xs">
+                      <Link
+                        to={`/organizer/check-in?eventId=${e.id}`}
+                        className="inline-flex items-center gap-1 text-[#949599] hover:text-white transition"
+                      >
+                        <ScanLine className="w-3.5 h-3.5" /> Scan QR
+                      </Link>
+                      <Link
+                        to={`/organizer/attendees?eventId=${e.id}`}
+                        className="inline-flex items-center gap-1 text-[#949599] hover:text-white transition"
+                      >
+                        <Users className="w-3.5 h-3.5" /> Guestlist
+                      </Link>
+                      <Link
+                        to={`/organizer/events/${e.id}/edit`}
+                        className="inline-flex items-center gap-1 text-[#949599] hover:text-white transition"
+                      >
+                        Edit Event <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
+                  </div>
                 );
               })}
             </div>
           ) : (
-            <EmptyState icon={CalendarDays} title="No upcoming events" description="Create your first event to get started." action={() => navigate('/organizer/events/create')} actionLabel="Create Event" className="py-10" />
+            <EmptyState
+              icon={CalendarDays}
+              title="No upcoming events"
+              description="Create your first event and start selling tickets today."
+              action={() => navigate('/organizer/events/create')}
+              actionLabel="Create Event"
+              className="py-10"
+            />
           )}
         </div>
       </div>

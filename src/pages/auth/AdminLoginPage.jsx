@@ -16,7 +16,7 @@ export default function AdminLoginPage() {
   const onSubmit = async (data) => {
     try {
       const user = await adminLogin(data.email, data.password, data.website);
-      if (user.role !== 'admin') {
+      if (!['admin', 'system_admin', 'superadmin', 'staff'].includes(user.role)) {
         toast.error('Access denied. Admin credentials required.');
         return;
       }

@@ -89,7 +89,9 @@ export function AuthProvider({ children }) {
   };
 
   const isAuthenticated = !!token && !!user;
-  const isAdmin = user?.role === 'admin';
+  const isSystemAdmin = user?.role === 'system_admin' || user?.role === 'superadmin';
+  const isAdmin = isSystemAdmin || user?.role === 'admin' || user?.role === 'staff';
+  const isStaffAdmin = user?.role === 'admin' || user?.role === 'staff';
   const isOrganizer = user?.role === 'organizer';
   const isAttendee = user?.role === 'attendee';
 
@@ -98,7 +100,7 @@ export function AuthProvider({ children }) {
       user, token, loading,
       login, adminLogin, logout, logoutAll,
       changePassword, getSessions, revokeSession,
-      isAuthenticated, isAdmin, isOrganizer, isAttendee, setUser,
+      isAuthenticated, isSystemAdmin, isAdmin, isStaffAdmin, isOrganizer, isAttendee, setUser,
       persistAuth,
     }}>
       {children}

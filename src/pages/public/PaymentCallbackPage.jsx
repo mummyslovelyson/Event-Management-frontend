@@ -83,14 +83,22 @@ export default function PaymentCallbackPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-[#EFEFF1]">Payment Successful!</h3>
                 <p className="mt-2 text-sm text-[#949599]">
-                  Your tickets have been confirmed. You can view them in your tickets.
+                  Your tickets and official receipt have been generated. You can view, print, or download them below.
                 </p>
-                <button
-                  onClick={goToTickets}
-                  className="mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
-                >
-                  <TicketCheck className="w-4 h-4" /> View My Tickets
-                </button>
+                <div className="mt-6 space-y-2.5">
+                  <button
+                    onClick={goToTickets}
+                    className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-md"
+                  >
+                    <TicketCheck className="w-4 h-4" /> View Digital Tickets &amp; QR
+                  </button>
+                  <Link
+                    to="/attendee/bookings"
+                    className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-semibold hover:bg-[#2C343D] hover:border-white/40 transition"
+                  >
+                    View &amp; Print Payment Receipt
+                  </Link>
+                </div>
               </motion.div>
             )}
 

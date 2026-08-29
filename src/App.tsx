@@ -137,6 +137,7 @@ function AppRoutes() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/admin-login" element={<AdminLoginPage />} />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/maintenance" element={<MaintenancePage message="" />} />
 
           {/* ── Attendee dashboard ── */}
@@ -191,7 +192,7 @@ function AppRoutes() {
           {/* ── Admin dashboard ── */}
           <Route
             element={
-              <ProtectedRoute roles={['admin']} redirectTo="/admin-login">
+              <ProtectedRoute roles={['admin', 'system_admin', 'superadmin', 'staff']} redirectTo="/admin-login">
                 <AdminLayout />
               </ProtectedRoute>
             }
@@ -207,8 +208,22 @@ function AppRoutes() {
             <Route path="/admin/content" element={<ContentManagementPage />} />
             <Route path="/admin/notifications" element={<NotificationCenterPage />} />
             <Route path="/admin/support" element={<SupportPage />} />
-            <Route path="/admin/settings" element={<SystemSettingsPage />} />
-            <Route path="/admin/audit-logs" element={<AuditLogsPage />} />
+            <Route
+              path="/admin/settings"
+              element={
+                <ProtectedRoute roles={['system_admin', 'superadmin']} redirectTo="/admin/dashboard">
+                  <SystemSettingsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/audit-logs"
+              element={
+                <ProtectedRoute roles={['system_admin', 'superadmin']} redirectTo="/admin/dashboard">
+                  <AuditLogsPage />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* ── Catch-all ── */}

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Download, ShoppingBag, DollarSign, Clock, RotateCcw,
-  ChevronDown, ChevronUp, CreditCard, Check,
+  ChevronDown, ChevronUp, CreditCard, Check, Printer, Receipt as ReceiptIcon,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getOrders } from '@/api/orders';
@@ -10,6 +10,7 @@ import { getDashboard } from '@/api/organizer';
 import { useCurrency } from '@/context/CurrencyContext';
 import Badge from '@/components/common/Badge';
 import Modal from '@/components/common/Modal';
+import ReceiptModal from '@/components/common/ReceiptModal';
 import Pagination from '@/components/common/Pagination';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -34,6 +35,7 @@ export default function OrdersPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [expandedId, setExpandedId] = useState(null);
   const [detailOrder, setDetailOrder] = useState(null);
+  const [receiptOrder, setReceiptOrder] = useState(null);
   const [selected, setSelected] = useState(new Set());
 
   const fetchOrders = useCallback(async () => {
@@ -195,7 +197,34 @@ export default function OrdersPage() {
       {!loading && orders.length > 0 && <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />}
 
       {/* Detail Modal */}
-      <Modal open={!!detailOrder} onClose={() => setDetailOrder(null)} title={`Order #${detailOrder?.reference || String(detailOrder?.id ?? '').slice(-6)}`} size="lg">
+      <Modal
+        open={!!detailOrder}
+        onClose={() => setDetailOrder(null)}
+        title={`Order #${detailOrder?.reference || String(detailOrder?.id ?? '').slice(-6)}`}
+        size="lg"
+        footer={
+          detailOrder ? (
+            <div className="flex items-center justify-between w-full">
+              <button
+                onClick={() => setDetailOrder(null)}
+                className="px-4 py-2 rounded-lg text-xs text-[#949599] hover:text-[#EFEFF1] transition"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  const o = detailOrder;
+                  setDetailOrder(null);
+                  setReceiptOrder(o);
+                }}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-md"
+              >
+                <Printer className="w-4 h-4" /> View &amp; Print Official Receipt
+              </button>
+            </div>
+          ) : null
+        }
+      >
         {detailOrder && (
           <div className="space-y-5">
             <div className="flex items-center justify-between">
@@ -233,6 +262,13 @@ export default function OrdersPage() {
           </div>
         )}
       </Modal>
+
+      {/* Printable Receipt Modal */}
+      <ReceiptModal
+        open={!!receiptOrder}
+        onClose={() => setReceiptOrder(null)}
+        order={receiptOrder}
+      />
     </div>
   );
 }

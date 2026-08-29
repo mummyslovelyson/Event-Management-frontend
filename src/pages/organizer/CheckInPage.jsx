@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ScanLine, Search, Camera, QrCode, CheckCircle2, XCircle, AlertTriangle,
@@ -20,8 +21,10 @@ const scanResultState = (type) => {
 };
 
 export default function CheckInPage() {
+  const [searchParams] = useSearchParams();
+  const paramEventId = searchParams.get('eventId') || searchParams.get('event');
   const [events, setEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState(paramEventId || '');
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [tab, setTab] = useState('scanner');
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -42,13 +45,15 @@ export default function CheckInPage() {
       const payload = res.data;
       const list = Array.isArray(payload) ? payload : payload.events || payload.data || [];
       setEvents(list);
-      if (list.length && !selectedEvent) setSelectedEvent(list[0].id);
+      if (list.length && !selectedEvent) {
+        setSelectedEvent(paramEventId || list[0].id);
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to load events');
     } finally {
       setLoadingEvents(false);
     }
-  }, [selectedEvent]);
+  }, [selectedEvent, paramEventId]);
 
   const fetchAttendees = useCallback(async () => {
     if (!selectedEvent) return;

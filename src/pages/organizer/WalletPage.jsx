@@ -332,24 +332,45 @@ export default function WalletPage() {
       <Modal
         open={withdrawModal}
         onClose={() => setWithdrawModal(false)}
-        title="Withdraw Funds"
+        title="Request Payout / Withdrawal"
         size="md"
         footer={
           <>
             <button onClick={() => setWithdrawModal(false)} className="px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition">Cancel</button>
-            <button onClick={submitWithdraw} disabled={submitting} className="px-4 py-2.5 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition">
-              {submitting ? 'Processing...' : 'Request Withdrawal'}
+            <button onClick={submitWithdraw} disabled={submitting || Number(wForm.amount) <= 0 || Number(wForm.amount) > balance.available} className="px-4 py-2.5 rounded-lg text-sm font-semibold text-[#1C232B] bg-white hover:bg-[#CBD5E1] disabled:opacity-60 transition shadow-md">
+              {submitting ? 'Processing...' : 'Submit Withdrawal Request'}
             </button>
           </>
         }
       >
         <form onSubmit={submitWithdraw} className="space-y-4">
-          <div className="rounded-lg bg-gradient-to-br from-white/10 to-[#1D2124] border border-white/20 p-4 flex items-center justify-between">
-            <span className="text-sm text-[#949599]">Available</span>
-            <span className="text-lg font-bold text-white">{format(balance.available)}</span>
+          <div className="rounded-xl bg-gradient-to-br from-white/10 to-[#1D2124] border border-white/20 p-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-[#949599]">Available for Withdrawal</p>
+              <p className="text-xl font-bold text-white mt-0.5">{format(balance.available)}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] text-[#949599]">Pending Settlement</p>
+              <p className="text-sm font-semibold text-[#CBD5E1]">{format(balance.pending)}</p>
+            </div>
           </div>
+
           <div>
-            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Amount (₵)</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-medium text-[#949599] uppercase tracking-wider">Amount to Withdraw</label>
+              <div className="flex items-center gap-1">
+                {[0.25, 0.5, 0.75, 1.0].map((pct) => (
+                  <button
+                    key={pct}
+                    type="button"
+                    onClick={() => setWForm((f) => ({ ...f, amount: String(Math.floor(balance.available * pct)) }))}
+                    className="px-2 py-0.5 rounded bg-[#242B32] text-[10px] font-semibold text-[#949599] hover:text-white transition"
+                  >
+                    {pct === 1.0 ? 'MAX' : `${pct * 100}%`}
+                  </button>
+                ))}
+              </div>
+            </div>
             <input
               type="number"
               step="0.01"
@@ -357,35 +378,107 @@ export default function WalletPage() {
               max={balance.available}
               value={wForm.amount}
               onChange={(e) => setWForm((f) => ({ ...f, amount: e.target.value }))}
-              placeholder="1000"
+              placeholder="e.g. 500"
               className={inputCls}
+              required
             />
           </div>
+
           <div>
-            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Bank Name</label>
-            <input
-              value={wForm.bankName}
-              onChange={(e) => setWForm((f) => ({ ...f, bankName: e.target.value }))}
-              placeholder="GCB Bank, MTN MoMo..."
-              className={inputCls}
-            />
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Payout Destination</label>
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              {[
+                { key: 'momo', label: '📱 Mobile Money' },
+                { key: 'bank', label: '🏦 Bank Account' },
+              ].map((m) => {
+                const active = (wForm.payoutType || 'momo') === m.key;
+                return (
+                  <button
+                    key={m.key}
+                    type="button"
+                    onClick={() => setWForm((f) => ({
+                      ...f,
+                      payoutType: m.key,
+                      bankName: m.key === 'momo' ? 'MTN Mobile Money' : 'GCB Bank',
+                    }))}
+                    className={`py-2 rounded-lg text-xs font-semibold border transition ${
+                      active ? 'bg-white text-[#1C232B] border-white' : 'bg-[#1C232B] text-[#949599] border-[#494F55]/40 hover:text-white'
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {(wForm.payoutType || 'momo') === 'momo' ? (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-[11px] text-[#949599] mb-1">Select Network</label>
+                  <select
+                    value={wForm.bankName || 'MTN Mobile Money'}
+                    onChange={(e) => setWForm((f) => ({ ...f, bankName: e.target.value }))}
+                    className={inputCls}
+                  >
+                    <option value="MTN Mobile Money">MTN Mobile Money</option>
+                    <option value="Telecel Cash">Telecel Cash (Vodafone)</option>
+                    <option value="AT Money">AT Money (AirtelTigo)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] text-[#949599] mb-1">Mobile Money Number</label>
+                  <input
+                    type="tel"
+                    value={wForm.accountNumber}
+                    onChange={(e) => setWForm((f) => ({ ...f, accountNumber: e.target.value }))}
+                    placeholder="e.g. 0244123456"
+                    className={inputCls}
+                    required
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-[11px] text-[#949599] mb-1">Bank Name</label>
+                  <select
+                    value={wForm.bankName || 'GCB Bank'}
+                    onChange={(e) => setWForm((f) => ({ ...f, bankName: e.target.value }))}
+                    className={inputCls}
+                  >
+                    <option value="GCB Bank">GCB Bank</option>
+                    <option value="Ecobank Ghana">Ecobank Ghana</option>
+                    <option value="Stanbic Bank">Stanbic Bank</option>
+                    <option value="Absa Bank Ghana">Absa Bank Ghana</option>
+                    <option value="Fidelity Bank Ghana">Fidelity Bank Ghana</option>
+                    <option value="Zenith Bank Ghana">Zenith Bank Ghana</option>
+                    <option value="CalBank">CalBank</option>
+                    <option value="Access Bank Ghana">Access Bank Ghana</option>
+                    <option value="Standard Chartered">Standard Chartered</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] text-[#949599] mb-1">Account Number</label>
+                  <input
+                    value={wForm.accountNumber}
+                    onChange={(e) => setWForm((f) => ({ ...f, accountNumber: e.target.value }))}
+                    placeholder="e.g. 10111222333"
+                    className={inputCls}
+                    required
+                  />
+                </div>
+              </div>
+            )}
           </div>
+
           <div>
-            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Account Number</label>
-            <input
-              value={wForm.accountNumber}
-              onChange={(e) => setWForm((f) => ({ ...f, accountNumber: e.target.value }))}
-              placeholder="0123456789"
-              className={inputCls}
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Account Name</label>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Account / Subscriber Name</label>
             <input
               value={wForm.accountName}
               onChange={(e) => setWForm((f) => ({ ...f, accountName: e.target.value }))}
-              placeholder="Account holder name"
+              placeholder="e.g. Kwame Mensah"
               className={inputCls}
+              required
             />
           </div>
         </form>

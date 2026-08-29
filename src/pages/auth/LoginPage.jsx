@@ -21,7 +21,7 @@ export default function LoginPage() {
       const from = location.state?.from?.pathname;
       if (from && !from.startsWith('/admin')) {
         navigate(from, { replace: true });
-      } else if (user.role === 'admin') {
+      } else if (['admin', 'system_admin', 'superadmin', 'staff'].includes(user.role)) {
         navigate('/admin/dashboard', { replace: true });
       } else if (user.role === 'organizer') {
         navigate('/organizer/dashboard', { replace: true });
@@ -29,6 +29,11 @@ export default function LoginPage() {
         navigate('/attendee/dashboard', { replace: true });
       }
     } catch (err) {
+      if (err.response?.data?.isAdminPortalRedirect) {
+        toast.error(err.response.data.message || 'Admin accounts must log in via the Admin Portal', { duration: 5000 });
+        navigate('/admin-login');
+        return;
+      }
       if (err.response?.data?.requiresVerification) {
         toast.error(err.response.data.message || 'Please verify your account first', { duration: 6000 });
         const emailParam = encodeURIComponent(err.response.data.email || data.email || '');

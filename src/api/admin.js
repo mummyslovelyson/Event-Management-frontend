@@ -9,6 +9,7 @@ export const suspendUser = (id, data) => api.post(`/admin/users/${id}/suspend`, 
 export const unsuspendUser = (id) => api.post(`/admin/users/${id}/unsuspend`);
 export const verifyUser = (id) => api.post(`/admin/users/${id}/verify`);
 export const resetUserPassword = (id, data) => api.post(`/admin/users/${id}/reset-password`, data);
+export const createAdminUser = (data) => api.post('/admin/users/create-admin', data);
 
 export const getUserManagementStats = () => api.get('/admin/users/stats');
 export const getUserActivity = (id, params) => api.get(`/admin/users/${id}/activity`, { params });

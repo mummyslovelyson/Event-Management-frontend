@@ -10,6 +10,7 @@ import {
   getOrders, cancelOrder, refundOrder, getOrderInvoice,
 } from '@/api/orders';
 import Modal from '@/components/common/Modal';
+import ReceiptModal from '@/components/common/ReceiptModal';
 import Badge from '@/components/common/Badge';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import EmptyState from '@/components/common/EmptyState';
@@ -49,6 +50,7 @@ export default function MyBookingsPage() {
   const [tab, setTab] = useState('all');
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState(null);
+  const [receiptOrder, setReceiptOrder] = useState(null);
   const [cancelTarget, setCancelTarget] = useState(null);
   const [cancelReason, setCancelReason] = useState('');
   const [cancelling, setCancelling] = useState(false);
@@ -283,18 +285,24 @@ export default function MyBookingsPage() {
                         <TicketIcon className="w-3.5 h-3.5" /> View Tickets
                       </Link>
                       <button
-                        onClick={() => setExpanded(expanded === order.id ? null : order.id)}
-                        className="inline-flex items-center gap-1.5 px-3 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 transition"
+                        onClick={() => setReceiptOrder(order)}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-xs font-semibold hover:bg-white hover:text-[#1C232B] transition shadow-sm"
                       >
-                        <Receipt className="w-3.5 h-3.5" /> Details
+                        <Receipt className="w-3.5 h-3.5" /> View &amp; Print Receipt
+                      </button>
+                      <button
+                        onClick={() => setExpanded(expanded === order.id ? null : order.id)}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 transition"
+                      >
+                        Details
                         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expanded === order.id ? 'rotate-180' : ''}`} />
                       </button>
                       <button
                         onClick={() => handleExport(order)}
                         disabled={exporting === order.id}
-                        className="inline-flex items-center gap-1.5 px-3 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 disabled:opacity-50 transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-medium hover:border-white/40 disabled:opacity-50 transition"
                       >
-                        <FileDown className="w-3.5 h-3.5" /> {exporting === order.id ? 'Exporting...' : 'Export PDF'}
+                        <FileDown className="w-3.5 h-3.5" /> {exporting === order.id ? 'Exporting...' : 'PDF'}
                       </button>
                       {isUpcoming && (
                         <button
@@ -443,6 +451,13 @@ export default function MyBookingsPage() {
           </div>
         )}
       </Modal>
+
+      {/* Official Receipt & Print Modal */}
+      <ReceiptModal
+        open={!!receiptOrder}
+        onClose={() => setReceiptOrder(null)}
+        order={receiptOrder}
+      />
     </motion.div>
   );
 }

@@ -4,17 +4,18 @@ import {
   Users, Search, Eye, Ban, CheckCircle2, Trash2, UserCheck,
   Pencil, XCircle, ShieldCheck, KeyRound, Copy, EyeOff, LayoutGrid,
   Table as TableIcon, Download, LogOut, StickyNote, Clock, Monitor,
-  Send, Loader2, X,
+  Send, Loader2, X, UserPlus,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import {
   getUsers, getUser, suspendUser, unsuspendUser, deleteUser, updateUser,
-  approveOrganizer, rejectOrganizer, resetUserPassword,
+  approveOrganizer, rejectOrganizer, resetUserPassword, createAdminUser,
   getUserManagementStats, getUserActivity, getUserSessions, getUserStats,
   forceLogoutUser, addAdminNote, getAdminNotes, deleteAdminNote,
   exportUsersCSV, bulkRoleChange, bulkDeleteUsers,
 } from '@/api/admin';
+import { useAuth } from '@/context/AuthContext';
 import Badge from '@/components/common/Badge';
 import StatCard from '@/components/common/StatCard';
 import EmptyState from '@/components/common/EmptyState';
@@ -30,7 +31,7 @@ const tabs = [
   { key: 'suspended', label: 'Suspended' },
 ];
 
-const roleVariant = (r) => ({ admin: 'danger', organizer: 'gold', attendee: 'info' }[r] || 'neutral');
+const roleVariant = (r) => ({ system_admin: 'danger', superadmin: 'danger', admin: 'danger', organizer: 'gold', attendee: 'info' }[r] || 'neutral');
 const isSuspendedUser = (u) => u?.status === 'suspended';
 const userStatus = (u) => {
   if (isSuspendedUser(u)) return { label: 'Suspended', variant: 'error' };
@@ -57,6 +58,7 @@ const panelTabs = [
 ];
 
 export default function UserManagementPage() {
+  const { isSystemAdmin } = useAuth();
   const [tab, setTab] = useState('all');
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,6 +82,10 @@ export default function UserManagementPage() {
   const [resetResult, setResetResult] = useState(null);
   const [revealHash, setRevealHash] = useState(false);
 
+  const [createAdminOpen, setCreateAdminOpen] = useState(false);
+  const [createAdminData, setCreateAdminData] = useState({ name: '', email: '', phone: '', password: '' });
+  const [createAdminLoading, setCreateAdminLoading] = useState(false);
+
   const [panelUser, setPanelUser] = useState(null);
   const [panelTab, setPanelTab] = useState('overview');
   const [panelDetail, setPanelDetail] = useState(null);
@@ -95,7 +101,7 @@ export default function UserManagementPage() {
 
   useEffect(() => {
     if (!editTarget) return;
-    reset({ name: editTarget.name || '', email: editTarget.email || '', phone: editTarget.phone || '', role: editTarget.role === 'organizer' ? 'organizer' : 'attendee' });
+    reset({ name: editTarget.name || '', email: editTarget.email || '', phone: editTarget.phone || '', role: editTarget.role || 'attendee' });
   }, [editTarget, reset]);
 
   const fetchStats = useCallback(async () => {
@@ -273,6 +279,41 @@ export default function UserManagementPage() {
     catch { toast.error('Failed to delete note'); }
   };
 
+  const fillRandomAdminPassword = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
+    let p = '';
+    for (let i = 0; i < 14; i++) p += chars.charAt(Math.floor(Math.random() * chars.length));
+    setCreateAdminData((prev) => ({ ...prev, password: p }));
+  };
+
+  const handleCreateAdmin = async (e) => {
+    e.preventDefault();
+    if (!createAdminData.name?.trim() || !createAdminData.email?.trim() || !createAdminData.password?.trim()) {
+      toast.error('Name, email, and password are required');
+      return;
+    }
+    setCreateAdminLoading(true);
+    try {
+      const res = await createAdminUser(createAdminData);
+      toast.success(res.data?.message || 'Operations Admin created! 🎉');
+      setCreateAdminOpen(false);
+      setCreateAdminData({ name: '', email: '', phone: '', password: '' });
+      fetchUsers();
+      fetchStats();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to create admin');
+    } finally {
+      setCreateAdminLoading(false);
+    }
+  };
+
+  const canManage = (u) => {
+    if (!u) return false;
+    if (u.role === 'system_admin' || u.role === 'superadmin') return false;
+    if (u.role === 'admin') return isSystemAdmin;
+    return true;
+  };
+
   const d = panelDetail;
   const pStats = panelStats;
   const hasSelectedSuspended = [...selected].some((id) => users.find((u) => u.id === id)?.status === 'suspended');
@@ -280,8 +321,31 @@ export default function UserManagementPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader icon={Users} accent="sky" title="Users" subtitle="Manage accounts, approvals, suspensions, and activity." count={total}
-        actions={<button onClick={handleExport} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:border-white/40 transition"><Download className="w-4 h-4" /> Export CSV</button>} />
+      <PageHeader
+        icon={Users}
+        accent="sky"
+        title="Users"
+        subtitle="Manage accounts, approvals, suspensions, and staff."
+        count={total}
+        actions={
+          <div className="flex items-center gap-2">
+            {isSystemAdmin && (
+              <button
+                onClick={() => {
+                  setCreateAdminData({ name: '', email: '', phone: '', password: '' });
+                  setCreateAdminOpen(true);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] font-semibold text-sm hover:bg-[#CBD5E1] transition shadow-md"
+              >
+                <UserPlus className="w-4 h-4" /> Add Operations Admin
+              </button>
+            )}
+            <button onClick={handleExport} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:border-white/40 transition">
+              <Download className="w-4 h-4" /> Export CSV
+            </button>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Users} label="Total Users" value={stats.total?.toLocaleString() || '0'} />
@@ -312,7 +376,13 @@ export default function UserManagementPage() {
         </div>
 
         <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
-          {tabs.map((t) => (
+          {[
+            { key: 'all', label: 'All Users' },
+            ...(isSystemAdmin ? [{ key: 'admin', label: 'Admins & Staff' }] : []),
+            { key: 'attendee', label: 'Attendees' },
+            { key: 'organizer', label: 'Organizers' },
+            { key: 'suspended', label: 'Suspended' },
+          ].map((t) => (
             <button key={t.key} onClick={() => setTab(t.key)} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${tab === t.key ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'}`}>{t.label}</button>
           ))}
         </div>
@@ -340,7 +410,6 @@ export default function UserManagementPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {users.map((u, i) => {
             const uInit = initials(u.name || u.email);
-            const isAdmin = u.role === 'admin';
             const isPendingOrg = u.role === 'organizer' && u.is_approved !== 1 && u.status !== 'rejected';
             return (
               <motion.div key={u.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
@@ -350,14 +419,14 @@ export default function UserManagementPage() {
                   <input type="checkbox" checked={selected.has(u.id)} onChange={() => toggleSelect(u.id)} className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#EFEFF1]" />
                 </div>
                 <div className="absolute top-4 right-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition" onClick={(e) => e.stopPropagation()}>
-                  {!isAdmin && <button onClick={() => setEditTarget(u)} className={actionBtn} title="Edit"><Pencil className="w-3.5 h-3.5" /></button>}
-                  {!isAdmin && <button onClick={() => setSuspendTarget(u)} className={`${actionBtn} ${isSuspendedUser(u) ? 'text-emerald-400' : 'text-amber-400'}`} title={isSuspendedUser(u) ? 'Unsuspend' : 'Suspend'}><Ban className="w-3.5 h-3.5" /></button>}
-                  {!isAdmin && <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-red-400`} title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>}
+                  {canManage(u) && <button onClick={() => setEditTarget(u)} className={actionBtn} title="Edit"><Pencil className="w-3.5 h-3.5" /></button>}
+                  {canManage(u) && <button onClick={() => setSuspendTarget(u)} className={`${actionBtn} ${isSuspendedUser(u) ? 'text-emerald-400' : 'text-amber-400'}`} title={isSuspendedUser(u) ? 'Unsuspend' : 'Suspend'}><Ban className="w-3.5 h-3.5" /></button>}
+                  {canManage(u) && <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-red-400`} title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>}
                 </div>
                 <div className="flex items-center gap-3.5 mt-5">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${avatarBg[i % avatarBg.length]}`}>{uInit}</div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-[#EFEFF1] truncate flex items-center gap-1.5">{u.name || 'Unknown'}{isAdmin && <ShieldCheck className="w-3.5 h-3.5 text-white shrink-0" />}</p>
+                    <p className="font-semibold text-[#EFEFF1] truncate flex items-center gap-1.5">{u.name || 'Unknown'}{(u.role === 'admin' || u.role === 'system_admin') && <ShieldCheck className="w-3.5 h-3.5 text-white shrink-0" />}</p>
                     <p className="text-xs text-[#949599] truncate">{u.email}</p>
                   </div>
                 </div>
@@ -391,7 +460,6 @@ export default function UserManagementPage() {
               <tbody className="divide-y divide-[#262B2F]/70">
                 {users.map((u, i) => {
                   const uInit = initials(u.name || u.email);
-                  const isAdmin = u.role === 'admin';
                   const isPendingOrg = u.role === 'organizer' && u.is_approved !== 1 && u.status !== 'rejected';
                   return (
                     <tr key={u.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(u.id) ? 'bg-white/5' : ''}`}>
@@ -399,7 +467,7 @@ export default function UserManagementPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3 cursor-pointer" onClick={() => openPanel(u)}>
                           <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${avatarBg[i % avatarBg.length]}`}>{uInit}</div>
-                          <div className="min-w-0"><p className="font-medium text-[#EFEFF1] truncate max-w-[160px] flex items-center gap-1.5">{u.name || 'Unknown'}{isAdmin && <ShieldCheck className="w-3.5 h-3.5 text-white" />}</p><p className="text-xs text-[#949599] truncate max-w-[180px]">{u.email}</p></div>
+                          <div className="min-w-0"><p className="font-medium text-[#EFEFF1] truncate max-w-[160px] flex items-center gap-1.5">{u.name || 'Unknown'}{(u.role === 'admin' || u.role === 'system_admin') && <ShieldCheck className="w-3.5 h-3.5 text-white" />}</p><p className="text-xs text-[#949599] truncate max-w-[180px]">{u.email}</p></div>
                         </div>
                       </td>
                       <td className="hidden md:table-cell px-4 py-3"><Badge variant={roleVariant(u.role)} size="sm">{u.role}</Badge></td>
@@ -410,10 +478,10 @@ export default function UserManagementPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
                           <button onClick={() => openPanel(u)} className={actionBtn} title="View"><Eye className="w-4 h-4" /></button>
-                          {!isAdmin && <button onClick={() => setEditTarget(u)} className={actionBtn} title="Edit"><Pencil className="w-4 h-4" /></button>}
+                          {canManage(u) && <button onClick={() => setEditTarget(u)} className={actionBtn} title="Edit"><Pencil className="w-4 h-4" /></button>}
                           {isPendingOrg && <button onClick={() => handleVerify(u)} className={`${actionBtn} text-emerald-400`} title="Approve"><CheckCircle2 className="w-4 h-4" /></button>}
-                          {!isAdmin && <button onClick={() => setSuspendTarget(u)} className={`${actionBtn} text-amber-400`} title="Suspend"><Ban className="w-4 h-4" /></button>}
-                          {!isAdmin && <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-red-400`} title="Delete"><Trash2 className="w-4 h-4" /></button>}
+                          {canManage(u) && <button onClick={() => setSuspendTarget(u)} className={`${actionBtn} text-amber-400`} title="Suspend"><Ban className="w-4 h-4" /></button>}
+                          {canManage(u) && <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-red-400`} title="Delete"><Trash2 className="w-4 h-4" /></button>}
                         </div>
                       </td>
                     </tr>
@@ -434,7 +502,7 @@ export default function UserManagementPage() {
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center text-base font-bold">{initials(d.name)}</div>
             <div>
-              <p className="text-base font-semibold text-[#EFEFF1] flex items-center gap-2">{d.name}{d.role === 'admin' && <ShieldCheck className="w-4 h-4 text-white" />}</p>
+              <p className="text-base font-semibold text-[#EFEFF1] flex items-center gap-2">{d.name}{(d.role === 'admin' || d.role === 'system_admin') && <ShieldCheck className="w-4 h-4 text-white" />}</p>
               <p className="text-sm text-[#949599]">{d.email}</p>
               <div className="flex items-center gap-2 mt-1">
                 <Badge variant={roleVariant(d.role)} size="sm">{d.role}</Badge>
@@ -447,7 +515,7 @@ export default function UserManagementPage() {
           <div className="flex items-center justify-center py-16"><LoadingSpinner label="Loading..." /></div>
         ) : d ? (
           <div className="space-y-5">
-            {d.role !== 'admin' && (
+            {canManage(d) && (
               <div className="flex items-center gap-2 flex-wrap">
                 <button onClick={() => { setPanelUser(null); setEditTarget(d); }} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs font-medium text-[#EFEFF1] hover:border-white/40 transition"><Pencil className="w-3.5 h-3.5" /> Edit</button>
                 <button onClick={() => { setPanelUser(null); openReset(d); }} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs font-medium text-[#EFEFF1] hover:border-white/40 transition"><KeyRound className="w-3.5 h-3.5" /> Reset Password</button>
@@ -568,7 +636,7 @@ export default function UserManagementPage() {
           <div><label className="block text-xs font-medium text-[#949599] mb-1.5">Email</label><input type="email" {...register('email', { required: 'Required', pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid' } })} className={inputCls} />{errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}</div>
           <div className="grid grid-cols-2 gap-4">
             <div><label className="block text-xs font-medium text-[#949599] mb-1.5">Phone</label><input {...register('phone')} className={inputCls} /></div>
-            <div><label className="block text-xs font-medium text-[#949599] mb-1.5">Role</label><select {...register('role')} className={inputCls}><option value="attendee">Attendee</option><option value="organizer">Organizer</option></select></div>
+            <div><label className="block text-xs font-medium text-[#949599] mb-1.5">Role</label><select {...register('role')} className={inputCls}><option value="attendee">Attendee</option><option value="organizer">Organizer</option>{isSystemAdmin && <option value="admin">Operations Admin</option>}</select></div>
           </div>
         </form>
       </Modal>
@@ -615,6 +683,86 @@ export default function UserManagementPage() {
             <p className="text-xs text-[#494F55]">Min 10 chars with uppercase, lowercase, numbers, and a special character.</p>
           </div>
         )}
+      </Modal>
+
+      <Modal
+        open={createAdminOpen}
+        onClose={() => setCreateAdminOpen(false)}
+        title="Add Operations Admin"
+        footer={
+          <>
+            <button
+              onClick={() => setCreateAdminOpen(false)}
+              className="px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateAdmin}
+              disabled={createAdminLoading}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50"
+            >
+              {createAdminLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+              Create Admin
+            </button>
+          </>
+        }
+      >
+        <form onSubmit={handleCreateAdmin} className="space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5">Full Name</label>
+            <input
+              type="text"
+              value={createAdminData.name}
+              onChange={(e) => setCreateAdminData((p) => ({ ...p, name: e.target.value }))}
+              placeholder="e.g. Operations Staff"
+              className={inputCls}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5">Email Address</label>
+            <input
+              type="email"
+              value={createAdminData.email}
+              onChange={(e) => setCreateAdminData((p) => ({ ...p, email: e.target.value }))}
+              placeholder="e.g. ops@tribesandcliqs.com"
+              className={inputCls}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-[#949599] mb-1.5">Phone Number (Optional)</label>
+            <input
+              type="tel"
+              value={createAdminData.phone}
+              onChange={(e) => setCreateAdminData((p) => ({ ...p, phone: e.target.value }))}
+              placeholder="+233..."
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-medium text-[#949599]">Password</label>
+              <button
+                type="button"
+                onClick={fillRandomAdminPassword}
+                className="text-xs text-sky-400 hover:text-sky-300 font-medium"
+              >
+                Auto-generate
+              </button>
+            </div>
+            <input
+              type="text"
+              value={createAdminData.password}
+              onChange={(e) => setCreateAdminData((p) => ({ ...p, password: e.target.value }))}
+              placeholder="Enter strong password (min 10 chars)"
+              className={inputCls}
+              required
+            />
+            <p className="text-xs text-[#494F55] mt-1">Must have uppercase, lowercase, numbers, and special characters.</p>
+          </div>
+        </form>
       </Modal>
     </div>
   );

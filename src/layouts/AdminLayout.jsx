@@ -20,20 +20,22 @@ const nav = [
   { to: '/admin/content', label: 'Content', icon: FileText },
   { to: '/admin/notifications', label: 'Notifications', icon: Bell },
   { to: '/admin/support', label: 'Support', icon: LifeBuoy },
-  { to: '/admin/settings', label: 'Settings', icon: Settings },
-  { to: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText },
+  { to: '/admin/settings', label: 'Settings', icon: Settings, systemAdminOnly: true },
+  { to: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText, systemAdminOnly: true },
 ];
 
 const flatNav = nav;
 
 export default function AdminLayout() {
-  const { user, logout } = useAuth();
+  const { user, logout, isSystemAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [isMaintenance, setIsMaintenance] = useState(false);
   const profileRef = useRef(null);
+
+  const visibleNav = nav.filter((i) => !i.systemAdminOnly || isSystemAdmin);
 
   const checkMaintenance = async () => {
     try {
@@ -67,12 +69,13 @@ export default function AdminLayout() {
   const handleLogout = () => { logout(); navigate('/admin-login'); };
 
   const initials = (user?.name || user?.email || 'A').split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase();
-  const pageLabel = flatNav.find((i) => (i.end ? location.pathname === i.to : location.pathname.startsWith(i.to)))?.label || 'Dashboard';
+  const pageLabel = visibleNav.find((i) => (i.end ? location.pathname === i.to : location.pathname.startsWith(i.to)))?.label || 'Dashboard';
+  const roleLabel = isSystemAdmin ? 'System Administrator' : 'Operations Admin';
 
   return (
     <div className="min-h-screen bg-[#111417] text-[#EFEFF1]">
       <aside className="hidden lg:flex fixed inset-y-0 left-0 w-64 bg-[#171A1D] border-r border-[#262B2F] flex-col z-40">
-        <SidebarContent user={user} initials={initials} />
+        <SidebarContent user={user} initials={initials} navItems={visibleNav} roleLabel={roleLabel} isSystemAdmin={isSystemAdmin} />
       </aside>
 
       <AnimatePresence>
@@ -80,7 +83,7 @@ export default function AdminLayout() {
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
             <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} transition={{ type: 'tween', duration: 0.2 }} className="fixed inset-y-0 left-0 w-[min(256px,80vw)] bg-[#171A1D] border-r border-[#262B2F] flex flex-col z-50 lg:hidden">
-              <SidebarContent user={user} initials={initials} onNavigate={() => setSidebarOpen(false)} />
+              <SidebarContent user={user} initials={initials} navItems={visibleNav} roleLabel={roleLabel} isSystemAdmin={isSystemAdmin} onNavigate={() => setSidebarOpen(false)} />
             </motion.aside>
           </>
         )}
@@ -94,12 +97,14 @@ export default function AdminLayout() {
               <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
               <span className="truncate">Maintenance Mode is Active — Public visitors cannot access the site.</span>
             </div>
-            <Link
-              to="/admin/settings"
-              className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-200 hover:bg-amber-500/30 transition underline shrink-0"
-            >
-              Turn Off in Settings &rarr;
-            </Link>
+            {isSystemAdmin && (
+              <Link
+                to="/admin/settings"
+                className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-200 hover:bg-amber-500/30 transition underline shrink-0"
+              >
+                Turn Off in Settings &rarr;
+              </Link>
+            )}
           </div>
         )}
 
@@ -138,15 +143,21 @@ export default function AdminLayout() {
                 </button>
                 <AnimatePresence>
                   {profileOpen && (
-                    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }} transition={{ duration: 0.15 }} className="absolute right-0 mt-2 w-60 rounded-xl max-w-[calc(100vw-2rem)] bg-[#171A1D] border border-[#262B2F] shadow-xl shadow-black/40 py-1.5 overflow-hidden">
+                    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }} transition={{ duration: 0.15 }} className="absolute right-0 mt-2 w-64 rounded-xl max-w-[calc(100vw-2rem)] bg-[#171A1D] border border-[#262B2F] shadow-xl shadow-black/40 py-1.5 overflow-hidden">
                       <div className="px-4 py-3 border-b border-[#262B2F]">
                         <p className="text-sm font-medium text-[#EFEFF1] truncate">{user?.name || 'Admin'}</p>
                         <p className="text-xs text-[#949599] truncate">{user?.email}</p>
-                        <span className="inline-block mt-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium text-white bg-white/10">Administrator</span>
+                        <span className={`inline-block mt-1.5 px-2 py-0.5 rounded text-[10px] font-bold ${
+                          isSystemAdmin ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-white/10 text-white'
+                        }`}>
+                          {roleLabel}
+                        </span>
                       </div>
-                      <Link to="/admin/settings" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
-                        <Settings className="w-4 h-4" /> Settings
-                      </Link>
+                      {isSystemAdmin && (
+                        <Link to="/admin/settings" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
+                          <Settings className="w-4 h-4" /> System Settings
+                        </Link>
+                      )}
                       <div className="border-t border-[#262B2F] mt-1 pt-1">
                         <button onClick={handleLogout} className="flex items-center gap-2.5 w-full px-4 py-2 text-sm text-[#949599] hover:text-red-300 hover:bg-red-500/10 transition">
                           <LogOut className="w-4 h-4" /> Logout
@@ -168,7 +179,7 @@ export default function AdminLayout() {
   );
 }
 
-function SidebarContent({ user, initials, onNavigate }) {
+function SidebarContent({ user, initials, navItems, roleLabel, isSystemAdmin, onNavigate }) {
   return (
     <>
       <div className="flex items-center justify-between h-14 px-4 border-b border-[#262B2F] shrink-0">
@@ -183,7 +194,7 @@ function SidebarContent({ user, initials, onNavigate }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-        {nav.map(({ to, label, icon: Icon, end }) => (
+        {(navItems || []).map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}
@@ -212,7 +223,9 @@ function SidebarContent({ user, initials, onNavigate }) {
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2A2F33] to-[#1D2124] border border-[#3A4045] flex items-center justify-center text-[#C4C9CC] text-xs font-semibold shrink-0">{initials}</div>
           <div className="min-w-0">
             <p className="text-[13px] font-medium text-[#EFEFF1] truncate">{user?.name || 'Admin'}</p>
-            <p className="text-[11px] text-[#6B7278] truncate">Administrator</p>
+            <p className={`text-[11px] font-medium truncate ${isSystemAdmin ? 'text-purple-300' : 'text-[#6B7278]'}`}>
+              {roleLabel}
+            </p>
           </div>
         </div>
       </div>
