@@ -4,9 +4,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   LayoutDashboard, Users, CalendarDays, Layers, CreditCard, BarChart3,
   FileText, Bell, LifeBuoy, Settings, ScrollText, Menu, X, LogOut,
-  Search, ChevronDown, UserCheck, AlertTriangle, Globe, Brain,
+  Search, ChevronDown, UserCheck, AlertTriangle, Globe, Brain, CheckCircle, ExternalLink,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { getAdminNotifications, markAdminNotificationsRead } from '@/api/admin';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
 
 const nav = [
@@ -34,10 +35,25 @@ export default function AdminLayout() {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [isMaintenance, setIsMaintenance] = useState(false);
   const profileRef = useRef(null);
+  const notifRef = useRef(null);
 
   const visibleNav = nav.filter((i) => !i.systemAdminOnly || isSystemAdmin);
+
+  const fetchNotifs = async () => {
+    try {
+      const res = await getAdminNotifications({ limit: 6 });
+      const items = res.data?.notifications || (Array.isArray(res.data) ? res.data : []);
+      setNotifications(items);
+      setUnreadCount(Number(res.data?.unreadCount ?? items.filter((n) => !n.is_read).length));
+    } catch {
+      // ignore
+    }
+  };
 
   const checkMaintenance = async () => {
     try {
@@ -51,11 +67,21 @@ export default function AdminLayout() {
 
   useEffect(() => {
     checkMaintenance();
-    const interval = setInterval(checkMaintenance, 45000);
-    return () => clearInterval(interval);
+    fetchNotifs();
+    const maintInterval = setInterval(checkMaintenance, 45000);
+    const notifInterval = setInterval(fetchNotifs, 25000);
+    return () => {
+      clearInterval(maintInterval);
+      clearInterval(notifInterval);
+    };
   }, []);
 
-  useEffect(() => { setSidebarOpen(false); setProfileOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    setSidebarOpen(false);
+    setProfileOpen(false);
+    setNotifOpen(false);
+    fetchNotifs();
+  }, [location.pathname]);
 
   useEffect(() => {
     document.body.style.overflow = sidebarOpen ? 'hidden' : '';
@@ -63,10 +89,23 @@ export default function AdminLayout() {
   }, [sidebarOpen]);
 
   useEffect(() => {
-    const onClick = (e) => { if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false); };
+    const onClick = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
+      if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
+    };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
   }, []);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await markAdminNotificationsRead('all');
+      setUnreadCount(0);
+      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    } catch {
+      // ignore
+    }
+  };
 
   const handleLogout = () => { logout(); navigate('/admin-login'); };
 
@@ -84,7 +123,7 @@ export default function AdminLayout() {
         {sidebarOpen && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
-            <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} transition={{ type: 'tween', duration: 0.2 }} className="fixed inset-y-0 left-0 w-[min(256px,80vw)] bg-[#171A1D] border-r border-[#262B2F] flex flex-col z-50 lg:hidden">
+            <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} transition={{ type: 'tween', duration: 0.2 }} className="fixed inset-y-0 left-0 w-[min(256px,80vw)] bg-[#171A1D] border-r border-[#262B2F] flex-col z-50 lg:hidden">
               <SidebarContent user={user} initials={initials} navItems={visibleNav} roleLabel={roleLabel} isSystemAdmin={isSystemAdmin} onNavigate={() => setSidebarOpen(false)} />
             </motion.aside>
           </>
@@ -132,10 +171,107 @@ export default function AdminLayout() {
 
               <CurrencyToggle />
 
-              <button aria-label="Notifications" className="relative p-2.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-white rounded-full ring-2 ring-[#111417]" />
-              </button>
+              {/* Notification Bell with Dropdown Preview */}
+              <div className="relative" ref={notifRef}>
+                <button
+                  onClick={() => setNotifOpen((v) => !v)}
+                  aria-label="Notifications"
+                  className="relative p-2.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition"
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full ring-2 ring-[#111417] animate-pulse">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {notifOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-[#171A1D] border border-[#262B2F] shadow-2xl shadow-black/60 overflow-hidden z-50"
+                    >
+                      <div className="px-4 py-3 border-b border-[#262B2F] flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-semibold text-[#EFEFF1]">Live Notifications</span>
+                          {unreadCount > 0 && (
+                            <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 text-[11px] font-bold">
+                              {unreadCount} new
+                            </span>
+                          )}
+                        </div>
+                        {unreadCount > 0 && (
+                          <button
+                            onClick={handleMarkAllRead}
+                            className="text-xs text-white/80 hover:text-white font-medium flex items-center gap-1 transition"
+                          >
+                            <CheckCircle className="w-3.5 h-3.5" /> Mark all read
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="max-h-80 overflow-y-auto divide-y divide-[#262B2F]/60">
+                        {notifications.length === 0 ? (
+                          <div className="py-8 text-center text-xs text-[#6B7278]">
+                            No notifications yet. New activity will pop up here!
+                          </div>
+                        ) : (
+                          notifications.map((n) => (
+                            <div
+                              key={n.id}
+                              className={`p-3.5 transition flex items-start gap-3 hover:bg-[#1D2124] ${
+                                !n.is_read ? 'bg-white/[0.03]' : ''
+                              }`}
+                            >
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold ${
+                                n.type === 'account' ? 'bg-blue-500/20 text-blue-300' :
+                                n.type === 'payment' || n.type === 'withdrawal' ? 'bg-emerald-500/20 text-emerald-300' :
+                                n.type === 'support' ? 'bg-amber-500/20 text-amber-300' :
+                                n.type === 'ticket' ? 'bg-purple-500/20 text-purple-300' :
+                                'bg-white/10 text-white'
+                              }`}>
+                                <Bell className="w-4 h-4" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center justify-between gap-1">
+                                  <p className="text-xs font-semibold text-[#EFEFF1] truncate">{n.title}</p>
+                                  <span className="text-[10px] text-[#6B7278] shrink-0">
+                                    {n.created_at ? new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-[#949599] line-clamp-2 mt-0.5">{n.message}</p>
+                                {n.link && (
+                                  <Link
+                                    to={n.link}
+                                    onClick={() => setNotifOpen(false)}
+                                    className="inline-flex items-center gap-1 mt-1 text-[11px] text-white/90 hover:underline font-medium"
+                                  >
+                                    View details <ExternalLink className="w-3 h-3" />
+                                  </Link>
+                                )}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+
+                      <div className="p-2.5 border-t border-[#262B2F] text-center bg-[#14171A]">
+                        <Link
+                          to="/admin/notifications"
+                          onClick={() => setNotifOpen(false)}
+                          className="text-xs font-semibold text-[#EFEFF1] hover:text-white transition"
+                        >
+                          View All in Notification Center &rarr;
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               <div className="relative" ref={profileRef}>
                 <button onClick={() => setProfileOpen((v) => !v)} className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-[#262B2F] transition">
