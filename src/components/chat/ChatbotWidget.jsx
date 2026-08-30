@@ -175,9 +175,11 @@ export default function ChatbotWidget() {
             <div className="p-3.5 px-4 bg-[#1A2127] border-b border-[#2E363E] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-xl bg-[#242B32] border border-[#2E363E] flex items-center justify-center text-white shadow-md">
-                    <MessageSquare className="w-4 h-4 text-emerald-400" />
-                  </div>
+                  <img
+                    src="/assets/images/Logo.jpeg"
+                    alt="Cliq Concierge"
+                    className="w-9 h-9 rounded-xl object-cover ring-1 ring-[#3A4045] shadow-md"
+                  />
                   <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#1A2127]" />
                 </div>
                 <div>
@@ -230,9 +232,11 @@ export default function ChatbotWidget() {
                   >
                     <div className={`flex gap-2 max-w-[88%] ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
                       {!isUser && (
-                        <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                          <Bot className="w-3.5 h-3.5" />
-                        </div>
+                        <img
+                          src="/assets/images/Logo.jpeg"
+                          alt="Concierge"
+                          className="w-6 h-6 rounded-lg object-cover ring-1 ring-white/10 shrink-0 mt-0.5 shadow-sm"
+                        />
                       )}
 
                       <div
@@ -334,11 +338,18 @@ export default function ChatbotWidget() {
       <motion.button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="relative group p-3.5 rounded-2xl bg-white text-[#1C232B] shadow-xl shadow-black/50 border border-white/40 flex items-center justify-center font-bold"
+        whileHover={{ scale: 1.06 }}
+        whileTap={{ scale: 0.94 }}
+        className="relative group p-1 rounded-2xl bg-[#171A1D] shadow-2xl shadow-black/80 border border-[#2E363E] hover:border-white/40 flex items-center justify-center transition-all"
+        title="Open Cliq Concierge"
       >
-        <MessageSquare className="w-5 h-5 text-[#14181C]" />
+        <div className="w-12 h-12 rounded-xl overflow-hidden relative flex items-center justify-center bg-[#1C232B] shadow-inner">
+          <img
+            src="/assets/images/Logo.jpeg"
+            alt="Cliq Concierge"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+          />
+        </div>
 
         {/* Unread / Attention Ring */}
         {hasUnread && !isOpen && (

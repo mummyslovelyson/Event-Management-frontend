@@ -51,11 +51,11 @@ export default function AdminLayout() {
 
   useEffect(() => {
     checkMaintenance();
-    const interval = setInterval(checkMaintenance, 15000);
+    const interval = setInterval(checkMaintenance, 45000);
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => { setSidebarOpen(false); setProfileOpen(false); checkMaintenance(); }, [location.pathname]);
+  useEffect(() => { setSidebarOpen(false); setProfileOpen(false); }, [location.pathname]);
 
   useEffect(() => {
     document.body.style.overflow = sidebarOpen ? 'hidden' : '';

@@ -95,7 +95,7 @@ function MaintenanceWrapper() {
       }
     };
     check();
-    const interval = setInterval(check, 15000);
+    const interval = setInterval(check, 45000);
     return () => clearInterval(interval);
   }, []);
 
