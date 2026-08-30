@@ -16,6 +16,7 @@ import { getGoogleCalendarUrl, downloadIcsFile } from '@/utils/calendar';
 import Modal from '@/components/common/Modal';
 import SocialShareModal from '@/components/common/SocialShareModal';
 import InvoiceModal from '@/components/tickets/InvoiceModal';
+import TicketPass, { downloadTicketPassAsImage } from '@/components/tickets/TicketPass';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import EmptyState from '@/components/common/EmptyState';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -224,17 +225,8 @@ export default function MyTicketsPage() {
 
   const handleDownload = async (ticket) => {
     try {
-      const res = await downloadTicket(ticket.id);
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `ticket-${(ticket.ticketNumber || ticket.id).toString().slice(-8)}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-      toast.success('Ticket downloaded');
-    } catch (err) {
+      await downloadTicketPassAsImage(ticket);
+    } catch {
       // Fallback: open print modal
       setPrintTicket(ticket);
     }
@@ -603,37 +595,28 @@ export default function MyTicketsPage() {
         )}
       </Modal>
 
-      {/* Print modal */}
+      {/* Ticket Pass View & Download Modal */}
       <Modal
         open={!!printTicket}
         onClose={() => setPrintTicket(null)}
-        title="Download Ticket"
-        size="md"
-        footer={
-          <>
-            <button
-              onClick={() => setPrintTicket(null)}
-              className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
-            >
-              Close
-            </button>
-            <button
-              onClick={() => window.print()}
-              className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
-            >
-              <Printer className="w-4 h-4" /> Print
-            </button>
-          </>
-        }
+        title="Official Event Ticket Pass"
+        size="xl"
       >
-        {printTicket && <PrintableTicket ticket={printTicket} />}
+        {printTicket && (
+          <div className="py-2">
+            <TicketPass
+              ticket={printTicket}
+              onDownload={() => downloadTicketPassAsImage(printTicket)}
+              onPrint={() => window.print()}
+            />
+          </div>
+        )}
       </Modal>
 
-      {/* Print-only ticket: when the user hits Print, only this clean ticket
-          (with its QR code) is sent to the printer. */}
+      {/* Print-only ticket area */}
       {printTicket && (
         <div className="print-ticket-area">
-          <PrintableTicket ticket={printTicket} />
+          <TicketPass ticket={printTicket} />
         </div>
       )}
       {/* Quick Event Details Modal */}
