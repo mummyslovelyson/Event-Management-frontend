@@ -77,7 +77,7 @@ import AuditLogsPage from '@/pages/admin/AuditLogsPage';
 import AITrainingPage from '@/pages/admin/AITrainingPage';
 
 function MaintenanceWrapper() {
-  const [maintenance, setMaintenance] = useState<boolean | null>(null);
+  const [maintenance, setMaintenance] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
   const auth = useAuth() as { user?: { role?: string } | null } | null;
   const user = auth?.user;
@@ -88,18 +88,18 @@ function MaintenanceWrapper() {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/public/maintenance`);
         const data = await res.json();
-        setMaintenance(!!data.maintenance);
-        setMessage(data.message || '');
+        if (data && typeof data.maintenance === 'boolean') {
+          setMaintenance(data.maintenance);
+          setMessage(data.message || '');
+        }
       } catch {
-        setMaintenance(false);
+        // Fail open if network check drops
       }
     };
     check();
-    const interval = setInterval(check, 45000);
+    const interval = setInterval(check, 60000);
     return () => clearInterval(interval);
   }, []);
-
-  if (maintenance === null) return null;
 
   // If maintenance is active, allow admins and admin login portal through
   const isAdmin = user?.role === 'admin';
