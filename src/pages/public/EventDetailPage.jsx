@@ -29,6 +29,7 @@ import { getEventResale, purchaseResaleListing } from '@/api/resale';
 import { applyCoupon, createOrder, initiatePayment } from '@/api/orders';
 import { useAuth } from '@/context/AuthContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import InteractiveSeatMap from '@/components/events/InteractiveSeatMap';
 
 const TABS = ['Overview', 'Tickets', 'Seating & VIP Sections', 'Squads & Group Outings', 'Community & Attendees', 'FAQs'];
@@ -60,6 +61,67 @@ export default function EventDetailPage() {
   const [event, setEvent] = useState(null);
   const [tickets, setTickets] = useState([]);
   const [related, setRelated] = useState([]);
+
+  useDocumentTitle(
+    event?.title ? `${event.title} - Tickets & Information` : 'Event Details',
+    event?.description ? event.description.slice(0, 160) : 'Book tickets for this event on Tribes & Cliqs.'
+  );
+
+  // Inject Google Schema JSON-LD structured data for rich search results
+  useEffect(() => {
+    if (!event) return;
+    const scriptId = 'event-json-ld';
+    let script = document.getElementById(scriptId);
+    if (!script) {
+      script = document.createElement('script');
+      script.id = scriptId;
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+
+    const minPrice = tickets.length > 0 ? Math.min(...tickets.map((t) => Number(t.price) || 0)) : 0;
+    const maxPrice = tickets.length > 0 ? Math.max(...tickets.map((t) => Number(t.price) || 0)) : 0;
+
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      name: event.title,
+      startDate: event.startDate || event.start_date,
+      endDate: event.endDate || event.end_date || event.startDate || event.start_date,
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      eventStatus: 'https://schema.org/EventScheduled',
+      location: {
+        '@type': 'Place',
+        name: event.venue || event.location || 'Venue TBA',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: event.city || 'Accra',
+          addressCountry: 'GH',
+        },
+      },
+      image: [event.bannerImage || event.banner_image || '/assets/images/Logo.jpeg'],
+      description: event.description || event.title,
+      offers: {
+        '@type': 'AggregateOffer',
+        lowPrice: minPrice,
+        highPrice: maxPrice,
+        priceCurrency: 'GHS',
+        availability: 'https://schema.org/InStock',
+        url: window.location.href,
+      },
+      organizer: {
+        '@type': 'Organization',
+        name: event.organizerName || event.organizer?.name || 'Event Organizer',
+      },
+    };
+
+    script.textContent = JSON.stringify(schema);
+
+    return () => {
+      const el = document.getElementById(scriptId);
+      if (el) el.remove();
+    };
+  }, [event, tickets]);
   const [loading, setLoading] = useState(true);
   const [loadingTickets, setLoadingTickets] = useState(true);
   const [activeTab, setActiveTab] = useState('Overview');

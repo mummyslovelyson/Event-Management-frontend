@@ -14,6 +14,7 @@ import EventCard from '@/components/common/EventCard';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { getFeaturedEvents, getTrendingEvents, getRecommendedEvents, getCategories, getFeaturedOrganizers } from '@/api/events';
 import { getCategoryImage } from '@/utils/categoryImages';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 const HERO_IMAGE = 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg';
 
@@ -88,6 +89,11 @@ function SkeletonCard() {
 
 export default function HomePage() {
   const navigate = useNavigate();
+
+  useDocumentTitle(
+    'Tribes & Cliqs — Premier Events, Concerts & Ticketing in Ghana',
+    'Find and book tickets for the hottest concerts, festivals, nightlife events, and conferences in Ghana. Fast, secure checkout with Mobile Money & Card.'
+  );
   const [featured, setFeatured] = useState([]);
   const [trending, setTrending] = useState([]);
   const [recommended, setRecommended] = useState([]);

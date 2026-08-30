@@ -13,6 +13,7 @@ import Pagination from '@/components/common/Pagination';
 import { getEvents } from '@/api/events';
 import { POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 const CATEGORIES = [
   'Musical Shows',
@@ -89,6 +90,11 @@ function EventCardSkeleton({ viewMode = 'grid' }) {
 export default function ExplorePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { format, currency } = useCurrency();
+
+  useDocumentTitle(
+    'Explore Events & Shows in Ghana',
+    'Discover upcoming concerts, nightlife, food festivals, tech conferences, and comedy shows across Ghana. Book tickets instantly on Tribes & Cliqs.'
+  );
 
   // Search input with local debounce state
   const [searchInput, setSearchInput] = useState(searchParams.get('q') || '');

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Loader2, CheckCircle2, XCircle, ArrowLeft, TicketCheck } from 'lucide-react';
+import { Loader2, CheckCircle2, XCircle, ArrowLeft, TicketCheck, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { verifyPayment } from '@/api/orders';
 import Logo from '@/components/common/Logo';
@@ -13,34 +13,59 @@ export default function PaymentCallbackPage() {
   const [orderId, setOrderId] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const [retryCount, setRetryCount] = useState(0);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const runVerification = useCallback(async () => {
     if (!reference) {
       setStatus('error');
+      setErrorMessage('No payment reference found in URL.');
       return;
     }
-    let cancelled = false;
-    (async () => {
+
+    setStatus('verifying');
+    setErrorMessage('');
+
+    let attempts = 0;
+    const maxAttempts = 4;
+
+    const attemptVerify = async () => {
+      attempts++;
       try {
         const res = await verifyPayment({ reference });
-        if (!cancelled) {
-          const paymentStatus = res.data?.status;
-          if (paymentStatus === 'success') {
-            setOrderId(res.data?.orderId || null);
-            setStatus('success');
-          } else {
-            setStatus('error');
-            toast.error('Payment was not completed.');
-          }
+        const paymentStatus = res.data?.status;
+
+        if (paymentStatus === 'success') {
+          setOrderId(res.data?.orderId || null);
+          setStatus('success');
+          return true;
         }
+
+        if (attempts < maxAttempts) {
+          await new Promise((resolve) => setTimeout(resolve, 2500));
+          return attemptVerify();
+        }
+
+        setStatus('error');
+        setErrorMessage('Payment status could not be confirmed as successful.');
+        return false;
       } catch (err) {
-        if (!cancelled) {
-          setStatus('error');
-          toast.error(err.response?.data?.message || 'Could not confirm your payment.');
+        if (attempts < maxAttempts) {
+          await new Promise((resolve) => setTimeout(resolve, 2500));
+          return attemptVerify();
         }
+        setStatus('error');
+        setErrorMessage(err.response?.data?.message || 'Could not verify payment with provider.');
+        return false;
       }
-    })();
-    return () => { cancelled = true; };
+    };
+
+    attemptVerify();
   }, [reference]);
+
+  useEffect(() => {
+    runVerification();
+  }, [runVerification]);
 
   const goToTickets = () => navigate('/attendee/tickets');
 
@@ -114,9 +139,17 @@ export default function PaymentCallbackPage() {
                     : 'No payment reference was found. Please return and try again.'}
                 </p>
                 <div className="mt-6 space-y-3">
+                  {reference && (
+                    <button
+                      onClick={() => runVerification()}
+                      className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-md"
+                    >
+                      <RefreshCw className="w-4 h-4" /> Retry Verification
+                    </button>
+                  )}
                   <Link
                     to="/attendee/tickets"
-                    className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
+                    className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#242B32] border border-[#494F55]/50 text-[#EFEFF1] text-sm font-semibold hover:bg-[#2C343D] hover:border-white/40 transition"
                   >
                     <TicketCheck className="w-4 h-4" /> Check My Tickets
                   </Link>
