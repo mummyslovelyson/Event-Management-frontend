@@ -91,6 +91,99 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
     );
   }
 
+  if (variant === 'list') {
+    return (
+      <>
+        <motion.div
+          whileHover={{ y: -2 }}
+          className="group rounded-2xl overflow-hidden bg-[#171A1D] border border-[#262B2F] hover:border-white/40 hover:shadow-xl hover:shadow-black/25 transition-all p-4"
+        >
+          <Link to={`/events/${event.id}`} className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
+            <div className="relative w-full sm:w-56 h-36 rounded-xl overflow-hidden shrink-0 bg-[#1C232B]">
+              {img ? (
+                <img
+                  src={img}
+                  alt={event.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Ticket className="w-10 h-10 text-[#494F55]" />
+                </div>
+              )}
+              {event.category && (
+                <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wide bg-[#1C232B]/90 text-white backdrop-blur-sm">
+                  {event.category}
+                </span>
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0 space-y-2 w-full">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-lg font-bold text-[#EFEFF1] group-hover:text-white transition line-clamp-1">
+                    {event.title}
+                  </h3>
+                  <p className="text-xs text-[#949599] line-clamp-1 mt-0.5">
+                    {event.description || 'Join us for this exciting live event.'}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.preventDefault()}>
+                  <button
+                    onClick={handleReminder}
+                    disabled={reminderLoading}
+                    className={`p-2 rounded-full backdrop-blur-sm transition ${
+                      reminded ? 'bg-amber-500/30 text-amber-400' : 'bg-[#1C232B] text-[#949599] hover:text-white'
+                    }`}
+                    title="Reminder"
+                  >
+                    <Bell className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={handleShareClick}
+                    className="p-2 rounded-full bg-[#1C232B] text-[#949599] hover:text-white transition"
+                    title="Share"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={handleFav}
+                    disabled={loading}
+                    className="p-2 rounded-full bg-[#1C232B] text-[#949599] hover:text-white transition"
+                    title="Favorite"
+                  >
+                    <Heart className={`w-3.5 h-3.5 ${fav ? 'fill-white text-white' : ''}`} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4 text-xs text-[#949599] pt-1">
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-[#CBD5E1]" /> {formattedDate}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#CBD5E1]" /> {event.venue || event.location || 'Venue TBA'}
+                </span>
+              </div>
+
+              <div className="pt-3 border-t border-[#262B2F] flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-[#6B7278]">From</span>
+                  <span className="text-base font-extrabold text-white">{priceLabel}</span>
+                </div>
+                <span className="px-3.5 py-1.5 rounded-xl bg-white text-[#1C232B] text-xs font-bold shadow group-hover:bg-[#CBD5E1] transition">
+                  Get Tickets &rarr;
+                </span>
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+        <SocialShareModal open={shareOpen} onClose={() => setShareOpen(false)} event={event} />
+      </>
+    );
+  }
+
   return (
     <>
       <motion.div

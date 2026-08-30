@@ -9,6 +9,7 @@ import AttendeeLayout from '@/layouts/AttendeeLayout';
 import OrganizerLayout from '@/layouts/OrganizerLayout';
 import AdminLayout from '@/layouts/AdminLayout';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
+import ChatbotWidget from '@/components/chat/ChatbotWidget';
 
 // Public pages
 import HomePage from '@/pages/public/HomePage';
@@ -73,6 +74,7 @@ import SupportPage from '@/pages/admin/SupportPage';
 import UserSupportPage from '@/pages/attendee/SupportPage';
 import SystemSettingsPage from '@/pages/admin/SystemSettingsPage';
 import AuditLogsPage from '@/pages/admin/AuditLogsPage';
+import AITrainingPage from '@/pages/admin/AITrainingPage';
 
 function MaintenanceWrapper() {
   const [maintenance, setMaintenance] = useState<boolean | null>(null);
@@ -208,6 +210,7 @@ function AppRoutes() {
             <Route path="/admin/content" element={<ContentManagementPage />} />
             <Route path="/admin/notifications" element={<NotificationCenterPage />} />
             <Route path="/admin/support" element={<SupportPage />} />
+            <Route path="/admin/ai-training" element={<AITrainingPage />} />
             <Route
               path="/admin/settings"
               element={
@@ -254,6 +257,7 @@ export default function App() {
           }}
         />
         <MaintenanceWrapper />
+        <ChatbotWidget />
       </BrowserRouter>
       </CurrencyProvider>
     </AuthProvider>

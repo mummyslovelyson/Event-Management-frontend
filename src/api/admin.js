@@ -68,3 +68,12 @@ export const getSmsBalance = () => api.get('/admin/settings/sms-balance');
 export const testPaystack = () => api.post('/admin/settings/test-paystack');
 
 export const getAuditLogs = (params) => api.get('/admin/audit-logs', { params });
+
+// AI Training & Knowledge Management
+export const getAITrainingData = () => api.get('/admin/ai/knowledge');
+export const createAIKnowledgeItem = (data) => api.post('/admin/ai/knowledge', data);
+export const updateAIKnowledgeItem = (id, data) => api.put(`/admin/ai/knowledge/${id}`, data);
+export const deleteAIKnowledgeItem = (id) => api.delete(`/admin/ai/knowledge/${id}`);
+export const updateAISettings = (data) => api.put('/admin/ai/settings', data);
+export const testAIPrompt = (data) => api.post('/admin/ai/test', data);
+
