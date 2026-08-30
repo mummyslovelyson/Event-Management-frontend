@@ -159,7 +159,7 @@ export default function InteractiveSeatMap({
             <div className="relative py-2.5 px-6 rounded-xl bg-gradient-to-r from-amber-500/20 via-white/15 to-amber-500/20 border border-white/20 shadow-lg shadow-black/40">
               <div className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-[#EFEFF1]">
                 <Zap className="w-4 h-4 text-amber-400 animate-pulse" />
-                <span>★ MAIN PERFORMANCE STAGE ★</span>
+                <span>MAIN PERFORMANCE STAGE</span>
                 <Zap className="w-4 h-4 text-amber-400 animate-pulse" />
               </div>
               <div className="absolute -bottom-2 inset-x-8 h-1 bg-gradient-to-r from-transparent via-amber-400/60 to-transparent blur-[2px]" />
@@ -242,7 +242,7 @@ export default function InteractiveSeatMap({
                   className="transition-all duration-200"
                 />
                 <text x="200" y="52" fill="#D1FAE5" fontSize="12" fontWeight="bold" textAnchor="middle">
-                  🌟 GOLDEN CIRCLE
+                  GOLDEN CIRCLE
                 </text>
                 <text x="200" y="68" fill="#A7F3D0" fontSize="9" textAnchor="middle">
                   Front Stage Pit
@@ -268,7 +268,7 @@ export default function InteractiveSeatMap({
                   className="transition-all duration-200"
                 />
                 <text x="200" y="155" fill="#DBEAFE" fontSize="14" fontWeight="bold" textAnchor="middle">
-                  🎟️ GENERAL ADMISSION
+                  GENERAL ADMISSION
                 </text>
                 <text x="200" y="175" fill="#93C5FD" fontSize="10" textAnchor="middle">
                   Main Arena Floor • Standing & Dance Area
@@ -290,7 +290,7 @@ export default function InteractiveSeatMap({
                   className="transition-all duration-200"
                 />
                 <text x="200" y="260" fill="#FCE7F3" fontSize="11" fontWeight="bold" textAnchor="middle">
-                  🏛️ MEZZANINE & ELEVATED SUITES
+                  MEZZANINE & ELEVATED SUITES
                 </text>
               </g>
             </svg>

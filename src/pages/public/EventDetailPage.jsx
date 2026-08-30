@@ -31,7 +31,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import InteractiveSeatMap from '@/components/events/InteractiveSeatMap';
 
-const TABS = ['Overview', 'Tickets', 'Seating & VIP Sections 🗺️', 'Squads & Group Outings', 'Community & Attendees', 'FAQs'];
+const TABS = ['Overview', 'Tickets', 'Seating & VIP Sections', 'Squads & Group Outings', 'Community & Attendees', 'FAQs'];
 
 const PAYMENT_METHODS = [
   { id: 'paystack', label: 'Paystack', icon: ShieldCheck },
@@ -401,11 +401,11 @@ export default function EventDetailPage() {
     const title = event?.title || 'Event';
     const date = event?.startDate ? new Date(event.startDate).toLocaleDateString() : '';
     const venue = event?.venue || '';
-    const squadMsg = `🔥 Hey! Check out "${title}" on Tribes & Cliqs! Happening ${date ? `on ${date}` : ''} ${venue ? `at ${venue}` : ''}.\nGet tickets or join the squad here: ${url}`;
+    const squadMsg = `Hey! Check out "${title}" on Tribes & Cliqs! Happening ${date ? `on ${date}` : ''} ${venue ? `at ${venue}` : ''}.\nGet tickets or join the squad here: ${url}`;
 
     const shareUrls = {
       whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(squadMsg)}`,
-      telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`🔥 Join me at ${title}!`)}`,
+      telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`Join me at ${title}!`)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Going to ${title} on Tribes & Cliqs! Get your tickets: `)}&url=${encodeURIComponent(url)}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
@@ -955,7 +955,7 @@ export default function EventDetailPage() {
                 )}
 
                 {/* SEATING & VIP SECTIONS */}
-                {activeTab === 'Seating & VIP Sections 🗺️' && (
+                {activeTab === 'Seating & VIP Sections' && (
                   <div className="space-y-6">
                     <InteractiveSeatMap
                       ticketTypes={tickets}
@@ -1013,11 +1013,11 @@ export default function EventDetailPage() {
                         {meetups.map((m) => {
                           const full = m.maxMembers > 0 && m.memberCount >= m.maxMembers;
                           const squadTypeLabels = {
-                            carpool: { label: '🚗 Carpool / Ride Share', bg: 'bg-blue-500/15 text-blue-300 border-blue-500/30' },
-                            preparty: { label: '🎉 Pre-Event Party', bg: 'bg-purple-500/15 text-purple-300 border-purple-500/30' },
-                            vip: { label: '🥂 VIP Lounge Crew', bg: 'bg-amber-500/15 text-amber-300 border-amber-500/30' },
-                            food: { label: '🍹 Drinks & Bites', bg: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
-                            general: { label: '👥 Squad Hangout', bg: 'bg-white/10 text-white border-white/20' },
+                            carpool: { label: 'Carpool / Ride Share', bg: 'bg-blue-500/15 text-blue-300 border-blue-500/30' },
+                            preparty: { label: 'Pre-Event Party', bg: 'bg-purple-500/15 text-purple-300 border-purple-500/30' },
+                            vip: { label: 'VIP Lounge Crew', bg: 'bg-amber-500/15 text-amber-300 border-amber-500/30' },
+                            food: { label: 'Drinks & Bites', bg: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
+                            general: { label: 'Squad Hangout', bg: 'bg-white/10 text-white border-white/20' },
                           };
                           const typeInfo = squadTypeLabels[m.type] || squadTypeLabels.general;
 
@@ -1115,7 +1115,7 @@ export default function EventDetailPage() {
                                         : 'bg-white text-[#1C232B] hover:bg-[#CBD5E1]'
                                     }`}
                                   >
-                                    {m.joined ? 'In Squad ✓' : full ? 'Squad Full' : 'Join Squad'}
+                                    {m.joined ? 'In Squad' : full ? 'Squad Full' : 'Join Squad'}
                                   </button>
                                 </div>
                               </div>
@@ -1235,10 +1235,10 @@ export default function EventDetailPage() {
                         {/* Quick Prompts */}
                         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
                           {[
-                            '🚗 Anyone carpooling?',
-                            '👗 What is the dress code vibe?',
-                            '🍹 Who wants to grab drinks before?',
-                            '🎟️ Anyone got spare VIP tickets?',
+                            'Anyone carpooling?',
+                            'What is the dress code vibe?',
+                            'Who wants to grab drinks before?',
+                            'Anyone got spare VIP tickets?',
                           ].map((prompt, idx) => (
                             <button
                               key={idx}
@@ -1439,11 +1439,11 @@ export default function EventDetailPage() {
             <label className="block text-xs font-medium text-[#949599] mb-1.5">Outing Type</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {[
-                { id: 'general', label: '👥 Squad Hangout' },
-                { id: 'carpool', label: '🚗 Carpool / Ride' },
-                { id: 'preparty', label: '🎉 Pre-Party' },
-                { id: 'vip', label: '🥂 VIP Lounge' },
-                { id: 'food', label: '🍹 Drinks & Food' },
+                { id: 'general', label: 'Squad Hangout' },
+                { id: 'carpool', label: 'Carpool / Ride' },
+                { id: 'preparty', label: 'Pre-Party' },
+                { id: 'vip', label: 'VIP Lounge' },
+                { id: 'food', label: 'Drinks & Food' },
               ].map((t) => (
                 <button
                   key={t.id}

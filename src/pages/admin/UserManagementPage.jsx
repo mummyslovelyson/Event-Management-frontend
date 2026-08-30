@@ -295,7 +295,7 @@ export default function UserManagementPage() {
     setCreateAdminLoading(true);
     try {
       const res = await createAdminUser(createAdminData);
-      toast.success(res.data?.message || 'Operations Admin created! 🎉');
+      toast.success(res.data?.message || 'Operations Admin created!');
       setCreateAdminOpen(false);
       setCreateAdminData({ name: '', email: '', phone: '', password: '' });
       fetchUsers();

@@ -47,8 +47,8 @@ export default function RegisterPage() {
       const res = await registerUser(payload);
       toast.success(
         res.data?.message || (data.phone
-          ? `🎉 Verification code sent to your phone (${data.phone}) via SMS and email! Enter code to create account.`
-          : `🎉 Verification code sent to your email (${data.email})! Enter code to create account.`),
+          ? `Verification code sent to your phone (${data.phone}) via SMS and email! Enter code to create account.`
+          : `Verification code sent to your email (${data.email})! Enter code to create account.`),
         { duration: 6000 }
       );
       const regIdParam = res.data?.registrationId ? `&regId=${encodeURIComponent(res.data.registrationId)}` : '';
@@ -125,7 +125,7 @@ export default function RegisterPage() {
                 >
                   <div className="p-3.5 rounded-xl bg-white/[0.03] border border-[#494F55]/30 mb-2">
                     <p className="text-xs text-[#949599] leading-relaxed">
-                      💡 Organizer accounts require administrator review and approval before publishing events. Please provide accurate details.
+                      Organizer accounts require administrator review and approval before publishing events. Please provide accurate details.
                     </p>
                   </div>
 

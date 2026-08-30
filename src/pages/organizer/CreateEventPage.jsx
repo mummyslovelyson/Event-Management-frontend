@@ -248,10 +248,10 @@ const StepTickets = () => {
               <div>
                 <label className={labelCls}>Section / Layout Zone</label>
                 <select {...register(`ticketTypes.${i}.section_type`)} className={inputCls}>
-                  <option value="general">🎟️ General Admission Floor</option>
-                  <option value="golden_circle">🌟 Golden Circle (Front Pit)</option>
-                  <option value="vip">👑 Diamond VIP Lounge & Tables</option>
-                  <option value="balcony">🏛️ Mezzanine & Elevated Suites</option>
+                  <option value="general">General Admission Floor</option>
+                  <option value="golden_circle">Golden Circle (Front Pit)</option>
+                  <option value="vip">Diamond VIP Lounge & Tables</option>
+                  <option value="balcony">Mezzanine & Elevated Suites</option>
                 </select>
               </div>
               <div>
@@ -267,7 +267,7 @@ const StepTickets = () => {
             {/* Optional Early Bird Rules */}
             <div className="p-3.5 rounded-xl bg-[#14181C] border border-[#2E363E] space-y-3">
               <p className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                ⚡ Optional Early-Bird Pricing Rules
+                Optional Early-Bird Pricing Rules
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>

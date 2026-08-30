@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
       };
       await resetPassword(payload);
       setSuccess(true);
-      toast.success('🎉 Password reset successfully! You can now log in.', { duration: 5000 });
+      toast.success('Password reset successfully! You can now log in.', { duration: 5000 });
       setTimeout(() => navigate('/login'), 2200);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not reset password. Invalid or expired 6-digit code.');

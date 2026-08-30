@@ -49,7 +49,7 @@ export default function VerifyEmailPage() {
           if (res.data?.accessToken && persistAuth) {
             persistAuth(res.data.accessToken, res.data.refreshToken, res.data.user);
           }
-          toast.success('Account verified successfully! 🎉');
+          toast.success('Account verified successfully!');
         }
       } catch (err) {
         if (!cancelled) {
@@ -181,7 +181,7 @@ export default function VerifyEmailPage() {
       if (res.data?.accessToken && persistAuth) {
         persistAuth(res.data.accessToken, res.data.refreshToken, res.data.user);
       }
-      toast.success(res.data?.message || 'Account verified and created successfully! 🎉');
+      toast.success(res.data?.message || 'Account verified and created successfully!');
     } catch (err) {
       setStatus('idle');
       const msg = err.response?.data?.message || 'Invalid or expired verification code';

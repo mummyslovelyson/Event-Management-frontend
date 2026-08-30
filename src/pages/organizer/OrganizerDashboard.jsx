@@ -99,7 +99,7 @@ export default function OrganizerDashboard() {
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-xl font-semibold tracking-tight text-[#EFEFF1]">
-              {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening'}, {user?.name?.split(' ')[0] || 'Organizer'} 👋
+              {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening'}, {user?.name?.split(' ')[0] || 'Organizer'}
             </h1>
             {data?.organization?.isApproved
               ? <Badge variant="success" size="sm" dot>Verified Organizer</Badge>

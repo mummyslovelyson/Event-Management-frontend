@@ -388,8 +388,8 @@ export default function WalletPage() {
             <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Payout Destination</label>
             <div className="grid grid-cols-2 gap-2 mb-2">
               {[
-                { key: 'momo', label: '📱 Mobile Money' },
-                { key: 'bank', label: '🏦 Bank Account' },
+                { key: 'momo', label: 'Mobile Money' },
+                { key: 'bank', label: 'Bank Account' },
               ].map((m) => {
                 const active = (wForm.payoutType || 'momo') === m.key;
                 return (

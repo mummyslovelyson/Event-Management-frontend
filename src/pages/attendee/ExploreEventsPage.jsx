@@ -247,13 +247,13 @@ export default function ExploreEventsPage() {
         </div>
         <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-none snap-x">
           {[
-            { label: 'Afrobeats & Live Concerts', icon: '🎤', category: 'Musical Shows' },
-            { label: 'Football & Sports Games', icon: '⚽', category: 'Tournaments' },
-            { label: 'Festivals & Carnivals', icon: '🎪', category: 'Festivals' },
-            { label: 'Tech Summits & Keynotes', icon: '💡', category: 'Corporate Events' },
-            { label: 'Standup Comedy & Theatre', icon: '🎭', category: 'Movies & Stage Plays' },
-            { label: 'Food, Drinks & Parties', icon: '🍹', category: 'Social Events' },
-            { label: 'Fairs & Fashion Expos', icon: '🎨', category: 'Fairs & Exhibitions' },
+            { label: 'Afrobeats & Live Concerts', icon: '', category: 'Musical Shows' },
+            { label: 'Football & Sports Games', icon: '', category: 'Tournaments' },
+            { label: 'Festivals & Carnivals', icon: '', category: 'Festivals' },
+            { label: 'Tech Summits & Keynotes', icon: '', category: 'Corporate Events' },
+            { label: 'Standup Comedy & Theatre', icon: '', category: 'Movies & Stage Plays' },
+            { label: 'Food, Drinks & Parties', icon: '', category: 'Social Events' },
+            { label: 'Fairs & Fashion Expos', icon: '', category: 'Fairs & Exhibitions' },
           ].map((p) => {
             const isActive = filters.category === p.category;
             return (

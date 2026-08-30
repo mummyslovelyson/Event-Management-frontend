@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
     try {
       const res = await forgotPassword({ email: data.email, website: data.website });
       setSent(true);
-      toast.success(res.data?.message || '🎉 6-digit password reset code sent via Email & SMS!', { duration: 6000 });
+      toast.success(res.data?.message || '6-digit password reset code sent via Email & SMS!', { duration: 6000 });
       setTimeout(() => {
         navigate(`/reset-password?email=${encodeURIComponent(data.email)}`);
       }, 1200);

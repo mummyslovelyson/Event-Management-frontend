@@ -19,7 +19,7 @@ export default function OrganizerPendingApproval() {
     try {
       const updated = await refreshProfile();
       if (updated?.is_approved || updated?.isApproved) {
-        toast.success('🎉 Congratulations! Your organizer account has been approved. Welcome to your dashboard!', { duration: 6000 });
+        toast.success('Congratulations! Your organizer account has been approved. Welcome to your dashboard!', { duration: 6000 });
         window.location.reload();
       } else {
         toast('Your application is still under review by our operations team. We will notify you as soon as it is approved.', {

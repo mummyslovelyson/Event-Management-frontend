@@ -78,7 +78,7 @@ export default function InvoiceModal({
             <div className="flex items-center gap-2">
               <span className="text-xl font-black tracking-tight text-white">TRIBES & CLIQS</span>
               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                PAID IN FULL ✓
+                PAID IN FULL
               </span>
             </div>
             <p className="text-xs text-[#949599] mt-1">Official Event Ticketing & Experience Receipt</p>

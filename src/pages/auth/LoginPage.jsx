@@ -18,7 +18,7 @@ export default function LoginPage() {
   const onSubmit = async (data) => {
     try {
       const user = await login(data.email, data.password, data.website);
-      toast.success(`Welcome back, ${user.name || user.email}! 👋`, { duration: 4000 });
+      toast.success(`Welcome back, ${user.name || user.email}!`, { duration: 4000 });
       const from = location.state?.from?.pathname;
       if (from && !from.startsWith('/admin')) {
         navigate(from, { replace: true });

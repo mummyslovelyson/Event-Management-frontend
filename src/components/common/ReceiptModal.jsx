@@ -107,8 +107,8 @@ export default function ReceiptModal({ open, onClose, order }) {
             <div class="card">
               <div class="card-title">Event Information</div>
               <p style="font-weight: 700; margin: 0 0 4px 0;">${eventTitle}</p>
-              <p style="color: #4B5563; margin: 0 0 2px 0;">📅 ${eventDate ? new Date(eventDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'TBA'}</p>
-              <p style="color: #4B5563; margin: 0;">📍 ${eventVenue}</p>
+              <p style="color: #4B5563; margin: 0 0 2px 0;">Date: ${eventDate ? new Date(eventDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'TBA'}</p>
+              <p style="color: #4B5563; margin: 0;">Venue: ${eventVenue}</p>
             </div>
           </div>
 

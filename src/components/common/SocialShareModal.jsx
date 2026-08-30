@@ -35,10 +35,10 @@ export default function SocialShareModal({
 
   // Customizable Squad Message
   const squadMessage = meetup
-    ? `🔥 Hey! I'm organizing a group outing "${meetup.title}" for ${eventTitle} on ${eventDate} at ${eventVenue}!\n\nJoin our squad here: ${url}`
+    ? `Hey! I'm organizing a group outing "${meetup.title}" for ${eventTitle} on ${eventDate} at ${eventVenue}!\n\nJoin our squad here: ${url}`
     : ticket
-      ? `🎟️ I just got my ticket for ${eventTitle} happening ${eventDate} at ${eventVenue}! Who's coming with me?\n\nGrab your ticket here: ${url}`
-      : `🔥 Hey! Check out ${eventTitle} happening on ${eventDate} at ${eventVenue}!\n\nGet your tickets or join the squad on Tribes & Cliqs: ${url}`;
+      ? `I just got my ticket for ${eventTitle} happening ${eventDate} at ${eventVenue}! Who's coming with me?\n\nGrab your ticket here: ${url}`
+      : `Hey! Check out ${eventTitle} happening on ${eventDate} at ${eventVenue}!\n\nGet your tickets or join the squad on Tribes & Cliqs: ${url}`;
 
   const shareChannels = [
     {
@@ -59,7 +59,7 @@ export default function SocialShareModal({
       icon: TelegramIcon,
       color: 'bg-sky-500/20 text-sky-400 border-sky-500/30 hover:bg-sky-500/30',
       action: () => {
-        const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`🔥 Join me at ${eventTitle}!`)}`;
+        const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`Join me at ${eventTitle}!`)}`;
         window.open(shareUrl, '_blank');
       },
     },
@@ -71,8 +71,8 @@ export default function SocialShareModal({
       color: 'bg-white/10 text-white border-white/20 hover:bg-white/20',
       action: () => {
         const tweetText = ticket
-          ? `Just secured my ticket for ${eventTitle} on @TribesAndCliqs! Who's pulling up? 🎟️🔥`
-          : `Can't wait for ${eventTitle}! Check it out on @TribesAndCliqs 🎟️🔥`;
+          ? `Just secured my ticket for ${eventTitle} on @TribesAndCliqs! Who's pulling up?`
+          : `Can't wait for ${eventTitle}! Check it out on @TribesAndCliqs`;
         const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(url)}`;
         window.open(shareUrl, '_blank');
       },

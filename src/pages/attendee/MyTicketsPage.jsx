@@ -25,7 +25,7 @@ const TABS = [
   { value: 'all', label: 'All Tickets' },
   { value: 'upcoming', label: 'Upcoming' },
   { value: 'past', label: 'Past' },
-  { value: 'reminders', label: 'Event Reminders 🔔' },
+  { value: 'reminders', label: 'Event Reminders' },
   { value: 'cancelled', label: 'Cancelled' },
 ];
 

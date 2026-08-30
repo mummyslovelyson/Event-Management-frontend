@@ -42,7 +42,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
     setReminded(!prev);
     try {
       await toggleEventReminder(event.id);
-      toast.success(!prev ? 'Event reminder set! 🔔' : 'Reminder removed');
+      toast.success(!prev ? 'Event reminder set!' : 'Reminder removed');
     } catch {
       setReminded(prev);
       toast.error('Could not update reminder');
@@ -222,7 +222,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
                     : 'bg-[#1C232B]/90 text-[#EFEFF1] hover:text-amber-400 hover:scale-110'
                 }`}
                 aria-label="Set event reminder"
-                title={reminded ? 'Reminder active (click to remove)' : 'Set event reminder 🔔'}
+                title={reminded ? 'Reminder active (click to remove)' : 'Set event reminder'}
               >
                 {reminded ? <BellRing className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
               </motion.button>

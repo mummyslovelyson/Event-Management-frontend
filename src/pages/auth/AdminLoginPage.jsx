@@ -20,7 +20,7 @@ export default function AdminLoginPage() {
         toast.error('Access denied. Admin credentials required.');
         return;
       }
-      toast.success(`Welcome back, ${user.name || 'Administrator'}! 🛡️`, { duration: 4000 });
+      toast.success(`Welcome back, ${user.name || 'Administrator'}!`, { duration: 4000 });
       navigate('/admin/dashboard', { replace: true });
     } catch (err) {
       toast.error(err.friendlyMessage || err.response?.data?.message || 'Invalid admin credentials');

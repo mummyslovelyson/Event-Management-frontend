@@ -97,7 +97,7 @@ export default function ChatbotWidget() {
       const errorMsg = {
         id: `bot-${Date.now()}`,
         sender: 'bot',
-        text: '⚠️ I encountered an issue retrieving event details. Please try asking again in a moment!',
+        text: 'I encountered an issue retrieving event details. Please try asking again in a moment!',
         suggestions: DEFAULT_SUGGESTIONS,
         timestamp: new Date().toISOString(),
       };
@@ -119,7 +119,7 @@ export default function ChatbotWidget() {
       {
         id: 'welcome-reset',
         sender: 'bot',
-        text: `✨ Chat cleared! What can I help you discover next?`,
+        text: `Chat cleared! What can I help you discover next?`,
         suggestions: DEFAULT_SUGGESTIONS,
         timestamp: new Date().toISOString(),
       },
