@@ -546,6 +546,12 @@ export default function EventDetailPage() {
   };
 
   const handleProceedPayment = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in or create an account to book your ticket');
+      navigate(`/login?redirect=/events/${id}`);
+      return;
+    }
+
     if (selectedQty < 1) {
       toast.error('Please select at least one ticket');
       return;
