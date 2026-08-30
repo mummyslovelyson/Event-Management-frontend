@@ -1700,19 +1700,36 @@ export default function EventDetailPage() {
               </div>
             </div>
 
+            {!isAuthenticated && (
+              <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between gap-3 text-xs">
+                <div>
+                  <p className="font-semibold text-amber-300">Sign in to complete booking</p>
+                  <p className="text-[#949599] mt-0.5">Tickets are instantly delivered to your account and phone.</p>
+                </div>
+                <Link
+                  to={`/login?redirect=/events/${id}`}
+                  className="px-3.5 py-1.5 rounded-lg bg-white text-[#1C232B] font-bold text-xs shrink-0 hover:bg-[#CBD5E1] transition shadow-sm"
+                >
+                  Sign In
+                </Link>
+              </div>
+            )}
+
             <button
               onClick={handleProceedPayment}
               disabled={placingOrder}
-              className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-60 flex items-center justify-center gap-2 shadow-md"
             >
               {placingOrder ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
+              ) : !isAuthenticated ? (
+                <><User className="w-4 h-4" /> Sign In to Pay with Paystack</>
               ) : (
-                <><Wallet className="w-4 h-4" /> Proceed to Payment</>
+                <><Wallet className="w-4 h-4" /> Pay with Paystack ({format(total)})</>
               )}
             </button>
             <p className="text-center text-xs text-[#494F55] flex items-center justify-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5" /> Secure payment powered by Paystack
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Secure Mobile Money &amp; Card payment via Paystack
             </p>
           </div>
         )}
