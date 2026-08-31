@@ -130,8 +130,21 @@ export default function CheckInPage() {
   // Handle barcode / QR verification & check-in
   const handleScan = useCallback(async (code) => {
     if (!code || isProcessingRef.current) return;
-    const cleanCode = String(code).trim();
+    let cleanCode = String(code).trim();
     if (!cleanCode) return;
+
+    // Parse JSON string or URL
+    if (cleanCode.startsWith('{') && cleanCode.endsWith('}')) {
+      try {
+        const obj = JSON.parse(cleanCode);
+        cleanCode = obj.ticketNumber || obj.qrCode || obj.ticketId || cleanCode;
+      } catch {}
+    }
+    if (cleanCode.includes('/verify/')) {
+      cleanCode = cleanCode.split('/verify/')[1] || cleanCode;
+    } else if (cleanCode.includes('?code=')) {
+      cleanCode = cleanCode.split('?code=')[1].split('&')[0] || cleanCode;
+    }
 
     isProcessingRef.current = true;
     setScanning(true);
@@ -139,7 +152,7 @@ export default function CheckInPage() {
     setLastScannedCode(cleanCode);
 
     try {
-      const res = await verifyTicket(cleanCode);
+      const res = await verifyTicket(encodeURIComponent(cleanCode));
       const ticket = res.data?.ticket || res.data;
 
       if (!ticket || !ticket.id) {
