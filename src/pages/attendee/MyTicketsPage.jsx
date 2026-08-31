@@ -732,12 +732,8 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
   const st = statusMap[status] || statusMap.valid;
   const isCancelled = status === 'cancelled' || status === 'void';
 
-  const qrValue = JSON.stringify({
-    ticketId: ticket.id,
-    ticketNumber,
-    event: event.title,
-    type: ticket.ticketType || ticket.type,
-  });
+  const origin = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://tribesandcliqs.com';
+  const qrValue = `${origin}/verify/${encodeURIComponent(ticketNumber)}`;
 
   return (
     <motion.div
@@ -887,7 +883,8 @@ function PrintableTicket({ ticket }) {
   const eventDate = event.startDate || ticket.eventDate || ticket.startDate;
   const ticketNumber = (ticket.ticketNumber || ticket.id || '').toString();
   const seat = ticket.seat || ticket.seatNumber || ticket.seatInfo;
-  const qrValue = JSON.stringify({ ticketId: ticket.id, ticketNumber, event: event.title });
+  const origin = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://tribesandcliqs.com';
+  const qrValue = `${origin}/verify/${encodeURIComponent(ticketNumber)}`;
 
   return (
     <div className="rounded-xl border border-[#494F55]/40 overflow-hidden">

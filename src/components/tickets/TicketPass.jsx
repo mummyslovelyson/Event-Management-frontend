@@ -547,12 +547,8 @@ export default function TicketPass({ ticket, onDownload, onPrint }) {
   const attendeeName = ticket.attendeeName || ticket.name || ticket.user?.name || 'Attendee';
   const customTemplateUrl = ticket.ticketTemplate || event.ticketTemplate || ticket.ticket_template || event.ticket_template;
 
-  const qrValue = JSON.stringify({
-    ticketId: ticket.id,
-    ticketNumber: ticketNo,
-    event: title,
-    type: tierName,
-  });
+  const origin = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://tribesandcliqs.com';
+  const qrValue = `${origin}/verify/${encodeURIComponent(ticketNo)}`;
 
   const handleDownloadClick = () => {
     if (onDownload) {
