@@ -31,23 +31,30 @@ const TABS = [
 ];
 
 // The tickets API returns flat snake_case columns (event_title, event_venue,
-// start_date, banner_image, ticket_type_name). Normalize them into the nested
-// camelCase shape the ticket cards expect so event info actually displays.
-const normalizeTicket = (t) => ({
-  ...t,
-  ticketType: t.ticketType || t.type || t.ticket_type_name || t.ticketTypeName || 'General',
-  seat: t.seat || t.seatNumber || t.seat_number || t.seatInfo,
-  event: {
-    id: t.event_id || t.event?.id,
-    title: t.event?.title || t.event_title || t.event_name || t.eventName || 'Event',
-    venue: t.event?.venue || t.event_venue || t.venue || 'Venue TBA',
-    startDate: t.event?.startDate || t.event?.start_date || t.startDate || t.start_date || t.eventDate,
-    startTime: t.event?.startTime || t.event?.start_time || t.startTime || t.start_time,
-    image: t.event?.image || t.banner_image || t.event?.banner_image || t.image,
-    category: t.event?.category || t.category,
-    city: t.event?.city || t.city,
-  },
-});
+// start_date, banner_image, ticket_type_name, ticket_template). Normalize them
+// into the nested camelCase shape the ticket cards expect so event info actually displays.
+const normalizeTicket = (t) => {
+  const template = t.ticket_template || t.ticketTemplate || t.event?.ticket_template || t.event?.ticketTemplate || null;
+  return {
+    ...t,
+    ticketType: t.ticketType || t.type || t.ticket_type_name || t.ticketTypeName || 'General',
+    price: t.price || t.ticket_price || t.amount || 0,
+    attendeeName: t.attendee_name || t.attendeeName || t.user_name || t.userName || 'Attendee',
+    seat: t.seat || t.seatNumber || t.seat_number || t.seatInfo,
+    ticketTemplate: template,
+    event: {
+      id: t.event_id || t.event?.id,
+      title: t.event?.title || t.event_title || t.event_name || t.eventName || 'Event',
+      venue: t.event?.venue || t.event_venue || t.venue || 'Venue TBA',
+      startDate: t.event?.startDate || t.event?.start_date || t.startDate || t.start_date || t.eventDate,
+      startTime: t.event?.startTime || t.event?.start_time || t.startTime || t.start_time,
+      image: t.event?.image || t.banner_image || t.event?.banner_image || t.image,
+      ticketTemplate: template,
+      category: t.event?.category || t.category,
+      city: t.event?.city || t.city,
+    },
+  };
+};
 
 const containerStagger = {
   hidden: { opacity: 0 },

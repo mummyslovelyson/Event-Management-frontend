@@ -33,6 +33,7 @@ export default function EditEventPage() {
         endTime: e.end_time || '',
         dressCode: e.dress_code || '',
         bannerImage: e.banner_image || '',
+        ticketTemplate: e.ticket_template || '',
         additionalImages: Array.isArray(e.images) ? e.images : [],
         contactEmail: e.contact_email || '',
         contactPhone: e.contact_phone || '',

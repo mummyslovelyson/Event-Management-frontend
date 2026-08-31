@@ -82,10 +82,12 @@ const StepLocationTime = () => (
 const StepMedia = () => {
   const { watch, setValue } = useFormContext();
   const bannerUrl = watch('bannerImage');
+  const ticketTemplateUrl = watch('ticketTemplate');
   const additional = watch('additionalImages') || [];
   const fileRef = useRef(null);
+  const ticketRef = useRef(null);
   const extraRef = useRef(null);
-  const [uploading, setUploading] = useState(null); // 'banner' | 'extra' | null
+  const [uploading, setUploading] = useState(null); // 'banner' | 'ticket' | 'extra' | null
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -100,6 +102,23 @@ const StepMedia = () => {
       setValue('bannerImage', res.data.url);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Banner upload failed');
+    } finally {
+      setUploading(null);
+    }
+  };
+
+  const handleTicketTemplate = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file || uploading) return;
+    if (file.size > MAX_FILE_SIZE) { toast.error('Ticket template image must be under 5MB'); return; }
+    setUploading('ticket');
+    try {
+      const res = await uploadImage(file);
+      setValue('ticketTemplate', res.data.url);
+      toast.success('Custom ticket design uploaded!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Ticket upload failed');
     } finally {
       setUploading(null);
     }
@@ -131,7 +150,8 @@ const StepMedia = () => {
   const removeExtra = (i) => setValue('additionalImages', additional.filter((_, idx) => idx !== i));
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
+      {/* Banner Upload */}
       <div>
         <label className={labelCls}>Banner Image</label>
         <div
@@ -159,6 +179,53 @@ const StepMedia = () => {
         </div>
       </div>
 
+      {/* Custom Ticket Template Upload */}
+      <div>
+        <div className="flex items-center justify-between mb-1.5">
+          <label className={labelCls}>Event Ticket Design / Pass Artwork (Optional)</label>
+          <span className="text-[11px] text-amber-400 font-medium">Attendees download &amp; print this</span>
+        </div>
+        <p className="text-xs text-[#949599] mb-2.5">
+          Upload your branded concert pass, stub, or VIP badge artwork. We will automatically superimpose the attendee's live QR code, Seat/Row, Ticket #, and event details onto this design when they download or print their pass.
+        </p>
+        <div
+          onClick={() => { if (!uploading) ticketRef.current?.click(); }}
+          className="relative border-2 border-dashed border-amber-500/30 rounded-xl p-5 text-center cursor-pointer hover:border-amber-400/60 transition-colors bg-[#171A1D]/80"
+        >
+          {uploading === 'ticket' ? (
+            <div className="flex flex-col items-center gap-2 py-6">
+              <Upload className="w-8 h-8 text-amber-400 mx-auto animate-pulse" />
+              <p className="text-sm text-[#949599]">Uploading custom ticket artwork...</p>
+            </div>
+          ) : ticketTemplateUrl ? (
+            <div className="relative">
+              <div className="max-h-56 overflow-hidden rounded-lg border border-amber-500/30 flex items-center justify-center bg-black/40">
+                <img src={ticketTemplateUrl} alt="custom ticket" className="max-h-56 w-auto object-contain rounded" />
+              </div>
+              <div className="mt-2.5 flex items-center justify-between text-xs text-amber-300 font-medium px-1">
+                <span>Custom Ticket Design Active</span>
+                <span className="text-[#949599]">Click to change</span>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setValue('ticketTemplate', ''); }}
+                className="absolute top-2 right-2 p-2 rounded-md bg-black/70 text-white hover:bg-black/90 shadow-md"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <TicketIcon className="w-8 h-8 text-amber-400/60 mx-auto mb-2" />
+              <p className="text-sm text-[#949599]">Upload your <span className="text-amber-400 font-semibold">Custom Ticket / Badge Artwork</span></p>
+              <p className="text-xs text-[#494F55] mt-1">Recommended landscape ratio (1600x680px or 1200x500px), PNG or JPG under 5MB</p>
+            </>
+          )}
+          <input ref={ticketRef} type="file" accept="image/*" className="hidden" onChange={handleTicketTemplate} />
+        </div>
+      </div>
+
+      {/* Additional Images */}
       <div>
         <label className={labelCls}>Additional Images (up to 5)</label>
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
@@ -340,6 +407,33 @@ const StepReview = () => {
         </dl>
       </div>
       <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
+        <h3 className="text-sm font-semibold text-white mb-3">Media & Custom Ticket Design</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+          <div>
+            <span className="text-xs text-[#949599] block mb-1.5">Banner Image</span>
+            {d.bannerImage ? (
+              <img src={d.bannerImage} alt="banner" className="w-full h-24 object-cover rounded-lg border border-[#494F55]/30" />
+            ) : (
+              <p className="text-xs text-[#494F55] italic">No banner uploaded</p>
+            )}
+          </div>
+          <div>
+            <span className="text-xs text-[#949599] block mb-1.5">Custom Ticket Design</span>
+            {d.ticketTemplate ? (
+              <div className="relative">
+                <img src={d.ticketTemplate} alt="ticket design" className="w-full h-24 object-contain rounded-lg border border-amber-500/40 bg-black/30" />
+                <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded text-[10px] bg-amber-500/90 text-black font-bold">Custom Design</span>
+              </div>
+            ) : (
+              <div className="h-24 rounded-lg border border-dashed border-[#494F55]/40 flex items-center justify-center p-3 text-center">
+                <p className="text-xs text-[#949599]">Default Golden &amp; Burgundy Concert Stub Pass</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-xl bg-[#242B32] border border-[#262B2F] p-5">
         <h3 className="text-sm font-semibold text-white mb-3">Ticket Types ({(d.ticketTypes || []).length})</h3>
         <div className="space-y-2">
           {(d.ticketTypes || []).map((t, i) => (
@@ -369,7 +463,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
       title: '', description: '', category: '', tags: '',
       venue: '', address: '', city: '', country: '',
       startDate: '', endDate: '', startTime: '', endTime: '', dressCode: '',
-      bannerImage: '', additionalImages: [],
+      bannerImage: '', ticketTemplate: '', additionalImages: [],
       contactEmail: '', contactPhone: '',
       totalCapacity: '', visibility: 'public',
       ticketTypes: [{ name: '', price: '', quantity: '', description: '', saleStartDate: '', saleEndDate: '' }],
