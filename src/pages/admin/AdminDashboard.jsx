@@ -122,16 +122,6 @@ function KpiCard({ icon: Icon, label, value, sub, accent }) {
   );
 }
 
-function SnapshotTile({ icon: Icon, label, value, tone = 'text-[#949599]' }) {
-  return (
-    <div className="rounded-lg bg-[#1C232B]/60 border border-[#494F55]/20 p-3">
-      <Icon className={`w-4 h-4 ${tone}`} />
-      <p className="mt-2 text-lg font-bold text-[#EFEFF1] tabular-nums break-words leading-tight">{value}</p>
-      <p className="text-[11px] text-[#949599] break-words leading-tight">{label}</p>
-    </div>
-  );
-}
-
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -271,18 +261,10 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <CardShell className="lg:col-span-2 overflow-hidden">
           <div className="p-5 pb-1">
-            <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="flex items-center gap-1.5 text-xs font-medium text-[#949599]">
-                  <CircleDollarSign className="w-3.5 h-3.5" /> Gross Ticket Sales Velocity
-                </p>
-                <p className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold text-[#EFEFF1] tabular-nums tracking-tight">
-                  {format(o.totalRevenue)}
-                </p>
-                <div className="mt-2 flex items-center gap-2">
-                  <DeltaPill value={o.revenueTrend} />
-                  <span className="text-xs text-[#949599]">vs prior 7 days</span>
-                </div>
+                <h2 className="text-sm font-semibold text-[#EFEFF1]">Gross Revenue Performance</h2>
+                <p className="text-xs text-[#949599] mt-0.5">30-day ticket sales volume &amp; velocity</p>
               </div>
               <div className="flex gap-6 text-right">
                 <div>
@@ -511,21 +493,218 @@ export default function AdminDashboard() {
         ) : (
           <EmptyInline text="No activity yet." />
         )}
+          </div>
+        </CardShell>
+
+        <CardShell className="p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-[#EFEFF1]">Pending Administrative Actions</h2>
+            <ShieldAlert className="w-4 h-4 text-amber-400" />
+          </div>
+          <p className="text-xs text-[#949599] mt-0.5">Tasks requiring staff authorization.</p>
+          <div className="mt-4 space-y-3">
+            <AttentionRow
+              icon={CalendarDays}
+              count={o.pendingEvents ?? 0}
+              label="Event Listings Awaiting Review"
+            />
+            <AttentionRow
+              icon={UserCheck}
+              count={o.pendingOrganizers ?? 0}
+              label="Organizer Verification Applications"
+            />
+            <AttentionRow
+              icon={Wallet}
+              count={o.pendingWithdrawals ?? 0}
+              label="Pending Payout Requests"
+            />
+          </div>
+        </CardShell>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <CardShell className="lg:col-span-2">
+          <SectionHeader
+            title="User Registrations"
+            hint="New signups · past 14 days"
+            action={
+              <div className="flex items-center gap-3 pr-5 text-xs">
+                <span className="flex items-center gap-1.5 text-[#949599]"><span className="w-2 h-2 rounded-full bg-white" /> Attendees</span>
+                <span className="flex items-center gap-1.5 text-[#949599]"><span className="w-2 h-2 rounded-full bg-[#60A5FA]" /> Organizers</span>
+              </div>
+            }
+          />
+          <div className="px-3 pt-2 pb-3">
+            {growthSeries?.length ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={growthSeries} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#494F55" strokeOpacity={0.18} vertical={false} />
+                  <XAxis dataKey="date" stroke="#494F55" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmtDay} minTickGap={24} />
+                  <YAxis stroke="#494F55" fontSize={10} tickLine={false} axisLine={false} width={30} allowDecimals={false} />
+                  <Tooltip content={<ChartTip />} cursor={{ stroke: '#494F55', strokeOpacity: 0.4 }} />
+                  <Line type="monotone" dataKey="attendees" stroke="#EFEFF1" strokeWidth={2} dot={false} activeDot={{ r: 3, fill: '#EFEFF1' }} name="Attendees" />
+                  <Line type="monotone" dataKey="organizers" stroke="#60A5FA" strokeWidth={2} dot={false} activeDot={{ r: 3, fill: '#60A5FA' }} name="Organizers" />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyInline text="No signups in the last two weeks." />
+            )}
+          </div>
+        </CardShell>
+
+        <CardShell className="p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-[#EFEFF1]">Operational Status</h2>
+          </div>
+          <p className="text-xs text-[#949599] mt-0.5">Live transaction and queue summary.</p>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <SnapshotTile icon={ShoppingCart} label="Total Ticket Orders" value={(o.totalOrders ?? 0).toLocaleString()} tone="text-white" />
+            <SnapshotTile icon={CircleDollarSign} label="7-Day Volume" value={shortFmt(o.last7Revenue)} tone="text-white" />
+            <SnapshotTile icon={Wallet} label="Payouts Pending" value={(o.pendingWithdrawals ?? 0).toLocaleString()} tone="text-amber-400" />
+            <SnapshotTile icon={UserCheck} label="KYC Applications" value={(o.pendingOrganizers ?? 0).toLocaleString()} tone="text-white" />
+          </div>
+        </CardShell>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <CardShell className="lg:col-span-2 overflow-hidden">
+          <SectionHeader
+            title="Recent Event Submissions"
+            hint="Newest events published or submitted for moderation"
+          />
+          {recentEvents?.length ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <tbody className="divide-y divide-[#494F55]/15">
+                  {recentEvents.map((e) => {
+                    const st = EVENT_STATUS[e.status] || EVENT_STATUS.draft;
+                    return (
+                      <tr key={e.id} className="hover:bg-[#1C232B]/50 transition-colors">
+                        <td className="px-5 py-3">
+                          <p className="font-medium text-[#EFEFF1] break-words">{e.title}</p>
+                          <p className="text-xs text-[#949599] mt-0.5 break-words">{e.organizer_name || '—'}</p>
+                        </td>
+                        <td className="px-5 py-3 hidden md:table-cell">
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium ${st.cls}`}>{st.label}</span>
+                        </td>
+                        <td className="px-5 py-3 hidden sm:table-cell text-xs text-[#949599]">
+                          {e.start_date ? fmtDay(e.start_date) : '—'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <EmptyInline text="No events have been created yet." />
+          )}
+        </CardShell>
+
+        <CardShell className="overflow-hidden">
+          <SectionHeader title="Recent Platform Signups" hint="Newest attendees & organizers" />
+          {recentUsers?.length ? (
+            <div className="px-2 pb-3">
+              {recentUsers.map((u) => (
+                <div key={u.id} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#1C232B]/50 transition-colors">
+                  <div className="w-9 h-9 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] text-xs font-bold flex items-center justify-center shrink-0">
+                    {initials(u.name)}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-[#EFEFF1] break-words">{u.name}</p>
+                    <p className="text-[11px] text-[#949599] break-words">{u.email}</p>
+                  </div>
+                  <span className={`text-[11px] font-medium capitalize ${ROLE_CLS[u.role] || ROLE_CLS.attendee}`}>
+                    {ROLE_LABEL[u.role] || u.role}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyInline text="No members yet." />
+          )}
+        </CardShell>
+      </div>
+
+      {pendingEvents?.length > 0 && (
+        <CardShell className="overflow-hidden">
+          <SectionHeader
+            title="Event Moderation Queue"
+            hint="Submissions currently awaiting review"
+          />
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-[11px] uppercase tracking-wider text-[#949599] border-b border-[#494F55]/20">
+                  <th className="px-5 py-2.5 font-medium">Event</th>
+                  <th className="hidden md:table-cell px-5 py-2.5 font-medium">Organizer</th>
+                  <th className="hidden md:table-cell px-5 py-2.5 font-medium">Date</th>
+                  <th className="px-5 py-2.5 font-medium text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#494F55]/15">
+                {pendingEvents.map((ev) => (
+                  <tr key={ev.id} className="hover:bg-[#1C232B]/50 transition-colors">
+                    <td className="px-5 py-3">
+                      <p className="font-medium text-[#EFEFF1] break-words">{ev.title}</p>
+                    </td>
+                    <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599] break-words">{ev.organizer_name || '—'}</td>
+                    <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599]">{ev.start_date ? fmtDay(ev.start_date) : '—'}</td>
+                    <td className="px-5 py-3 text-right">
+                      <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/15 text-amber-300">
+                        Pending Review
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardShell>
+      )}
+
+      <CardShell className="overflow-hidden">
+        <SectionHeader title="System Activity Log" hint="Real-time events and user actions" />
+        {activity?.length ? (
+          <div className="divide-y divide-[#494F55]/15">
+            {activity.map((a, i) => (
+              <div key={i} className="flex items-start gap-3.5 px-5 py-3 hover:bg-[#1C232B]/50 transition-colors">
+                <div className="w-2 h-2 rounded-full bg-white mt-1.5 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm text-[#EFEFF1] break-words">
+                    {a.type === 'event' ? (
+                      <>New event <span className="font-medium">“{a.label}”</span></>
+                    ) : (
+                      <>{a.label.replace(' joined as ', ' joined as ')}</>
+                    )}
+                  </p>
+                  <p className="text-[11px] text-[#949599] mt-0.5">
+                    {a.organizer || a.role || 'System'} · {new Date(a.time).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyInline text="No activity yet." />
+        )}
       </CardShell>
     </div>
   );
 }
 
-function AttentionRow({ icon: Icon, count, label }) {
-  return (
-    <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1C232B]/60 border border-[#494F55]/20">
-      <Icon className="w-4 h-4 text-[#949599] shrink-0" />
+function AttentionRow({ icon: Icon, count, label, to }) {
+  const inner = (
+    <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1C232B]/60 border border-[#494F55]/20 hover:border-white/30 hover:bg-[#1D2124] transition group">
+      <Icon className="w-4 h-4 text-[#949599] group-hover:text-white shrink-0 transition-colors" />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium text-[#EFEFF1] truncate">{label}</p>
       </div>
       <span className={`text-sm font-bold tabular-nums ${count > 0 ? 'text-amber-400' : 'text-[#494F55]'}`}>
         {count}
       </span>
+      {to && <ArrowRight className="w-3.5 h-3.5 text-[#494F55] group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" />}
     </div>
   );
+  return to ? <Link to={to} className="block">{inner}</Link> : inner;
 }

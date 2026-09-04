@@ -146,7 +146,7 @@ export default function ContentManagementPage() {
         {loading ? (
           <LoadingSpinner label="Loading content..." className="py-16" />
         ) : items.length === 0 ? (
-          <EmptyState icon={FileText} title={`No ${itemLabelsPlural[tab]} yet`} description={`Create your first ${itemLabels[tab]} to get started.`} action={openAdd} actionLabel={`Add ${itemLabels[tab]}`} className="py-16" />
+          <EmptyState icon={FileText} title={`No ${itemLabelsPlural[tab]} yet`} description={`Create your first ${itemLabels[tab]} to get started.`} className="py-16" />
         ) : tab === 'banners' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-5">
             {items.map((item, i) => (

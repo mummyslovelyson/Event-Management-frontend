@@ -178,8 +178,6 @@ export default function EventsPage() {
           icon={CalendarDays}
           title="No events found"
           description="Try adjusting your filters or create a new event."
-          action={() => navigate('/organizer/events/create')}
-          actionLabel="Create Event"
           className="py-16"
         />
       ) : view === 'grid' ? (

@@ -135,9 +135,7 @@ export default function OrganizerCategoriesPage() {
           <EmptyState
             icon={Layers}
             title="No categories yet"
-            description="Nothing here yet — add the first category."
-            action={openAdd}
-            actionLabel="Add Category"
+            description="Nothing here yet — add the first category using the button above."
             className="py-16"
           />
         </div>

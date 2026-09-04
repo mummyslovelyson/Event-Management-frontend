@@ -162,7 +162,7 @@ export default function TicketManagementPage() {
       ) : loadingTickets ? (
         <LoadingSpinner label="Loading ticket types..." className="py-16" />
       ) : tickets.length === 0 ? (
-        <EmptyState icon={TicketIcon} title="No ticket types" description="Add ticket types like VIP, General, or Early Bird." action={openAdd} actionLabel="Add Ticket Type" className="py-16" />
+        <EmptyState icon={TicketIcon} title="No ticket types" description="Add ticket types like VIP, General, or Early Bird using the button above." className="py-16" />
       ) : (
         <>
           {/* Summary */}

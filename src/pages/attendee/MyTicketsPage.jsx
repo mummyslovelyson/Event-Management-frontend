@@ -401,9 +401,7 @@ export default function MyTicketsPage() {
         <EmptyState
           icon={TicketIcon}
           title={search ? "No tickets match your search" : "No tickets yet"}
-          description={search ? "Try a different search term." : "Browse events and purchase tickets to see them here."}
-          action={() => (window.location.href = '/attendee/explore')}
-          actionLabel="Browse Events"
+          description={search ? "Try a different search term." : "Browse events and purchase tickets using the Browse Events button above to see them here."}
         />
       ) : (
         <motion.div variants={containerStagger} className="grid grid-cols-1 lg:grid-cols-2 gap-5">

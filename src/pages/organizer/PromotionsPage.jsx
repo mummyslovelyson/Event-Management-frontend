@@ -283,8 +283,6 @@ export default function PromotionsPage() {
             icon={Tag}
             title="No discount codes yet"
             description="Create discount codes to offer promotions to your customers."
-            action={openCreateCoupon}
-            actionLabel="Create Discount Code"
             className="py-16"
           />
         ) : (
@@ -385,8 +383,6 @@ export default function PromotionsPage() {
             icon={Zap}
             title="No flash sales yet"
             description="Create time-limited flash sales to drive urgent ticket purchases."
-            action={() => setFlashModal(true)}
-            actionLabel="Create Flash Sale"
             className="py-16"
           />
         ) : (
