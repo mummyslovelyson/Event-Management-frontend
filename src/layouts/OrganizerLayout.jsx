@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   LayoutDashboard, CalendarDays, Ticket as TicketIcon, ShoppingBag, ScanLine,
-  Users, Tag, BarChart3, Megaphone, UsersRound, Wallet, Settings, Menu, X,
+  Users, Tag, BarChart3, Megaphone, UsersRound, Wallet, CreditCard, Settings, Menu, X,
   LogOut, Search, ChevronDown, Bell, LifeBuoy, Layers, Globe, Clock,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -22,7 +22,7 @@ const nav = [
   { to: '/organizer/promotions', label: 'Promotions', icon: Tag },
   { to: '/organizer/marketing', label: 'Marketing', icon: Megaphone },
   { to: '/organizer/reports', label: 'Reports', icon: BarChart3 },
-  { to: '/organizer/wallet', label: 'Wallet', icon: Wallet },
+  { to: '/organizer/payments', label: 'Payments', icon: CreditCard },
   { to: '/organizer/team', label: 'Team', icon: UsersRound },
   { to: '/organizer/support', label: 'Help & Support', icon: LifeBuoy },
   { to: '/organizer/settings', label: 'Settings', icon: Settings },
@@ -128,8 +128,8 @@ export default function OrganizerLayout() {
                           <Link to="/organizer/settings" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
                             <Settings className="w-4 h-4" /> Settings
                           </Link>
-                          <Link to="/organizer/wallet" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
-                            <Wallet className="w-4 h-4" /> Wallet
+                          <Link to="/organizer/payments" className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
+                            <CreditCard className="w-4 h-4" /> Payments
                           </Link>
                         </>
                       )}

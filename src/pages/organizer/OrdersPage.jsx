@@ -5,7 +5,7 @@ import {
   ChevronDown, ChevronUp, CreditCard, Check, Printer, Receipt as ReceiptIcon,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getOrders } from '@/api/orders';
+import { getOrders, refundOrder } from '@/api/orders';
 import { getDashboard } from '@/api/organizer';
 import { useCurrency } from '@/context/CurrencyContext';
 import Badge from '@/components/common/Badge';
@@ -37,6 +37,26 @@ export default function OrdersPage() {
   const [detailOrder, setDetailOrder] = useState(null);
   const [receiptOrder, setReceiptOrder] = useState(null);
   const [selected, setSelected] = useState(new Set());
+  const [refundTarget, setRefundTarget] = useState(null);
+  const [refundReason, setRefundReason] = useState('');
+  const [refunding, setRefunding] = useState(false);
+
+  const handleRefundOrder = async () => {
+    if (!refundTarget) return;
+    setRefunding(true);
+    try {
+      await refundOrder(refundTarget.id, { reason: refundReason.trim() });
+      toast.success('Refund processed successfully');
+      setRefundTarget(null);
+      setRefundReason('');
+      setDetailOrder(null);
+      fetchOrders();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to process refund');
+    } finally {
+      setRefunding(false);
+    }
+  };
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -205,12 +225,25 @@ export default function OrdersPage() {
         footer={
           detailOrder ? (
             <div className="flex items-center justify-between w-full">
-              <button
-                onClick={() => setDetailOrder(null)}
-                className="px-4 py-2 rounded-lg text-xs text-[#949599] hover:text-[#EFEFF1] transition"
-              >
-                Close
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setDetailOrder(null)}
+                  className="px-4 py-2 rounded-lg text-xs text-[#949599] hover:text-[#EFEFF1] transition"
+                >
+                  Close
+                </button>
+                {detailOrder.status === 'completed' && (
+                  <button
+                    onClick={() => {
+                      setRefundTarget(detailOrder);
+                      setRefundReason('');
+                    }}
+                    className="px-3 py-2 rounded-lg bg-red-500/15 border border-red-500/30 text-xs font-semibold text-red-400 hover:bg-red-500/25 transition"
+                  >
+                    Issue Refund
+                  </button>
+                )}
+              </div>
               <button
                 onClick={() => {
                   const o = detailOrder;
@@ -269,6 +302,55 @@ export default function OrdersPage() {
         onClose={() => setReceiptOrder(null)}
         order={receiptOrder}
       />
+
+      {/* Organizer Refund Modal */}
+      <Modal
+        open={!!refundTarget}
+        onClose={() => setRefundTarget(null)}
+        title="Issue Customer Refund"
+        footer={
+          <>
+            <button
+              onClick={() => setRefundTarget(null)}
+              className="px-4 py-2.5 rounded-xl text-sm font-medium text-[#949599] hover:text-white transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleRefundOrder}
+              disabled={refunding}
+              className="px-5 py-2.5 rounded-xl bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition disabled:opacity-50"
+            >
+              {refunding ? 'Refunding...' : 'Confirm Refund'}
+            </button>
+          </>
+        }
+      >
+        {refundTarget && (
+          <div className="space-y-3">
+            <p className="text-sm text-[#EFEFF1]">
+              Refund order <span className="font-mono text-white">#{refundTarget.reference || refundTarget.id}</span> for{' '}
+              <span className="font-bold text-white">{format(refundTarget.amount || refundTarget.total)}</span> to{' '}
+              <span className="font-semibold text-white">{refundTarget.customerName || refundTarget.user?.name}</span>?
+            </p>
+            <p className="text-xs text-[#949599]">
+              This will cancel the attendee's ticket pass and release the seats back to your event inventory.
+            </p>
+            <div>
+              <label className="text-xs font-semibold text-[#949599] block mb-1">
+                Reason for Refund (Optional)
+              </label>
+              <textarea
+                value={refundReason}
+                onChange={(e) => setRefundReason(e.target.value)}
+                placeholder="e.g. Customer requested cancellation / emergency..."
+                rows={3}
+                className="w-full px-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40 resize-none"
+              />
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

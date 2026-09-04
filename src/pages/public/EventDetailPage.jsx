@@ -1028,6 +1028,7 @@ export default function EventDetailPage() {
                     <InteractiveSeatMap
                       ticketTypes={tickets}
                       currency={event?.currency || 'GHS'}
+                      event={event}
                       onSelectTicket={(ticket) => openPurchase(ticket)}
                     />
                   </div>

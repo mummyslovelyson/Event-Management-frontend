@@ -57,6 +57,7 @@ import PromotionsPage from '@/pages/organizer/PromotionsPage';
 import ReportsPage from '@/pages/organizer/ReportsPage';
 import MarketingPage from '@/pages/organizer/MarketingPage';
 import TeamPage from '@/pages/organizer/TeamPage';
+import OrganizerPaymentsPage from '@/pages/organizer/OrganizerPaymentsPage';
 import WalletPage from '@/pages/organizer/WalletPage';
 import OrganizerSettingsPage from '@/pages/organizer/OrganizerSettingsPage';
 import OrganizerCategoriesPage from '@/pages/organizer/OrganizerCategoriesPage';
@@ -190,7 +191,8 @@ function AppRoutes() {
             <Route path="/organizer/reports" element={<ReportsPage />} />
             <Route path="/organizer/marketing" element={<MarketingPage />} />
             <Route path="/organizer/team" element={<TeamPage />} />
-            <Route path="/organizer/wallet" element={<WalletPage />} />
+            <Route path="/organizer/payments" element={<OrganizerPaymentsPage />} />
+            <Route path="/organizer/wallet" element={<OrganizerPaymentsPage />} />
             <Route path="/organizer/support" element={<UserSupportPage />} />
             <Route path="/organizer/categories" element={<OrganizerCategoriesPage />} />
             <Route path="/organizer/settings" element={<OrganizerSettingsPage />} />

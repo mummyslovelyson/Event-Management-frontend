@@ -9,7 +9,7 @@ import {
   CalendarDays, Ticket as TicketIcon, Activity, ArrowRight,
   PlusCircle, BarChart3, UsersRound, Wallet, Calendar,
   ScanLine, Users, CheckCircle2, TrendingUp, DollarSign,
-  Clock, ShieldAlert,
+  Clock, ShieldAlert, CreditCard,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
@@ -127,11 +127,14 @@ export default function OrganizerDashboard() {
           trend={metrics.ticketsSoldTrend ?? 0}
           trendLabel="vs last month"
         />
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 flex flex-col justify-between">
+        <Link
+          to="/organizer/payments"
+          className="rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/30 p-5 flex flex-col justify-between transition-colors group cursor-pointer"
+        >
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-[#949599]">Available Balance</span>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
-              <Wallet className="w-4 h-4" />
+            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
+              <CreditCard className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
@@ -140,10 +143,12 @@ export default function OrganizerDashboard() {
             </p>
             <div className="mt-2 flex items-center justify-between">
               <span className="text-[11px] text-[#949599]">Pending: {format(wallet.pending ?? 0)}</span>
-              <span className="text-xs text-emerald-400 font-medium">Ready for payout</span>
+              <span className="text-xs text-emerald-400 font-medium group-hover:underline flex items-center gap-1">
+                Manage Payments <ArrowRight className="w-3 h-3" />
+              </span>
             </div>
           </div>
-        </div>
+        </Link>
         <StatCard
           icon={CalendarDays}
           label="Active Events"
@@ -250,9 +255,17 @@ export default function OrganizerDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Orders Table */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
-          <div className="px-5 py-4 border-b border-[#262B2F]">
-            <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Recent Ticket Purchases</h2>
-            <p className="text-xs text-[#949599]">Real-time orders received</p>
+          <div className="px-5 py-4 border-b border-[#262B2F] flex items-center justify-between">
+            <div>
+              <h2 className="text-[15px] font-semibold text-[#EFEFF1]">Recent Ticket Purchases</h2>
+              <p className="text-xs text-[#949599]">Real-time customer payments received</p>
+            </div>
+            <Link
+              to="/organizer/payments"
+              className="text-xs font-medium text-white hover:text-[#CBD5E1] transition flex items-center gap-1"
+            >
+              Manage Payments <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
           {recentOrders.length > 0 ? (
             <div className="overflow-x-auto">
@@ -268,7 +281,12 @@ export default function OrganizerDashboard() {
                 </thead>
                 <tbody className="divide-y divide-[#262B2F]/70">
                   {recentOrders.map((o) => (
-                    <tr key={o.id} className="hover:bg-[#1D2124] transition-colors">
+                    <tr
+                      key={o.id}
+                      onClick={() => navigate('/organizer/payments')}
+                      className="hover:bg-[#1D2124] transition-colors cursor-pointer"
+                      title="Manage payment"
+                    >
                       <td className="hidden md:table-cell px-5 py-3 font-mono text-xs text-[#EFEFF1]">
                         #{o.reference ? o.reference.slice(-6) : String(o.id ?? '').slice(-6)}
                       </td>
