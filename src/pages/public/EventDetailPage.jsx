@@ -8,7 +8,7 @@ import {
   Smartphone, Wallet, ShieldCheck, Loader2, User, AlertCircle,
   UserPlus, UserCheck, UsersRound, CalendarClock, Trash2,
   Bell, BellRing, CalendarPlus, MessageCircle, Send as TelegramIcon,
-  MessageSquare, Car, Sparkles, Send,
+  MessageSquare, Car, Send,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import EventCard from '@/components/common/EventCard';

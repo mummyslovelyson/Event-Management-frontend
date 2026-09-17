@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
   Ticket as TicketIcon, CalendarDays, CheckCircle2, Heart, Compass,
-  ArrowRight, TrendingUp, Sparkles, Activity, MapPin, Calendar,
+  ArrowRight, TrendingUp, Activity, MapPin, Calendar,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getUserTickets } from '@/api/tickets';
@@ -174,7 +174,7 @@ export default function AttendeeDashboard() {
       <motion.div variants={itemFade}>
         <SectionHeader title="Recommended For You" subtitle="Personalized recommendations based on your activity" />
         {recommended.length === 0 ? (
-          <EmptyState icon={Sparkles} title="No recommendations yet" description="Personalized event recommendations will appear here." />
+          <EmptyState icon={Compass} title="No recommendations yet" description="Personalized event recommendations will appear here." />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {recommended.map((event) => (

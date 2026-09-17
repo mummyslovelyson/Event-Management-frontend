@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Clock, ShieldCheck, CheckCircle2, Building2, Mail, Phone,
   MapPin, Tag, Globe, RefreshCw, LogOut, ArrowRight, ExternalLink,
-  Sparkles, AlertCircle,
+  AlertCircle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
@@ -122,7 +122,7 @@ export default function OrganizerPendingApproval() {
               {/* Step 3 */}
               <div className="p-3.5 rounded-xl bg-[#171A1D]/60 border border-[#262B2F] opacity-75">
                 <div className="flex items-center gap-2 text-[#6B7278] mb-1">
-                  <Sparkles className="w-4 h-4 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span className="text-xs font-bold uppercase tracking-wider">Step 3 · Pending</span>
                 </div>
                 <p className="text-sm font-semibold text-[#949599]">Dashboard &amp; Ticketing</p>

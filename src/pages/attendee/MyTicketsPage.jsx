@@ -7,7 +7,7 @@ import {
   Ticket as TicketIcon, Search, Download, Send, Calendar, MapPin, Armchair,
   X, Printer, CheckCircle2, Clock, XCircle, QrCode, Tag, Store, BadgeDollarSign,
   ChevronDown, Loader2, CalendarPlus, Share2, Bell, BellRing, ExternalLink,
-  Info, Sparkles, ShieldCheck,
+  Info, ShieldCheck,
 } from 'lucide-react';
 import { getUserTickets, transferTicket, downloadTicket } from '@/api/tickets';
 import { getMyResale, createResaleListing, cancelResaleListing } from '@/api/resale';
@@ -361,7 +361,7 @@ export default function MyTicketsPage() {
                   {/* Pre-sale & ticket alert info */}
                   <div className="p-3 rounded-xl bg-[#14171A] border border-[#262B2F] flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2 text-[#EFEFF1]">
-                      <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                      <Tag className="w-4 h-4 text-amber-400 shrink-0" />
                       <span>{ev.min_price != null ? `Tickets from ${format(ev.min_price)}` : 'Tickets available'}</span>
                     </div>
                     <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Share2, MessageCircle, Send as TelegramIcon, Twitter, Facebook,
-  Linkedin, MessageSquare, Link2, Copy, Check, Sparkles, Download,
+  Linkedin, MessageSquare, Link2, Copy, Check, Download,
   Users, MapPin, Calendar, QrCode, X,
 } from 'lucide-react';
 import toast from 'react-hot-toast';

@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Download, Printer, ShieldCheck, MapPin, Calendar, Clock, Sparkles, Ticket as TicketIcon } from 'lucide-react';
+import { Download, Printer, ShieldCheck, MapPin, Calendar, Clock, Ticket as TicketIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 /**

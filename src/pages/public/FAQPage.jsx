@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   HelpCircle, ChevronDown, Search, MessageSquare, Ticket,
-  CreditCard, Users, ShieldCheck, Mail, Sparkles,
+  CreditCard, Users, ShieldCheck, Mail,
 } from 'lucide-react';
 
 const categories = [
@@ -210,7 +210,7 @@ export default function FAQPage() {
                   <Mail className="w-4 h-4" /> Contact Support
                 </Link>
                 <a href="mailto:support@tribescliqs.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#494F55] text-[#EFEFF1] text-sm font-semibold hover:border-white/40 hover:text-white transition">
-                  <Sparkles className="w-4 h-4" /> support@tribescliqs.com
+                  <Mail className="w-4 h-4" /> support@tribescliqs.com
                 </a>
               </div>
             </div>

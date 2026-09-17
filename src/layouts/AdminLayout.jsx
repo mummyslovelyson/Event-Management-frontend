@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   LayoutDashboard, Users, CalendarDays, Layers, CreditCard, BarChart3,
   FileText, Bell, LifeBuoy, Settings, ScrollText, Menu, X, LogOut,
-  Search, ChevronDown, UserCheck, AlertTriangle, Globe, Brain, CheckCircle, ExternalLink,
+  Search, ChevronDown, UserCheck, AlertTriangle, Globe, BookOpen, CheckCircle, ExternalLink,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getAdminNotifications, markAdminNotificationsRead } from '@/api/admin';
@@ -22,7 +22,7 @@ const nav = [
   { to: '/admin/content', label: 'Content', icon: FileText },
   { to: '/admin/notifications', label: 'Notifications', icon: Bell },
   { to: '/admin/support', label: 'Support', icon: LifeBuoy },
-  { to: '/admin/ai-training', label: 'Concierge Training', icon: Brain },
+  { to: '/admin/ai-training', label: 'Concierge Training', icon: BookOpen },
   { to: '/admin/settings', label: 'Settings', icon: Settings, systemAdminOnly: true },
   { to: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText, systemAdminOnly: true },
 ];

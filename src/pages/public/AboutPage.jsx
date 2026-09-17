@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import {
-  Target, Eye, Users, Heart, ShieldCheck, Zap, Sparkles, MapPin, CheckCircle2,
+  Target, Eye, Users, Heart, ShieldCheck, Zap, MapPin, CheckCircle2,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

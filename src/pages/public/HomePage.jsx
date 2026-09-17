@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import {
   Search, MapPin, Calendar, Tag, ArrowRight, Ticket, Compass,
-  CalendarCheck, Mic2, Trophy, Sparkles as FestivalIcon, Presentation,
-  GraduationCap, Wrench, Drama, Church, Heart, Sparkles, Mail,
+  CalendarCheck, Mic2, Trophy, PartyPopper as FestivalIcon, Presentation,
+  GraduationCap, Wrench, Drama, Church, Heart, Mail, Shirt,
   TrendingUp, Users, Building2, ChevronRight, CheckCircle2, Shield,
   CreditCard, QrCode, LayoutGrid, Music, Flame,
 } from 'lucide-react';
@@ -29,7 +29,7 @@ const CATEGORY_ICONS = {
   Theatre: Drama,
   Church: Church,
   Wedding: Heart,
-  Fashion: Sparkles,
+  Fashion: Shirt,
   Nightlife: Flame,
 };
 
@@ -364,7 +364,7 @@ export default function HomePage() {
           <div className="flex items-end justify-between mb-8">
             <div>
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-white">
-                <Sparkles className="w-3.5 h-3.5" /> Tailored Picks
+                <Compass className="w-3.5 h-3.5" /> Tailored Picks
               </span>
               <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Recommended For You</h2>
               <p className="mt-1 text-xs sm:text-sm text-[#949599]">Personalized events matched to your favorite categories, city, and attendance history.</p>

@@ -62,12 +62,14 @@ function SoftFill({ d, color = GOLD }) {
 
 function Sparkle({ x, y, size = 5, delay = 0, color = GOLD }) {
   return (
-    <motion.path
-      d={`M ${x} ${y - size} L ${x + size * 0.3} ${y - size * 0.3} L ${x + size} ${y} L ${x + size * 0.3} ${y + size * 0.3} L ${x} ${y + size} L ${x - size * 0.3} ${y + size * 0.3} L ${x - size} ${y} L ${x - size * 0.3} ${y - size * 0.3} Z`}
+    <motion.circle
+      cx={x}
+      cy={y}
+      r={size * 0.4}
       fill={color}
       stroke="none"
       initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: [0, 1, 0], scale: [0, 1, 0.4] }}
+      animate={{ opacity: [0, 0.7, 0], scale: [0.6, 1.2, 0.6] }}
       transition={{ duration: 2.6, repeat: Infinity, delay, ease: 'easeInOut' }}
       style={{ transformOrigin: `${x}px ${y}px` }}
     />

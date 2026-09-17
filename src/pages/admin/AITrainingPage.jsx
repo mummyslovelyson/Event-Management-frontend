@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Brain, Plus, Search, Trash2, Edit3, Check, X,
+  Plus, Search, Trash2, Edit3, Check, X,
   Sliders, Send, Play, RefreshCw, AlertCircle, Database, CheckCircle2,
-  FileText, ShieldCheck, HelpCircle, Tags, Cpu
+  FileText, ShieldCheck, HelpCircle, Tags,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
@@ -459,7 +459,7 @@ export default function AITrainingPage() {
           {/* Test Input Form */}
           <div className="rounded-2xl bg-[#161D22] border border-[#2E363E] p-6 space-y-4">
             <div className="flex items-center gap-2 text-white font-bold text-sm">
-              <Cpu className="w-4 h-4 text-emerald-400" />
+              <HelpCircle className="w-4 h-4 text-emerald-400" />
               <span>Test Question</span>
             </div>
             <p className="text-xs text-[#949599]">
@@ -521,7 +521,7 @@ export default function AITrainingPage() {
             <div>
               <div className="flex items-center justify-between text-white font-bold text-sm">
                 <div className="flex items-center gap-2">
-                  <Brain className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   <span>Concierge Response Preview</span>
                 </div>
                 {testResult && (

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MessageSquare, X, Send, Sparkles, Bot, User, Trash2,
+  MessageSquare, X, Send, User, Trash2,
   Minimize2, Maximize2, Loader2, ArrowDownCircle, ChevronRight,
 } from 'lucide-react';
 import { sendChatMessage } from '@/api/chat';

@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, SlidersHorizontal, X, MapPin, Calendar, Tag, ChevronDown,
-  ArrowUpDown, Inbox, Sparkles, LayoutGrid, List, RotateCcw,
+  ArrowUpDown, Inbox, Flame, LayoutGrid, List, RotateCcw,
   Check, DollarSign, Clock, Compass, ChevronRight,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -535,7 +535,7 @@ export default function ExplorePage() {
         <div className="space-y-2.5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-[#949599] flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Popular Categories
+              <Flame className="w-3.5 h-3.5 text-amber-400" /> Popular Categories
             </span>
             <span className="text-[11px] text-[#6B7278]">Scroll to view all</span>
           </div>

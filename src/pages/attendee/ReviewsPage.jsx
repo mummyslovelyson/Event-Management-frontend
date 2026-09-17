@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
-  Star, Pencil, Trash2, Calendar, MapPin, MessageSquare, Award, Sparkles,
+  Star, Pencil, Trash2, Calendar, MapPin, MessageSquare, Award,
 } from 'lucide-react';
 import { getReviews, createReview, deleteReview } from '@/api/users';
 import { getUserTickets } from '@/api/tickets';
@@ -151,7 +151,7 @@ export default function ReviewsPage() {
       <motion.div variants={itemFade} className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard icon={MessageSquare} label="Reviews Written" value={reviews.length} accent />
         <StatCard icon={Award} label="Average Rating Given" value={`${avgRating} / 5`} />
-        <StatCard icon={Sparkles} label="Events to Review" value={eventsToReview.length} />
+        <StatCard icon={Star} label="Events to Review" value={eventsToReview.length} />
       </motion.div>
 
       {/* Rating distribution */}

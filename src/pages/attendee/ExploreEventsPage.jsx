@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
-  Search, SlidersHorizontal, X, MapPin, DollarSign, Tag, Calendar, ChevronDown, Ticket, Sparkles,
+  Search, SlidersHorizontal, X, MapPin, DollarSign, Tag, Calendar, ChevronDown, Ticket, Compass, Star,
 } from 'lucide-react';
 import { getEvents, getCategories, getRecommendedEvents } from '@/api/events';
 import { useAuth } from '@/context/AuthContext';
@@ -166,7 +166,7 @@ export default function ExploreEventsPage() {
           <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
               <span className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center">
-                <Sparkles className="w-4 h-4" />
+                <Compass className="w-4 h-4" />
               </span>
               <div>
                 <h2 className="text-base font-bold text-[#EFEFF1]">Recommended For You</h2>
@@ -241,7 +241,7 @@ export default function ExploreEventsPage() {
       <motion.div variants={itemFade} className="space-y-2.5">
         <div className="flex items-center justify-between">
           <p className="text-xs font-bold uppercase tracking-wider text-[#949599] flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Discover Performers, Teams & Keynote Speakers
+            <Star className="w-3.5 h-3.5 text-amber-400" /> Discover Performers, Teams & Keynote Speakers
           </p>
           <span className="text-[11px] text-[#494F55]">1-tap filter</span>
         </div>

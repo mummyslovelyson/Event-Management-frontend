@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Ticket, Sparkles, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Ticket, ArrowRight } from 'lucide-react';
 import { formatCurrency } from '@/utils/formatters';
 
 export default function ChatEventCard({ event, onNavigate }) {

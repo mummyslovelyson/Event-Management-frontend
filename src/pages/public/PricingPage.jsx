@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  Check, X, Sparkles, Rocket, Crown, Building2, Ticket,
+  Check, X, Rocket, Crown, Building2, Ticket,
   Users, BarChart3, Mail, Percent, Headphones, Zap,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
