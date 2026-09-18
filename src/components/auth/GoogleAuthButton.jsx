@@ -205,33 +205,8 @@ export default function GoogleAuthButton({
         }
       }, 500);
     } else {
-      // Graceful local demo prompt when client ID is not yet configured in .env
-      promptDemoGoogleSignIn();
+      toast.error('Google Sign-In is not configured. Please sign in with your email and password.');
     }
-  };
-
-  const promptDemoGoogleSignIn = () => {
-    const email = window.prompt('Enter your Google email for demo sign-in (e.g. user@gmail.com):');
-    if (!email || !email.includes('@')) {
-      if (email) toast.error('Please enter a valid email address');
-      return;
-    }
-    const name = email.split('@')[0].replace(/[._]/g, ' ');
-    const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
-
-    // Create a mock Google JWT credential token with valid base64 payload
-    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-    const payload = btoa(
-      JSON.stringify({
-        sub: `google_uid_${Math.abs(email.split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0))}`,
-        email: email.toLowerCase().trim(),
-        name: formattedName,
-        picture: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(email)}`,
-        email_verified: true,
-      }),
-    );
-    const mockToken = `${header}.${payload}.mockSignature`;
-    handleGoogleResponse(mockToken);
   };
 
   // Load Google Identity Services script if not already present
