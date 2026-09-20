@@ -10,21 +10,10 @@ import toast from 'react-hot-toast';
 import EventCard from '@/components/common/EventCard';
 import EmptyState from '@/components/common/EmptyState';
 import Pagination from '@/components/common/Pagination';
-import { getEvents } from '@/api/events';
+import { getEvents, getCategories } from '@/api/events';
 import { POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-
-const CATEGORIES = [
-  'Musical Shows',
-  'Festivals',
-  'Corporate Events',
-  'Tournaments',
-  'Social Events',
-  'Movies & Stage Plays',
-  'Fairs & Exhibitions',
-  'Religious Activities',
-];
 
 const POPULAR_CITIES = ['Accra', 'Kumasi', 'Takoradi', 'Tema', 'Cape Coast', 'Tamale'];
 
@@ -116,6 +105,24 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
   const [showFiltersMobile, setShowFiltersMobile] = useState(false);
+  const [availableCategories, setAvailableCategories] = useState([]);
+
+  // Fetch real categories from database
+  useEffect(() => {
+    let active = true;
+    getCategories()
+      .then((res) => {
+        if (!active) return;
+        const cats = Array.isArray(res.data) ? res.data : res.data?.categories || [];
+        setAvailableCategories(cats.map((c) => (typeof c === 'string' ? c : c.name)).filter(Boolean));
+      })
+      .catch(() => {
+        if (active) setAvailableCategories([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Debounce search typing by 350ms
   useEffect(() => {
@@ -297,7 +304,7 @@ export default function ExplorePage() {
           )}
         </label>
         <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
-          {CATEGORIES.map((cat) => {
+          {availableCategories.map((cat) => {
             const isSelected = filters.categories.includes(cat);
             return (
               <button

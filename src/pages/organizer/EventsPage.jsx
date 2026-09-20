@@ -89,12 +89,8 @@ export default function EventsPage() {
         await unpublishEvent(e.id);
         toast.success('Event unpublished');
       } else {
-        // Publishing submits the event for admin review — it goes live only
-        // after an admin approves it.
         await publishEvent(e.id);
-        toast.success(e.status === 'pending'
-          ? 'Event resubmitted for review'
-          : 'Event submitted for review. It will go live once approved.');
+        toast.success('Event published and live for ticket sales');
       }
       fetchEvents();
     } catch (err) {
@@ -183,7 +179,15 @@ export default function EventsPage() {
       ) : view === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {events.map((e) => (
-            <EventCard key={e.id} event={e} onEdit={() => navigate(`/organizer/events/${e.id}/edit`)} onView={() => navigate(`/events/${e.id}`)} onTogglePublish={() => togglePublish(e)} onDelete={() => setDeleteTarget(e)} />
+            <EventCard
+              key={e.id}
+              event={e}
+              onEdit={() => navigate(`/organizer/events/${e.id}/edit`)}
+              onManageTickets={() => navigate(`/organizer/tickets?event=${e.id}`)}
+              onView={() => navigate(`/events/${e.id}`)}
+              onTogglePublish={() => togglePublish(e)}
+              onDelete={() => setDeleteTarget(e)}
+            />
           ))}
         </div>
       ) : (
@@ -221,9 +225,10 @@ export default function EventsPage() {
                     <td className="px-5 py-3"><Badge variant={statusVariant(e.status)} size="sm">{e.status}</Badge></td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-1" onClick={(ev) => ev.stopPropagation()}>
-                        <button onClick={() => navigate(`/organizer/events/${e.id}/edit`)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit"><Edit2 className="w-4 h-4" /></button>
-                        <button onClick={() => navigate(`/events/${e.id}`)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View"><Eye className="w-4 h-4" /></button>
-                        <button onClick={() => togglePublish(e)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title={e.status === 'published' ? 'Unpublish' : 'Submit for Review'}>
+                        <button onClick={() => navigate(`/organizer/events/${e.id}/edit`)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit Event"><Edit2 className="w-4 h-4" /></button>
+                        <button onClick={() => navigate(`/organizer/tickets?event=${e.id}`)} className="p-2.5 rounded-md text-[#949599] hover:text-amber-400 hover:bg-amber-400/10 transition" title="Manage & Upload Tickets"><TicketIcon className="w-4 h-4" /></button>
+                        <button onClick={() => navigate(`/events/${e.id}`)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View Public Page"><Eye className="w-4 h-4" /></button>
+                        <button onClick={() => togglePublish(e)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title={e.status === 'published' ? 'Unpublish' : 'Publish Event'}>
                           {e.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Send className="w-4 h-4" />}
                         </button>
                         <button onClick={() => setDeleteTarget(e)} className="p-2.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete"><Trash2 className="w-4 h-4" /></button>
@@ -261,7 +266,7 @@ export default function EventsPage() {
   );
 }
 
-function EventCard({ event, onEdit, onView, onTogglePublish, onDelete }) {
+function EventCard({ event, onEdit, onManageTickets, onView, onTogglePublish, onDelete }) {
   const [menu, setMenu] = useState(false);
   const sold = event.ticketsSold || 0;
   const cap = event.totalCapacity || event.capacity || 0;
@@ -282,10 +287,11 @@ function EventCard({ event, onEdit, onView, onTogglePublish, onDelete }) {
             <button onClick={(e) => { e.stopPropagation(); setMenu((v) => !v); }} className="p-2.5 rounded-md bg-black/40 text-white hover:bg-black/60 transition"><MoreVertical className="w-4 h-4" /></button>
             <AnimatePresence>
               {menu && (
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="absolute right-0 mt-1 w-40 rounded-lg bg-[#171A1D] border border-[#494F55]/40 shadow-xl py-1 z-10">
-                  <button onClick={() => { setMenu(false); onEdit(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Edit2 className="w-4 h-4" /> Edit</button>
-                  <button onClick={() => { setMenu(false); onView(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Eye className="w-4 h-4" /> View</button>
-                  <button onClick={() => { setMenu(false); onTogglePublish(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Send className="w-4 h-4" /> {event.status === 'published' ? 'Unpublish' : 'Submit for Review'}</button>
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="absolute right-0 mt-1 w-44 rounded-lg bg-[#171A1D] border border-[#494F55]/40 shadow-xl py-1 z-10">
+                  <button onClick={() => { setMenu(false); onEdit(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Edit2 className="w-4 h-4" /> Edit Event</button>
+                  <button onClick={() => { setMenu(false); onManageTickets?.(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-amber-400 hover:bg-[#494F55]/20"><TicketIcon className="w-4 h-4 text-amber-400" /> Manage Tickets</button>
+                  <button onClick={() => { setMenu(false); onView(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Eye className="w-4 h-4" /> View Public Page</button>
+                  <button onClick={() => { setMenu(false); onTogglePublish(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/20"><Send className="w-4 h-4" /> {event.status === 'published' ? 'Unpublish' : 'Publish Event'}</button>
                   <button onClick={() => { setMenu(false); onDelete(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-red-400 hover:bg-red-500/10"><Trash2 className="w-4 h-4" /> Delete</button>
                 </motion.div>
               )}

@@ -11,3 +11,7 @@ export const bulkCheckIn = (data) => api.post('/tickets/check-in/bulk', data);
 export const transferTicket = (ticketId, data) => api.post(`/tickets/${ticketId}/transfer`, data);
 export const downloadTicket = (id) => api.get(`/tickets/${id}/download`, { responseType: 'blob' });
 export const verifyTicket = (code) => api.get(`/tickets/verify/${code}`);
+export const uploadTicketFiles = (formData) => api.post('/upload/tickets', formData, {
+  headers: { 'Content-Type': 'multipart/form-data' },
+});
+export const getUploadedTickets = (ticketTypeId) => api.get(`/tickets/types/${ticketTypeId}/inventory`);

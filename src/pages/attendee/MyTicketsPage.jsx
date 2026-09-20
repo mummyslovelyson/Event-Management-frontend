@@ -7,7 +7,7 @@ import {
   Ticket as TicketIcon, Search, Download, Send, Calendar, MapPin, Armchair,
   X, Printer, CheckCircle2, Clock, XCircle, QrCode, Tag, Store, BadgeDollarSign,
   ChevronDown, Loader2, CalendarPlus, Share2, Bell, BellRing, ExternalLink,
-  Info, ShieldCheck,
+  Info, ShieldCheck, FileText,
 } from 'lucide-react';
 import { getUserTickets, transferTicket, downloadTicket } from '@/api/tickets';
 import { getMyResale, createResaleListing, cancelResaleListing } from '@/api/resale';
@@ -16,7 +16,7 @@ import { getGoogleCalendarUrl, downloadIcsFile } from '@/utils/calendar';
 import Modal from '@/components/common/Modal';
 import SocialShareModal from '@/components/common/SocialShareModal';
 import InvoiceModal from '@/components/tickets/InvoiceModal';
-import TicketPass, { downloadTicketPassAsImage } from '@/components/tickets/TicketPass';
+import TicketPass, { downloadTicketPassAsImage, printTicketPass } from '@/components/tickets/TicketPass';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import EmptyState from '@/components/common/EmptyState';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -35,13 +35,30 @@ const TABS = [
 // into the nested camelCase shape the ticket cards expect so event info actually displays.
 const normalizeTicket = (t) => {
   const template = t.ticket_template || t.ticketTemplate || t.event?.ticket_template || t.event?.ticketTemplate || null;
+  const unitPrice = t.unit_price ?? t.unitPrice ?? t.ticket_price ?? t.ticketPrice ?? t.price;
+  const parsedPrice = unitPrice !== undefined && unitPrice !== null && unitPrice !== '' ? Number(unitPrice) : null;
   return {
     ...t,
-    ticketType: t.ticketType || t.type || t.ticket_type_name || t.ticketTypeName || 'General',
-    price: t.price || t.ticket_price || t.amount || 0,
+    ticketNumber: t.ticketNumber || t.ticket_number || `TC-${t.id}`,
+    qrCode: t.qrCode || t.qr_code || t.ticket_number || `TC-${t.id}`,
+    ticketType: t.ticketType || t.type || t.ticket_type_name || t.ticketTypeName || t.name || 'General',
+    price: parsedPrice !== null && !isNaN(parsedPrice) ? parsedPrice : (t.amount ? Number(t.amount) : 0),
+    unitPrice: parsedPrice !== null && !isNaN(parsedPrice) ? parsedPrice : null,
     attendeeName: t.attendee_name || t.attendeeName || t.user_name || t.userName || 'Attendee',
+    attendeeEmail: t.attendee_email || t.attendeeEmail || t.user_email || t.email || '',
+    attendeePhone: t.attendee_phone || t.attendeePhone || t.user_phone || t.phone || '',
+    orderId: t.order_id || t.orderId || null,
+    paymentRef: t.payment_reference || t.paymentRef || t.reference || null,
+    paymentMethod: t.payment_method || t.paymentMethod || 'Paystack (Card / MoMo)',
+    paymentStatus: t.payment_status || t.paymentStatus || 'paid',
+    invoiceNumber: t.invoice_number || t.invoiceNumber || null,
+    orderDiscount: Number(t.order_discount ?? t.discount_amount ?? 0),
+    orderTotal: t.order_total !== undefined && t.order_total !== null ? Number(t.order_total) : null,
+    orderCreatedAt: t.order_created_at || t.orderCreatedAt || t.created_at,
     seat: t.seat || t.seatNumber || t.seat_number || t.seatInfo,
     ticketTemplate: template,
+    ticketFileUrl: t.ticket_file_url || t.ticketFileUrl || null,
+    ticketFileName: t.ticket_file_name || t.ticketFileName || null,
     event: {
       id: t.event_id || t.event?.id,
       title: t.event?.title || t.event_title || t.event_name || t.eventName || 'Event',
@@ -411,7 +428,7 @@ export default function MyTicketsPage() {
                 ticket={ticket}
                 onDownload={() => handleDownload(ticket)}
                 onTransfer={() => setTransferTarget(ticket)}
-                onPrint={() => setPrintTicket(ticket)}
+                onPrint={() => printTicketPass(ticket)}
                 onShare={() => setShareTicket(ticket)}
                 onViewEvent={() => setPreviewEvent(ticket.event)}
                 onInvoice={() => setInvoiceTicket(ticket)}
@@ -612,7 +629,7 @@ export default function MyTicketsPage() {
             <TicketPass
               ticket={printTicket}
               onDownload={() => downloadTicketPassAsImage(printTicket)}
-              onPrint={() => window.print()}
+              onPrint={() => printTicketPass(printTicket)}
             />
           </div>
         )}
@@ -772,19 +789,24 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
         <div className="flex flex-col sm:flex-row gap-4 p-5">
           {/* Left: details */}
           <div className="flex-1 min-w-0 space-y-2.5">
-            <div>
+            <div className="flex items-center justify-between">
               <span className="text-[10px] font-semibold uppercase tracking-wide text-white">
                 {ticket.ticketType || ticket.type || 'General'}
               </span>
-              <h3
-                onClick={onViewEvent}
-                className="text-base font-bold text-[#EFEFF1] line-clamp-2 hover:text-white cursor-pointer transition flex items-center gap-1.5"
-                title="Click to view event details"
-              >
-                <span>{event.title || ticket.eventName || 'Event'}</span>
-                <Info className="w-3.5 h-3.5 text-[#949599] shrink-0 hover:text-white" />
-              </h3>
+              {(ticket.price !== undefined && ticket.price !== null && Number(ticket.price) > 0) && (
+                <span className="text-[11px] font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
+                  GHS {Number(ticket.price).toFixed(2).replace(/\.00$/, '')}
+                </span>
+              )}
             </div>
+            <h3
+              onClick={onViewEvent}
+              className="text-base font-bold text-[#EFEFF1] line-clamp-2 hover:text-white cursor-pointer transition flex items-center gap-1.5"
+              title="Click to view event details"
+            >
+              <span>{event.title || ticket.eventName || 'Event'}</span>
+              <Info className="w-3.5 h-3.5 text-[#949599] shrink-0 hover:text-white" />
+            </h3>
             <div className="space-y-1.5 text-sm">
               <p className="text-[#949599] flex items-center gap-1.5">
                 <Calendar className="w-4 h-4 text-[#494F55] shrink-0" />
@@ -823,6 +845,22 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
             </p>
           </div>
         </div>
+
+        {/* Attached Organizer Pass File Download */}
+        {ticket.ticketFileUrl && (
+          <div className="px-5 pb-3">
+            <a
+              href={ticket.ticketFileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              download={ticket.ticketFileName || 'Official-Ticket-Pass'}
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500/20 via-amber-400/30 to-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold hover:brightness-125 transition-all shadow-sm"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              Download Attached Pass ({ticket.ticketFileName?.toLowerCase().endsWith('.pdf') ? 'PDF' : 'Pass'})
+            </a>
+          </div>
+        )}
 
         {/* Actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 p-5 pt-0">

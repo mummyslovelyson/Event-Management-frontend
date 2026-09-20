@@ -6,7 +6,13 @@ import api from '@/api/axios';
 const CurrencyContext = createContext(null);
 
 export function CurrencyProvider({ children }) {
-  const [currency, setCurrency] = useState(() => localStorage.getItem('tc_currency') || 'GHS');
+  const [currency, setCurrency] = useState(() => {
+    try {
+      return sessionStorage.getItem('tc_currency') || 'GHS';
+    } catch {
+      return 'GHS';
+    }
+  });
   const [rate, setRate] = useState(15); // GHS per 1 USD
 
   useEffect(() => {
@@ -25,7 +31,9 @@ export function CurrencyProvider({ children }) {
   const toggle = useCallback(() => {
     setCurrency((prev) => {
       const next = prev === 'USD' ? 'GHS' : 'USD';
-      localStorage.setItem('tc_currency', next);
+      try {
+        sessionStorage.setItem('tc_currency', next);
+      } catch { /* ignore */ }
       return next;
     });
   }, []);

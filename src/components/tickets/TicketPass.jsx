@@ -1,7 +1,150 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import { QRCodeSVG } from 'qrcode.react';
-import { Download, Printer, ShieldCheck, MapPin, Calendar, Clock, Ticket as TicketIcon } from 'lucide-react';
+import { Download, Printer, ShieldCheck, MapPin, Calendar, Clock, Ticket as TicketIcon, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
+
+/**
+ * Generate a complete, self-contained SVG string with xmlns for a QR code
+ */
+export const generateQrSvgString = (value, size = 300) => {
+  try {
+    let svgString = ReactDOMServer.renderToStaticMarkup(
+      React.createElement(QRCodeSVG, {
+        value: String(value),
+        size,
+        level: 'H',
+        includeMargin: false,
+        xmlns: 'http://www.w3.org/2000/svg',
+      })
+    );
+    if (!svgString.includes('xmlns=')) {
+      svgString = svgString.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+    }
+    return svgString;
+  } catch (err) {
+    console.error('[generateQrSvgString] Error generating QR SVG:', err);
+    return null;
+  }
+};
+
+/**
+ * Draw the QR code onto a 2D canvas at (x, y) with dimension (size x size)
+ * Uses Path2D for instant, synchronous, vector rendering.
+ * Falls back to Image SVG data URL if Path2D is not available.
+ */
+export const drawQrCodeToCanvas = async (ctx, qrValue, x, y, size) => {
+  const svgString = generateQrSvgString(qrValue, size);
+  if (!svgString) return false;
+
+  // 1. Primary approach: Synchronous Path2D vector drawing
+  try {
+    const viewBoxMatch = svgString.match(/viewBox="0 0 (\d+) (\d+)"/);
+    const numCells = viewBoxMatch ? parseInt(viewBoxMatch[1], 10) : 41;
+    const fgPathMatch = svgString.match(/fill="#000000" d="([^"]+)"/);
+
+    if (typeof Path2D !== 'undefined' && fgPathMatch && fgPathMatch[1]) {
+      const d = fgPathMatch[1];
+      const scale = size / numCells;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+      ctx.fillStyle = '#000000';
+      ctx.fill(new Path2D(d));
+      ctx.restore();
+      return true;
+    }
+  } catch (err) {
+    console.warn('[drawQrCodeToCanvas] Path2D failed, falling back to Image loader', err);
+  }
+
+  // 2. Fallback: Image loader with SVG Data URL
+  try {
+    const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+    await new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, x, y, size, size);
+        resolve();
+      };
+      img.onerror = (e) => {
+        console.error('[drawQrCodeToCanvas] Image fallback failed', e);
+        resolve();
+      };
+      img.src = dataUrl;
+    });
+    return true;
+  } catch (err) {
+    console.error('[drawQrCodeToCanvas] All methods failed', err);
+    return false;
+  }
+};
+
+/**
+ * Format tier price accurately: Single ticket displays Single price, Double ticket displays Double price
+ */
+export const formatTicketTierPrice = (ticket) => {
+  if (!ticket) return 'VALID PASS';
+  const rawPrice = ticket.unitPrice ?? ticket.unit_price ?? ticket.ticket_price ?? ticket.ticketPrice ?? ticket.price;
+  if (rawPrice !== undefined && rawPrice !== null && rawPrice !== '') {
+    const num = Number(rawPrice);
+    if (!isNaN(num)) {
+      if (num <= 0) return 'FREE PASS';
+      return `GHS ${num.toFixed(2).replace(/\.00$/, '')}`;
+    }
+  }
+  if (ticket.amount && (ticket.quantity === 1 || !ticket.quantity)) {
+    const num = Number(ticket.amount);
+    if (!isNaN(num) && num > 0) {
+      return `GHS ${num.toFixed(2).replace(/\.00$/, '')}`;
+    }
+  }
+  return 'VALID PASS';
+};
+
+/**
+ * Extract clean tier/ticket type name (e.g. Single, Double, VIP)
+ */
+export const getTicketTierName = (ticket) => {
+  if (!ticket) return 'STANDARD ADMISSION';
+  return (
+    ticket.ticketType ||
+    ticket.ticket_type_name ||
+    ticket.ticketTypeName ||
+    ticket.type ||
+    ticket.name ||
+    'STANDARD ADMISSION'
+  ).toString().toUpperCase();
+};
+
+/**
+ * Extract ticket number with TC prefix fallback
+ */
+export const getTicketCode = (ticket) => {
+  if (!ticket) return 'TC-00000000';
+  return (
+    ticket.ticketNumber ||
+    ticket.ticket_number ||
+    ticket.ticketCode ||
+    ticket.ticket_code ||
+    (ticket.id ? `TC-${ticket.id}` : 'TC-00000000')
+  ).toString().toUpperCase();
+};
+
+/**
+ * Extract attendee name cleanly
+ */
+export const getTicketAttendeeName = (ticket) => {
+  if (!ticket) return 'ATTENDEE';
+  return (
+    ticket.attendeeName ||
+    ticket.attendee_name ||
+    ticket.userName ||
+    ticket.user_name ||
+    ticket.user?.name ||
+    'ATTENDEE'
+  ).toString().toUpperCase();
+};
 
 /**
  * Format date nicely for ticket stubs
@@ -33,13 +176,15 @@ export const downloadTicketPassAsImage = async (ticket) => {
     const timeStr = (event.startTime || ticket.startTime || '7:00 PM - 11:00 PM').toUpperCase();
     const venueStr = (event.venue || ticket.venue || 'ACCRA, GHANA').toUpperCase();
     const cityStr = (event.city || ticket.city || 'ACCRA').toUpperCase();
-    const tierName = (ticket.ticketType || ticket.type || 'STANDARD ADMISSION').toUpperCase();
-    const priceStr = ticket.price ? `GHS ${ticket.price}` : (ticket.amount ? `GHS ${ticket.amount}` : 'VALID PASS');
-    const ticketNo = (ticket.ticketNumber || ticket.id || 'TC-00000000').toString().toUpperCase();
+    const tierName = getTicketTierName(ticket);
+    const priceStr = formatTicketTierPrice(ticket);
+    const ticketNo = getTicketCode(ticket);
     const seatNumber = ticket.seat || ticket.seatNumber || 'GA';
     const rowNumber = ticket.row || (seatNumber.includes('-') ? seatNumber.split('-')[0] : 'AAA');
-    const attendeeName = (ticket.attendeeName || ticket.name || ticket.user?.name || 'ATTENDEE').toUpperCase();
+    const attendeeName = getTicketAttendeeName(ticket);
     const customTemplateUrl = ticket.ticketTemplate || event.ticketTemplate || ticket.ticket_template || event.ticket_template;
+    const origin = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://tribesandcliqs.com';
+    const qrValue = ticket.qrCode || ticket.qr_code || `${origin}/verify/${encodeURIComponent(ticketNo)}`;
 
     // High resolution canvas (1600 x 680)
     const canvas = document.createElement('canvas');
@@ -156,23 +301,8 @@ export const downloadTicketPassAsImage = async (ticket) => {
       drawRoundedRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize, 16);
       ctx.fill();
 
-      const qrSvg = document.getElementById(`ticket-qr-${ticket.id || 'export'}`);
-      if (qrSvg) {
-        const svgData = new XMLSerializer().serializeToString(qrSvg);
-        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        const DOMURL = window.URL || window.webkitURL || window;
-        const url = DOMURL.createObjectURL(svgBlob);
-        const qrImg = new Image();
-        await new Promise((resolve) => {
-          qrImg.onload = () => {
-            ctx.drawImage(qrImg, qrBoxX + 15, qrBoxY + 15, qrBoxSize - 30, qrBoxSize - 30);
-            DOMURL.revokeObjectURL(url);
-            resolve();
-          };
-          qrImg.onerror = resolve;
-          qrImg.src = url;
-        });
-      }
+      // Draw vector QR code directly onto canvas
+      await drawQrCodeToCanvas(ctx, qrValue, qrBoxX + 15, qrBoxY + 15, qrBoxSize - 30);
 
       // Row & Seat
       ctx.textAlign = 'left';
@@ -355,7 +485,7 @@ export const downloadTicketPassAsImage = async (ticket) => {
       ctx.beginPath();
       ctx.arc(ticketX + ticketW, ticketY + ticketH / 2, 26, 0, Math.PI * 2);
       ctx.fill();
-
+      ctx.beginPath();
       ctx.setLineDash([10, 8]);
       ctx.strokeStyle = 'rgba(80, 40, 10, 0.35)';
       ctx.lineWidth = 2.5;
@@ -374,26 +504,10 @@ export const downloadTicketPassAsImage = async (ticket) => {
       drawRoundedRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize, 16);
       ctx.fill();
 
-      const qrSvg = document.getElementById(`ticket-qr-${ticket.id || 'export'}`);
-      if (qrSvg) {
-        const svgData = new XMLSerializer().serializeToString(qrSvg);
-        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        const DOMURL = window.URL || window.webkitURL || window;
-        const url = DOMURL.createObjectURL(svgBlob);
-        const qrImg = new Image();
-        await new Promise((resolve) => {
-          qrImg.onload = () => {
-            ctx.drawImage(qrImg, qrBoxX + 15, qrBoxY + 15, qrBoxSize - 30, qrBoxSize - 30);
-            DOMURL.revokeObjectURL(url);
-            resolve();
-          };
-          qrImg.onerror = resolve;
-          qrImg.src = url;
-        });
-      }
+      // Draw vector QR code directly onto canvas
+      await drawQrCodeToCanvas(ctx, qrValue, qrBoxX + 15, qrBoxY + 15, qrBoxSize - 30);
 
       // Row & Seat
-      ctx.fillStyle = '#1A1208';
       ctx.font = 'bold 18px "Inter", Arial, sans-serif';
       ctx.fillText('ROW', ticketX + 85, ticketY + 345);
       ctx.fillText('SEAT', ticketX + 215, ticketY + 345);
@@ -428,63 +542,61 @@ export const downloadTicketPassAsImage = async (ticket) => {
         if (metrics.width > maxTitleW && n > 0) {
           ctx.fillText(line, leftStubX + (rightStubX - leftStubX) / 2, titleY);
           line = words[n] + ' ';
-          titleY += 58;
+          titleY += 56;
         } else {
           line = testLine;
         }
       }
       ctx.fillText(line, leftStubX + (rightStubX - leftStubX) / 2, titleY);
 
-      // Tier badge
+      // Slogan & Meta under Title
+      const metaY = titleY + 50;
+      ctx.font = 'bold 18px "Inter", Arial, sans-serif';
       ctx.fillStyle = '#6B0F24';
-      const badgeW = 280;
+      ctx.fillText(`🗓 ${dateStr}`, leftStubX + (rightStubX - leftStubX) / 2, metaY);
+
+      ctx.font = 'bold 17px "Inter", Arial, sans-serif';
+      ctx.fillStyle = '#4A2A08';
+      ctx.fillText(`⏰ ${timeStr}`, leftStubX + (rightStubX - leftStubX) / 2, metaY + 34);
+
+      ctx.font = 'bold 17px "Inter", Arial, sans-serif';
+      ctx.fillStyle = '#301A04';
+      ctx.fillText(`📍 ${venueStr}${cityStr ? `, ${cityStr}` : ''}`, leftStubX + (rightStubX - leftStubX) / 2, metaY + 68);
+
+      // Center Tier Badge Pill
+      const badgeW = 220;
       const badgeH = 44;
-      const badgeX = leftStubX + (rightStubX - leftStubX) / 2 - badgeW / 2;
-      const badgeY = titleY + 25;
+      const badgeX = leftStubX + (rightStubX - leftStubX - badgeW) / 2;
+      const badgeY = metaY - 110;
+      ctx.fillStyle = '#6B0F24';
       drawRoundedRect(badgeX, badgeY, badgeW, badgeH, 22);
       ctx.fill();
 
-      ctx.font = '900 20px "Inter", Arial, sans-serif';
       ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 18px "Inter", Arial, sans-serif';
       ctx.fillText(`✦ ${tierName} ✦`, leftStubX + (rightStubX - leftStubX) / 2, badgeY + 29);
 
-      // Meta info
-      const metaStartY = badgeY + 80;
-      ctx.textAlign = 'left';
-      ctx.fillStyle = '#6B0F24';
-      ctx.font = 'bold 22px "Inter", Arial, sans-serif';
-      ctx.fillText('📅 ' + dateStr, leftStubX + 60, metaStartY);
-
-      ctx.fillStyle = '#1C150A';
-      ctx.font = 'bold 20px "Inter", Arial, sans-serif';
-      ctx.fillText('⏰ ' + timeStr, leftStubX + 60, metaStartY + 38);
-
-      ctx.font = 'bold 20px "Inter", Arial, sans-serif';
-      ctx.fillStyle = '#160F06';
-      ctx.fillText('📍 ' + venueStr + (cityStr ? `, ${cityStr}` : ''), leftStubX + 60, metaStartY + 76);
-
-      // Right stub
-      ctx.textAlign = 'center';
+      // Right Stub (Burgundy)
       const rightCenter = rightStubX + rightStubW / 2;
-
-      ctx.font = '900 22px "Inter", Arial, sans-serif';
+      ctx.textAlign = 'center';
       ctx.fillStyle = '#F5C862';
-      ctx.fillText('★ ADMISSION PASS ★', rightCenter, ticketY + 80);
+      ctx.font = '900 18px "Inter", Arial, sans-serif';
+      ctx.fillText('★ ADMISSION PASS ★', rightCenter, ticketY + 70);
 
-      ctx.font = 'bold 18px "Inter", Arial, sans-serif';
-      ctx.fillStyle = '#E5A93C';
-      ctx.fillText('TIER & PRICING', rightCenter, ticketY + 160);
+      ctx.font = 'bold 12px "Inter", Arial, sans-serif';
+      ctx.fillStyle = 'rgba(255, 235, 200, 0.85)';
+      ctx.fillText('TIER & PRICING', rightCenter, ticketY + 140);
 
-      ctx.font = '900 32px "Inter", Arial, sans-serif';
+      ctx.font = '900 24px "Inter", Arial, sans-serif';
       ctx.fillStyle = '#FFFFFF';
-      ctx.fillText(tierName.slice(0, 16), rightCenter, ticketY + 220);
+      ctx.fillText(tierName, rightCenter, ticketY + 180);
 
-      ctx.font = '900 54px "Inter", Arial, sans-serif';
+      ctx.font = '900 46px "Inter", Arial, sans-serif';
       ctx.fillStyle = '#F5C862';
-      ctx.fillText(priceStr, rightCenter, ticketY + 290);
+      ctx.fillText(priceStr, rightCenter, ticketY + 260);
 
-      ctx.font = 'bold 16px "Inter", Arial, sans-serif';
-      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 14px "Inter", Arial, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
       ctx.fillText('OFFICIAL DIGITAL PASS', rightCenter, ticketY + 390);
 
       ctx.font = 'bold 14px "Inter", Arial, monospace';
@@ -532,6 +644,249 @@ export const downloadTicketPassAsImage = async (ticket) => {
   }
 };
 
+/**
+ * Open a dedicated print window with styled ticket pass and guaranteed high-res QR code
+ */
+export const printTicketPass = (ticket) => {
+  if (typeof window === 'undefined') return;
+
+  const event = ticket.event || {};
+  const title = (event.title || ticket.eventName || 'Live Concert Event').toUpperCase();
+  const dateStr = formatTicketDate(event.startDate || ticket.startDate || ticket.eventDate);
+  const timeStr = (event.startTime || ticket.startTime || '7:00 PM - 11:00 PM').toUpperCase();
+  const venueStr = (event.venue || ticket.venue || 'Accra, Ghana').toUpperCase();
+  const cityStr = (event.city || ticket.city || 'Accra').toUpperCase();
+  const tierName = getTicketTierName(ticket);
+  const priceStr = formatTicketTierPrice(ticket);
+  const ticketNo = getTicketCode(ticket);
+  const seatNumber = ticket.seat || ticket.seatNumber || 'GA';
+  const rowNumber = ticket.row || (seatNumber.includes('-') ? seatNumber.split('-')[0] : 'AAA');
+  const attendeeName = getTicketAttendeeName(ticket);
+
+  const origin = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://tribesandcliqs.com';
+  const qrValue = ticket.qrCode || ticket.qr_code || `${origin}/verify/${encodeURIComponent(ticketNo)}`;
+  const qrSvg = generateQrSvgString(qrValue, 200);
+
+  const printWindow = window.open('', '_blank', 'width=920,height=720');
+  if (!printWindow) {
+    window.print();
+    return;
+  }
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>Ticket Pass #${ticketNo.slice(-8)} - ${title}</title>
+        <style>
+          @page {
+            size: landscape;
+            margin: 10mm;
+          }
+          * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #ffffff;
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+          }
+          .ticket-wrapper {
+            width: 100%;
+            max-width: 860px;
+            border-radius: 20px;
+            background: #0F1215;
+            padding: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+          }
+          .ticket-card {
+            display: flex;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #D49A32, #F3C760, #D49A32);
+            color: #171007;
+          }
+          .stub-left {
+            width: 250px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            border-right: 2px dashed rgba(80,40,10,0.4);
+            background: rgba(232, 175, 62, 0.35);
+          }
+          .qr-box {
+            width: 170px;
+            height: 170px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          }
+          .qr-box svg {
+            width: 100%;
+            height: 100%;
+          }
+          .seat-box {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            text-align: center;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+            padding: 8px 4px;
+            margin-top: 12px;
+          }
+          .seat-col p { margin: 0; }
+          .seat-label { font-size: 10px; font-weight: 800; color: #6B0F24; text-transform: uppercase; }
+          .seat-val { font-size: 18px; font-weight: 900; color: #1A1208; }
+          .serial { font-family: monospace; font-size: 11px; font-weight: bold; margin-top: 8px; color: #3D2A0F; }
+          .attendee { font-size: 12px; font-weight: bold; color: #1A1208; }
+          .center-body {
+            flex: 1;
+            padding: 24px 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+          }
+          .domain { font-size: 11px; font-weight: 900; letter-spacing: 1.5px; color: #1C150A; }
+          .badge {
+            background: #6B0F24;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+          .event-title {
+            font-size: 26px;
+            font-weight: 900;
+            margin: 14px 0;
+            color: #160F06;
+            line-height: 1.2;
+          }
+          .meta-row { font-size: 13px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+          .meta-date { color: #6B0F24; }
+          .meta-other { color: #502A0B; }
+          .stub-right {
+            width: 220px;
+            padding: 20px;
+            background: linear-gradient(135deg, #6B0F24, #7F132C, #500B1B);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 2px dashed rgba(255,255,255,0.3);
+            text-align: center;
+          }
+          .pass-tag { font-size: 11px; font-weight: 900; letter-spacing: 1.5px; color: #F5C862; }
+          .price-large { font-size: 24px; font-weight: 900; color: #F5C862; margin: 10px 0 4px; }
+          .barcode { display: flex; justify-content: center; gap: 3px; margin-top: 10px; opacity: 0.85; }
+          .bar { background: #ffffff; height: 32px; border-radius: 1px; }
+          .bottom-slogan {
+            text-align: center;
+            font-size: 10px;
+            font-weight: 800;
+            color: #E5A93C;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="ticket-wrapper">
+          <div class="ticket-card">
+            <!-- Left QR Stub -->
+            <div class="stub-left">
+              <div class="qr-box">
+                ${qrSvg || ''}
+              </div>
+              <div class="seat-box">
+                <div class="seat-col">
+                  <p class="seat-label">Row</p>
+                  <p class="seat-val">${rowNumber}</p>
+                </div>
+                <div class="seat-col">
+                  <p class="seat-label">Seat</p>
+                  <p class="seat-val">${seatNumber}</p>
+                </div>
+              </div>
+              <div class="serial">#${ticketNo.slice(-8)}</div>
+              <div class="attendee">${attendeeName}</div>
+            </div>
+
+            <!-- Center Stage Details -->
+            <div class="center-body">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="domain">WWW.TRIBESANDCLIQS.COM</span>
+                <span class="badge">${tierName}</span>
+              </div>
+              <div class="event-title">${title}</div>
+              <div>
+                <div class="meta-row meta-date">📅 ${dateStr}</div>
+                <div class="meta-row meta-other">⏰ ${timeStr}</div>
+                <div class="meta-row meta-other">📍 ${venueStr}${cityStr ? ', ' + cityStr : ''}</div>
+              </div>
+            </div>
+
+            <!-- Right Stub -->
+            <div class="stub-right">
+              <div>
+                <div class="pass-tag">★ ADMISSION PASS ★</div>
+                <div style="font-size: 10px; opacity: 0.7; margin-top: 4px; text-transform: uppercase;">Tier &amp; Pricing</div>
+                <div style="font-size: 13px; font-weight: bold; margin-top: 2px;">${tierName}</div>
+              </div>
+              <div>
+                <div class="price-large">${priceStr}</div>
+                <div style="font-size: 10px; font-family: monospace; opacity: 0.8;">#${ticketNo.slice(-8)}</div>
+              </div>
+              <div class="barcode">
+                <div class="bar" style="width: 4px;"></div>
+                <div class="bar" style="width: 8px;"></div>
+                <div class="bar" style="width: 3px;"></div>
+                <div class="bar" style="width: 10px;"></div>
+                <div class="bar" style="width: 4px;"></div>
+                <div class="bar" style="width: 12px;"></div>
+                <div class="bar" style="width: 6px;"></div>
+                <div class="bar" style="width: 8px;"></div>
+                <div class="bar" style="width: 4px;"></div>
+                <div class="bar" style="width: 14px;"></div>
+                <div class="bar" style="width: 8px;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-slogan">
+            ✔ SECURE YOUR SEAT &nbsp;|&nbsp; NON-REFUNDABLE &nbsp;|&nbsp; ★ GOOD MUSIC • GOOD VIBES • GOOD PEOPLE
+          </div>
+        </div>
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+            }, 300);
+          };
+        </script>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+};
+
 export default function TicketPass({ ticket, onDownload, onPrint }) {
   const event = ticket.event || {};
   const title = event.title || ticket.eventName || 'Live Concert Event';
@@ -539,16 +894,18 @@ export default function TicketPass({ ticket, onDownload, onPrint }) {
   const timeStr = event.startTime || ticket.startTime || '7:00 PM - 11:00 PM';
   const venueStr = event.venue || ticket.venue || 'Accra, Ghana';
   const cityStr = event.city || ticket.city || 'Accra';
-  const tierName = ticket.ticketType || ticket.type || 'Standard Admission';
-  const priceStr = ticket.price ? `GHS ${ticket.price}` : (ticket.amount ? `GHS ${ticket.amount}` : 'Valid Pass');
-  const ticketNo = (ticket.ticketNumber || ticket.id || 'TC-00000000').toString().toUpperCase();
+  const tierName = getTicketTierName(ticket);
+  const priceStr = formatTicketTierPrice(ticket);
+  const ticketNo = getTicketCode(ticket);
   const seatNumber = ticket.seat || ticket.seatNumber || 'GA';
   const rowNumber = ticket.row || (seatNumber.includes('-') ? seatNumber.split('-')[0] : 'AAA');
-  const attendeeName = ticket.attendeeName || ticket.name || ticket.user?.name || 'Attendee';
+  const attendeeName = getTicketAttendeeName(ticket);
   const customTemplateUrl = ticket.ticketTemplate || event.ticketTemplate || ticket.ticket_template || event.ticket_template;
+  const ticketFileUrl = ticket.ticket_file_url || ticket.ticketFileUrl;
+  const ticketFileName = ticket.ticket_file_name || ticket.ticketFileName;
 
   const origin = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://tribesandcliqs.com';
-  const qrValue = `${origin}/verify/${encodeURIComponent(ticketNo)}`;
+  const qrValue = ticket.qrCode || ticket.qr_code || `${origin}/verify/${encodeURIComponent(ticketNo)}`;
 
   const handleDownloadClick = () => {
     if (onDownload) {
@@ -562,7 +919,7 @@ export default function TicketPass({ ticket, onDownload, onPrint }) {
     if (onPrint) {
       onPrint();
     } else {
-      window.print();
+      printTicketPass(ticket);
     }
   };
 
@@ -789,6 +1146,17 @@ export default function TicketPass({ ticket, onDownload, onPrint }) {
 
       {/* Download & Print Actions */}
       <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
+        {ticketFileUrl && (
+          <a
+            href={ticketFileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            download={ticketFileName || 'Official-Ticket-Pass'}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-black text-sm font-extrabold hover:brightness-110 transition shadow-lg shadow-amber-500/20"
+          >
+            <FileText className="w-4 h-4" /> Download Official File ({ticketFileName?.toLowerCase().endsWith('.pdf') ? 'PDF' : 'Pass'})
+          </a>
+        )}
         <button
           onClick={handlePrintClick}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm font-semibold text-[#EFEFF1] hover:bg-[#242B32] hover:border-white/40 transition shadow-md"

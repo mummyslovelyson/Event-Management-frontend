@@ -17,6 +17,7 @@ const EVENT_FIELD_MAP = {
   totalCapacity: 'capacity',
   dressCode: 'dress_code',
   isFeatured: 'is_featured',
+  ticketTemplate: 'ticket_template',
 };
 
 const mapEventPayload = (data) => {

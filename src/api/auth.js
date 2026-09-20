@@ -12,5 +12,7 @@ export const resendVerification = (data) => api.post('/auth/resend-verification'
 export const logoutUser = (refreshToken) => api.post('/auth/logout', { refreshToken });
 export const logoutAll = () => api.post('/auth/logout-all');
 export const changePassword = (data) => api.post('/auth/change-password', data);
+export const refreshToken = (data) => api.post('/auth/refresh', data);
 export const getSessions = () => api.get('/auth/sessions');
 export const revokeSession = (sessionId) => api.delete(`/auth/sessions/${sessionId}`);
+

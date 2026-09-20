@@ -921,7 +921,13 @@ export default function EventDetailPage() {
                                   <p className="mt-1 text-sm text-[#949599] line-clamp-2">{ticket.description || ticket.name}</p>
                                   <div className="mt-2 flex items-center gap-3 text-xs">
                                     <span className="text-2xl font-bold text-white">
-                                      {ticket.price === 0 ? 'Free' : format(ticket.price)}
+                                      {Number(ticket.price) > 0 ? (
+                                        format(ticket.price)
+                                      ) : (ticket.uploaded_tickets?.length > 0 || ticket.uploadedTickets?.length > 0) ? (
+                                        <span className="text-lg text-amber-400 font-semibold">Amount on pass</span>
+                                      ) : (
+                                        'Free'
+                                      )}
                                     </span>
                                     {available !== null && (
                                       <span className={available > 0 ? 'text-emerald-400' : 'text-red-400'}>

@@ -15,8 +15,10 @@ const api = axios.create({
 /* Request interceptor — attach access token                           */
 /* ------------------------------------------------------------------ */
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('tc_token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  try {
+    const token = sessionStorage.getItem('tc_token');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  } catch { /* ignore */ }
   return config;
 });
 
@@ -42,7 +44,11 @@ api.interceptors.response.use(
 
     // --- Auto-refresh on 401 (token expired) ---
     if (status === 401 && !originalRequest._retry) {
-      const refreshToken = localStorage.getItem('tc_refresh');
+      let refreshToken = null;
+      try {
+        refreshToken = sessionStorage.getItem('tc_refresh');
+      } catch { /* ignore */ }
+
       if (!refreshToken) {
         redirectToLogin();
         return Promise.reject(err);
@@ -72,8 +78,10 @@ api.interceptors.response.use(
           `${originalRequest.baseURL || api.defaults.baseURL}/auth/refresh`,
           { refreshToken },
         );
-        localStorage.setItem('tc_token', data.accessToken);
-        localStorage.setItem('tc_refresh', data.refreshToken);
+        try {
+          sessionStorage.setItem('tc_token', data.accessToken);
+          sessionStorage.setItem('tc_refresh', data.refreshToken);
+        } catch { /* ignore */ }
         api.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
         processQueue(null, data.accessToken);
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
@@ -89,17 +97,17 @@ api.interceptors.response.use(
 
     // --- Account locked (423) ---
     if (status === 423) {
-      const message = err.response?.data?.message || 'Account locked due to too many failed attempts';
+      const message = err.response?.data?.message || 'Account locked due to too many failed attempts. Please try again in 15 minutes.';
       return Promise.reject({ ...err, friendlyMessage: message });
     }
 
-    // --- Suspended (403) ---
+    // --- Suspended or Forbidden (403) ---
     if (status === 403) {
-      const message = err.response?.data?.message || 'Your account has been suspended';
-      if (message.includes('suspended') || message.includes('Suspended')) {
+      const message = err.response?.data?.message || 'Access forbidden: you do not have permission for this resource.';
+      if (message.toLowerCase().includes('suspended')) {
         redirectToLogin();
-        return Promise.reject({ ...err, friendlyMessage: message });
       }
+      return Promise.reject({ ...err, friendlyMessage: message });
     }
 
     // --- Rate limited (429) ---
@@ -108,8 +116,31 @@ api.interceptors.response.use(
       return Promise.reject({ ...err, friendlyMessage: message });
     }
 
-    // --- All other errors — pass through with friendly message ---
-    const message = err.response?.data?.message || err.message || 'An error occurred';
+    // --- Payload too large (413) ---
+    if (status === 413) {
+      const message = err.response?.data?.message || 'Upload size exceeds the maximum limit (5 MB). Please choose a smaller file.';
+      return Promise.reject({ ...err, friendlyMessage: message });
+    }
+
+    // --- Network / Connection Failure ---
+    if (!err.response) {
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        return Promise.reject({ ...err, friendlyMessage: 'The request timed out. Please check your connection and try again.' });
+      }
+      return Promise.reject({
+        ...err,
+        friendlyMessage: 'Unable to connect to the Tribes & Cliqs server. Please verify your internet connection.',
+      });
+    }
+
+    // --- Server errors (500, 502, 503, 504) ---
+    if (status >= 500) {
+      const message = err.response?.data?.message || 'Our services are temporarily busy. Please try again in a moment.';
+      return Promise.reject({ ...err, friendlyMessage: message });
+    }
+
+    // --- Default friendly message ---
+    const message = err.response?.data?.message || err.message || 'An unexpected error occurred.';
     return Promise.reject({ ...err, friendlyMessage: message });
   }
 );
@@ -120,12 +151,14 @@ function redirectToLogin() {
   if (publicAuthPaths.some((p) => path.startsWith(p))) {
     return;
   }
-  localStorage.removeItem('tc_token');
-  localStorage.removeItem('tc_refresh');
-  localStorage.removeItem('tc_user');
+  try {
+    sessionStorage.removeItem('tc_token');
+    sessionStorage.removeItem('tc_refresh');
+    sessionStorage.removeItem('tc_user');
+  } catch { /* ignore */ }
   let role = null;
   try {
-    const stored = localStorage.getItem('tc_user');
+    const stored = sessionStorage.getItem('tc_user');
     role = stored ? JSON.parse(stored)?.role : null;
   } catch { /* ignore */ }
   const adminContext = role === 'admin' || path.startsWith('/admin');

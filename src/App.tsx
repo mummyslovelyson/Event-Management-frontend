@@ -10,6 +10,7 @@ import OrganizerLayout from '@/layouts/OrganizerLayout';
 import AdminLayout from '@/layouts/AdminLayout';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
 import ChatbotWidget from '@/components/chat/ChatbotWidget';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 // Public pages
 import HomePage from '@/pages/public/HomePage';
@@ -243,30 +244,43 @@ function AppRoutes() {
 }
 
 export default function App() {
+  useEffect(() => {
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('[Unhandled Promise Rejection]', event.reason);
+      // Prevent browser default crash behavior
+      event.preventDefault();
+    };
+
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    return () => window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+  }, []);
+
   return (
-    <AuthProvider>
-      <CurrencyProvider>
-        <BrowserRouter>
-        <Toaster
-          position="top-right"
-          gutter={8}
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#242B32',
-              color: '#F2F4F5',
-              border: '1px solid rgba(73,79,85,0.5)',
-              borderRadius: '10px',
-              fontSize: '14px',
-            },
-            success: { iconTheme: { primary: '#EFEFF1', secondary: '#1E252B' } },
-            error: { iconTheme: { primary: '#EF4444', secondary: '#1E252B' } },
-          }}
-        />
-        <MaintenanceWrapper />
-        <ChatbotWidget />
-      </BrowserRouter>
-      </CurrencyProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <CurrencyProvider>
+          <BrowserRouter>
+            <Toaster
+              position="top-right"
+              gutter={8}
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#242B32',
+                  color: '#F2F4F5',
+                  border: '1px solid rgba(73,79,85,0.5)',
+                  borderRadius: '10px',
+                  fontSize: '14px',
+                },
+                success: { iconTheme: { primary: '#EFEFF1', secondary: '#1E252B' } },
+                error: { iconTheme: { primary: '#EF4444', secondary: '#1E252B' } },
+              }}
+            />
+            <MaintenanceWrapper />
+            <ChatbotWidget />
+          </BrowserRouter>
+        </CurrencyProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

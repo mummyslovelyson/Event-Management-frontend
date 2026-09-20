@@ -35,18 +35,6 @@ const CATEGORY_ICONS = {
 
 const DEFAULT_CATEGORY_ICON = LayoutGrid;
 
-// Default categories with local images if database hasn't seeded yet
-const DEFAULT_CATEGORIES = [
-  { name: 'Musical Shows' },
-  { name: 'Festivals' },
-  { name: 'Corporate Events' },
-  { name: 'Tournaments' },
-  { name: 'Social Events' },
-  { name: 'Movies & Stage Plays' },
-  { name: 'Fairs & Exhibitions' },
-  { name: 'Religious Activities' },
-];
-
 const POPULAR_TAGS = [
   'Concerts',
   'Festivals',
@@ -142,9 +130,9 @@ export default function HomePage() {
       try {
         const res = await getCategories();
         const cats = Array.isArray(res.data) ? res.data : res.data?.categories || [];
-        if (active) setCategories(cats.length > 0 ? cats : DEFAULT_CATEGORIES);
+        if (active) setCategories(cats);
       } catch {
-        if (active) setCategories(DEFAULT_CATEGORIES);
+        if (active) setCategories([]);
       } finally {
         if (active) setLoadingCategories(false);
       }

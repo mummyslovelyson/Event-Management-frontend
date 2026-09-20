@@ -1,60 +1,125 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   Printer, Download, CheckCircle2, Calendar, MapPin, Ticket as TicketIcon,
-  CreditCard, ShieldCheck, Mail, Phone, User, Receipt, X,
+  CreditCard, ShieldCheck, Mail, Phone, User, Receipt, X, Loader2, FileText,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Modal from '@/components/common/Modal';
 import Badge from '@/components/common/Badge';
 import { useCurrency } from '@/context/CurrencyContext';
-import { getOrderInvoice } from '@/api/orders';
+import { getOrder, getOrderInvoice } from '@/api/orders';
 
-export default function ReceiptModal({ open, onClose, order }) {
+export default function ReceiptModal({ open, onClose, order, ticket }) {
   const { format } = useCurrency();
   const printableRef = useRef(null);
+  const [fetchedOrder, setFetchedOrder] = useState(null);
+  const [loadingOrder, setLoadingOrder] = useState(false);
 
-  if (!order) return null;
+  const orderId = order?.id || ticket?.orderId || ticket?.order_id || null;
 
-  const event = order.event || {};
-  const eventTitle = event.title || order.eventTitle || order.eventName || 'Event';
-  const eventDate = event.startDate || event.start_date || order.eventDate || order.startDate;
-  const eventVenue = event.venue || order.venue || 'Venue TBA';
-  const customerName = order.customerName || order.user?.name || order.userName || 'Attendee';
-  const customerEmail = order.customerEmail || order.user?.email || order.userEmail || '—';
-  const customerPhone = order.customerPhone || order.user?.phone || order.phone || '—';
-  const orderRef = order.reference || order.orderId || String(order.id ?? '').slice(-8).toUpperCase();
-  const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-GB', {
+  useEffect(() => {
+    let active = true;
+    if (open && orderId && (!order?.items || order.items.length === 0)) {
+      setLoadingOrder(true);
+      getOrder(orderId)
+        .then((res) => {
+          if (active && res.data?.order) {
+            setFetchedOrder(res.data.order);
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (active) setLoadingOrder(false);
+        });
+    } else {
+      setFetchedOrder(null);
+    }
+    return () => {
+      active = false;
+    };
+  }, [open, orderId, order?.items]);
+
+  const activeData = fetchedOrder || order || (ticket ? {
+    ...ticket,
+    id: ticket.orderId || ticket.order_id || ticket.id,
+    reference: ticket.paymentRef || ticket.payment_reference || ticket.ticketNumber,
+    totalAmount: ticket.orderTotal ?? ticket.price,
+    customerName: ticket.attendeeName,
+    customerEmail: ticket.attendeeEmail,
+    customerPhone: ticket.attendeePhone,
+    createdAt: ticket.orderCreatedAt || ticket.created_at,
+    event: ticket.event,
+    ticketFileUrl: ticket.ticketFileUrl || ticket.ticket_file_url || null,
+    ticketFileName: ticket.ticketFileName || ticket.ticket_file_name || null,
+    items: [{
+      ticketType: ticket.ticketType || ticket.ticket_type_name || 'Event Pass',
+      quantity: 1,
+      unit_price: ticket.unitPrice ?? ticket.price,
+      subtotal: ticket.unitPrice ?? ticket.price,
+      ticket_file_url: ticket.ticketFileUrl || ticket.ticket_file_url || null,
+      ticket_file_name: ticket.ticketFileName || ticket.ticket_file_name || null,
+    }],
+  } : null);
+
+  if (!activeData) return null;
+
+  const event = activeData.event || {};
+  const eventTitle = event.title || activeData.eventTitle || activeData.event_title || activeData.eventName || 'Event';
+  const eventDate = event.startDate || event.start_date || activeData.eventDate || activeData.event_date || activeData.startDate;
+  const eventVenue = event.venue || activeData.venue || activeData.eventVenue || activeData.event_venue || 'Venue TBA';
+  const customerName = activeData.customerName || activeData.buyer_name || activeData.user?.name || activeData.userName || 'Attendee';
+  const customerEmail = activeData.customerEmail || activeData.buyer_email || activeData.user?.email || activeData.userEmail || '—';
+  const customerPhone = activeData.customerPhone || activeData.buyer_phone || activeData.user?.phone || activeData.phone || '—';
+  const orderRef = activeData.reference || activeData.payment_reference || activeData.orderId || String(activeData.id ?? '').slice(-8).toUpperCase();
+  const orderDate = activeData.createdAt || activeData.created_at ? new Date(activeData.createdAt || activeData.created_at).toLocaleDateString('en-GB', {
     day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
   }) : '—';
-  const totalAmount = Number(order.totalAmount ?? order.total ?? order.amount ?? 0);
-  const discountAmount = Number(order.discountAmount ?? order.discount ?? 0);
-  const subtotal = totalAmount + discountAmount;
-  const items = Array.isArray(order.items) && order.items.length > 0 ? order.items : [
+  const totalAmount = Number(activeData.totalAmount ?? activeData.total_amount ?? activeData.total ?? activeData.amount ?? 0);
+  const discountAmount = Number(activeData.discountAmount ?? activeData.discount_amount ?? activeData.discount ?? 0);
+  const couponCode = activeData.couponCode || activeData.coupon_code || null;
+
+  const rawItems = Array.isArray(activeData.items) && activeData.items.length > 0 ? activeData.items : null;
+  const items = rawItems ? rawItems.map((it) => {
+    const qty = Number(it.quantity || 1);
+    const unit = Number(it.unit_price ?? it.price ?? it.ticketPrice ?? 0);
+    const sub = it.subtotal !== undefined && it.subtotal !== null ? Number(it.subtotal) : unit * qty;
+    return {
+      name: it.ticket_type_name || it.ticketType || it.name || 'Event Pass',
+      quantity: qty,
+      unitPrice: unit,
+      subtotal: sub,
+    };
+  }) : [
     {
-      name: order.ticketType || order.ticket_type_name || 'General Admission',
-      quantity: order.quantity || order.ticketCount || 1,
-      price: order.ticketPrice || (totalAmount / (order.quantity || 1)),
+      name: activeData.ticketType || activeData.ticket_type_name || 'General Admission',
+      quantity: activeData.quantity || activeData.ticketCount || 1,
+      unitPrice: Number(activeData.unitPrice ?? activeData.ticketPrice ?? (totalAmount / (activeData.quantity || activeData.ticketCount || 1))),
+      subtotal: totalAmount,
     },
   ];
 
+  const subtotal = items.reduce((acc, it) => acc + it.subtotal, 0);
+
   const qrData = JSON.stringify({
     ref: orderRef,
-    orderId: order.id,
+    orderId: activeData.id,
     event: eventTitle,
     amount: totalAmount,
-    status: order.paymentStatus || order.status || 'paid',
+    status: activeData.paymentStatus || activeData.status || 'paid',
   });
 
   const handlePrint = () => {
     const printContent = printableRef.current;
     if (!printContent) return;
 
-    const printWindow = window.open('', '_blank', 'width=800,height=900');
+    const printWindow = window.open('', '_blank', 'width=840,height=960');
     if (!printWindow) {
       window.print();
       return;
     }
+
+    const qrSvg = printableRef.current?.querySelector('svg')?.outerHTML || '';
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -124,29 +189,39 @@ export default function ReceiptModal({ open, onClose, order }) {
             <tbody>
               ${items.map((it) => `
                 <tr>
-                  <td><strong>${it.ticketType || it.name || 'Ticket'}</strong></td>
-                  <td class="text-right">${it.quantity || 1}</td>
-                  <td class="text-right">${format(Number(it.price || 0))}</td>
-                  <td class="text-right font-medium">${format(Number(it.price || 0) * (it.quantity || 1))}</td>
+                  <td><strong>${it.name}</strong></td>
+                  <td class="text-right">${it.quantity}</td>
+                  <td class="text-right">${format(it.unitPrice)}</td>
+                  <td class="text-right font-medium">${format(it.subtotal)}</td>
                 </tr>
               `).join('')}
             </tbody>
           </table>
 
-          <div class="totals">
-            <div class="totals-row">
-              <span style="color: #6B7280;">Subtotal</span>
-              <span>${format(subtotal)}</span>
-            </div>
-            ${discountAmount > 0 ? `
-              <div class="totals-row" style="color: #059669;">
-                <span>Discount Applied</span>
-                <span>-${format(discountAmount)}</span>
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 24px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              ${qrSvg ? `<div style="padding: 6px; border: 1px solid #E5E7EB; border-radius: 8px; background: #fff; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center;">${qrSvg}</div>` : ''}
+              <div>
+                <p style="font-size: 11px; font-weight: 700; color: #111827; margin: 0 0 2px 0;">Official Verification QR</p>
+                <p style="font-size: 10px; color: #6B7280; margin: 0;">Scan at event gate or verify online</p>
+                <p style="font-size: 10px; color: #6B7280; font-family: monospace; margin: 2px 0 0 0;">Ref: #${orderRef}</p>
               </div>
-            ` : ''}
-            <div class="totals-row grand">
-              <span>Total Paid</span>
-              <span>${format(totalAmount)}</span>
+            </div>
+            <div class="totals" style="margin: 0; width: 280px;">
+              <div class="totals-row">
+                <span style="color: #6B7280;">Subtotal</span>
+                <span>${format(subtotal)}</span>
+              </div>
+              ${discountAmount > 0 ? `
+                <div class="totals-row" style="color: #059669;">
+                  <span>Discount Applied</span>
+                  <span>-${format(discountAmount)}</span>
+                </div>
+              ` : ''}
+              <div class="totals-row grand">
+                <span>Total Paid</span>
+                <span>${format(totalAmount)}</span>
+              </div>
             </div>
           </div>
 
@@ -280,17 +355,38 @@ export default function ReceiptModal({ open, onClose, order }) {
               {items.map((it, idx) => (
                 <tr key={idx} className="hover:bg-[#1D2124]/40">
                   <td className="px-4 py-3 font-medium text-[#EFEFF1]">
-                    {it.ticketType || it.name || 'General Admission'}
+                    {it.name}
                   </td>
-                  <td className="px-4 py-3 text-center text-[#949599]">{it.quantity || 1}</td>
-                  <td className="px-4 py-3 text-right text-[#949599]">{format(Number(it.price || 0))}</td>
+                  <td className="px-4 py-3 text-center text-[#949599]">{it.quantity}</td>
+                  <td className="px-4 py-3 text-right text-[#949599]">{format(it.unitPrice)}</td>
                   <td className="px-4 py-3 text-right font-semibold text-[#EFEFF1]">
-                    {format(Number(it.price || 0) * (it.quantity || 1))}
+                    {format(it.subtotal)}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          {/* Attached Ticket Pass File Notification */}
+          {(activeData.ticketFileUrl || (activeData.items && activeData.items[0]?.ticket_file_url)) && (
+            <div className="p-3 bg-amber-400/10 border-t border-[#262B2F] flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2 text-amber-300">
+                <FileText className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>
+                  Official Attached Ticket: <strong className="text-white">{activeData.ticketFileName || activeData.items?.[0]?.ticket_file_name || 'Ticket Pass'}</strong>
+                </span>
+              </div>
+              <a
+                href={activeData.ticketFileUrl || activeData.items?.[0]?.ticket_file_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                download={activeData.ticketFileName || activeData.items?.[0]?.ticket_file_name || 'Official-Ticket'}
+                className="px-2.5 py-1 rounded bg-amber-400 text-black font-bold hover:bg-amber-300 transition"
+              >
+                Download File
+              </a>
+            </div>
+          )}
 
           {/* Totals Summary Section */}
           <div className="p-4 bg-[#171A1D]/80 border-t border-[#262B2F] flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -313,7 +409,7 @@ export default function ReceiptModal({ open, onClose, order }) {
               </div>
               {discountAmount > 0 && (
                 <div className="flex justify-between text-emerald-400">
-                  <span>Discount</span>
+                  <span>Discount {couponCode ? `(${couponCode})` : ''}</span>
                   <span>-{format(discountAmount)}</span>
                 </div>
               )}

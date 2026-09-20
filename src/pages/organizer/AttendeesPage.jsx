@@ -26,6 +26,31 @@ const downloadBlob = (blob, filename) => {
   URL.revokeObjectURL(url);
 };
 
+const normalizeAttendee = (a) => {
+  const isCheckedIn = Boolean(a.checked_in || a.checkedIn || a.status === 'used' || a.checkInStatus === 'checked_in' || a.checked_in_at);
+  const fullName = a.attendee_name || a.attendeeName || a.name || `${a.firstName || ''} ${a.lastName || ''}`.trim() || 'Attendee';
+  const email = a.email || '—';
+  const phone = a.phone || a.phoneNumber || '—';
+  const ticketType = a.ticket_type || a.ticketType || a.ticket_type_name || a.ticket?.type || 'Standard Entry';
+  const orderId = a.order_reference || a.orderReference || a.ticket_number || a.ticketNumber || (a.order_id ? String(a.order_id) : '—');
+  const checkInTime = a.checked_in_at || a.checkInTime || null;
+  const seatNumber = a.seat_number || a.seatNumber || a.seat || '—';
+  const ticketNumber = a.ticket_number || a.ticketNumber || (a.id ? `TC-${a.id}` : '—');
+
+  return {
+    ...a,
+    isCheckedIn,
+    fullName,
+    email,
+    phone,
+    ticketType,
+    orderId,
+    checkInTime,
+    seatNumber,
+    ticketNumber,
+  };
+};
+
 export default function AttendeesPage() {
   const [searchParams] = useSearchParams();
   const paramEventId = searchParams.get('eventId') || searchParams.get('event');
@@ -65,7 +90,8 @@ export default function AttendeesPage() {
     try {
       const res = await getAttendees(selectedEvent);
       const payload = res.data;
-      setAttendees(Array.isArray(payload) ? payload : payload.attendees || payload.data || []);
+      const rawList = Array.isArray(payload) ? payload : payload.attendees || payload.data || [];
+      setAttendees(rawList.map(normalizeAttendee));
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to load attendees');
       setAttendees([]);
@@ -77,7 +103,7 @@ export default function AttendeesPage() {
   useEffect(() => { fetchAttendees(); }, [fetchAttendees]);
 
   const checkedInCount = useMemo(
-    () => attendees.filter((a) => a.checkedIn || a.checkInStatus === 'checked_in').length,
+    () => attendees.filter((a) => a.isCheckedIn).length,
     [attendees]
   );
   const notArrivedCount = attendees.length - checkedInCount;
@@ -86,17 +112,16 @@ export default function AttendeesPage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return attendees.filter((a) => {
-      const status = a.checkedIn || a.checkInStatus === 'checked_in' ? 'in' : 'out';
+      const status = a.isCheckedIn ? 'in' : 'out';
       if (tab === 'Checked In' && status !== 'in') return false;
       if (tab === 'Not Arrived' && status !== 'out') return false;
       if (!q) return true;
-      const name = `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.name || '';
-      const email = a.email || '';
-      const phone = a.phone || a.phoneNumber || '';
       return (
-        name.toLowerCase().includes(q) ||
-        email.toLowerCase().includes(q) ||
-        phone.toLowerCase().includes(q)
+        a.fullName.toLowerCase().includes(q) ||
+        a.email.toLowerCase().includes(q) ||
+        a.phone.toLowerCase().includes(q) ||
+        a.ticketType.toLowerCase().includes(q) ||
+        String(a.orderId).toLowerCase().includes(q)
       );
     });
   }, [attendees, tab, search]);
@@ -289,8 +314,8 @@ export default function AttendeesPage() {
             </thead>
             <tbody className="divide-y divide-[#262B2F]/70">
               {filtered.map((a, idx) => {
-                const isCheckedIn = a.checkedIn || a.checkInStatus === 'checked_in';
-                const fullName = `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.name || '—';
+                const isCheckedIn = Boolean(a.isCheckedIn);
+                const fullName = a.fullName || '—';
                 return (
                   <tr
                     key={a.id || idx}
@@ -300,15 +325,20 @@ export default function AttendeesPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center text-xs font-semibold shrink-0">
-                          {fullName.split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
+                          {fullName.split(' ').filter(Boolean).map((s) => s[0]).join('').slice(0, 2).toUpperCase() || 'AT'}
                         </div>
-                        <span className="font-medium text-[#EFEFF1]">{fullName}</span>
+                        <div>
+                          <span className="font-medium text-[#EFEFF1] block">{fullName}</span>
+                          {a.ticketNumber && a.ticketNumber !== '—' && (
+                            <span className="text-[11px] font-mono text-[#6B7278]">{a.ticketNumber}</span>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-[#949599]">{a.email || '—'}</td>
-                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.phone || a.phoneNumber || '—'}</td>
-                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.ticketType || a.ticket?.type || '—'}</td>
-                    <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#949599]">#{a.orderId || a.orderReference || (a.order?.reference || '—')}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.phone || '—'}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.ticketType || '—'}</td>
+                    <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#949599]">#{a.orderId || '—'}</td>
                     <td className="px-4 py-3">
                       <Badge variant={isCheckedIn ? 'success' : 'pending'} size="sm">
                         {isCheckedIn ? 'Checked In' : 'Not Arrived'}
@@ -317,7 +347,7 @@ export default function AttendeesPage() {
                     <td className="hidden md:table-cell px-4 py-3 text-xs text-[#949599]">
                       {isCheckedIn ? (a.checkInTime ? new Date(a.checkInTime).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—') : '—'}
                     </td>
-                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.seatNumber || a.seat || '—'}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.seatNumber || '—'}</td>
                   </tr>
                 );
               })}
@@ -337,15 +367,15 @@ export default function AttendeesPage() {
           <div className="space-y-5">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-white/10 text-white flex items-center justify-center text-xl font-semibold shrink-0">
-                {`${detail.firstName || ''} ${detail.lastName || ''}`.trim().split(' ').map((s) => s[0]).join('').slice(0, 2).toUpperCase()}
+                {(detail.fullName || 'Attendee').split(' ').filter(Boolean).map((s) => s[0]).join('').slice(0, 2).toUpperCase() || 'AT'}
               </div>
               <div className="min-w-0">
                 <h3 className="text-lg font-semibold text-[#EFEFF1]">
-                  {`${detail.firstName || ''} ${detail.lastName || ''}`.trim() || detail.name || 'Attendee'}
+                  {detail.fullName || 'Attendee'}
                 </h3>
                 <div className="mt-1">
-                  <Badge variant={detail.checkedIn || detail.checkInStatus === 'checked_in' ? 'success' : 'pending'} dot>
-                    {detail.checkedIn || detail.checkInStatus === 'checked_in' ? 'Checked In' : 'Not Arrived'}
+                  <Badge variant={detail.isCheckedIn ? 'success' : 'pending'} dot>
+                    {detail.isCheckedIn ? 'Checked In' : 'Not Arrived'}
                   </Badge>
                 </div>
               </div>
@@ -353,10 +383,11 @@ export default function AttendeesPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <InfoRow icon={Mail} label="Email" value={detail.email} />
-              <InfoRow icon={Phone} label="Phone" value={detail.phone || detail.phoneNumber} />
-              <InfoRow icon={TicketIcon} label="Ticket Type" value={detail.ticketType || detail.ticket?.type} />
-              <InfoRow icon={MapPin} label="Seat" value={detail.seatNumber || detail.seat} />
-              <InfoRow icon={TicketIcon} label="Order ID" value={detail.orderId || detail.orderReference || detail.order?.reference} mono />
+              <InfoRow icon={Phone} label="Phone" value={detail.phone} />
+              <InfoRow icon={TicketIcon} label="Ticket Type" value={detail.ticketType} />
+              <InfoRow icon={MapPin} label="Seat" value={detail.seatNumber} />
+              <InfoRow icon={TicketIcon} label="Ticket Number" value={detail.ticketNumber} mono />
+              <InfoRow icon={TicketIcon} label="Order Reference" value={detail.orderId} mono />
               <InfoRow icon={Calendar} label="Check-in Time" value={detail.checkInTime ? new Date(detail.checkInTime).toLocaleString('en-GB') : null} />
             </div>
 

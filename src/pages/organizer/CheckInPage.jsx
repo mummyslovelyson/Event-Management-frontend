@@ -58,6 +58,29 @@ const scanResultState = (type) => {
   return { icon: XCircle, color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/30', label: 'Invalid / Unrecognized Ticket' };
 };
 
+const normalizeCheckInAttendee = (a) => {
+  const isCheckedIn = Boolean(a.checked_in || a.checkedIn || a.status === 'used' || a.checkInStatus === 'checked_in' || a.checked_in_at);
+  const name = a.attendee_name || a.attendeeName || a.name || 'Attendee';
+  const email = a.email || a.attendeeEmail || '';
+  const phone = a.phone || a.phoneNumber || '';
+  const ticketType = a.ticket_type || a.ticketType || a.ticket_type_name || 'Standard Admission';
+  const ticketCode = a.ticket_number || a.ticketCode || a.id;
+  const seatNumber = a.seat_number || a.seatNumber || 'General Admission';
+  const checkedInAt = a.checked_in_at || a.checkInTime || null;
+
+  return {
+    ...a,
+    name,
+    email,
+    phone,
+    ticketType,
+    ticketCode,
+    seatNumber,
+    checkedIn: isCheckedIn,
+    checkedInAt,
+  };
+};
+
 export default function CheckInPage() {
   const [searchParams] = useSearchParams();
   const paramEventId = searchParams.get('eventId') || searchParams.get('event');
@@ -78,12 +101,12 @@ export default function CheckInPage() {
   const [manualQuery, setManualQuery] = useState('');
   const [manualResults, setManualResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [checkingIn, setCheckingIn] = useState(null);
   const [attendees, setAttendees] = useState([]);
   const [log, setLog] = useState([]);
-  const [checkingIn, setCheckingIn] = useState(null);
 
-  const scannerRef = useRef(null);
   const isProcessingRef = useRef(false);
+  const scannerRef = useRef(null);
 
   const fetchEvents = useCallback(async () => {
     setLoadingEvents(true);
@@ -107,7 +130,8 @@ export default function CheckInPage() {
     try {
       const res = await getAttendees(selectedEvent);
       const payload = res.data;
-      setAttendees(Array.isArray(payload) ? payload : payload.attendees || payload.data || []);
+      const rawList = Array.isArray(payload) ? payload : payload.attendees || payload.data || [];
+      setAttendees(rawList.map(normalizeCheckInAttendee));
     } catch {
       setAttendees([]);
     }
@@ -118,7 +142,7 @@ export default function CheckInPage() {
 
   const stats = useMemo(() => {
     const total = attendees.length;
-    const checkedIn = attendees.filter((a) => a.checkedIn || a.checkInStatus === 'checked_in' || a.checked_in).length;
+    const checkedIn = attendees.filter((a) => a.checkedIn).length;
     return {
       total,
       checkedIn,
@@ -159,7 +183,16 @@ export default function CheckInPage() {
         throw new Error('Ticket not found');
       }
 
-      if (ticket.checkedIn || ticket.checkInStatus === 'checked_in' || ticket.checked_in) {
+      const isAlreadyCheckedIn = Boolean(
+        ticket.checkedIn ||
+        ticket.checkInStatus === 'checked_in' ||
+        ticket.checked_in ||
+        ticket.status === 'used' ||
+        ticket.checkedInAt ||
+        ticket.checked_in_at
+      );
+
+      if (isAlreadyCheckedIn) {
         setScanResult({ type: 'used', ticket });
         if (soundEnabled) playSound('error');
         toast.error('Ticket already checked in');

@@ -1,33 +1,63 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import {
   loginUser, loginAdmin, logoutUser, changePassword as apiChangePassword,
   getSessions as apiGetSessions, revokeSession as apiRevokeSession,
-  logoutAll as apiLogoutAll,
+  logoutAll as apiLogoutAll, refreshToken as apiRefreshToken,
 } from '@/api/auth';
 import { getProfile } from '@/api/users';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  // Purge any legacy localStorage keys to ensure zero persistent local storage
+  useEffect(() => {
+    try {
+      localStorage.removeItem('tc_token');
+      localStorage.removeItem('tc_refresh');
+      localStorage.removeItem('tc_user');
+      localStorage.removeItem('tc_currency');
+    } catch {
+      // Ignore if localStorage is disabled or restricted
+    }
+  }, []);
+
   const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem('tc_user');
-    return stored ? JSON.parse(stored) : null;
+    try {
+      const stored = sessionStorage.getItem('tc_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
   });
-  const [token, setToken] = useState(() => localStorage.getItem('tc_token'));
+  const [token, setToken] = useState(() => {
+    try {
+      return sessionStorage.getItem('tc_token');
+    } catch {
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(false);
 
   const persistAuth = useCallback((accessToken, refreshToken, userData) => {
-    localStorage.setItem('tc_token', accessToken);
-    localStorage.setItem('tc_refresh', refreshToken);
-    localStorage.setItem('tc_user', JSON.stringify(userData));
+    try {
+      sessionStorage.setItem('tc_token', accessToken);
+      sessionStorage.setItem('tc_refresh', refreshToken);
+      sessionStorage.setItem('tc_user', JSON.stringify(userData));
+    } catch {
+      // Fail-safe if storage quota exceeded
+    }
     setToken(accessToken);
     setUser(userData);
   }, []);
 
   const clearAuth = useCallback(() => {
-    localStorage.removeItem('tc_token');
-    localStorage.removeItem('tc_refresh');
-    localStorage.removeItem('tc_user');
+    try {
+      sessionStorage.removeItem('tc_token');
+      sessionStorage.removeItem('tc_refresh');
+      sessionStorage.removeItem('tc_user');
+    } catch {
+      // Fail-safe
+    }
     setToken(null);
     setUser(null);
   }, []);
@@ -38,7 +68,9 @@ export function AuthProvider({ children }) {
       if (res.data?.user) {
         setUser((prev) => {
           const updated = { ...prev, ...res.data.user };
-          localStorage.setItem('tc_user', JSON.stringify(updated));
+          try {
+            sessionStorage.setItem('tc_user', JSON.stringify(updated));
+          } catch { /* ignore */ }
           return updated;
         });
         return res.data.user;
@@ -48,6 +80,41 @@ export function AuthProvider({ children }) {
     }
     return null;
   }, []);
+
+  // Proactive token validation & refresh on application mount
+  useEffect(() => {
+    const validateInitialSession = async () => {
+      const storedToken = sessionStorage.getItem('tc_token');
+      const storedRefresh = sessionStorage.getItem('tc_refresh');
+      if (!storedToken) return;
+
+      try {
+        // Inspect token expiration
+        const parts = storedToken.split('.');
+        if (parts.length === 3) {
+          const payload = JSON.parse(atob(parts[1]));
+          // If expiring within 60 seconds or already expired, attempt silent rotation
+          if (payload.exp && payload.exp * 1000 < Date.now() + 60000) {
+            if (storedRefresh) {
+              const res = await apiRefreshToken({ refreshToken: storedRefresh });
+              if (res.data?.accessToken) {
+                persistAuth(res.data.accessToken, res.data.refreshToken || storedRefresh, res.data.user || user);
+                return;
+              }
+            } else {
+              clearAuth();
+              return;
+            }
+          }
+        }
+        await refreshProfile();
+      } catch (err) {
+        console.warn('Initial session validation notice:', err.message);
+      }
+    };
+
+    validateInitialSession();
+  }, [clearAuth, persistAuth, refreshProfile, user]);
 
   const login = async (email, password, website = '') => {
     setLoading(true);
@@ -78,8 +145,8 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      const refreshToken = localStorage.getItem('tc_refresh');
-      await logoutUser(refreshToken);
+      const refreshToken = sessionStorage.getItem('tc_refresh');
+      if (refreshToken) await logoutUser(refreshToken);
     } catch { /* token may already be invalid */ }
     clearAuth();
   };
@@ -87,16 +154,17 @@ export function AuthProvider({ children }) {
   const logoutAll = async () => {
     try {
       await apiLogoutAll();
-    } catch { /* proceed with local cleanup */ }
+    } catch { /* proceed with session cleanup */ }
     clearAuth();
   };
 
   const changePassword = async (currentPassword, newPassword) => {
     const res = await apiChangePassword({ currentPassword, newPassword });
     // If backend returns a new refresh token (other sessions revoked), update it
-    if (res.data.refreshToken) {
-      const refreshToken = localStorage.getItem('tc_refresh');
-      localStorage.setItem('tc_refresh', res.data.refreshToken);
+    if (res.data?.refreshToken) {
+      try {
+        sessionStorage.setItem('tc_refresh', res.data.refreshToken);
+      } catch { /* ignore */ }
     }
     return res.data;
   };
