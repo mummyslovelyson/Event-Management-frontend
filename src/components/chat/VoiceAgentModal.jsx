@@ -28,6 +28,7 @@ export default function VoiceAgentModal({
   const synthRef = useRef(window.speechSynthesis || null);
   const canvasRef = useRef(null);
   const animationFrameRef = useRef(null);
+  const hasWelcomedRef = useRef(false);
 
   // Web Audio API refs for real microphone frequency reactivity
   const audioContextRef = useRef(null);
@@ -106,6 +107,28 @@ export default function VoiceAgentModal({
     }
   }, []);
 
+  // Start speech recognition
+  const startListening = useCallback(() => {
+    if (!recognitionRef.current) return;
+    try {
+      recognitionRef.current.start();
+      setAgentState('listening');
+    } catch {
+      // Already running
+    }
+  }, []);
+
+  // Stop speech recognition
+  const stopListening = useCallback(() => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {
+        // ignore
+      }
+    }
+  }, []);
+
   // Text-to-speech speaker
   const speakResponse = useCallback((text) => {
     if (!synthRef.current || isMuted) {
@@ -147,29 +170,7 @@ export default function VoiceAgentModal({
     };
 
     synthRef.current.speak(utterance);
-  }, [isMuted, stopSpeaking]);
-
-  // Start speech recognition
-  const startListening = useCallback(() => {
-    if (!recognitionRef.current) return;
-    try {
-      recognitionRef.current.start();
-      setAgentState('listening');
-    } catch {
-      // Already running
-    }
-  }, []);
-
-  // Stop speech recognition
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch {
-        // ignore
-      }
-    }
-  }, []);
+  }, [isMuted, stopSpeaking, startListening]);
 
   // Initialize Speech Recognition
   useEffect(() => {
@@ -253,20 +254,37 @@ export default function VoiceAgentModal({
     }
   };
 
-  // Start on open
+  // Welcome user aloud and start on open
   useEffect(() => {
     if (isOpen) {
       setTranscript('');
       playChime('wake');
       setupAudioStream();
-      startListening();
+
+      if (!hasWelcomedRef.current) {
+        hasWelcomedRef.current = true;
+        const firstName = activeContext?.user?.name ? activeContext.user.name.split(' ')[0] : '';
+        const welcomeText = firstName
+          ? `Hello ${firstName}! Welcome to Tribes and Cliqs. What events or tickets can I help you with today?`
+          : `Hello! Welcome to Tribes and Cliqs. What events or tickets can I help you with today?`;
+
+        setLastAgentReply(welcomeText);
+        setAgentState('speaking');
+
+        const timer = setTimeout(() => {
+          speakResponse(welcomeText);
+        }, 350);
+
+        return () => clearTimeout(timer);
+      }
     } else {
+      hasWelcomedRef.current = false;
       stopSpeaking();
       stopListening();
       releaseAudioStream();
       setAgentState('idle');
     }
-  }, [isOpen, startListening, stopSpeaking, stopListening, playChime, setupAudioStream, releaseAudioStream]);
+  }, [isOpen, activeContext?.user?.name, playChime, setupAudioStream, speakResponse, stopSpeaking, stopListening, releaseAudioStream]);
 
   // Real Audio Frequency Reactive Visualizer
   useEffect(() => {
@@ -432,7 +450,7 @@ export default function VoiceAgentModal({
             {agentState === 'paused' && 'Paused (Tap orb to speak)'}
           </p>
           <p className="text-[11px] text-[#949599] mt-0.5">
-            {agentState === 'listening' ? 'Speak naturally into your microphone' : 'Ask about concerts, tickets, or transfers'}
+            {agentState === 'listening' ? 'Speak naturally into your microphone' : agentState === 'speaking' ? 'Welcoming you · Tap orb to speak immediately' : 'Ask about concerts, tickets, or transfers'}
           </p>
         </div>
 
