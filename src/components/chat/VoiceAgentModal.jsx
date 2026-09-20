@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mic, MicOff, Volume2, VolumeX, X, MessageSquare,
-  Sparkles, ArrowRight, Loader2, Play
+  Sparkles, ArrowRight, Loader2, Play, AlertCircle, RefreshCw
 } from 'lucide-react';
 import ChatEventCard from './ChatEventCard';
 import ChatTicketCard from './ChatTicketCard';
@@ -17,30 +17,43 @@ export default function VoiceAgentModal({
   const [agentState, setAgentState] = useState('idle'); // 'idle' | 'listening' | 'thinking' | 'speaking' | 'paused'
   const [transcript, setTranscript] = useState('');
   const [lastAgentReply, setLastAgentReply] = useState(
-    "Hey! I'm listening. Ask me anything about upcoming concerts, parties, or your tickets!"
+    "Welcome to Tribes & Cliqs! How can I help you find events or tickets today?"
   );
   const [lastEvents, setLastEvents] = useState([]);
   const [lastTickets, setLastTickets] = useState([]);
   const [lastActions, setLastActions] = useState([]);
   const [isMuted, setIsMuted] = useState(false);
+  const [micError, setMicError] = useState(null);
 
   const recognitionRef = useRef(null);
   const synthRef = useRef(window.speechSynthesis || null);
   const canvasRef = useRef(null);
   const animationFrameRef = useRef(null);
+
   const hasWelcomedRef = useRef(false);
+  const isListeningWantedRef = useRef(false);
+  const agentStateRef = useRef(agentState);
+  const isOpenRef = useRef(isOpen);
+  const utteranceRef = useRef(null);
+  const speechWatchdogRef = useRef(null);
+  const handleVoiceSubmitRef = useRef(null);
 
-  // Web Audio API refs for real microphone frequency reactivity
-  const audioContextRef = useRef(null);
-  const analyserRef = useRef(null);
-  const micStreamRef = useRef(null);
-  const audioDataArrayRef = useRef(null);
+  // Sync refs for event handlers and callbacks
+  useEffect(() => {
+    agentStateRef.current = agentState;
+  }, [agentState]);
 
-  // Synthesize gentle procedural audio chimes using Web Audio API oscillators
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  // Procedural audio chimes using Web Audio API oscillators (no mic input needed)
   const playChime = useCallback((type = 'wake') => {
     if (isMuted) return;
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
@@ -62,74 +75,53 @@ export default function VoiceAgentModal({
         osc.stop(ctx.currentTime + 0.18);
       }
     } catch {
-      // Audio context might be restricted before user gesture
+      // Procedural audio might be blocked before first user click
     }
   }, [isMuted]);
 
-  // Setup real microphone audio analyser
-  const setupAudioStream = useCallback(async () => {
-    try {
-      if (!navigator.mediaDevices?.getUserMedia) return;
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-      micStreamRef.current = stream;
-
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      const audioCtx = new AudioCtx();
-      audioContextRef.current = audioCtx;
-
-      const source = audioCtx.createMediaStreamSource(stream);
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 64;
-      source.connect(analyser);
-
-      analyserRef.current = analyser;
-      audioDataArrayRef.current = new Uint8Array(analyser.frequencyBinCount);
-    } catch (err) {
-      console.warn('[VoiceAgent AudioStream]', err.message);
-    }
-  }, []);
-
-  const releaseAudioStream = useCallback(() => {
-    if (micStreamRef.current) {
-      micStreamRef.current.getTracks().forEach((t) => t.stop());
-      micStreamRef.current = null;
-    }
-    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-      audioContextRef.current.close().catch(() => {});
-      audioContextRef.current = null;
-    }
-  }, []);
-
   // Stop speech synthesis safely
   const stopSpeaking = useCallback(() => {
+    if (speechWatchdogRef.current) {
+      clearTimeout(speechWatchdogRef.current);
+      speechWatchdogRef.current = null;
+    }
     if (synthRef.current) {
-      synthRef.current.cancel();
+      try {
+        synthRef.current.cancel();
+      } catch {}
+    }
+    utteranceRef.current = null;
+  }, []);
+
+  // Stop speech recognition
+  const stopListening = useCallback(() => {
+    isListeningWantedRef.current = false;
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {}
     }
   }, []);
 
   // Start speech recognition
   const startListening = useCallback(() => {
-    if (!recognitionRef.current) return;
+    setMicError(null);
+    isListeningWantedRef.current = true;
+    setAgentState('listening');
+
+    if (!recognitionRef.current) {
+      setMicError('Speech recognition is not supported in this browser. Try Chrome or Edge.');
+      return;
+    }
+
     try {
       recognitionRef.current.start();
-      setAgentState('listening');
     } catch {
-      // Already running
+      // Throws InvalidStateError if already running, which is expected and harmless
     }
   }, []);
 
-  // Stop speech recognition
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch {
-        // ignore
-      }
-    }
-  }, []);
-
-  // Text-to-speech speaker
+  // Text-to-speech speaker with persistent reference & timeout watchdog
   const speakResponse = useCallback((text) => {
     if (!synthRef.current || isMuted) {
       setAgentState('listening');
@@ -138,15 +130,23 @@ export default function VoiceAgentModal({
     }
 
     stopSpeaking();
+    stopListening();
     setAgentState('speaking');
 
     // Strip markdown formatting before speaking
-    const cleanText = text
+    const cleanText = (text || '')
       .replace(/[*_#`~]/g, '')
       .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
       .slice(0, 350);
 
+    if (!cleanText.trim()) {
+      setAgentState('listening');
+      startListening();
+      return;
+    }
+
     const utterance = new SpeechSynthesisUtterance(cleanText);
+    utteranceRef.current = utterance; // Prevent Chrome V8 garbage collection mid-speech
     utterance.rate = 1.05;
     utterance.pitch = 1.0;
 
@@ -159,55 +159,44 @@ export default function VoiceAgentModal({
       utterance.voice = englishVoice;
     }
 
-    utterance.onend = () => {
-      setAgentState('listening');
-      startListening();
+    let hasHandledEnd = false;
+    const onSpeechComplete = () => {
+      if (hasHandledEnd) return;
+      hasHandledEnd = true;
+      if (speechWatchdogRef.current) {
+        clearTimeout(speechWatchdogRef.current);
+        speechWatchdogRef.current = null;
+      }
+      utteranceRef.current = null;
+      if (isOpenRef.current && agentStateRef.current === 'speaking') {
+        setAgentState('listening');
+        startListening();
+      }
     };
 
-    utterance.onerror = () => {
-      setAgentState('listening');
-      startListening();
-    };
+    utterance.onend = onSpeechComplete;
+    utterance.onerror = onSpeechComplete;
 
-    synthRef.current.speak(utterance);
-  }, [isMuted, stopSpeaking, startListening]);
+    // Watchdog timer: If browser TTS hangs or onend fails to fire, transition to listening
+    const maxSpeechDurationMs = Math.max(2500, (cleanText.length / 14) * 1000 + 2000);
+    speechWatchdogRef.current = setTimeout(() => {
+      if (agentStateRef.current === 'speaking') {
+        console.warn('[VoiceAgent] Speech synthesis watchdog triggered transition to listening');
+        onSpeechComplete();
+      }
+    }, maxSpeechDurationMs);
 
-  // Initialize Speech Recognition
-  useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
-
-      recognition.onresult = (event) => {
-        let currentTranscript = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          currentTranscript += event.results[i][0].transcript;
-        }
-        setTranscript(currentTranscript);
-
-        if (event.results[0].isFinal) {
-          handleVoiceSubmit(currentTranscript);
-        }
-      };
-
-      recognition.onerror = (e) => {
-        if (e.error !== 'no-speech') {
-          console.warn('[VoiceAgent Recognition Error]', e.error);
-        }
-      };
-
-      recognitionRef.current = recognition;
+    try {
+      synthRef.current.cancel();
+      if (synthRef.current.paused) {
+        synthRef.current.resume();
+      }
+      synthRef.current.speak(utterance);
+    } catch (err) {
+      console.warn('[VoiceAgent Speak Error]', err);
+      onSpeechComplete();
     }
-
-    return () => {
-      stopSpeaking();
-      stopListening();
-      releaseAudioStream();
-    };
-  }, [stopSpeaking, stopListening, releaseAudioStream]);
+  }, [isMuted, stopSpeaking, stopListening, startListening]);
 
   // Handle incoming final speech query
   const handleVoiceSubmit = async (spokenText) => {
@@ -239,6 +228,111 @@ export default function VoiceAgentModal({
     }
   };
 
+  // Keep latest submit handler available for recognition listener
+  useEffect(() => {
+    handleVoiceSubmitRef.current = handleVoiceSubmit;
+  });
+
+  // Initialize Speech Recognition once
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setMicError('Speech recognition is not supported in this browser. Please use Google Chrome or Microsoft Edge.');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      setMicError(null);
+      if (agentStateRef.current !== 'thinking' && agentStateRef.current !== 'speaking') {
+        setAgentState('listening');
+      }
+    };
+
+    recognition.onresult = (event) => {
+      let interim = '';
+      let finalChunk = '';
+
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        const piece = event.results[i][0]?.transcript || '';
+        if (event.results[i].isFinal) {
+          finalChunk += piece;
+        } else {
+          interim += piece;
+        }
+      }
+
+      const liveText = (finalChunk || interim).trim();
+      if (liveText) {
+        setTranscript(liveText);
+      }
+
+      if (finalChunk.trim()) {
+        isListeningWantedRef.current = false;
+        try {
+          recognition.stop();
+        } catch {}
+        handleVoiceSubmitRef.current?.(finalChunk.trim());
+      }
+    };
+
+    recognition.onerror = (e) => {
+      if (e.error === 'no-speech') {
+        // Normal silence timeout; onend will automatically restart if still in listening mode
+        return;
+      }
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        setMicError('Microphone access blocked. Please allow microphone permission in your browser address bar.');
+        setAgentState('paused');
+        isListeningWantedRef.current = false;
+        return;
+      }
+      if (e.error === 'network') {
+        setMicError('Voice recognition network issue. Please check your internet connection.');
+        return;
+      }
+      if (e.error !== 'aborted') {
+        console.warn('[VoiceAgent Recognition Error]', e.error);
+      }
+    };
+
+    recognition.onend = () => {
+      // If agent is supposed to be listening, automatically restart recognition!
+      if (
+        isListeningWantedRef.current &&
+        isOpenRef.current &&
+        agentStateRef.current !== 'thinking' &&
+        agentStateRef.current !== 'speaking'
+      ) {
+        try {
+          recognition.start();
+        } catch {
+          setTimeout(() => {
+            if (
+              isListeningWantedRef.current &&
+              isOpenRef.current &&
+              agentStateRef.current !== 'thinking' &&
+              agentStateRef.current !== 'speaking'
+            ) {
+              try { recognition.start(); } catch {}
+            }
+          }, 250);
+        }
+      }
+    };
+
+    recognitionRef.current = recognition;
+
+    return () => {
+      stopSpeaking();
+      stopListening();
+    };
+  }, [stopSpeaking, stopListening]);
+
   // Toggle listening / paused
   const toggleListening = () => {
     if (agentState === 'speaking') {
@@ -254,12 +348,12 @@ export default function VoiceAgentModal({
     }
   };
 
-  // Welcome user aloud and start on open
+  // Welcome user aloud and initialize when modal opens
   useEffect(() => {
     if (isOpen) {
       setTranscript('');
+      setMicError(null);
       playChime('wake');
-      setupAudioStream();
 
       if (!hasWelcomedRef.current) {
         hasWelcomedRef.current = true;
@@ -276,17 +370,18 @@ export default function VoiceAgentModal({
         }, 350);
 
         return () => clearTimeout(timer);
+      } else {
+        startListening();
       }
     } else {
       hasWelcomedRef.current = false;
       stopSpeaking();
       stopListening();
-      releaseAudioStream();
       setAgentState('idle');
     }
-  }, [isOpen, activeContext?.user?.name, playChime, setupAudioStream, speakResponse, stopSpeaking, stopListening, releaseAudioStream]);
+  }, [isOpen, activeContext?.user?.name, playChime, speakResponse, startListening, stopSpeaking, stopListening]);
 
-  // Real Audio Frequency Reactive Visualizer
+  // Smooth Harmonic Visualizer Canvas (dynamically reacts to agentState)
   useEffect(() => {
     if (!isOpen) return;
     const canvas = canvasRef.current;
@@ -301,33 +396,26 @@ export default function VoiceAgentModal({
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
 
-      // Extract real audio frequency volume if available
-      let audioVolume = 0;
-      if (analyserRef.current && audioDataArrayRef.current && agentState === 'listening') {
-        analyserRef.current.getByteFrequencyData(audioDataArrayRef.current);
-        const sum = audioDataArrayRef.current.reduce((a, b) => a + b, 0);
-        audioVolume = sum / (audioDataArrayRef.current.length * 255);
-      }
-
       const isSpeaking = agentState === 'speaking';
       const isListening = agentState === 'listening';
       const isThinking = agentState === 'thinking';
 
-      const baseAmplitude = isSpeaking ? 32 : isListening ? (18 + audioVolume * 45) : isThinking ? 15 : 6;
+      const baseAmplitude = isSpeaking ? 34 : isListening ? 20 : isThinking ? 14 : 6;
       const numWaves = 4;
 
       for (let i = 0; i < numWaves; i++) {
         ctx.beginPath();
-        const radius = 55 + i * 16 + Math.sin(step + i * 1.2) * baseAmplitude;
+        const pulse = Math.sin(step * 1.8 + i * 1.1) * baseAmplitude;
+        const radius = 56 + i * 16 + pulse;
 
         ctx.arc(centerX, centerY, Math.max(12, radius), 0, Math.PI * 2);
         ctx.strokeStyle = isSpeaking
-          ? `rgba(16, 185, 129, ${0.45 - i * 0.09})`
+          ? `rgba(16, 185, 129, ${0.5 - i * 0.1})`
           : isThinking
-          ? `rgba(168, 85, 247, ${0.45 - i * 0.09})`
+          ? `rgba(168, 85, 247, ${0.5 - i * 0.1})`
           : isListening
-          ? `rgba(45, 212, 191, ${0.45 - i * 0.09})`
-          : `rgba(75, 85, 99, 0.15)`;
+          ? `rgba(45, 212, 191, ${0.5 - i * 0.1})`
+          : `rgba(75, 85, 99, 0.18)`;
         ctx.lineWidth = 2.5;
         ctx.stroke();
       }
@@ -419,7 +507,7 @@ export default function VoiceAgentModal({
           <button
             type="button"
             onClick={toggleListening}
-            className={`absolute w-24 h-24 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 ${
+            className={`absolute w-24 h-24 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 cursor-pointer ${
               agentState === 'speaking'
                 ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 scale-105 shadow-emerald-500/50'
                 : agentState === 'thinking'
@@ -450,9 +538,31 @@ export default function VoiceAgentModal({
             {agentState === 'paused' && 'Paused (Tap orb to speak)'}
           </p>
           <p className="text-[11px] text-[#949599] mt-0.5">
-            {agentState === 'listening' ? 'Speak naturally into your microphone' : agentState === 'speaking' ? 'Welcoming you · Tap orb to speak immediately' : 'Ask about concerts, tickets, or transfers'}
+            {agentState === 'listening'
+              ? 'Speak naturally into your microphone'
+              : agentState === 'speaking'
+              ? 'Welcoming you · Tap orb to speak immediately'
+              : 'Ask about concerts, tickets, or transfers'}
           </p>
         </div>
+
+        {/* Mic Permission / Hardware Alert if any */}
+        {micError && (
+          <div className="w-full max-w-sm px-3.5 py-2.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs flex items-center justify-between mb-2.5 text-left gap-2">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+              <span>{micError}</span>
+            </div>
+            <button
+              type="button"
+              onClick={startListening}
+              className="px-2 py-1 rounded bg-red-500/30 hover:bg-red-500/50 text-[11px] font-bold text-white shrink-0 flex items-center gap-1"
+            >
+              <RefreshCw className="w-3 h-3" />
+              <span>Retry</span>
+            </button>
+          </div>
+        )}
 
         {/* Live speech transcription */}
         {transcript && (
