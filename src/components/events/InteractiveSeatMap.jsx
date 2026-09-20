@@ -18,7 +18,6 @@ const SECTION_BLUEPRINTS = [
     accentColor: '#F5C862',
     bgTint: 'rgba(229, 169, 60, 0.14)',
     borderStroke: 'rgba(229, 169, 60, 0.55)',
-    defaultPrice: 350,
     proximity: '3 – 8m to Stage',
     sightline: 'Direct Elevated Angle (Unobstructed Front Stage)',
     format: 'Reserved Table & Lounge Service',
@@ -40,7 +39,6 @@ const SECTION_BLUEPRINTS = [
     accentColor: '#34D399',
     bgTint: 'rgba(16, 185, 129, 0.14)',
     borderStroke: 'rgba(16, 185, 129, 0.55)',
-    defaultPrice: 180,
     proximity: '1 – 10m to Center Stage',
     sightline: 'Direct Stage Front (High Energy Pit)',
     format: 'Standing Floor • Immediate Stage Proximity',
@@ -61,7 +59,6 @@ const SECTION_BLUEPRINTS = [
     accentColor: '#60A5FA',
     bgTint: 'rgba(59, 130, 246, 0.14)',
     borderStroke: 'rgba(59, 130, 246, 0.5)',
-    defaultPrice: 80,
     proximity: '12 – 35m to Stage',
     sightline: 'Panoramic Center Floor View',
     format: 'Open Standing & Dancing Floor',
@@ -82,7 +79,6 @@ const SECTION_BLUEPRINTS = [
     accentColor: '#A78BFA',
     bgTint: 'rgba(139, 92, 246, 0.14)',
     borderStroke: 'rgba(139, 92, 246, 0.5)',
-    defaultPrice: 220,
     proximity: '20 – 38m (Elevated +3.5m)',
     sightline: 'Sweeping Bird’s-Eye Amphitheater View',
     format: 'Tiered Auditorium Seating with Armrests',
@@ -116,7 +112,7 @@ export default function InteractiveSeatMap({
   onSelectTicket,
 }) {
   const { format } = useCurrency();
-  const [selectedSectionId, setSelectedSectionId] = useState('vip_lounge');
+  const [selectedSectionId, setSelectedSectionId] = useState('general_floor');
   const [hoveredSectionId, setHoveredSectionId] = useState(null);
   const [viewMode, setViewMode] = useState('map'); // 'map' | 'comparison'
 
@@ -130,21 +126,23 @@ export default function InteractiveSeatMap({
         return (
           secType === bp.slug ||
           name.includes(bp.slug) ||
-          (bp.slug === 'vip' && (t.isVip || name.includes('vip') || name.includes('lounge') || name.includes('table'))) ||
+          (bp.slug === 'vip' && (t.isVip || name.includes('vip') || name.includes('lounge') || name.includes('table') || name.includes('double'))) ||
           (bp.slug === 'golden_circle' && (name.includes('gold') || name.includes('pit') || name.includes('front') || name.includes('circle'))) ||
-          (bp.slug === 'general' && (name.includes('regular') || name.includes('general') || name.includes('standard') || name.includes('early'))) ||
+          (bp.slug === 'general' && (name.includes('regular') || name.includes('general') || name.includes('standard') || name.includes('single') || name.includes('early'))) ||
           (bp.slug === 'balcony' && (name.includes('balcony') || name.includes('mezzanine') || name.includes('suite') || name.includes('elevated')))
         );
       });
 
+      const isConfigured = Boolean(matchingTicket);
+      const hasPasses = Boolean(matchingTicket?.uploaded_tickets?.length || matchingTicket?.uploadedTickets?.length);
       const parsedPerks = matchingTicket ? parsePerksList(matchingTicket.perks) : [];
       const perks = parsedPerks.length > 0 ? parsedPerks : bp.defaultPerks;
-      const price = matchingTicket ? Number(matchingTicket.price) : bp.defaultPrice;
+      const price = isConfigured ? Number(matchingTicket.price) : null;
       const earlyBirdPrice = matchingTicket?.early_bird_price ? Number(matchingTicket.early_bird_price) : null;
-      const isEarlyBirdActive = earlyBirdPrice !== null && earlyBirdPrice < price;
+      const isEarlyBirdActive = isConfigured && earlyBirdPrice !== null && earlyBirdPrice < price;
       const effectivePrice = isEarlyBirdActive ? earlyBirdPrice : price;
 
-      const availableQty = matchingTicket
+      const availableQty = isConfigured
         ? (matchingTicket.quantity != null && matchingTicket.quantity_sold != null
             ? Math.max(0, matchingTicket.quantity - matchingTicket.quantity_sold)
             : (matchingTicket.available ?? matchingTicket.quantityAvailable ?? null))
@@ -153,26 +151,33 @@ export default function InteractiveSeatMap({
       return {
         ...bp,
         matchingTicket,
+        isConfigured,
+        hasPasses,
         displayName: matchingTicket?.name || bp.name,
         price: effectivePrice,
         originalPrice: price,
         isEarlyBird: isEarlyBirdActive,
-        available: availableQty,
+        available: isConfigured ? availableQty : 0,
         perks,
       };
     });
   }, [ticketTypes]);
 
+  // Default selection to first configured section if available
+  useEffect(() => {
+    const firstConfigured = sections.find((s) => s.isConfigured);
+    if (firstConfigured) {
+      setSelectedSectionId(firstConfigured.id);
+    }
+  }, [sections]);
+
   const activeSection = sections.find((s) => s.id === (hoveredSectionId || selectedSectionId)) || sections[0];
 
   const handleSelect = (sec) => {
+    if (!sec.isConfigured) return;
     setSelectedSectionId(sec.id);
-    if (onSelectTicket) {
-      if (sec.matchingTicket) {
-        onSelectTicket(sec.matchingTicket);
-      } else if (ticketTypes.length > 0) {
-        onSelectTicket(ticketTypes[0]);
-      }
+    if (onSelectTicket && sec.matchingTicket) {
+      onSelectTicket(sec.matchingTicket);
     }
   };
 
@@ -502,7 +507,13 @@ export default function InteractiveSeatMap({
                     />
                     <span>{sec.displayName}</span>
                     <span className="text-[11px] text-[#949599] font-mono">
-                      {sec.price === 0 ? 'Free' : format(sec.price)}
+                      {!sec.isConfigured
+                        ? 'Unavailable'
+                        : sec.hasPasses && (!sec.price || sec.price === 0)
+                        ? 'On Pass'
+                        : sec.price === 0
+                        ? 'Free'
+                        : format(sec.price)}
                     </span>
                   </button>
                 );
@@ -535,18 +546,26 @@ export default function InteractiveSeatMap({
                     {activeSection.category}
                   </span>
 
-                  {activeSection.isEarlyBird && (
-                    <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-bold">
-                      Early Bird Price Active
-                    </span>
-                  )}
-                  {activeSection.available !== null && (
-                    <span
-                      className={`text-xs font-medium ${
-                        activeSection.available > 0 ? 'text-emerald-400' : 'text-red-400'
-                      }`}
-                    >
-                      {activeSection.available > 0 ? `${activeSection.available} passes left` : 'Sold out'}
+                  {activeSection.isConfigured ? (
+                    <>
+                      {activeSection.isEarlyBird && (
+                        <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-bold">
+                          Early Bird Price Active
+                        </span>
+                      )}
+                      {activeSection.available !== null && (
+                        <span
+                          className={`text-xs font-medium ${
+                            activeSection.available > 0 ? 'text-emerald-400' : 'text-red-400'
+                          }`}
+                        >
+                          {activeSection.available > 0 ? `${activeSection.available} passes left` : 'Sold out'}
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-full bg-gray-500/15 border border-gray-500/30 text-[#949599] text-[10px] font-medium">
+                      Not Configured
                     </span>
                   )}
                 </div>
@@ -568,17 +587,31 @@ export default function InteractiveSeatMap({
                       Price per Admission
                     </span>
                     <div className="flex items-baseline gap-2 mt-0.5">
-                      <span className="text-2xl font-black text-white">
-                        {activeSection.price === 0 ? 'Free' : format(activeSection.price)}
-                      </span>
-                      {activeSection.isEarlyBird && (
-                        <span className="text-xs text-[#949599] line-through">
-                          {format(activeSection.originalPrice)}
+                      {!activeSection.isConfigured ? (
+                        <span className="text-base font-semibold text-[#6B7280]">
+                          Not available for this event
                         </span>
+                      ) : activeSection.hasPasses && (!activeSection.price || activeSection.price === 0) ? (
+                        <span className="text-xl font-bold text-amber-400">
+                          Amount on pass
+                        </span>
+                      ) : (
+                        <>
+                          <span className="text-2xl font-black text-white">
+                            {activeSection.price === 0 ? 'Free' : format(activeSection.price)}
+                          </span>
+                          {activeSection.isEarlyBird && (
+                            <span className="text-xs text-[#949599] line-through">
+                              {format(activeSection.originalPrice)}
+                            </span>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
-                  <span className="text-xs text-[#949599]">Taxes &amp; fees incl.</span>
+                  {activeSection.isConfigured && (
+                    <span className="text-xs text-[#949599]">Taxes &amp; fees incl.</span>
+                  )}
                 </div>
 
                 {/* Technical Specifications Grid (Full text without ugly ellipses) */}
@@ -626,10 +659,25 @@ export default function InteractiveSeatMap({
               <button
                 type="button"
                 onClick={() => handleSelect(activeSection)}
-                className="w-full py-3.5 px-4 rounded-xl bg-white text-[#12161A] font-bold text-sm hover:bg-[#CBD5E1] transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/30 active:scale-[0.99]"
+                disabled={!activeSection.isConfigured || (activeSection.available !== null && activeSection.available <= 0)}
+                className="w-full py-3.5 px-4 rounded-xl bg-white text-[#12161A] font-bold text-sm hover:bg-[#CBD5E1] transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/30 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <span>Select {activeSection.displayName} — {activeSection.price === 0 ? 'Free' : format(activeSection.price)}</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>
+                  {!activeSection.isConfigured
+                    ? 'Section Not Offered for this Event'
+                    : activeSection.available !== null && activeSection.available <= 0
+                    ? 'Sold Out'
+                    : `Select ${activeSection.displayName} — ${
+                        activeSection.hasPasses && (!activeSection.price || activeSection.price === 0)
+                          ? 'Amount on pass'
+                          : activeSection.price === 0
+                          ? 'Free'
+                          : format(activeSection.price)
+                      }`}
+                </span>
+                {activeSection.isConfigured && activeSection.available > 0 && (
+                  <ArrowRight className="w-4 h-4" />
+                )}
               </button>
               <p className="text-[11px] text-center text-[#949599] mt-2.5 flex items-center justify-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
@@ -657,8 +705,12 @@ export default function InteractiveSeatMap({
                 {sections.map((sec) => (
                   <tr
                     key={sec.id}
-                    className="hover:bg-[#14181D] transition-colors group cursor-pointer"
-                    onClick={() => handleSelect(sec)}
+                    className={`transition-colors group ${
+                      sec.isConfigured ? 'hover:bg-[#14181D] cursor-pointer' : 'opacity-50'
+                    }`}
+                    onClick={() => {
+                      if (sec.isConfigured) handleSelect(sec);
+                    }}
                   >
                     <td className="py-4 px-4 font-semibold text-white">
                       <div className="flex items-center gap-2.5">
@@ -672,7 +724,15 @@ export default function InteractiveSeatMap({
                       </div>
                     </td>
                     <td className="py-4 px-4 font-bold text-white whitespace-nowrap">
-                      {sec.price === 0 ? 'Free' : format(sec.price)}
+                      {!sec.isConfigured ? (
+                        <span className="text-xs text-[#6B7280] font-normal">Not offered</span>
+                      ) : sec.hasPasses && (!sec.price || sec.price === 0) ? (
+                        <span className="text-xs text-amber-400 font-semibold">Amount on pass</span>
+                      ) : sec.price === 0 ? (
+                        'Free'
+                      ) : (
+                        format(sec.price)
+                      )}
                     </td>
                     <td className="py-4 px-4 text-[#C5C7CB]">
                       <p className="font-medium text-white">{sec.proximity}</p>
@@ -694,14 +754,15 @@ export default function InteractiveSeatMap({
                     <td className="py-4 px-4 text-right whitespace-nowrap">
                       <button
                         type="button"
+                        disabled={!sec.isConfigured || (sec.available !== null && sec.available <= 0)}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleSelect(sec);
+                          if (sec.isConfigured) handleSelect(sec);
                         }}
-                        className="px-4 py-2 rounded-lg bg-white text-[#12161A] text-xs font-bold hover:bg-[#CBD5E1] transition-all shadow-sm inline-flex items-center gap-1"
+                        className="px-4 py-2 rounded-lg bg-white text-[#12161A] text-xs font-bold hover:bg-[#CBD5E1] transition-all shadow-sm inline-flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed"
                       >
-                        <span>Select</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <span>{sec.isConfigured ? 'Select' : 'Unavailable'}</span>
+                        {sec.isConfigured && <ArrowRight className="w-3.5 h-3.5" />}
                       </button>
                     </td>
                   </tr>

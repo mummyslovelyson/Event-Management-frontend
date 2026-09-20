@@ -628,7 +628,7 @@ export default function EventDetailPage() {
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.4, ease: 'easeOut' }}
-          src={event.image || event.banner || 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg'}
+          src={event.banner_image || event.bannerImage || event.image || event.banner || '/assets/images/Logo.jpeg'}
           alt={event.title}
           className="w-full h-full object-cover"
         />
@@ -1346,45 +1346,6 @@ export default function EventDetailPage() {
                         </div>
                       </form>
                     </div>
-                  </div>
-                )}
-
-                {/* FAQs */}
-                {activeTab === 'FAQs' && (
-                  <div>
-                    {faqs.length === 0 ? (
-                      <EmptyState
-                        icon={AlertCircle}
-                        title="No FAQs yet"
-                        description="FAQs for this event will appear here once the organizer adds them."
-                      />
-                    ) : (
-                      <div className="space-y-3">
-                        {faqs.map((faq, i) => (
-                          <div key={i} className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden hover:border-white/40 transition-colors">
-                            <button
-                              onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                              className="w-full flex items-center justify-between px-5 py-4 text-left"
-                            >
-                              <span className="text-sm font-semibold text-[#EFEFF1] pr-4">{faq.question}</span>
-                              <ChevronDown className={`w-5 h-5 text-[#949599] shrink-0 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
-                            </button>
-                            <AnimatePresence>
-                              {openFaq === i && (
-                                <motion.div
-                                  initial={{ height: 0, opacity: 0 }}
-                                  animate={{ height: 'auto', opacity: 1 }}
-                                  exit={{ height: 0, opacity: 0 }}
-                                  transition={{ duration: 0.2 }}
-                                >
-                                  <p className="px-5 pb-4 text-sm text-[#949599] leading-relaxed">{faq.answer}</p>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 )}
 
