@@ -37,6 +37,8 @@ export default function VoiceAgentModal({
   const utteranceRef = useRef(null);
   const speechWatchdogRef = useRef(null);
   const handleVoiceSubmitRef = useRef(null);
+  const lastSpokenCleanRef = useRef('');
+  const lastSpokenEndTimestampRef = useRef(0);
 
   // Sync refs for event handlers and callbacks
   useEffect(() => {
@@ -93,13 +95,17 @@ export default function VoiceAgentModal({
     utteranceRef.current = null;
   }, []);
 
-  // Stop speech recognition
+  // Stop speech recognition immediately and discard pending audio
   const stopListening = useCallback(() => {
     isListeningWantedRef.current = false;
     if (recognitionRef.current) {
       try {
-        recognitionRef.current.stop();
-      } catch {}
+        recognitionRef.current.abort();
+      } catch {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
     }
   }, []);
 
@@ -139,6 +145,9 @@ export default function VoiceAgentModal({
       .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
       .slice(0, 350);
 
+    // Save normalized spoken text to filter out microphone self-echoes
+    lastSpokenCleanRef.current = cleanText.toLowerCase();
+
     if (!cleanText.trim()) {
       setAgentState('listening');
       startListening();
@@ -168,9 +177,16 @@ export default function VoiceAgentModal({
         speechWatchdogRef.current = null;
       }
       utteranceRef.current = null;
+      lastSpokenEndTimestampRef.current = Date.now();
+
+      // Grace period: allow 650ms for room echo / speaker tail audio to disperse before reopening mic
       if (isOpenRef.current && agentStateRef.current === 'speaking') {
-        setAgentState('listening');
-        startListening();
+        setTimeout(() => {
+          if (isOpenRef.current && agentStateRef.current === 'speaking') {
+            setAgentState('listening');
+            startListening();
+          }
+        }, 650);
       }
     };
 
@@ -254,6 +270,21 @@ export default function VoiceAgentModal({
     };
 
     recognition.onresult = (event) => {
+      // 1. Guard against agent speaking, thinking, modal closed, or browser TTS actively running
+      if (
+        !isOpenRef.current ||
+        agentStateRef.current === 'speaking' ||
+        agentStateRef.current === 'thinking' ||
+        window.speechSynthesis?.speaking
+      ) {
+        return;
+      }
+
+      // 2. Reject audio picked up during the echo cooldown window (650ms after speech ended)
+      if (Date.now() - lastSpokenEndTimestampRef.current < 650) {
+        return;
+      }
+
       let interim = '';
       let finalChunk = '';
 
@@ -267,6 +298,18 @@ export default function VoiceAgentModal({
       }
 
       const liveText = (finalChunk || interim).trim();
+
+      // 3. Self-echo cancellation: If the recognized audio matches what the agent just said, discard it!
+      const recentSpoken = lastSpokenCleanRef.current || '';
+      if (liveText && recentSpoken) {
+        const normLive = liveText.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+        const normSpoken = recentSpoken.replace(/[^a-z0-9 ]/g, '').trim();
+        if (normSpoken.length > 5 && (normSpoken.includes(normLive) || (normLive.length > 10 && normLive.includes(normSpoken.slice(0, 30))))) {
+          console.warn('[VoiceAgent] Discarded self-echo from speakers:', liveText);
+          return;
+        }
+      }
+
       if (liveText) {
         setTranscript(liveText);
       }
@@ -274,8 +317,10 @@ export default function VoiceAgentModal({
       if (finalChunk.trim()) {
         isListeningWantedRef.current = false;
         try {
-          recognition.stop();
-        } catch {}
+          recognition.abort();
+        } catch {
+          try { recognition.stop(); } catch {}
+        }
         handleVoiceSubmitRef.current?.(finalChunk.trim());
       }
     };
@@ -306,7 +351,9 @@ export default function VoiceAgentModal({
         isListeningWantedRef.current &&
         isOpenRef.current &&
         agentStateRef.current !== 'thinking' &&
-        agentStateRef.current !== 'speaking'
+        agentStateRef.current !== 'speaking' &&
+        !window.speechSynthesis?.speaking &&
+        Date.now() - lastSpokenEndTimestampRef.current > 600
       ) {
         try {
           recognition.start();
@@ -316,11 +363,12 @@ export default function VoiceAgentModal({
               isListeningWantedRef.current &&
               isOpenRef.current &&
               agentStateRef.current !== 'thinking' &&
-              agentStateRef.current !== 'speaking'
+              agentStateRef.current !== 'speaking' &&
+              !window.speechSynthesis?.speaking
             ) {
               try { recognition.start(); } catch {}
             }
-          }, 250);
+          }, 300);
         }
       }
     };
@@ -362,6 +410,7 @@ export default function VoiceAgentModal({
           ? `Hello ${firstName}! Welcome to Tribes and Cliqs. What events or tickets can I help you with today?`
           : `Hello! Welcome to Tribes and Cliqs. What events or tickets can I help you with today?`;
 
+        stopListening();
         setLastAgentReply(welcomeText);
         setAgentState('speaking');
 

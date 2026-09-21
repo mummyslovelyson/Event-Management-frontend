@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { Lock, Eye, EyeOff, Loader2, AlertCircle, Mail } from 'lucide-react';
+import { Lock, Eye, EyeOff, Loader2, AlertCircle, Mail, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
 import Logo from '@/components/common/Logo';
