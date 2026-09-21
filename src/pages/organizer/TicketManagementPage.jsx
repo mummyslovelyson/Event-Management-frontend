@@ -330,54 +330,29 @@ export default function TicketManagementPage() {
             <input {...register('name', { required: 'Name is required' })} placeholder="VIP, General..." className={inputCls} />
             {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name.message}</p>}
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-medium text-[#949599] uppercase tracking-wider">Price / Amount</label>
-                {uploadedTickets.length > 0 ? (
-                  <span className="text-[10px] font-bold text-amber-400">On Pass</span>
-                ) : (
-                  <span className="text-[10px] text-[#949599]">Optional</span>
-                )}
-              </div>
-              <input
-                type="number"
-                step="0.01"
-                {...register('price', { min: 0 })}
-                placeholder={uploadedTickets.length > 0 ? 'Amount is on pass' : '0.00'}
-                className={`${inputCls} ${uploadedTickets.length > 0 ? 'bg-[#12161A] text-amber-300 placeholder:text-[#949599]/60 border-amber-400/20' : ''}`}
-              />
-              <p className="mt-1 text-[11px] text-[#949599]">
-                {uploadedTickets.length > 0
-                  ? 'The uploaded ticket contains the amount. No need to enter an amount.'
-                  : 'Optional if amount is on uploaded pass'}
-              </p>
-              {errors.price && <p className="mt-1 text-xs text-red-400">{errors.price.message}</p>}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-medium text-[#949599] uppercase tracking-wider">Total Quantity</label>
+              {uploadedTickets.length > 0 && (
+                <span className="text-[10px] font-bold text-amber-400">Locked to files</span>
+              )}
             </div>
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-medium text-[#949599] uppercase tracking-wider">Quantity</label>
-                {uploadedTickets.length > 0 && (
-                  <span className="text-[10px] font-bold text-amber-400">Locked to files</span>
-                )}
-              </div>
-              <input
-                type="number"
-                {...register('quantity', {
-                  required: uploadedTickets.length > 0 ? false : 'Quantity is required',
-                  min: 1,
-                })}
-                placeholder="50"
-                readOnly={uploadedTickets.length > 0}
-                className={`${inputCls} ${uploadedTickets.length > 0 ? 'bg-[#12161A] text-amber-300 font-bold border-amber-400/30' : ''}`}
-              />
-              <p className="mt-1 text-[11px] text-[#949599]">
-                {uploadedTickets.length > 0
-                  ? `Auto-calculated from ${uploadedTickets.length} uploaded passes`
-                  : 'Or upload pre-generated passes below'}
-              </p>
-              {errors.quantity && <p className="mt-1 text-xs text-red-400">{errors.quantity.message}</p>}
-            </div>
+            <input
+              type="number"
+              {...register('quantity', {
+                required: uploadedTickets.length > 0 ? false : 'Quantity is required',
+                min: 1,
+              })}
+              placeholder="50"
+              readOnly={uploadedTickets.length > 0}
+              className={`${inputCls} ${uploadedTickets.length > 0 ? 'bg-[#12161A] text-amber-300 font-bold border-amber-400/30' : ''}`}
+            />
+            <p className="mt-1 text-[11px] text-[#949599]">
+              {uploadedTickets.length > 0
+                ? `Auto-calculated from ${uploadedTickets.length} uploaded passes (amount is on pass)`
+                : 'Upload pre-generated passes below or set figure'}
+            </p>
+            {errors.quantity && <p className="mt-1 text-xs text-red-400">{errors.quantity.message}</p>}
           </div>
 
           {/* Ticket Files Uploader */}

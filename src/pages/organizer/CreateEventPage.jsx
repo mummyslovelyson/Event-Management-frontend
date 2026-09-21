@@ -335,7 +335,7 @@ const StepTickets = () => {
                   <span>Ticket Type {i + 1}</span>
                   {hasUploadedFiles && (
                     <span className="text-[11px] font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">
-                      ★ {currentUploaded.length} pre-generated {currentUploaded.length === 1 ? 'ticket' : 'tickets'} loaded
+                      {currentUploaded.length} pre-generated {currentUploaded.length === 1 ? 'ticket' : 'tickets'} loaded
                     </span>
                   )}
                 </span>
@@ -346,7 +346,7 @@ const StepTickets = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className={labelCls}>Name</label>
                   <input {...register(`ticketTypes.${i}.name`, { required: 'Name is required' })} placeholder="VIP, Regular, Table..." className={inputCls} />
@@ -363,29 +363,6 @@ const StepTickets = () => {
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-xs font-medium text-[#949599] uppercase tracking-wider">Price / Amount</label>
-                    {hasUploadedFiles ? (
-                      <span className="text-[10px] font-bold text-amber-400">On Pass</span>
-                    ) : (
-                      <span className="text-[10px] text-[#949599]">Optional</span>
-                    )}
-                  </div>
-                  <input
-                    type="number"
-                    step="0.01"
-                    {...register(`ticketTypes.${i}.price`, { min: { value: 0, message: 'Price cannot be negative' } })}
-                    placeholder={hasUploadedFiles ? 'Amount is on pass' : '0.00'}
-                    className={`${inputCls} ${hasUploadedFiles ? 'bg-[#12161A] text-amber-300 placeholder:text-[#949599]/60 border-amber-400/20' : ''}`}
-                  />
-                  <p className="mt-1 text-[11px] text-[#949599]">
-                    {hasUploadedFiles
-                      ? 'The uploaded ticket contains the amount. No need to enter an amount.'
-                      : 'Optional if amount is on uploaded pass'}
-                  </p>
-                  {ticketErr?.price && <p className={errCls}>{ticketErr.price.message}</p>}
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
                     <label className="text-xs font-medium text-[#949599] uppercase tracking-wider">Total Quantity</label>
                     {hasUploadedFiles && (
                       <span className="text-[10px] font-bold text-amber-400">Locked to files</span>
@@ -393,7 +370,10 @@ const StepTickets = () => {
                   </div>
                   <input
                     type="number"
-                    {...register(`ticketTypes.${i}.quantity`, { required: 'Quantity is required', min: { value: 1, message: 'Min 1' } })}
+                    {...register(`ticketTypes.${i}.quantity`, {
+                      required: hasUploadedFiles ? false : 'Quantity is required',
+                      min: { value: 1, message: 'Min 1' }
+                    })}
                     placeholder="50"
                     readOnly={hasUploadedFiles}
                     className={`${inputCls} ${hasUploadedFiles ? 'bg-[#12161A] text-amber-300 font-bold border-amber-400/30' : ''}`}
@@ -418,27 +398,6 @@ const StepTickets = () => {
                     }
                   }}
                 />
-              </div>
-
-              {/* Optional Early Bird Rules */}
-              <div className="p-3.5 rounded-xl bg-[#14181C] border border-[#2E363E] space-y-3">
-                <p className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                  Optional Early-Bird Pricing Rules
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label className={labelCls}>Early-Bird Price (GHS)</label>
-                    <input type="number" step="0.01" {...register(`ticketTypes.${i}.early_bird_price`)} placeholder="e.g. 70" className={inputCls} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Early-Bird Deadline</label>
-                    <input type="date" {...register(`ticketTypes.${i}.early_bird_deadline`)} className={inputCls} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Early-Bird Cap (Max Tickets)</label>
-                    <input type="number" {...register(`ticketTypes.${i}.early_bird_max_qty`)} placeholder="e.g. 20" className={inputCls} />
-                  </div>
-                </div>
               </div>
 
               <div>
@@ -539,7 +498,9 @@ const StepReview = () => {
                   )}
                 </p>
               </div>
-              <span className="text-sm font-semibold text-white">{format(t.price)}</span>
+              <span className="text-xs font-semibold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full border border-amber-400/20">
+                {Number(t.price) > 0 ? format(t.price) : 'Amount on pass'}
+              </span>
             </div>
           ))}
         </div>
@@ -673,12 +634,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
           toast.error(`Ticket Type ${i + 1}: Name is required`);
           return;
         }
-        if (t.price === '' || t.price === null || t.price === undefined) {
-          methods.setValue(`ticketTypes.${i}.price`, 0);
-        } else if (isNaN(Number(t.price)) || Number(t.price) < 0) {
-          toast.error(`Ticket Type ${i + 1}: Price cannot be negative`);
-          return;
-        }
+        methods.setValue(`ticketTypes.${i}.price`, Number(t.price) || 0);
         const utCount = (t.uploadedTickets || []).length;
         const currentQty = utCount > 0 ? utCount : Number(t.quantity);
         if (!currentQty || isNaN(currentQty) || currentQty < 1) {
