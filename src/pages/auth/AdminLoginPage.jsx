@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { Lock, Eye, EyeOff, Loader2, AlertCircle, Mail, ShieldCheck } from 'lucide-react';
+import { Lock, Eye, EyeOff, Loader2, AlertCircle, Mail } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
 import Logo from '@/components/common/Logo';
@@ -332,19 +332,6 @@ export default function AdminLoginPage() {
           background: #b21414;
         }
 
-        .admin-login-wrapper .admin-badge {
-          font-size: 10.5px;
-          font-weight: 600;
-          color: #949599;
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          padding: 2px 8px;
-          border-radius: 6px;
-          background: rgba(36, 43, 50, 0.6);
-          border: 1px solid rgba(73, 79, 85, 0.3);
-        }
-
         /* Submit Button */
         .admin-login-wrapper .submit-btn {
           position: relative;
@@ -628,10 +615,6 @@ export default function AdminLoginPage() {
                 <div className={`switch ${rememberMe ? 'on' : ''}`} />
                 <span>Remember me</span>
               </div>
-
-              <span className="admin-badge">
-                <ShieldCheck size={11} className="text-[#EFEFF1]" /> Admin Portal
-              </span>
             </div>
 
             {/* Submit Button */}
