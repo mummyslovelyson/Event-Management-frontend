@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  X, Send, Trash2, Minimize2, Maximize2, Loader2,
+  X, Send, Trash2, Loader2,
   Mic, MicOff, Volume2, VolumeX, ArrowRight, Sparkles, Compass, Ticket,
   Radio, ChevronRight, MessageSquare
 } from 'lucide-react';
@@ -27,7 +27,6 @@ export default function ChatbotWidget() {
   const { user } = useAuth() || {};
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [hasUnread, setHasUnread] = useState(true);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -360,53 +359,33 @@ export default function ChatbotWidget() {
                 opacity: 1,
                 y: 0,
                 scale: 1,
-                width: isExpanded ? 'min(94vw, 700px)' : 'min(92vw, 410px)',
-                height: isExpanded ? 'min(86vh, 720px)' : 'min(76vh, 580px)',
+                width: 'min(92vw, 410px)',
+                height: 'min(76vh, 580px)',
               }}
               exit={{ opacity: 0, y: 30, scale: 0.94 }}
               transition={{ duration: 0.22, ease: 'easeOut' }}
               className="rounded-2xl bg-[#14181C]/95 backdrop-blur-xl border border-[#2E363E] shadow-2xl shadow-black/80 flex flex-col overflow-hidden mb-3 text-left"
             >
               {/* Header */}
-              <div className="p-3.5 px-4 bg-[#1A2127] border-b border-[#2E363E] flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="relative">
+              <div className="p-3 px-4 bg-[#1A2127] border-b border-[#2E363E] flex items-center justify-between">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="relative shrink-0">
                     <img
                       src="/assets/images/Logo.jpeg"
                       alt="Cliqs Bot"
                       className="w-9 h-9 rounded-xl object-cover ring-1 ring-[#3A4045] shadow-md"
                     />
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#EFEFF1] border-2 border-[#1A2127]" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#EFEFF1] border-2 border-[#1A2127]" />
                   </div>
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <h3 className="text-sm font-bold text-white tracking-tight">Cliqs Bot</h3>
-                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[#242B32] text-[#EFEFF1] border border-[#494F55]/40 flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#EFEFF1]" />
-                        {isEventPage ? 'Event Guide' : isOrganizerPage ? 'Organizer Agent' : 'AI Agent'}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-[#949599]">
-                      {isEventPage ? 'Ask questions about this event' : 'Tribes & Cliqs Smart Assistant'}
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-bold text-white tracking-tight leading-tight">Cliqs Bot</h3>
+                    <p className="text-[11px] text-[#949599] truncate mt-0.5">
+                      {isEventPage ? 'Ask about this event' : 'Tribes & Cliqs Assistant'}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 text-[#949599]">
-                  {/* Voice Agent Launcher Button */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsOpen(false);
-                      setIsVoiceModeOpen(true);
-                    }}
-                    title="Switch to Hands-Free Voice Agent"
-                    className="p-1.5 px-2 rounded-lg bg-[#242B32] hover:bg-[#2E363E] text-[#EFEFF1] hover:text-white transition border border-[#494F55]/40 flex items-center gap-1 text-[11px] font-bold"
-                  >
-                    <Radio className="w-3.5 h-3.5 text-[#EFEFF1] animate-pulse" />
-                    <span className="hidden sm:inline">Voice Agent</span>
-                  </button>
-
+                <div className="flex items-center gap-1 text-[#949599] shrink-0">
                   <button
                     type="button"
                     onClick={clearChat}
@@ -414,14 +393,6 @@ export default function ChatbotWidget() {
                     className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white transition"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsExpanded((v) => !v)}
-                    title={isExpanded ? 'Restore size' : 'Expand window'}
-                    className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white transition hidden sm:inline-flex"
-                  >
-                    {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                   </button>
                   <button
                     type="button"
