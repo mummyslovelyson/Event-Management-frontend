@@ -58,6 +58,10 @@ export const deleteContentPage = (id) => api.delete(`/admin/content/${id}`);
 export const sendNotification = (data) => api.post('/admin/notifications', data);
 export const getAdminNotifications = (params) => api.get('/admin/notifications', { params });
 export const markAdminNotificationsRead = (id = 'all') => api.put(`/admin/notifications/${id}/read`);
+export const deleteAdminNotification = (id) => api.delete(`/admin/notifications/${id}`);
+export const clearReadAdminNotifications = () => api.delete('/admin/notifications/clear-read');
+export const getAdminAnnouncements = (params) => api.get('/admin/announcements', { params });
+export const getNotificationTemplates = () => api.get('/admin/notification-templates');
 
 export const getSupportTickets = (params) => api.get('/admin/support', { params });
 export const getSupportTicket = (id) => api.get(`/admin/support/${id}`);

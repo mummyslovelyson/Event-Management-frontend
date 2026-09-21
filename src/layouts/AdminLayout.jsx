@@ -5,9 +5,10 @@ import {
   LayoutDashboard, Users, CalendarDays, Layers, CreditCard, BarChart3,
   FileText, Bell, LifeBuoy, Settings, ScrollText, Menu, X, LogOut,
   Search, ChevronDown, UserCheck, AlertTriangle, Globe, BookOpen, CheckCircle, ExternalLink,
+  Trash2, Check,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { getAdminNotifications, markAdminNotificationsRead } from '@/api/admin';
+import { getAdminNotifications, markAdminNotificationsRead, deleteAdminNotification } from '@/api/admin';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
 
 const nav = [
@@ -105,6 +106,62 @@ export default function AdminLayout() {
     } catch {
       // ignore
     }
+  };
+
+  const handleMarkOneRead = async (id) => {
+    try {
+      await markAdminNotificationsRead(id);
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleDeleteNotif = async (e, id) => {
+    e.stopPropagation();
+    try {
+      await deleteAdminNotification(id);
+      const target = notifications.find((n) => n.id === id);
+      if (target && !target.is_read) {
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+      }
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    } catch {
+      // ignore
+    }
+  };
+
+  const formatTimeAgo = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffSec = Math.floor((now - date) / 1000);
+    if (diffSec < 60) return 'Just now';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHours = Math.floor(diffMin / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+  };
+
+  const getNotifMeta = (type) => {
+    if (['payment', 'withdrawal', 'refund'].includes(type)) {
+      return { Icon: CreditCard, badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' };
+    }
+    if (type === 'account') {
+      return { Icon: UserCheck, badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30' };
+    }
+    if (['ticket', 'price_change', 'update'].includes(type)) {
+      return { Icon: CalendarDays, badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30' };
+    }
+    if (type === 'support') {
+      return { Icon: LifeBuoy, badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
+    }
+    return { Icon: Bell, badgeClass: 'bg-white/10 text-white border-white/20' };
   };
 
   const handleLogout = () => { logout(); navigate('/admin-login'); };
@@ -216,46 +273,82 @@ export default function AdminLayout() {
 
                       <div className="max-h-80 overflow-y-auto divide-y divide-[#262B2F]/60">
                         {notifications.length === 0 ? (
-                          <div className="py-8 text-center text-xs text-[#6B7278]">
-                            No notifications yet. New activity will pop up here!
+                          <div className="py-10 px-4 text-center">
+                            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-2 text-[#949599]">
+                              <Bell className="w-5 h-5" />
+                            </div>
+                            <p className="text-xs font-semibold text-[#EFEFF1]">No notifications</p>
+                            <p className="text-[11px] text-[#6B7278] mt-0.5">Live platform activity and alerts will appear here.</p>
                           </div>
                         ) : (
-                          notifications.map((n) => (
-                            <div
-                              key={n.id}
-                              className={`p-3.5 transition flex items-start gap-3 hover:bg-[#1D2124] ${
-                                !n.is_read ? 'bg-white/[0.03]' : ''
-                              }`}
-                            >
-                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold ${
-                                n.type === 'account' ? 'bg-blue-500/20 text-blue-300' :
-                                n.type === 'payment' || n.type === 'withdrawal' ? 'bg-emerald-500/20 text-emerald-300' :
-                                n.type === 'support' ? 'bg-amber-500/20 text-amber-300' :
-                                n.type === 'ticket' ? 'bg-purple-500/20 text-purple-300' :
-                                'bg-white/10 text-white'
-                              }`}>
-                                <Bell className="w-4 h-4" />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center justify-between gap-1">
-                                  <p className="text-xs font-semibold text-[#EFEFF1] truncate">{n.title}</p>
-                                  <span className="text-[10px] text-[#6B7278] shrink-0">
-                                    {n.created_at ? new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-                                  </span>
+                          notifications.map((n) => {
+                            const { Icon: TypeIcon, badgeClass } = getNotifMeta(n.type);
+                            return (
+                              <div
+                                key={n.id}
+                                onClick={() => {
+                                  if (!n.is_read) handleMarkOneRead(n.id);
+                                  if (n.link) {
+                                    setNotifOpen(false);
+                                    navigate(n.link);
+                                  }
+                                }}
+                                className={`group relative p-3.5 transition flex items-start gap-3 cursor-pointer hover:bg-[#1D2124] ${
+                                  !n.is_read ? 'bg-white/[0.04]' : 'opacity-85'
+                                }`}
+                              >
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${badgeClass}`}>
+                                  <TypeIcon className="w-4 h-4" />
                                 </div>
-                                <p className="text-xs text-[#949599] line-clamp-2 mt-0.5">{n.message}</p>
-                                {n.link && (
-                                  <Link
-                                    to={n.link}
-                                    onClick={() => setNotifOpen(false)}
-                                    className="inline-flex items-center gap-1 mt-1 text-[11px] text-white/90 hover:underline font-medium"
-                                  >
-                                    View details <ExternalLink className="w-3 h-3" />
-                                  </Link>
-                                )}
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center justify-between gap-1.5">
+                                    <div className="flex items-center gap-1.5 min-w-0">
+                                      <p className="text-xs font-semibold text-[#EFEFF1] truncate">{n.title}</p>
+                                      {!n.is_read && (
+                                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                                      )}
+                                    </div>
+                                    <span className="text-[10px] text-[#6B7278] shrink-0 font-medium">
+                                      {formatTimeAgo(n.created_at || n.createdAt)}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-[#949599] line-clamp-2 mt-0.5 leading-relaxed">{n.message}</p>
+                                  <div className="flex items-center justify-between mt-2 pt-1 border-t border-white/[0.04]">
+                                    {n.link ? (
+                                      <span className="inline-flex items-center gap-1 text-[11px] text-white/90 group-hover:text-white group-hover:underline font-medium">
+                                        View details <ExternalLink className="w-3 h-3" />
+                                      </span>
+                                    ) : (
+                                      <span className="text-[10px] text-[#6B7278] capitalize">{n.type || 'Platform'}</span>
+                                    )}
+                                    <div className="flex items-center gap-1 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                                      {!n.is_read && (
+                                        <button
+                                          type="button"
+                                          title="Mark as read"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleMarkOneRead(n.id);
+                                          }}
+                                          className="p-1 rounded text-[#949599] hover:text-emerald-300 hover:bg-emerald-500/10 transition"
+                                        >
+                                          <Check className="w-3.5 h-3.5" />
+                                        </button>
+                                      )}
+                                      <button
+                                        type="button"
+                                        title="Dismiss alert"
+                                        onClick={(e) => handleDeleteNotif(e, n.id)}
+                                        className="p-1 rounded text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          ))
+                            );
+                          })
                         )}
                       </div>
 
