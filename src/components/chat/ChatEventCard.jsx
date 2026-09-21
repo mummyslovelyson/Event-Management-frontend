@@ -17,7 +17,7 @@ export default function ChatEventCard({ event, onNavigate }) {
   const priceDisplay = event.minPrice === 0 ? 'Free' : formatCurrency(event.minPrice);
 
   return (
-    <div className="rounded-xl overflow-hidden bg-[#161D22] border border-[#2E363E] hover:border-emerald-500/50 transition-all group flex flex-col my-2 shadow-md">
+    <div className="rounded-xl overflow-hidden bg-[#161D22] border border-[#2E363E] hover:border-white/30 transition-all group flex flex-col my-2 shadow-md">
       {/* Flyer header */}
       <div className="h-28 bg-[#242B32] relative overflow-hidden">
         {event.image ? (
@@ -41,7 +41,7 @@ export default function ChatEventCard({ event, onNavigate }) {
             </span>
           )}
           {event.matchScore && (
-            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider bg-emerald-500/90 text-black shadow-md backdrop-blur">
+            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider bg-white text-[#1C232B] shadow-md backdrop-blur">
               <Sparkles className="w-2.5 h-2.5" />
               <span>{event.matchScore}% Match</span>
             </span>
@@ -62,7 +62,7 @@ export default function ChatEventCard({ event, onNavigate }) {
 
           {/* ML Match explanation if present */}
           {event.matchReason && (
-            <p className="text-[10px] text-emerald-400/90 font-medium truncate mt-0.5">
+            <p className="text-[10px] text-[#CBD5E1] font-medium truncate mt-0.5">
               ✦ {event.matchReason}
             </p>
           )}
@@ -96,7 +96,7 @@ export default function ChatEventCard({ event, onNavigate }) {
             <button
               type="button"
               onClick={() => setShowTiers((v) => !v)}
-              className="w-full flex items-center justify-between text-[10px] font-semibold text-emerald-400 hover:text-emerald-300 py-0.5"
+              className="w-full flex items-center justify-between text-[10px] font-semibold text-[#EFEFF1] hover:text-white py-0.5"
             >
               <span>{showTiers ? 'Hide Ticket Tiers' : `Preview Ticket Tiers (${event.ticketTiers.length})`}</span>
               {showTiers ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -106,7 +106,7 @@ export default function ChatEventCard({ event, onNavigate }) {
                 {event.ticketTiers.map((t, i) => (
                   <div key={i} className="flex items-center justify-between text-[11px]">
                     <span className="text-white font-medium truncate max-w-[65%]">{t.name}</span>
-                    <span className="text-emerald-400 font-bold">{formatCurrency(t.price)}</span>
+                    <span className="text-[#EFEFF1] font-bold">{formatCurrency(t.price)}</span>
                   </div>
                 ))}
               </div>
@@ -117,7 +117,7 @@ export default function ChatEventCard({ event, onNavigate }) {
         <Link
           to={`/events/${event.id}`}
           onClick={onNavigate}
-          className="w-full mt-0.5 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-black text-xs font-bold transition-all border border-emerald-500/30 hover:border-transparent"
+          className="w-full mt-0.5 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition-all border border-transparent shadow"
         >
           <span>View &amp; Buy Tickets</span>
           <ArrowRight className="w-3.5 h-3.5" />

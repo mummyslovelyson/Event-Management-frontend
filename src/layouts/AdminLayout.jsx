@@ -22,7 +22,7 @@ const nav = [
   { to: '/admin/content', label: 'Content', icon: FileText },
   { to: '/admin/notifications', label: 'Notifications', icon: Bell },
   { to: '/admin/support', label: 'Support', icon: LifeBuoy },
-  { to: '/admin/ai-training', label: 'Concierge Training', icon: BookOpen },
+  { to: '/admin/ai-training', label: 'Cliqs Bot Training', icon: BookOpen },
   { to: '/admin/settings', label: 'Settings', icon: Settings, systemAdminOnly: true },
   { to: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText, systemAdminOnly: true },
 ];

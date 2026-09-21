@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { Lock, Eye, EyeOff, Loader2, AlertCircle, Mail, ShieldCheck } from 'lucide-react';
+import { Lock, Eye, EyeOff, Loader2, AlertCircle, Mail } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
 import Logo from '@/components/common/Logo';
@@ -525,12 +525,7 @@ export default function AdminLoginPage() {
 
             {/* Logo Emblem on Top */}
             <div className="flex justify-center mb-3">
-              <div className="relative">
-                <Logo size="md" showText={false} asLink={false} />
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#161D22] border border-white/20 flex items-center justify-center shadow">
-                  <ShieldCheck className="w-2.5 h-2.5 text-[#EFEFF1]" />
-                </div>
-              </div>
+              <Logo size="md" showText={false} asLink={false} />
             </div>
 
             {/* Heading & Subtitle */}

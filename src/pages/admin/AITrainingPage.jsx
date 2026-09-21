@@ -66,7 +66,7 @@ export default function AITrainingPage() {
       setCustomInstructions(data.customInstructions || '');
       setTemperature(data.temperature || 0.7);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to load concierge data');
+      toast.error(err.response?.data?.message || 'Failed to load Cliqs Bot data');
     } finally {
       setLoading(false);
     }
@@ -114,7 +114,7 @@ export default function AITrainingPage() {
         toast.success('Knowledge item updated');
       } else {
         await createAIKnowledgeItem(formData);
-        toast.success('Knowledge rule added to concierge');
+        toast.success('Knowledge rule added to Cliqs Bot');
       }
       setIsModalOpen(false);
       loadData();
@@ -153,9 +153,9 @@ export default function AITrainingPage() {
     setSavingSettings(true);
     try {
       await updateAISettings({ customInstructions, temperature });
-      toast.success('Concierge voice guidelines and settings updated');
+      toast.success('Cliqs Bot voice guidelines and settings updated');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to update concierge settings');
+      toast.error(err.response?.data?.message || 'Failed to update Cliqs Bot settings');
     } finally {
       setSavingSettings(false);
     }
@@ -208,21 +208,21 @@ export default function AITrainingPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1] tracking-tight">
-              Concierge Knowledge &amp; Training Studio
+              Cliqs Bot Knowledge &amp; Training Studio
             </h1>
-            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-white/10 text-[#EFEFF1] border border-white/20">
               Live Assistant
             </span>
           </div>
           <p className="text-sm text-[#949599] mt-1">
-            Manage custom business rules, venue policies, and concierge guidelines in real time.
+            Manage custom business rules, venue policies, and Cliqs Bot guidelines in real time.
           </p>
         </div>
 
         {/* Global Action Stats */}
         <div className="flex items-center gap-3">
           <div className="px-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#2E363E] flex items-center gap-2 text-xs text-[#949599]">
-            <Database className="w-4 h-4 text-emerald-400" />
+            <Database className="w-4 h-4 text-[#EFEFF1]" />
             <span><strong className="text-white font-bold">{activeCount}</strong> Active Rules</span>
           </div>
           <button
@@ -366,8 +366,8 @@ export default function AITrainingPage() {
                   <div className="mt-4 pt-3 border-t border-[#242B32] flex items-center justify-between text-xs text-[#949599]">
                     <span className="text-[11px]">
                       {item.is_active ? (
-                        <span className="text-emerald-400 flex items-center gap-1 font-medium">
-                          <CheckCircle2 className="w-3 h-3" /> Live in Concierge
+                        <span className="text-[#EFEFF1] flex items-center gap-1 font-medium">
+                          <CheckCircle2 className="w-3 h-3" /> Live in Cliqs Bot
                         </span>
                       ) : (
                         <span>Paused</span>
@@ -402,16 +402,16 @@ export default function AITrainingPage() {
       {activeTab === 'prompt' && (
         <div className="rounded-2xl bg-[#161D22] border border-[#2E363E] p-6 sm:p-8 space-y-6">
           <div>
-            <h2 className="text-lg font-bold text-white">Concierge Persona &amp; Voice Guidelines</h2>
+            <h2 className="text-lg font-bold text-white">Cliqs Bot Persona &amp; Voice Guidelines</h2>
             <p className="text-xs text-[#949599] mt-1">
-              These guidelines define the concierge&apos;s communication style, customer service tone, and platform policies.
+              These guidelines define Cliqs Bot&apos;s communication style, customer service tone, and platform policies.
             </p>
           </div>
 
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-[#EFEFF1] uppercase tracking-wider mb-2">
-                Concierge Voice &amp; Guidelines
+                Cliqs Bot Voice &amp; Guidelines
               </label>
               <textarea
                 rows={6}
@@ -459,11 +459,11 @@ export default function AITrainingPage() {
           {/* Test Input Form */}
           <div className="rounded-2xl bg-[#161D22] border border-[#2E363E] p-6 space-y-4">
             <div className="flex items-center gap-2 text-white font-bold text-sm">
-              <HelpCircle className="w-4 h-4 text-emerald-400" />
+              <HelpCircle className="w-4 h-4 text-[#EFEFF1]" />
               <span>Test Question</span>
             </div>
             <p className="text-xs text-[#949599]">
-              Ask a question to preview how the concierge responds using live event data and your knowledge rules.
+              Ask a question to preview how Cliqs Bot responds using live event data and your knowledge rules.
             </p>
 
             <form onSubmit={handleRunTest} className="space-y-4">
@@ -521,8 +521,8 @@ export default function AITrainingPage() {
             <div>
               <div className="flex items-center justify-between text-white font-bold text-sm">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Concierge Response Preview</span>
+                  <CheckCircle2 className="w-4 h-4 text-[#EFEFF1]" />
+                  <span>Cliqs Bot Response Preview</span>
                 </div>
                 {testResult && (
                   <span className="text-[10px] text-[#949599] font-normal">
@@ -535,7 +535,7 @@ export default function AITrainingPage() {
                 {testLoading ? (
                   <div className="text-center text-xs text-[#949599] space-y-2">
                     <RefreshCw className="w-5 h-5 animate-spin text-white mx-auto" />
-                    <p>Generating concierge response...</p>
+                    <p>Generating Cliqs Bot response...</p>
                   </div>
                 ) : testResult ? (
                   <div className="text-xs text-[#EFEFF1] leading-relaxed">
@@ -550,7 +550,7 @@ export default function AITrainingPage() {
             </div>
 
             <div className="text-[11px] text-[#949599] pt-3 border-t border-[#2E363E] flex items-center justify-between">
-              <span>Assistant: Tribes &amp; Cliqs Concierge</span>
+              <span>Assistant: Tribes &amp; Cliqs Bot</span>
               <span>Flexibility: {temperature}</span>
             </div>
           </div>
@@ -620,7 +620,7 @@ export default function AITrainingPage() {
               required
               value={formData.instruction_or_answer}
               onChange={(e) => setFormData({ ...formData, instruction_or_answer: e.target.value })}
-              placeholder="Provide the exact information or guidance the concierge should use when answering questions about this topic..."
+              placeholder="Provide the exact information or guidance Cliqs Bot should use when answering questions about this topic..."
               className="w-full p-3.5 rounded-xl bg-[#161D22] border border-[#2E363E] text-xs text-white placeholder-[#494F55] focus:outline-none focus:border-white/40 leading-relaxed"
             />
           </div>
@@ -631,10 +631,10 @@ export default function AITrainingPage() {
               id="is_active"
               checked={formData.is_active}
               onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-              className="w-4 h-4 rounded accent-emerald-500 cursor-pointer"
+              className="w-4 h-4 rounded accent-[#b21414] cursor-pointer"
             />
             <label htmlFor="is_active" className="text-xs text-[#EFEFF1] cursor-pointer">
-              Enable this rule for concierge responses immediately
+              Enable this rule for Cliqs Bot responses immediately
             </label>
           </div>
 

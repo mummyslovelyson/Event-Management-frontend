@@ -8,7 +8,7 @@ import {
 import {
   Users, UserCheck, CalendarDays, Ticket as TicketIcon, Wallet, ShoppingCart,
   CheckCircle2, XCircle, ArrowRight, TrendingUp, TrendingDown,
-  FileBarChart, CircleDollarSign, ShieldAlert, RefreshCw, Activity as ActivityIcon,
+  FileBarChart, CircleDollarSign, RefreshCw, Activity as ActivityIcon,
   Bell,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -304,9 +304,8 @@ export default function AdminDashboard() {
         </CardShell>
 
         <CardShell className="p-5">
-          <div className="flex items-center justify-between">
+          <div>
             <h2 className="text-sm font-semibold text-[#EFEFF1]">Pending Administrative Actions</h2>
-            <ShieldAlert className="w-4 h-4 text-amber-400" />
           </div>
           <p className="text-xs text-[#949599] mt-0.5">Tasks requiring staff authorization.</p>
           <div className="mt-4 space-y-3">

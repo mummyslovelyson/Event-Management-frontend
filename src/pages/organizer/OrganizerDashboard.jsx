@@ -9,7 +9,7 @@ import {
   CalendarDays, Ticket as TicketIcon, Activity, ArrowRight,
   PlusCircle, BarChart3, UsersRound, Wallet, Calendar,
   ScanLine, Users, CheckCircle2, TrendingUp, DollarSign,
-  Clock, ShieldAlert, CreditCard,
+  Clock, CreditCard,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';

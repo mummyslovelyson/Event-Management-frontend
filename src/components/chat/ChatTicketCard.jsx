@@ -16,7 +16,7 @@ export default function ChatTicketCard({ ticket, onNavigate }) {
   const isActive = ticket.status === 'active';
 
   return (
-    <div className="rounded-xl overflow-hidden bg-[#161D22] border border-[#2E363E] hover:border-emerald-500/50 transition-all group flex flex-col my-2 shadow-md">
+    <div className="rounded-xl overflow-hidden bg-[#161D22] border border-[#2E363E] hover:border-white/30 transition-all group flex flex-col my-2 shadow-md">
       {/* Top Banner / Event info */}
       <div className="p-3 bg-[#1C232B] flex items-center gap-3 border-b border-[#2E363E]">
         <div className="w-11 h-11 rounded-lg overflow-hidden bg-[#252E38] shrink-0 relative flex items-center justify-center">
@@ -27,7 +27,7 @@ export default function ChatTicketCard({ ticket, onNavigate }) {
               className="w-full h-full object-cover"
             />
           ) : (
-            <Ticket className="w-5 h-5 text-emerald-400" />
+            <Ticket className="w-5 h-5 text-[#949599]" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -41,8 +41,8 @@ export default function ChatTicketCard({ ticket, onNavigate }) {
               <span
                 className={`px-1.5 py-0.2 rounded text-[9px] font-bold uppercase tracking-wider ${
                   isActive
-                    ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
-                    : 'bg-white/10 text-[#949599] border border-white/10'
+                    ? 'bg-white/10 text-[#EFEFF1] border border-white/20'
+                    : 'bg-white/5 text-[#949599] border border-white/10'
                 }`}
               >
                 {ticket.status}
@@ -52,7 +52,7 @@ export default function ChatTicketCard({ ticket, onNavigate }) {
           <h4 className="text-xs font-bold text-[#EFEFF1] truncate group-hover:text-white transition-colors">
             {ticket.eventTitle}
           </h4>
-          <span className="text-[11px] font-semibold text-emerald-400">
+          <span className="text-[11px] font-semibold text-[#EFEFF1]">
             {ticket.ticketTypeName}
             {ticket.ticketPrice ? ` • ${formatCurrency(ticket.ticketPrice)}` : ''}
           </span>
@@ -80,7 +80,7 @@ export default function ChatTicketCard({ ticket, onNavigate }) {
         <Link
           to="/attendee/tickets"
           onClick={onNavigate}
-          className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-black text-xs font-bold transition-all border border-emerald-500/30 hover:border-transparent"
+          className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition-all border border-transparent shadow"
         >
           <span>View QR Pass in My Tickets</span>
           <ArrowRight className="w-3.5 h-3.5" />

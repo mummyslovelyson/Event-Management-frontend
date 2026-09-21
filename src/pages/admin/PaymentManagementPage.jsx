@@ -4,7 +4,7 @@ import {
   CreditCard, Download, TrendingUp, Wallet, RotateCcw,
   CheckCircle2, XCircle, ArrowRight, Building2, Search,
   Filter, Eye, AlertCircle, Phone, Mail, Calendar, User,
-  FileText, Check, ShieldAlert, DollarSign,
+  FileText, Check, DollarSign,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {

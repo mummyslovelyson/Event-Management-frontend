@@ -96,8 +96,8 @@ export default function ChatbotWidget() {
       id: 'welcome-1',
       sender: 'bot',
       text: user
-        ? `Hey **${user.name || 'there'}**! I'm your **Cliq Agent**. Need help finding live events, checking your tickets, or managing your passes today?`
-        : `Hey! I'm your **Cliq Agent**. Whether you're hunting for live concerts, club nights, or need a hand with tickets and bookings, I'm here to help.`,
+        ? `Hey **${user.name || 'there'}**! I'm **Cliqs Bot**. Need help finding live events, checking your tickets, or managing your passes today?`
+        : `Hey! I'm **Cliqs Bot**. Whether you're hunting for live concerts, club nights, or need a hand with tickets and bookings, I'm here to help.`,
       suggestions: contextualSuggestions,
       timestamp: new Date().toISOString(),
     },
@@ -351,7 +351,7 @@ export default function ChatbotWidget() {
         activeContext={{ currentPath: location.pathname, user }}
       />
 
-      <aside aria-label="Cliq Concierge AI Agent" className="fixed bottom-5 right-5 z-50 flex flex-col items-end pointer-events-auto select-none">
+      <aside aria-label="Cliqs Bot AI Agent" className="fixed bottom-5 right-5 z-50 flex flex-col items-end pointer-events-auto select-none">
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -373,16 +373,16 @@ export default function ChatbotWidget() {
                   <div className="relative">
                     <img
                       src="/assets/images/Logo.jpeg"
-                      alt="Cliq Concierge"
+                      alt="Cliqs Bot"
                       className="w-9 h-9 rounded-xl object-cover ring-1 ring-[#3A4045] shadow-md"
                     />
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#1A2127]" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#EFEFF1] border-2 border-[#1A2127]" />
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <h3 className="text-sm font-bold text-white tracking-tight">Cliq Concierge</h3>
-                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <h3 className="text-sm font-bold text-white tracking-tight">Cliqs Bot</h3>
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[#242B32] text-[#EFEFF1] border border-[#494F55]/40 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#EFEFF1]" />
                         {isEventPage ? 'Event Guide' : isOrganizerPage ? 'Organizer Agent' : 'AI Agent'}
                       </span>
                     </div>
@@ -401,9 +401,9 @@ export default function ChatbotWidget() {
                       setIsVoiceModeOpen(true);
                     }}
                     title="Switch to Hands-Free Voice Agent"
-                    className="p-1.5 px-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-black transition border border-emerald-500/30 flex items-center gap-1 text-[11px] font-bold"
+                    className="p-1.5 px-2 rounded-lg bg-[#242B32] hover:bg-[#2E363E] text-[#EFEFF1] hover:text-white transition border border-[#494F55]/40 flex items-center gap-1 text-[11px] font-bold"
                   >
-                    <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                    <Radio className="w-3.5 h-3.5 text-[#EFEFF1] animate-pulse" />
                     <span className="hidden sm:inline">Voice Agent</span>
                   </button>
 
@@ -437,7 +437,7 @@ export default function ChatbotWidget() {
               {/* Interactive Vibe & Mood Discovery Carousel */}
               <div className="px-3.5 py-2 bg-[#171E24] border-b border-[#2E363E] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
                 <span className="text-[10px] font-bold text-[#949599] shrink-0 uppercase tracking-wider flex items-center gap-1">
-                  <Sparkles className="w-2.5 h-2.5 text-emerald-400" />
+                  <Sparkles className="w-2.5 h-2.5 text-[#949599]" />
                   <span>Vibes:</span>
                 </span>
                 {[
@@ -451,7 +451,7 @@ export default function ChatbotWidget() {
                     key={i}
                     type="button"
                     onClick={() => handleSendMessage(vibe.query)}
-                    className="px-2.5 py-0.5 rounded-full bg-[#1C232B] hover:bg-emerald-500 hover:text-black border border-[#2E363E] hover:border-transparent text-[11px] font-medium text-[#EFEFF1] whitespace-nowrap transition shadow-sm shrink-0"
+                    className="px-2.5 py-0.5 rounded-full bg-[#1C232B] hover:bg-white hover:text-[#1C232B] border border-[#2E363E] hover:border-transparent text-[11px] font-medium text-[#EFEFF1] whitespace-nowrap transition shadow-sm shrink-0"
                   >
                     {vibe.label}
                   </button>
@@ -471,7 +471,7 @@ export default function ChatbotWidget() {
                         {!isUser && (
                           <img
                             src="/assets/images/Logo.jpeg"
-                            alt="Concierge"
+                            alt="Cliqs Bot"
                             className="w-6 h-6 rounded-lg object-cover ring-1 ring-white/10 shrink-0 mt-0.5 shadow-sm"
                           />
                         )}
@@ -505,7 +505,7 @@ export default function ChatbotWidget() {
                                   key={i}
                                   type="button"
                                   onClick={() => handleExecuteAction(action)}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-black font-bold text-xs transition border border-emerald-500/30 hover:border-transparent shadow-sm"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#CBD5E1] text-[#1C232B] font-bold text-xs transition border border-transparent shadow-sm"
                                 >
                                   <span>{action.label || 'View'}</span>
                                   <ArrowRight className="w-3.5 h-3.5" />
@@ -550,7 +550,7 @@ export default function ChatbotWidget() {
                               key={i}
                               type="button"
                               onClick={() => handleSendMessage(sug)}
-                              className="px-2.5 py-1 rounded-lg bg-[#1A2127] border border-[#2E363E] hover:border-emerald-400 hover:text-emerald-300 text-[11px] text-[#949599] transition-colors shadow-sm"
+                              className="px-2.5 py-1 rounded-lg bg-[#1A2127] border border-[#2E363E] hover:border-white/40 hover:text-white text-[11px] text-[#949599] transition-colors shadow-sm"
                             >
                               {sug}
                             </button>
@@ -564,13 +564,13 @@ export default function ChatbotWidget() {
                 {/* Typing Indicator */}
                 {loading && (
                   <div className="flex items-center gap-2 text-xs text-[#949599]">
-                    <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0">
+                    <div className="w-6 h-6 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-[#EFEFF1] flex items-center justify-center shrink-0">
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     </div>
                     <div className="p-3 rounded-2xl rounded-tl-none bg-[#1C232B] border border-[#2E363E] flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:0.2s]" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:0.4s]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#949599] animate-bounce" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#949599] animate-bounce [animation-delay:0.2s]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#949599] animate-bounce [animation-delay:0.4s]" />
                     </div>
                   </div>
                 )}
@@ -603,7 +603,7 @@ export default function ChatbotWidget() {
                       }
                       className={`w-full pl-3.5 pr-9 py-2.5 rounded-xl bg-[#14181C] border text-xs text-[#EFEFF1] placeholder-[#494F55] focus:outline-none transition ${
                         isListening
-                          ? 'border-emerald-500 ring-2 ring-emerald-500/20'
+                          ? 'border-[#b21414] ring-2 ring-[#b21414]/20'
                           : 'border-[#2E363E] focus:border-white/50'
                       }`}
                     />
@@ -614,7 +614,7 @@ export default function ChatbotWidget() {
                       title={isListening ? 'Stop listening' : 'Voice input'}
                       className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition ${
                         isListening
-                          ? 'bg-emerald-500 text-black animate-pulse'
+                          ? 'bg-[#b21414] text-white animate-pulse'
                           : 'text-[#949599] hover:text-white hover:bg-white/10'
                       }`}
                     >
@@ -625,14 +625,14 @@ export default function ChatbotWidget() {
                   <button
                     type="submit"
                     disabled={!inputMessage.trim() || loading}
-                    className="p-2.5 rounded-xl bg-white text-[#1C232B] hover:bg-emerald-400 transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0 font-bold shadow"
+                    className="p-2.5 rounded-xl bg-white text-[#1C232B] hover:bg-[#CBD5E1] transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0 font-bold shadow"
                   >
                     <Send className="w-3.5 h-3.5" />
                   </button>
                 </form>
                 <div className="flex items-center justify-between text-[10px] text-[#949599] mt-1.5 px-1">
                   <span className="flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-emerald-400" />
+                    <Sparkles className="w-3 h-3 text-[#949599]" />
                     <span>Tribes &amp; Cliqs ML Agent</span>
                   </span>
                   <span>Press Enter ↵ to send</span>
@@ -653,20 +653,20 @@ export default function ChatbotWidget() {
               className="w-80 rounded-2xl bg-[#14181C]/95 backdrop-blur-xl border border-[#2E363E] shadow-2xl shadow-black/90 p-4 mb-3 text-left overflow-hidden relative"
             >
               {/* Subtle top glow */}
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-20 bg-emerald-500/20 blur-2xl rounded-full pointer-events-none" />
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-20 bg-white/5 blur-2xl rounded-full pointer-events-none" />
 
               <div className="flex items-center justify-between pb-3 border-b border-[#2E363E]">
                 <div className="flex items-center gap-2">
                   <div className="relative">
                     <img
                       src="/assets/images/Logo.jpeg"
-                      alt="Cliq Concierge"
+                      alt="Cliqs Bot"
                       className="w-7 h-7 rounded-lg object-cover ring-1 ring-white/10"
                     />
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 border border-[#14181C]" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#EFEFF1] border border-[#14181C]" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-white">Cliq Concierge</h4>
+                    <h4 className="text-xs font-bold text-white">Cliqs Bot</h4>
                     <p className="text-[10px] text-[#949599]">Choose your preferred agent</p>
                   </div>
                 </div>
@@ -688,17 +688,17 @@ export default function ChatbotWidget() {
                     setIsSelectorOpen(false);
                     setIsOpen(true);
                   }}
-                  className="w-full p-3 rounded-xl bg-[#1C232B] hover:bg-[#232C35] border border-[#2E363E] hover:border-emerald-500/50 transition-all text-left group flex items-start gap-3 shadow-sm"
+                  className="w-full p-3 rounded-xl bg-[#1C232B] hover:bg-[#242B32] border border-[#2E363E] hover:border-[#494F55] transition-all text-left group flex items-start gap-3 shadow-sm"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <div className="w-9 h-9 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-[#EFEFF1] flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:border-white/30 group-hover:bg-[#2A333C] transition-all">
                     <MessageSquare className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors">
+                      <span className="text-xs font-bold text-[#EFEFF1] group-hover:text-white transition-colors">
                         Chat Assistant
                       </span>
-                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold uppercase tracking-wider bg-white/10 text-white/80">
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[#161D22] text-[#EFEFF1] border border-[#2E363E]">
                         Interactive
                       </span>
                     </div>
@@ -715,17 +715,17 @@ export default function ChatbotWidget() {
                     setIsSelectorOpen(false);
                     setIsVoiceModeOpen(true);
                   }}
-                  className="w-full p-3 rounded-xl bg-[#1C232B] hover:bg-[#232C35] border border-[#2E363E] hover:border-teal-500/50 transition-all text-left group flex items-start gap-3 shadow-sm"
+                  className="w-full p-3 rounded-xl bg-[#1C232B] hover:bg-[#242B32] border border-[#2E363E] hover:border-[#494F55] transition-all text-left group flex items-start gap-3 shadow-sm"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-teal-500/15 border border-teal-500/30 text-teal-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <div className="w-9 h-9 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-[#EFEFF1] flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:border-white/30 group-hover:bg-[#2A333C] transition-all">
                     <Radio className="w-4 h-4 animate-pulse" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white group-hover:text-teal-300 transition-colors">
+                      <span className="text-xs font-bold text-[#EFEFF1] group-hover:text-white transition-colors">
                         Voice Agent
                       </span>
-                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold uppercase tracking-wider bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[#161D22] text-[#EFEFF1] border border-[#2E363E]">
                         Hands-Free
                       </span>
                     </div>
@@ -738,7 +738,7 @@ export default function ChatbotWidget() {
 
               <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between text-[10px] text-[#949599]">
                 <span className="flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-emerald-400" />
+                  <Sparkles className="w-3 h-3 text-[#949599]" />
                   <span>Trained on Tribes &amp; Cliqs</span>
                 </span>
                 <span>Powered by AI</span>
@@ -746,26 +746,6 @@ export default function ChatbotWidget() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Contextual Time-of-Day Floating Greeting Bubble */}
-        {!isOpen && !isVoiceModeOpen && !isSelectorOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 1, duration: 0.3 }}
-            onClick={() => setIsSelectorOpen(true)}
-            className="mb-2.5 p-2.5 px-3.5 rounded-2xl bg-[#14181C]/95 backdrop-blur-xl border border-emerald-500/40 shadow-xl shadow-black/80 flex items-center gap-2 text-xs text-white max-w-xs cursor-pointer group hover:border-emerald-400 transition select-none"
-          >
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <span className="font-medium text-[11px] text-[#EFEFF1] group-hover:text-white transition-colors">
-              {new Date().getHours() < 12
-                ? 'Good morning! Finding events today? ✦'
-                : new Date().getHours() < 17
-                ? 'Good afternoon! Ready for weekend vibes? ✦'
-                : "Good evening! Ready for tonight's Accra vibes? ✦"}
-            </span>
-          </motion.div>
-        )}
 
         {/* Unified Floating Launcher Button */}
         <motion.button
@@ -781,13 +761,13 @@ export default function ChatbotWidget() {
           }}
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.94 }}
-          className="relative group p-1 rounded-2xl bg-[#171A1D] shadow-2xl shadow-black/80 border border-[#2E363E] hover:border-emerald-500/60 flex items-center justify-center transition-all"
-          title="Open Cliq Concierge"
+          className="relative group p-1 rounded-2xl bg-[#171A1D] shadow-2xl shadow-black/80 border border-[#2E363E] hover:border-white/40 flex items-center justify-center transition-all"
+          title="Open Cliqs Bot"
         >
           <div className="w-12 h-12 rounded-xl overflow-hidden relative flex items-center justify-center bg-[#1C232B] shadow-inner">
             <img
               src="/assets/images/Logo.jpeg"
-              alt="Cliq Concierge Agent"
+              alt="Cliqs Bot Agent"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform"
             />
           </div>
@@ -795,16 +775,16 @@ export default function ChatbotWidget() {
           {/* Unread / Attention Ring */}
           {hasUnread && !isOpen && !isVoiceModeOpen && (
             <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-[#14181C]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#b21414] opacity-75" />
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#b21414] border-2 border-[#14181C]" />
             </span>
           )}
 
           {/* Hover Tooltip */}
           {!isOpen && !isVoiceModeOpen && !isSelectorOpen && (
             <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-[#14181C] border border-[#2E363E] text-white text-xs font-semibold whitespace-nowrap shadow-xl opacity-0 group-hover:opacity-100 transition pointer-events-none flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Cliq Concierge</span>
+              <Sparkles className="w-3.5 h-3.5 text-[#949599]" />
+              <span>Cliqs Bot</span>
             </span>
           )}
         </motion.button>

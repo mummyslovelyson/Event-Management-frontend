@@ -459,11 +459,11 @@ export default function VoiceAgentModal({
 
         ctx.arc(centerX, centerY, Math.max(12, radius), 0, Math.PI * 2);
         ctx.strokeStyle = isSpeaking
-          ? `rgba(16, 185, 129, ${0.5 - i * 0.1})`
+          ? `rgba(239, 239, 241, ${0.5 - i * 0.1})`
           : isThinking
-          ? `rgba(168, 85, 247, ${0.5 - i * 0.1})`
+          ? `rgba(178, 20, 20, ${0.55 - i * 0.1})`
           : isListening
-          ? `rgba(45, 212, 191, ${0.5 - i * 0.1})`
+          ? `rgba(239, 239, 241, ${0.45 - i * 0.1})`
           : `rgba(75, 85, 99, 0.18)`;
         ctx.lineWidth = 2.5;
         ctx.stroke();
@@ -493,22 +493,22 @@ export default function VoiceAgentModal({
       >
         {/* Background dynamic ambient glow */}
         <div
-          className={`absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full blur-3xl opacity-35 pointer-events-none transition-colors duration-700 ${
+          className={`absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full blur-3xl opacity-20 pointer-events-none transition-colors duration-700 ${
             agentState === 'speaking'
-              ? 'bg-emerald-500'
+              ? 'bg-white/25'
               : agentState === 'thinking'
-              ? 'bg-purple-500'
+              ? 'bg-[#b21414]/30'
               : agentState === 'listening'
-              ? 'bg-teal-400'
-              : 'bg-gray-600'
+              ? 'bg-white/15'
+              : 'bg-gray-600/10'
           }`}
         />
 
         {/* Top bar controls */}
         <div className="w-full flex items-center justify-between z-10 mb-2">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
+            <span className="p-1.5 rounded-xl bg-[#242B32] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-bold flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#949599]" />
               <span>Voice Agent Mode</span>
             </span>
             <span className="text-[11px] text-[#949599]">Real-Time Audio</span>
@@ -521,7 +521,7 @@ export default function VoiceAgentModal({
               title={isMuted ? 'Unmute voice audio' : 'Mute voice audio'}
               className="p-2 rounded-xl hover:bg-white/10 hover:text-white transition"
             >
-              {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+              {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4 text-[#EFEFF1]" />}
             </button>
             <button
               type="button"
@@ -558,12 +558,12 @@ export default function VoiceAgentModal({
             onClick={toggleListening}
             className={`absolute w-24 h-24 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 cursor-pointer ${
               agentState === 'speaking'
-                ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 scale-105 shadow-emerald-500/50'
+                ? 'bg-gradient-to-tr from-[#b21414] to-[#8f1010] scale-105 shadow-[#b21414]/50'
                 : agentState === 'thinking'
-                ? 'bg-gradient-to-tr from-purple-600 to-indigo-400 scale-100 animate-pulse shadow-purple-500/50'
+                ? 'bg-gradient-to-tr from-[#3A4045] to-[#242B32] scale-100 animate-pulse shadow-black/50'
                 : agentState === 'listening'
-                ? 'bg-gradient-to-tr from-teal-500 to-emerald-400 scale-105 shadow-teal-500/50'
-                : 'bg-gray-800 scale-95 opacity-80'
+                ? 'bg-gradient-to-tr from-[#242B32] to-[#1C232B] border border-white/30 scale-105 shadow-white/10'
+                : 'bg-[#242B32] scale-95 opacity-80'
             }`}
           >
             {agentState === 'thinking' ? (
@@ -580,7 +580,7 @@ export default function VoiceAgentModal({
 
         {/* Dynamic Status Label */}
         <div className="mb-3">
-          <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#EFEFF1]">
             {agentState === 'listening' && 'Listening to you...'}
             {agentState === 'thinking' && 'Analyzing events & vibes...'}
             {agentState === 'speaking' && 'Speaking (Tap orb to interrupt)'}
@@ -588,10 +588,12 @@ export default function VoiceAgentModal({
           </p>
           <p className="text-[11px] text-[#949599] mt-0.5">
             {agentState === 'listening'
-              ? 'Speak naturally into your microphone'
+              ? 'Speak naturally — the assistant replies by voice'
+              : agentState === 'thinking'
+              ? 'Searching live catalog and computing recommendations...'
               : agentState === 'speaking'
-              ? 'Welcoming you · Tap orb to speak immediately'
-              : 'Ask about concerts, tickets, or transfers'}
+              ? 'Listening paused while agent is answering'
+              : 'Microphone paused. Tap the central orb to resume listening.'}
           </p>
         </div>
 
@@ -622,7 +624,7 @@ export default function VoiceAgentModal({
 
         {/* Agent Answer Transcript Box */}
         <div className="w-full overflow-y-auto max-h-40 px-4 py-3 rounded-2xl bg-[#1C232B] border border-[#2E363E] text-left text-xs text-[#EFEFF1] leading-relaxed mb-3">
-          <p className="font-semibold text-emerald-300 text-[11px] mb-1">Cliq Concierge</p>
+          <p className="font-semibold text-[#EFEFF1] text-[11px] mb-1">Cliqs Bot</p>
           <p>{lastAgentReply}</p>
         </div>
 
@@ -638,7 +640,7 @@ export default function VoiceAgentModal({
                     window.location.href = act.path;
                   }
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-black text-xs font-bold transition border border-emerald-500/30 shadow"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition shadow"
               >
                 <span>{act.label || 'View'}</span>
                 <ArrowRight className="w-3 h-3" />
