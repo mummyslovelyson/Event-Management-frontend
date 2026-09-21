@@ -9,6 +9,7 @@ import {
   Users, UserCheck, CalendarDays, Ticket as TicketIcon, Wallet, ShoppingCart,
   CheckCircle2, XCircle, ArrowRight, TrendingUp, TrendingDown,
   FileBarChart, CircleDollarSign, ShieldAlert, RefreshCw, Activity as ActivityIcon,
+  Bell,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
