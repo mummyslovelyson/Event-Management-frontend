@@ -294,7 +294,7 @@ export default function ChatbotWidget() {
       {/* Backdrop for Assistant Selector */}
       {isSelectorOpen && !isOpen && !isVoiceOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[1px] transition-opacity"
+          className="fixed inset-0 z-40 bg-transparent"
           onClick={() => setIsSelectorOpen(false)}
         />
       )}
@@ -525,55 +525,34 @@ export default function ChatbotWidget() {
         )}
       </AnimatePresence>
 
-      {/* Assistant Selection Popover */}
+      {/* Assistant Selection Menu */}
       <AnimatePresence>
         {isSelectorOpen && !isOpen && !isVoiceOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            initial={{ opacity: 0, y: 8, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="w-72 sm:w-80 rounded-2xl bg-[#14181C] border border-[#2E363E] shadow-2xl shadow-black/90 p-4 mb-3 flex flex-col gap-2.5 text-left"
+            exit={{ opacity: 0, y: 6, scale: 0.94 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className="w-52 rounded-2xl bg-[#14181C]/95 backdrop-blur-xl border border-[#2E363E] shadow-2xl shadow-black/90 p-1.5 mb-2.5 flex flex-col gap-0.5 text-left"
           >
-            <div className="flex items-center justify-between pb-2 border-b border-[#242B32]">
-              <div>
-                <span className="text-[10px] font-bold tracking-wider uppercase text-[#b21414]">Assistant Concierge</span>
-                <h4 className="text-xs font-bold text-white">How can we help you?</h4>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsSelectorOpen(false)}
-                className="p-1 rounded-lg text-[#949599] hover:text-white hover:bg-[#1C232B] transition cursor-pointer"
-                title="Close selector"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <p className="text-[11px] text-[#949599] leading-tight">
-              Select your preferred assistant mode to get started:
-            </p>
-
             <button
               type="button"
               onClick={() => {
                 setIsSelectorOpen(false);
                 setIsOpen(true);
               }}
-              className="w-full text-left p-3 rounded-xl bg-[#171A1D] border border-[#2E363E] hover:border-white/50 hover:bg-[#1C232B] transition-all flex items-center gap-3 group cursor-pointer"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-[#1C232B] transition-colors text-left group cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#1C232B] border border-[#2E363E] group-hover:border-white/40 flex items-center justify-center flex-shrink-0 transition-colors">
-                <MessageSquare className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#2E363E] group-hover:border-white/20 flex items-center justify-center text-white shrink-0 transition-colors">
+                <MessageSquare className="w-4 h-4" />
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-1">
-                  <span className="text-xs font-bold text-white group-hover:text-white">Cliqs Bot</span>
-                  <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-[#242B32] text-[#EFEFF1] font-semibold">Text Chat</span>
-                </div>
-                <p className="text-[11px] text-[#949599] line-clamp-1 mt-0.5">Interactive event search &amp; ticketing answers</p>
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-semibold text-white tracking-tight">Chat</span>
+                <span className="text-[10px] text-[#949599]">Type your message</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#949599] group-hover:text-white group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
             </button>
+
+            <div className="h-px bg-[#242B32] mx-2" />
 
             <button
               type="button"
@@ -581,19 +560,15 @@ export default function ChatbotWidget() {
                 setIsSelectorOpen(false);
                 setIsVoiceOpen(true);
               }}
-              className="w-full text-left p-3 rounded-xl bg-[#171A1D] border border-[#2E363E] hover:border-[#b21414] hover:bg-[#1C232B] transition-all flex items-center gap-3 group cursor-pointer"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-[#1C232B] transition-colors text-left group cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#2E1414] border border-[#b21414]/50 group-hover:border-[#b21414] flex items-center justify-center flex-shrink-0 transition-colors">
-                <Mic className="w-5 h-5 text-[#b21414]" />
+              <div className="w-8 h-8 rounded-lg bg-[#1C232B] border border-[#2E363E] group-hover:border-white/20 flex items-center justify-center text-white shrink-0 transition-colors">
+                <Mic className="w-4 h-4" />
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-1">
-                  <span className="text-xs font-bold text-white group-hover:text-white">Voice Agent</span>
-                  <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-[#b21414]/20 text-[#b21414] font-semibold">Hands-Free</span>
-                </div>
-                <p className="text-[11px] text-[#949599] line-clamp-1 mt-0.5">Live voice conversation with speech reply</p>
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-semibold text-white tracking-tight">Voice</span>
+                <span className="text-[10px] text-[#949599]">Talk hands-free</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#949599] group-hover:text-white group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
             </button>
           </motion.div>
         )}
@@ -615,7 +590,7 @@ export default function ChatbotWidget() {
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.94 }}
           className="relative group p-1 rounded-2xl bg-[#171A1D] shadow-2xl shadow-black/80 border border-[#2E363E] hover:border-white/40 flex items-center justify-center transition-all cursor-pointer"
-          title={isOpen || isSelectorOpen || isVoiceOpen ? 'Close Assistant' : 'Open Assistant Concierge'}
+          title={isOpen || isSelectorOpen || isVoiceOpen ? 'Close' : 'Help & Support'}
         >
           <div className="w-12 h-12 rounded-xl overflow-hidden relative flex items-center justify-center bg-[#1C232B] shadow-inner">
             {isOpen || isSelectorOpen ? (
@@ -623,7 +598,7 @@ export default function ChatbotWidget() {
             ) : (
               <img
                 src="/assets/images/Logo.jpeg"
-                alt="Tribes & Cliqs Concierge"
+                alt="Tribes & Cliqs"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform"
               />
             )}
@@ -639,7 +614,7 @@ export default function ChatbotWidget() {
           {!isOpen && !isSelectorOpen && !isVoiceOpen && (
             <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-[#14181C] border border-[#2E363E] text-white text-xs font-semibold whitespace-nowrap shadow-xl opacity-0 group-hover:opacity-100 transition pointer-events-none flex items-center gap-1.5">
               <MessageSquare className="w-3.5 h-3.5 text-[#949599]" />
-              <span>Cliqs Assistant</span>
+              <span>Need help?</span>
             </span>
           )}
         </motion.button>
