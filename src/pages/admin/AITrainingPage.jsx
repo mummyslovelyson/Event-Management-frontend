@@ -4,6 +4,7 @@ import {
   Plus, Search, Trash2, Edit3, Check, X,
   Sliders, Send, Play, RefreshCw, AlertCircle, Database, CheckCircle2,
   FileText, ShieldCheck, HelpCircle, Tags,
+  MessageSquare, Mic, User, Clock, ChevronLeft, ChevronRight, Globe,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
@@ -13,6 +14,8 @@ import {
   deleteAIKnowledgeItem,
   updateAISettings,
   testAIPrompt,
+  getBotConversations,
+  deleteBotConversation,
 } from '@/api/admin';
 import Modal from '@/components/common/Modal';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -57,6 +60,50 @@ export default function AITrainingPage() {
   const [testLoading, setTestLoading] = useState(false);
   const [testResult, setTestResult] = useState(null);
 
+  // Bot & Voice Agent Conversations Logs State
+  const [conversations, setConversations] = useState([]);
+  const [convLoading, setConvLoading] = useState(false);
+  const [convSearch, setConvSearch] = useState('');
+  const [convMode, setConvMode] = useState('all'); // 'all' | 'chat' | 'voice'
+  const [convPage, setConvPage] = useState(1);
+  const [convPagination, setConvPagination] = useState({ page: 1, limit: 15, total: 0, totalPages: 1 });
+  const [convStats, setConvStats] = useState({ totalConversations: 0, todayCount: 0, chatCount: 0, voiceCount: 0 });
+
+  const loadConversations = async (page = 1, mode = convMode, search = convSearch) => {
+    setConvLoading(true);
+    try {
+      const res = await getBotConversations({ page, limit: 15, mode, search });
+      setConversations(res.data.conversations || []);
+      setConvPagination(res.data.pagination || { page: 1, limit: 15, total: 0, totalPages: 1 });
+      setConvStats(res.data.stats || { totalConversations: 0, todayCount: 0, chatCount: 0, voiceCount: 0 });
+    } catch (err) {
+      console.error('[loadConversations]', err);
+    } finally {
+      setConvLoading(false);
+    }
+  };
+
+  const handleDeleteConversation = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this conversation record?')) return;
+    try {
+      await deleteBotConversation(id);
+      toast.success('Conversation log deleted');
+      setConversations((prev) => prev.filter((c) => c.id !== id));
+      setConvStats((prev) => ({
+        ...prev,
+        totalConversations: Math.max(0, prev.totalConversations - 1),
+      }));
+    } catch (err) {
+      toast.error('Failed to delete conversation record');
+    }
+  };
+
+  const handleConvSearchSubmit = (e) => {
+    e?.preventDefault();
+    setConvPage(1);
+    loadConversations(1, convMode, convSearch);
+  };
+
   const loadData = async () => {
     setLoading(true);
     try {
@@ -70,11 +117,18 @@ export default function AITrainingPage() {
     } finally {
       setLoading(false);
     }
+    loadConversations(1, 'all', '');
   };
 
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 'conversations') {
+      loadConversations(convPage, convMode, convSearch);
+    }
+  }, [activeTab, convPage, convMode]);
 
   const openCreateModal = () => {
     setEditingItem(null);
@@ -247,6 +301,18 @@ export default function AITrainingPage() {
         >
           <Database className="w-4 h-4" />
           <span>Knowledge Base &amp; Rules ({knowledgeList.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('conversations')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
+            activeTab === 'conversations'
+              ? 'bg-white text-[#1C232B] shadow'
+              : 'text-[#949599] hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>User Questions &amp; Bot Logs ({convStats.totalConversations})</span>
         </button>
 
         <button
@@ -554,6 +620,261 @@ export default function AITrainingPage() {
               <span>Flexibility: {temperature}</span>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* TAB 4: LIVE USER CONVERSATIONS & LOGS */}
+      {activeTab === 'conversations' && (
+        <div className="space-y-6">
+          {/* Summary Stat Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-5 rounded-2xl bg-[#161D22] border border-[#2E363E] flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold text-[#949599] uppercase tracking-wider">Total Exchanges</span>
+                <h4 className="text-2xl font-black text-white mt-1">{convStats.totalConversations}</h4>
+                <span className="text-[11px] text-[#949599]">All logged user exchanges</span>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#1C232B] border border-[#2E363E] flex items-center justify-center text-white">
+                <Database className="w-5 h-5" />
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#161D22] border border-[#2E363E] flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold text-[#949599] uppercase tracking-wider">Today&apos;s Questions</span>
+                <h4 className="text-2xl font-black text-white mt-1">{convStats.todayCount}</h4>
+                <span className="text-[11px] text-[#949599]">Activity past 24 hours</span>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#1C232B] border border-[#2E363E] flex items-center justify-center text-white">
+                <Clock className="w-5 h-5" />
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#161D22] border border-[#2E363E] flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold text-[#949599] uppercase tracking-wider">Text Chat (Cliqs Bot)</span>
+                <h4 className="text-2xl font-black text-white mt-1">{convStats.chatCount}</h4>
+                <span className="text-[11px] text-[#949599]">Text widget interactions</span>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#1C232B] border border-[#2E363E] flex items-center justify-center text-white">
+                <MessageSquare className="w-5 h-5" />
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#161D22] border border-[#2E363E] flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold text-[#949599] uppercase tracking-wider">Voice Agent (Speech)</span>
+                <h4 className="text-2xl font-black text-white mt-1">{convStats.voiceCount}</h4>
+                <span className="text-[11px] text-[#949599]">Hands-free speech dialogues</span>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#2E1414] border border-[#b21414]/40 flex items-center justify-center text-[#b21414]">
+                <Mic className="w-5 h-5" />
+              </div>
+            </div>
+          </div>
+
+          {/* Filters, Mode Tabs & Search */}
+          <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+            <form onSubmit={handleConvSearchSubmit} className="relative w-full md:w-96 flex items-center">
+              <Search className="w-4 h-4 absolute left-3.5 text-[#494F55]" />
+              <input
+                type="text"
+                value={convSearch}
+                onChange={(e) => setConvSearch(e.target.value)}
+                placeholder="Search question, answer, user name or email..."
+                className="w-full pl-9 pr-20 py-2.5 rounded-xl bg-[#161D22] border border-[#2E363E] text-xs text-white placeholder-[#494F55] focus:outline-none focus:border-white/40"
+              />
+              <button
+                type="submit"
+                className="absolute right-1.5 px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white hover:text-[#1C232B] text-white text-[11px] font-bold transition cursor-pointer"
+              >
+                Search
+              </button>
+            </form>
+
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-[#161D22] border border-[#2E363E]">
+                {[
+                  { id: 'all', label: 'All Modes' },
+                  { id: 'chat', label: 'Text Chat' },
+                  { id: 'voice', label: 'Voice Agent' },
+                ].map((modeItem) => (
+                  <button
+                    key={modeItem.id}
+                    onClick={() => {
+                      setConvMode(modeItem.id);
+                      setConvPage(1);
+                      loadConversations(1, modeItem.id, convSearch);
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                      convMode === modeItem.id
+                        ? 'bg-white text-[#1C232B]'
+                        : 'text-[#949599] hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    {modeItem.label}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => loadConversations(convPage, convMode, convSearch)}
+                disabled={convLoading}
+                className="p-2.5 rounded-xl bg-[#161D22] border border-[#2E363E] text-[#949599] hover:text-white hover:border-white/30 transition cursor-pointer"
+                title="Refresh logs"
+              >
+                <RefreshCw className={`w-4 h-4 ${convLoading ? 'animate-spin text-white' : ''}`} />
+              </button>
+            </div>
+          </div>
+
+          {/* Conversations List */}
+          {convLoading ? (
+            <div className="rounded-2xl bg-[#161D22] border border-[#2E363E] p-12 flex flex-col items-center justify-center">
+              <LoadingSpinner size="lg" />
+              <p className="text-xs text-[#949599] mt-3">Loading conversation logs...</p>
+            </div>
+          ) : conversations.length === 0 ? (
+            <div className="rounded-2xl bg-[#161D22] border border-[#2E363E] p-12 text-center text-sm text-[#949599]">
+              <MessageSquare className="w-8 h-8 text-[#494F55] mx-auto mb-3" />
+              <p className="font-bold text-white">No conversation logs found</p>
+              <p className="text-xs mt-1">
+                {convSearch ? 'Try a different search query or mode filter.' : 'When users ask questions to Cliqs Bot or the Voice Agent, every question and answer is recorded here in real-time.'}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {conversations.map((item) => (
+                <div
+                  key={item.id}
+                  className="rounded-2xl bg-[#161D22] border border-[#2E363E] p-5 space-y-4 hover:border-white/30 transition-all"
+                >
+                  {/* Item Header */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#242B32]">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* Mode Badge */}
+                      {item.mode === 'voice' ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#2E1414] border border-[#b21414]/50 text-[#b21414] text-[11px] font-bold">
+                          <Mic className="w-3.5 h-3.5" />
+                          <span>Voice Agent</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1C232B] border border-[#2E363E] text-[#EFEFF1] text-[11px] font-bold">
+                          <MessageSquare className="w-3.5 h-3.5 text-[#949599]" />
+                          <span>Cliqs Bot</span>
+                        </span>
+                      )}
+
+                      {/* User Info */}
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14181C] border border-[#242B32] text-white text-[11px] font-medium">
+                        <User className="w-3.5 h-3.5 text-[#949599]" />
+                        <span>{item.user_name || 'Guest Visitor'}</span>
+                        {item.user_email && (
+                          <span className="text-[#949599] font-normal">({item.user_email})</span>
+                        )}
+                      </span>
+
+                      {/* Intent Badge */}
+                      {item.intent && (
+                        <span className="px-2 py-0.5 rounded bg-[#1C232B] text-[10px] uppercase font-semibold text-[#949599] border border-[#242B32]">
+                          {item.intent}
+                        </span>
+                      )}
+
+                      {/* Page Location */}
+                      {item.page_path && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#14181C] text-[10px] text-[#949599] border border-[#242B32] font-mono">
+                          <Globe className="w-3 h-3" />
+                          <span>{item.page_path}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-3 text-xs text-[#949599]">
+                      <span className="inline-flex items-center gap-1 text-[11px]">
+                        <Clock className="w-3.5 h-3.5 text-[#494F55]" />
+                        <span>{new Date(item.created_at).toLocaleString()}</span>
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteConversation(item.id)}
+                        className="p-1.5 rounded-lg text-[#949599] hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
+                        title="Delete log entry"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Question & Answer Exchange */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* User Question */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-[#949599] uppercase tracking-wider">
+                        <User className="w-3.5 h-3.5" />
+                        <span>User Question / Voice Query:</span>
+                      </div>
+                      <div className="p-3.5 rounded-xl bg-[#14181C] border border-[#242B32] text-xs text-white leading-relaxed font-medium">
+                        &quot;{item.question}&quot;
+                      </div>
+                    </div>
+
+                    {/* Bot / Voice Agent Answer */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-[#EFEFF1] uppercase tracking-wider">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Agent Response Delivered:</span>
+                      </div>
+                      <div className="p-3.5 rounded-xl bg-[#1C232B] border border-[#2E363E] text-xs text-[#EFEFF1] leading-relaxed whitespace-pre-wrap font-normal">
+                        {item.answer}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Pagination */}
+              {convPagination.totalPages > 1 && (
+                <div className="flex items-center justify-between pt-4 border-t border-[#2E363E]">
+                  <span className="text-xs text-[#949599]">
+                    Showing Page {convPagination.page} of {convPagination.totalPages} ({convPagination.total} total exchanges)
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={convPagination.page <= 1 || convLoading}
+                      onClick={() => {
+                        const newPage = convPagination.page - 1;
+                        setConvPage(newPage);
+                        loadConversations(newPage, convMode, convSearch);
+                      }}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#161D22] border border-[#2E363E] text-xs text-white hover:bg-white/10 disabled:opacity-40 transition cursor-pointer"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <span>Previous</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={convPagination.page >= convPagination.totalPages || convLoading}
+                      onClick={() => {
+                        const newPage = convPagination.page + 1;
+                        setConvPage(newPage);
+                        loadConversations(newPage, convMode, convSearch);
+                      }}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#161D22] border border-[#2E363E] text-xs text-white hover:bg-white/10 disabled:opacity-40 transition cursor-pointer"
+                    >
+                      <span>Next</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

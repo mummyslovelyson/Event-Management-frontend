@@ -85,3 +85,8 @@ export const deleteAIKnowledgeItem = (id) => api.delete(`/admin/ai/knowledge/${i
 export const updateAISettings = (data) => api.put('/admin/ai/settings', data);
 export const testAIPrompt = (data) => api.post('/admin/ai/test', data);
 
+// Bot & Voice Agent Conversations Logs
+export const getBotConversations = (params) => api.get('/admin/chat-logs', { params });
+export const deleteBotConversation = (id) => api.delete(`/admin/chat-logs/${id}`);
+
+

@@ -2,12 +2,13 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  X, Send, Trash2, Loader2, ArrowRight, MessageSquare
+  X, Send, Trash2, Loader2, ArrowRight, MessageSquare, Mic, ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { sendChatMessage } from '@/api/chat';
 import ChatEventCard from './ChatEventCard';
 import ChatTicketCard from './ChatTicketCard';
+import VoiceAgentModal from './VoiceAgentModal';
 
 const DEFAULT_SUGGESTIONS = [
   'What’s happening this weekend?',
@@ -28,6 +29,8 @@ export default function ChatbotWidget() {
   const { user } = useAuth() || {};
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isVoiceOpen, setIsVoiceOpen] = useState(false);
+  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [hasUnread, setHasUnread] = useState(true);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -140,7 +143,13 @@ export default function ChatbotWidget() {
 
       const res = await sendChatMessage(text, historyPayload, {
         currentPath: location.pathname,
+        pathname: location.pathname,
         userRole: user?.role || 'guest',
+        isEventPage,
+        isTicketsPage,
+        isOrganizerPage,
+        userId: user?.id,
+        mode: 'chat',
       });
 
       const data = res.data;
@@ -197,6 +206,50 @@ export default function ChatbotWidget() {
     }
   };
 
+  const handleVoiceMessage = async (text) => {
+    try {
+      const res = await sendChatMessage(
+        text,
+        messages.slice(-8).map((m) => ({
+          role: m.sender === 'user' ? 'user' : 'assistant',
+          content: m.text,
+        })),
+        {
+          currentPath: location.pathname,
+          pathname: location.pathname,
+          isEventPage,
+          isTicketsPage,
+          isOrganizerPage,
+          userId: user?.id,
+          mode: 'voice',
+        }
+      );
+      const data = res?.data || res;
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `voice-u-${Date.now()}`,
+          sender: 'user',
+          text,
+          timestamp: new Date().toISOString(),
+        },
+        {
+          id: `voice-b-${Date.now() + 1}`,
+          sender: 'bot',
+          text: data?.reply || 'Here is what I found for you:',
+          events: data?.events || [],
+          tickets: data?.tickets || [],
+          actions: data?.actions || [],
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+      return data;
+    } catch (err) {
+      console.error('[handleVoiceMessage]', err);
+      throw err;
+    }
+  };
+
   const clearChat = () => {
     setMessages([
       {
@@ -237,7 +290,16 @@ export default function ChatbotWidget() {
   };
 
   return (
-    <aside aria-label="Cliqs Bot" className="fixed bottom-5 right-5 z-50 flex flex-col items-end pointer-events-auto select-none">
+    <>
+      {/* Backdrop for Assistant Selector */}
+      {isSelectorOpen && !isOpen && !isVoiceOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[1px] transition-opacity"
+          onClick={() => setIsSelectorOpen(false)}
+        />
+      )}
+
+      <aside aria-label="Cliqs Bot" className="fixed bottom-5 right-5 z-50 flex flex-col items-end pointer-events-auto select-none">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -272,12 +334,24 @@ export default function ChatbotWidget() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-1 text-[#949599] shrink-0">
+              <div className="flex items-center gap-1.5 text-[#949599] shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsVoiceOpen(true);
+                  }}
+                  title="Switch to Voice Agent"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white text-white hover:text-[#1C232B] text-xs font-semibold transition cursor-pointer"
+                >
+                  <Mic className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Voice Agent</span>
+                </button>
                 <button
                   type="button"
                   onClick={clearChat}
                   title="Clear conversation"
-                  className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white transition"
+                  className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white transition cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -285,7 +359,7 @@ export default function ChatbotWidget() {
                   type="button"
                   onClick={() => setIsOpen(false)}
                   title="Close chat"
-                  className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white transition"
+                  className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -424,9 +498,21 @@ export default function ChatbotWidget() {
                 />
 
                 <button
+                  type="button"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsVoiceOpen(true);
+                  }}
+                  title="Switch to Voice Agent"
+                  className="p-2.5 rounded-xl bg-[#242B32] hover:bg-[#2E363E] text-[#EFEFF1] border border-[#2E363E] transition shrink-0 cursor-pointer"
+                >
+                  <Mic className="w-3.5 h-3.5" />
+                </button>
+
+                <button
                   type="submit"
                   disabled={!inputMessage.trim() || loading}
-                  className="p-2.5 rounded-xl bg-white text-[#1C232B] hover:bg-[#CBD5E1] transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0 font-bold shadow"
+                  className="p-2.5 rounded-xl bg-white text-[#1C232B] hover:bg-[#CBD5E1] transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0 font-bold shadow cursor-pointer"
                 >
                   <Send className="w-3.5 h-3.5" />
                 </button>
@@ -439,39 +525,144 @@ export default function ChatbotWidget() {
         )}
       </AnimatePresence>
 
+      {/* Assistant Selection Popover */}
+      <AnimatePresence>
+        {isSelectorOpen && !isOpen && !isVoiceOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="w-72 sm:w-80 rounded-2xl bg-[#14181C] border border-[#2E363E] shadow-2xl shadow-black/90 p-4 mb-3 flex flex-col gap-2.5 text-left"
+          >
+            <div className="flex items-center justify-between pb-2 border-b border-[#242B32]">
+              <div>
+                <span className="text-[10px] font-bold tracking-wider uppercase text-[#b21414]">Assistant Concierge</span>
+                <h4 className="text-xs font-bold text-white">How can we help you?</h4>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSelectorOpen(false)}
+                className="p-1 rounded-lg text-[#949599] hover:text-white hover:bg-[#1C232B] transition cursor-pointer"
+                title="Close selector"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <p className="text-[11px] text-[#949599] leading-tight">
+              Select your preferred assistant mode to get started:
+            </p>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsSelectorOpen(false);
+                setIsOpen(true);
+              }}
+              className="w-full text-left p-3 rounded-xl bg-[#171A1D] border border-[#2E363E] hover:border-white/50 hover:bg-[#1C232B] transition-all flex items-center gap-3 group cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-xl bg-[#1C232B] border border-[#2E363E] group-hover:border-white/40 flex items-center justify-center flex-shrink-0 transition-colors">
+                <MessageSquare className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-xs font-bold text-white group-hover:text-white">Cliqs Bot</span>
+                  <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-[#242B32] text-[#EFEFF1] font-semibold">Text Chat</span>
+                </div>
+                <p className="text-[11px] text-[#949599] line-clamp-1 mt-0.5">Interactive event search &amp; ticketing answers</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-[#949599] group-hover:text-white group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsSelectorOpen(false);
+                setIsVoiceOpen(true);
+              }}
+              className="w-full text-left p-3 rounded-xl bg-[#171A1D] border border-[#2E363E] hover:border-[#b21414] hover:bg-[#1C232B] transition-all flex items-center gap-3 group cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-xl bg-[#2E1414] border border-[#b21414]/50 group-hover:border-[#b21414] flex items-center justify-center flex-shrink-0 transition-colors">
+                <Mic className="w-5 h-5 text-[#b21414]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-xs font-bold text-white group-hover:text-white">Voice Agent</span>
+                  <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-[#b21414]/20 text-[#b21414] font-semibold">Hands-Free</span>
+                </div>
+                <p className="text-[11px] text-[#949599] line-clamp-1 mt-0.5">Live voice conversation with speech reply</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-[#949599] group-hover:text-white group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Floating Launcher Button */}
-      <motion.button
-        type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.94 }}
-        className="relative group p-1 rounded-2xl bg-[#171A1D] shadow-2xl shadow-black/80 border border-[#2E363E] hover:border-white/40 flex items-center justify-center transition-all"
-        title="Open Cliqs Bot"
-      >
-        <div className="w-12 h-12 rounded-xl overflow-hidden relative flex items-center justify-center bg-[#1C232B] shadow-inner">
-          <img
-            src="/assets/images/Logo.jpeg"
-            alt="Cliqs Bot"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-          />
-        </div>
+      <div className="flex items-center justify-end">
+        <motion.button
+          type="button"
+          onClick={() => {
+            if (isOpen) {
+              setIsOpen(false);
+            } else if (isVoiceOpen) {
+              setIsVoiceOpen(false);
+            } else {
+              setIsSelectorOpen((prev) => !prev);
+            }
+          }}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
+          className="relative group p-1 rounded-2xl bg-[#171A1D] shadow-2xl shadow-black/80 border border-[#2E363E] hover:border-white/40 flex items-center justify-center transition-all cursor-pointer"
+          title={isOpen || isSelectorOpen || isVoiceOpen ? 'Close Assistant' : 'Open Assistant Concierge'}
+        >
+          <div className="w-12 h-12 rounded-xl overflow-hidden relative flex items-center justify-center bg-[#1C232B] shadow-inner">
+            {isOpen || isSelectorOpen ? (
+              <X className="w-5 h-5 text-white" />
+            ) : (
+              <img
+                src="/assets/images/Logo.jpeg"
+                alt="Tribes & Cliqs Concierge"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+              />
+            )}
+          </div>
 
-        {/* Unread / Attention Dot */}
-        {hasUnread && !isOpen && (
-          <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#b21414] opacity-75" />
-            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#b21414] border-2 border-[#14181C]" />
-          </span>
-        )}
+          {hasUnread && !isOpen && !isVoiceOpen && !isSelectorOpen && (
+            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#b21414] opacity-75" />
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#b21414] border-2 border-[#14181C]" />
+            </span>
+          )}
 
-        {/* Hover Tooltip */}
-        {!isOpen && (
-          <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-[#14181C] border border-[#2E363E] text-white text-xs font-semibold whitespace-nowrap shadow-xl opacity-0 group-hover:opacity-100 transition pointer-events-none flex items-center gap-1.5">
-            <MessageSquare className="w-3.5 h-3.5 text-[#949599]" />
-            <span>Cliqs Bot</span>
-          </span>
-        )}
-      </motion.button>
+          {!isOpen && !isSelectorOpen && !isVoiceOpen && (
+            <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-[#14181C] border border-[#2E363E] text-white text-xs font-semibold whitespace-nowrap shadow-xl opacity-0 group-hover:opacity-100 transition pointer-events-none flex items-center gap-1.5">
+              <MessageSquare className="w-3.5 h-3.5 text-[#949599]" />
+              <span>Cliqs Assistant</span>
+            </span>
+          )}
+        </motion.button>
+      </div>
+
+      {/* Voice Agent Modal */}
+      <VoiceAgentModal
+        isOpen={isVoiceOpen}
+        onClose={() => setIsVoiceOpen(false)}
+        onSwitchToChat={() => {
+          setIsVoiceOpen(false);
+          setIsOpen(true);
+        }}
+        onSendMessage={handleVoiceMessage}
+        activeContext={{
+          isEventPage,
+          isTicketsPage,
+          isOrganizerPage,
+          isExplorePage,
+          user,
+        }}
+      />
     </aside>
+    </>
   );
 }
