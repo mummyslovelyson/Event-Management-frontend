@@ -35,7 +35,7 @@ export default function TicketFilesUploader({
     }
 
     if (validFiles.length < selectedFiles.length) {
-      toast('Some files were ignored because they are not PDF or images.', { icon: '⚠️' });
+      toast.error('Some files were ignored because they are not PDF or images.');
     }
 
     // Check size limit: 15MB each
@@ -174,7 +174,7 @@ export default function TicketFilesUploader({
               </p>
             </div>
             <div className="flex items-center gap-2 pt-1 text-[11px] text-amber-300 font-medium">
-              <span>★ Quantity automatically syncs to files • Uploaded ticket contains the amount</span>
+              <span>Quantity automatically syncs to files • Uploaded ticket contains the amount</span>
             </div>
           </div>
         )}

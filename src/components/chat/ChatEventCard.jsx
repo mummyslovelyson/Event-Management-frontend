@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Ticket, ArrowRight, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { Calendar, MapPin, Ticket, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { formatCurrency } from '@/utils/formatters';
 
 export default function ChatEventCard({ event, onNavigate }) {
@@ -33,17 +33,11 @@ export default function ChatEventCard({ event, onNavigate }) {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#161D22] via-transparent to-transparent" />
         
-        {/* Top Badges: Category & ML Match Score */}
+        {/* Top Badges: Category */}
         <div className="absolute top-2 left-2 flex items-center gap-1.5 flex-wrap">
           {event.category && (
             <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#1C232B]/90 text-white backdrop-blur border border-white/10">
               {event.category}
-            </span>
-          )}
-          {event.matchScore && (
-            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider bg-white text-[#1C232B] shadow-md backdrop-blur">
-              <Sparkles className="w-2.5 h-2.5" />
-              <span>{event.matchScore}% Match</span>
             </span>
           )}
         </div>
@@ -59,13 +53,6 @@ export default function ChatEventCard({ event, onNavigate }) {
           <h4 className="text-xs sm:text-sm font-bold text-[#EFEFF1] line-clamp-1 group-hover:text-white transition-colors">
             {event.title}
           </h4>
-
-          {/* ML Match explanation if present */}
-          {event.matchReason && (
-            <p className="text-[10px] text-[#CBD5E1] font-medium truncate mt-0.5">
-              ✦ {event.matchReason}
-            </p>
-          )}
 
           <div className="mt-1.5 space-y-0.5 text-[11px] text-[#949599]">
             {eventDate && (

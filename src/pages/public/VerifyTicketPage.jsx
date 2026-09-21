@@ -101,7 +101,7 @@ export default function VerifyTicketPage() {
         toast.success('Valid Ticket Verified!');
       } else if (data.ticket?.status === 'used') {
         if (soundEnabled) playSound('error');
-        toast('Ticket has already been checked in', { icon: '⚠️' });
+        toast.error('Ticket has already been checked in');
       }
 
       setRecentScans((prev) => [
