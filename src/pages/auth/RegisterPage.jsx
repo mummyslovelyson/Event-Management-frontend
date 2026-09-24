@@ -37,7 +37,7 @@ export default function RegisterPage() {
         fieldsToValidate = ['name', 'organizationName'];
       }
     } else if (step === 2 && role === 'organizer') {
-      fieldsToValidate = ['category', 'city'];
+      fieldsToValidate = ['category', 'city', 'websiteUrl', 'description'];
     }
 
     const isValid = await trigger(fieldsToValidate);
@@ -69,11 +69,16 @@ export default function RegisterPage() {
         website: data.website,
       };
       if (role === 'organizer') {
-        payload.organizationName = data.organizationName;
-        payload.category = data.category;
-        payload.city = data.city;
-        payload.description = data.description;
-        payload.websiteUrl = data.websiteUrl;
+        if (!data.organizationName?.trim() || !data.category?.trim() || !data.city?.trim() || !data.websiteUrl?.trim() || !data.description?.trim() || !data.phone?.trim()) {
+          setErrorMessage('All organizer fields are mandatory: Organization Name, Category, City, Website/Social Link, Bio, and Phone.');
+          toast.error('Please fill in all organizer fields');
+          return;
+        }
+        payload.organizationName = data.organizationName.trim();
+        payload.category = data.category.trim();
+        payload.city = data.city.trim();
+        payload.description = data.description.trim();
+        payload.websiteUrl = data.websiteUrl.trim();
       }
       const res = await registerUser(payload);
       toast.success(
@@ -860,10 +865,24 @@ export default function RegisterPage() {
                       <span className="input-icon"><Globe size={15} /></span>
                       <input
                         type="text"
-                        placeholder="Website or Social link"
-                        {...register('websiteUrl')}
+                        placeholder="Website or Social link *"
+                        {...register('websiteUrl', { required: 'Website or social link is required' })}
                       />
                     </div>
+                    {errors.websiteUrl && <div className="field-error">{errors.websiteUrl.message}</div>}
+
+                    <div className="input-box" style={{ height: 'auto', minHeight: '68px', padding: '8px 12px' }}>
+                      <textarea
+                        placeholder="Organization Bio & Event Scope *"
+                        rows={2}
+                        className="w-full bg-transparent text-xs text-[#EFEFF1] placeholder-[#494F55] focus:outline-none resize-none"
+                        {...register('description', {
+                          required: 'Organization bio and event scope is required',
+                          minLength: { value: 10, message: 'Please provide at least 10 characters' }
+                        })}
+                      />
+                    </div>
+                    {errors.description && <div className="field-error">{errors.description.message}</div>}
 
                     <div className="actions-row">
                       <button

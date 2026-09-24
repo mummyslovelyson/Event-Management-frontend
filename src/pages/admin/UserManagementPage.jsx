@@ -36,9 +36,10 @@ const isSuspendedUser = (u) => u?.status === 'suspended';
 const userStatus = (u) => {
   if (isSuspendedUser(u)) return { label: 'Suspended', variant: 'error' };
   if (u?.role === 'organizer') {
-    if (u.is_approved === 1) return { label: 'Active', variant: 'success' };
+    const isApproved = u.is_approved === true || u.is_approved === 1 || u.is_approved === 'true' || (u.status === 'active' && u.is_approved !== false && u.is_approved !== 0);
+    if (isApproved) return { label: 'Approved', variant: 'success' };
     if (u.status === 'rejected') return { label: 'Rejected', variant: 'error' };
-    return { label: 'Pending', variant: 'pending' };
+    return { label: 'Pending Approval', variant: 'pending' };
   }
   return { label: 'Active', variant: 'success' };
 };
@@ -161,7 +162,14 @@ export default function UserManagementPage() {
 
   const handleVerify = async (u) => {
     setActionLoading(`verify-${u.id}`);
-    try { await approveOrganizer(u.id); toast.success('Organizer approved'); fetchUsers(); refreshPanel(); }
+    try {
+      await approveOrganizer(u.id);
+      toast.success('Organizer approved successfully');
+      setUsers((prev) => prev.map((usr) => usr.id === u.id ? { ...usr, is_approved: true, status: 'active' } : usr));
+      fetchUsers();
+      fetchStats();
+      refreshPanel();
+    }
     catch (err) { toast.error(err.response?.data?.message || 'Failed to approve'); }
     finally { setActionLoading(null); }
   };
@@ -324,7 +332,7 @@ export default function UserManagementPage() {
       <PageHeader
         icon={Users}
         accent="sky"
-        title="User Management &amp; Permissions"
+        title="Users"
         subtitle="User directory, role assignments, organizer verifications, and account security controls."
         count={total}
         actions={
@@ -410,7 +418,8 @@ export default function UserManagementPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {users.map((u, i) => {
             const uInit = initials(u.name || u.email);
-            const isPendingOrg = u.role === 'organizer' && u.is_approved !== 1 && u.status !== 'rejected';
+            const isApproved = u.is_approved === true || u.is_approved === 1 || u.is_approved === 'true' || u.status === 'active';
+            const isPendingOrg = u.role === 'organizer' && !isApproved && u.status !== 'rejected' && u.status !== 'suspended';
             return (
               <motion.div key={u.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                 onClick={() => openPanel(u)}
@@ -460,7 +469,8 @@ export default function UserManagementPage() {
               <tbody className="divide-y divide-[#262B2F]/70">
                 {users.map((u, i) => {
                   const uInit = initials(u.name || u.email);
-                  const isPendingOrg = u.role === 'organizer' && u.is_approved !== 1 && u.status !== 'rejected';
+                  const isApproved = u.is_approved === true || u.is_approved === 1 || u.is_approved === 'true' || u.status === 'active';
+                  const isPendingOrg = u.role === 'organizer' && !isApproved && u.status !== 'rejected' && u.status !== 'suspended';
                   return (
                     <tr key={u.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(u.id) ? 'bg-white/5' : ''}`}>
                       <td className="hidden md:table-cell px-4 py-3"><input type="checkbox" checked={selected.has(u.id)} onChange={() => toggleSelect(u.id)} className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#EFEFF1]" /></td>
@@ -561,11 +571,48 @@ export default function UserManagementPage() {
                       <div key={f.l} className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-3"><p className="text-xs text-[#949599]">{f.l}</p><p className="mt-1 text-sm font-medium text-[#EFEFF1]">{f.v}</p></div>
                     ))}
                   </div>
-                  {d.organization?.name && (
-                    <div className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-4">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1">Organization</p>
-                      <p className="text-sm text-[#EFEFF1]">{d.organization.name}</p>
-                      {d.organization.description && <p className="text-xs text-[#949599] mt-1">{d.organization.description}</p>}
+                  {d.role === 'organizer' && (
+                    <div className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Organizer Profile & KYC Dossier</p>
+                        <Badge variant={userStatus(d).variant} size="sm" dot>{userStatus(d).label}</Badge>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div><span className="text-[#949599]">Organization:</span> <span className="text-[#EFEFF1] font-medium">{d.organization?.name || d.organizationName || '—'}</span></div>
+                        <div><span className="text-[#949599]">Category:</span> <span className="text-[#EFEFF1] font-medium">{d.organization?.category || d.category || '—'}</span></div>
+                        <div><span className="text-[#949599]">City / Region:</span> <span className="text-[#EFEFF1] font-medium">{d.organization?.city || d.city || d.location || '—'}</span></div>
+                        <div>
+                          <span className="text-[#949599]">Website:</span>{' '}
+                          {d.organization?.website || d.website ? (
+                            <a href={(d.organization?.website || d.website).startsWith('http') ? (d.organization?.website || d.website) : `https://${d.organization?.website || d.website}`} target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">
+                              {d.organization?.website || d.website}
+                            </a>
+                          ) : <span className="text-[#EFEFF1]">None</span>}
+                        </div>
+                      </div>
+                      {(d.organization?.description || d.bio) && (
+                        <div className="pt-2 border-t border-[#494F55]/20">
+                          <p className="text-[11px] font-medium text-[#949599] mb-1">Organization Bio & Event Scope:</p>
+                          <p className="text-xs text-[#EFEFF1] leading-relaxed whitespace-pre-wrap">{d.organization?.description || d.bio}</p>
+                        </div>
+                      )}
+                      {(!d.is_approved && d.status !== 'rejected' && d.status !== 'active') && (
+                        <div className="flex items-center gap-2 pt-2 border-t border-[#494F55]/20">
+                          <button
+                            onClick={() => handleVerify(d)}
+                            disabled={actionLoading === `verify-${d.id}`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-semibold hover:bg-emerald-500/30 transition disabled:opacity-50"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Approve Organizer
+                          </button>
+                          <button
+                            onClick={() => { setPanelUser(null); setRejectTarget(d); }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 border border-red-500/40 text-xs font-semibold hover:bg-red-500/30 transition"
+                          >
+                            <XCircle className="w-3.5 h-3.5" /> Reject Application
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                   {d.passwordHash && (

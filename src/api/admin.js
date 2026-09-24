@@ -89,4 +89,12 @@ export const testAIPrompt = (data) => api.post('/admin/ai/test', data);
 export const getBotConversations = (params) => api.get('/admin/chat-logs', { params });
 export const deleteBotConversation = (id) => api.delete(`/admin/chat-logs/${id}`);
 
+// Mobile App Remote Management
+export const getMobileAppConfig = () => api.get('/admin/mobile-app');
+export const updateMobileAppSettings = (data) => api.put('/admin/mobile-app/settings', data);
+export const createMobileAppBanner = (data) => api.post('/admin/mobile-app/banners', data);
+export const updateMobileAppBanner = (id, data) => api.put(`/admin/mobile-app/banners/${id}`, data);
+export const deleteMobileAppBanner = (id) => api.delete(`/admin/mobile-app/banners/${id}`);
+
+
 

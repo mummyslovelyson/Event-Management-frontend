@@ -13,6 +13,7 @@ dist-ssr
 
 # Backend + tooling (frontend-only repo)
 backend/
+Event-App/
 .bolt/
 .freebuff/
 

@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, CalendarDays, Layers, CreditCard, BarChart3,
   FileText, Bell, LifeBuoy, Settings, ScrollText, Menu, X, LogOut,
   Search, ChevronDown, UserCheck, AlertTriangle, Globe, BookOpen, CheckCircle, ExternalLink,
-  Trash2, Check,
+  Trash2, Check, Smartphone,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getAdminNotifications, markAdminNotificationsRead, deleteAdminNotification } from '@/api/admin';
@@ -14,13 +14,14 @@ import CurrencyToggle from '@/components/common/CurrencyToggle';
 const nav = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/', label: 'Public Website', icon: Globe },
-  { to: '/admin/users', label: 'User Management', icon: Users },
-  { to: '/admin/organizer-approvals', label: 'Organizer Approvals', icon: UserCheck },
+  { to: '/admin/users', label: 'Users', icon: Users },
+  { to: '/admin/organizers', label: 'Organizers', icon: UserCheck },
   { to: '/admin/events', label: 'Event Management', icon: CalendarDays },
   { to: '/admin/categories', label: 'Categories', icon: Layers },
   { to: '/admin/payments', label: 'Payments', icon: CreditCard },
   { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
   { to: '/admin/content', label: 'Content', icon: FileText },
+  { to: '/admin/mobile-app', label: 'Mobile App', icon: Smartphone },
   { to: '/admin/notifications', label: 'Notifications', icon: Bell },
   { to: '/admin/support', label: 'Support', icon: LifeBuoy },
   { to: '/admin/ai-training', label: 'Cliqs Bot Training', icon: BookOpen },

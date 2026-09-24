@@ -72,6 +72,7 @@ import CategoriesPage from '@/pages/admin/CategoriesPage';
 import PaymentManagementPage from '@/pages/admin/PaymentManagementPage';
 import PlatformReportsPage from '@/pages/admin/PlatformReportsPage';
 import ContentManagementPage from '@/pages/admin/ContentManagementPage';
+import MobileAppManagementPage from '@/pages/admin/MobileAppManagementPage';
 import NotificationCenterPage from '@/pages/admin/NotificationCenterPage';
 import SupportPage from '@/pages/admin/SupportPage';
 import UserSupportPage from '@/pages/attendee/SupportPage';
@@ -210,12 +211,14 @@ function AppRoutes() {
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UserManagementPage />} />
+            <Route path="/admin/organizers" element={<OrganizerApprovalsPage />} />
             <Route path="/admin/organizer-approvals" element={<OrganizerApprovalsPage />} />
             <Route path="/admin/events" element={<EventManagementPage />} />
             <Route path="/admin/categories" element={<CategoriesPage />} />
             <Route path="/admin/payments" element={<PaymentManagementPage />} />
             <Route path="/admin/reports" element={<PlatformReportsPage />} />
             <Route path="/admin/content" element={<ContentManagementPage />} />
+            <Route path="/admin/mobile-app" element={<MobileAppManagementPage />} />
             <Route path="/admin/notifications" element={<NotificationCenterPage />} />
             <Route path="/admin/support" element={<SupportPage />} />
             <Route path="/admin/ai-training" element={<AITrainingPage />} />
