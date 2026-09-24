@@ -16,7 +16,7 @@ const nav = [
   { to: '/', label: 'Public Website', icon: Globe },
   { to: '/admin/users', label: 'Users', icon: Users },
   { to: '/admin/organizers', label: 'Organizers', icon: UserCheck },
-  { to: '/admin/events', label: 'Event Management', icon: CalendarDays },
+  { to: '/admin/events', label: 'Events', icon: CalendarDays },
   { to: '/admin/categories', label: 'Categories', icon: Layers },
   { to: '/admin/payments', label: 'Payments', icon: CreditCard },
   { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
