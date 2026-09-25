@@ -26,6 +26,7 @@ import PrivacyPolicyPage from '@/pages/public/PrivacyPolicyPage';
 import CookiePolicyPage from '@/pages/public/CookiePolicyPage';
 import RefundPolicyPage from '@/pages/public/RefundPolicyPage';
 import VerifyTicketPage from '@/pages/public/VerifyTicketPage';
+import OrganizerProfilePage from '@/pages/public/OrganizerProfilePage';
 
 // Auth pages
 import LoginPage from '@/pages/auth/LoginPage';
@@ -135,6 +136,8 @@ function AppRoutes() {
             <Route path="/verify/:code" element={<VerifyTicketPage />} />
             <Route path="/verify-ticket" element={<VerifyTicketPage />} />
             <Route path="/verify-ticket/:code" element={<VerifyTicketPage />} />
+            <Route path="/organizers/:id" element={<OrganizerProfilePage />} />
+            <Route path="/organizer/:id" element={<OrganizerProfilePage />} />
           </Route>
 
           {/* ── Payment (standalone, no layout wrapper — Paystack redirects here) ── */}

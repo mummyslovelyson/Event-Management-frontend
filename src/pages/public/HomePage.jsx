@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 import EventCard from '@/components/common/EventCard';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { getFeaturedEvents, getTrendingEvents, getRecommendedEvents, getCategories, getFeaturedOrganizers } from '@/api/events';
-import { getCategoryImage } from '@/utils/categoryImages';
+import { getCategoryImage, POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 const HERO_IMAGE = 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg';
@@ -129,10 +129,17 @@ export default function HomePage() {
     const loadCategories = async () => {
       try {
         const res = await getCategories();
-        const cats = Array.isArray(res.data) ? res.data : res.data?.categories || [];
-        if (active) setCategories(cats);
+        const apiCats = Array.isArray(res.data) ? res.data : res.data?.categories || [];
+        const existingNames = new Set(apiCats.map(c => (c.name || c).toLowerCase()));
+        const merged = [...apiCats];
+        POPULAR_CATEGORY_LIST.forEach(item => {
+          if (!existingNames.has(item.name.toLowerCase())) {
+            merged.push({ name: item.name, event_count: 0, subtitle: item.countLabel });
+          }
+        });
+        if (active) setCategories(merged);
       } catch {
-        if (active) setCategories([]);
+        if (active) setCategories(POPULAR_CATEGORY_LIST.map(item => ({ name: item.name, event_count: 0, subtitle: item.countLabel })));
       } finally {
         if (active) setLoadingCategories(false);
       }
@@ -276,6 +283,32 @@ export default function HomePage() {
                 </button>
               ))}
             </div>
+
+            {/* City Quick Pills & Map Link */}
+            <div className="mt-2.5 pt-2.5 border-t border-[#262B2F]/60 flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-xs font-semibold text-[#949599] uppercase tracking-wider mr-1 flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-rose-500" /> Cities:
+                </span>
+                {['Accra', 'Kumasi', 'Takoradi', 'Tema', 'Cape Coast', 'Tamale'].map((city) => (
+                  <button
+                    key={city}
+                    type="button"
+                    onClick={() => navigate(`/explore?city=${encodeURIComponent(city)}`)}
+                    className="px-2.5 py-1 rounded-lg bg-[#1C232B] border border-[#262B2F] text-xs font-medium text-[#CBD5E1] hover:text-white hover:border-white/40 transition"
+                  >
+                    {city}
+                  </button>
+                ))}
+              </div>
+              <Link
+                to="/explore?view=map"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-white/10 hover:bg-white/15 px-3 py-1.5 rounded-lg border border-white/20 transition-all hover:scale-105 active:scale-95 shadow-sm"
+              >
+                <Compass className="w-3.5 h-3.5 text-rose-400 animate-spin-slow" />
+                Live Map View
+              </Link>
+            </div>
           </motion.form>
         </div>
       </section>
@@ -388,10 +421,11 @@ export default function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
             {categories.map((cat, i) => {
               const name = cat.name || cat;
               const count = cat.event_count ?? cat.eventCount ?? null;
+              const subtitle = cat.subtitle || null;
               const Icon = CATEGORY_ICONS[name] || DEFAULT_CATEGORY_ICON;
               const imgSrc = getCategoryImage(name);
 
@@ -400,7 +434,7 @@ export default function HomePage() {
                 <Link
                   key={name}
                   to={`/explore?category=${encodeURIComponent(name)}`}
-                  className="group relative overflow-hidden rounded-2xl aspect-[4/3] block"
+                  className="group relative overflow-hidden rounded-2xl aspect-[4/3] block border border-[#262B2F] hover:border-white/40 transition-all duration-300"
                 >
                   {/* Cover image */}
                   <img
@@ -410,13 +444,15 @@ export default function HomePage() {
                     loading="lazy"
                   />
                   {/* Gradient scrim */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                   {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
                     <p className="text-sm font-bold text-white leading-tight drop-shadow">{name}</p>
-                    {Number(count) > 0 && (
+                    {Number(count) > 0 ? (
                       <p className="mt-0.5 text-xs text-white/70">{count.toLocaleString()} events</p>
-                    )}
+                    ) : subtitle ? (
+                      <p className="mt-0.5 text-[11px] text-white/60 line-clamp-1">{subtitle}</p>
+                    ) : null}
                   </div>
                   {/* Hover border glow */}
                   <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-2xl transition-all duration-300" />
@@ -432,9 +468,11 @@ export default function HomePage() {
                     <Icon className="w-6 h-6" />
                   </div>
                   <span className="text-sm font-semibold text-[#EFEFF1] text-center">{name}</span>
-                  {Number(count) > 0 && (
+                  {Number(count) > 0 ? (
                     <span className="text-xs text-[#949599]">{count.toLocaleString()} events</span>
-                  )}
+                  ) : subtitle ? (
+                    <span className="text-[11px] text-[#949599]">{subtitle}</span>
+                  ) : null}
                 </Link>
               );
             })}

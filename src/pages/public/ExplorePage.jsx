@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import EventCard from '@/components/common/EventCard';
 import EmptyState from '@/components/common/EmptyState';
 import Pagination from '@/components/common/Pagination';
+import EventDiscoveryMap from '@/components/events/EventDiscoveryMap';
 import { getEvents, getCategories } from '@/api/events';
 import { POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -482,6 +483,16 @@ export default function ExplorePage() {
               >
                 <List className="w-4 h-4" />
               </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('map')}
+                className={`p-1.5 rounded-lg transition ${
+                  viewMode === 'map' ? 'bg-[#b21414] text-white' : 'text-[#949599] hover:text-white'
+                }`}
+                title="Map view"
+              >
+                <MapPin className="w-4 h-4" />
+              </button>
             </div>
 
             {/* Sort Dropdown */}
@@ -675,6 +686,10 @@ export default function ExplorePage() {
                 action={activeFilterCount > 0 ? clearAll : undefined}
                 actionLabel="Clear Filters"
               />
+            ) : viewMode === 'map' ? (
+              <div className="space-y-6">
+                <EventDiscoveryMap events={events} />
+              </div>
             ) : (
               <div className="space-y-8">
                 <motion.div

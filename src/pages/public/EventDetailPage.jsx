@@ -778,8 +778,8 @@ export default function EventDetailPage() {
             {/* Organizer card */}
             {event.organizer && (
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 mb-6 flex items-center justify-between gap-4 hover:border-white/40 transition-colors">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-12 h-12 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] flex items-center justify-center shrink-0 overflow-hidden">
+                <Link to={`/organizers/${event.organizer.id}`} className="flex items-center gap-3 min-w-0 group cursor-pointer">
+                  <div className="w-12 h-12 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] flex items-center justify-center shrink-0 overflow-hidden group-hover:border-[#b21414] transition">
                     {event.organizer.avatar ? (
                       <img src={event.organizer.avatar} alt={event.organizer.name} className="w-full h-full object-cover" />
                     ) : (
@@ -787,13 +787,16 @@ export default function EventDetailPage() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs text-[#494F55] uppercase tracking-wider">Organized by</p>
-                    <h3 className="text-sm font-semibold text-[#EFEFF1] truncate">{event.organizer.name}</h3>
+                    <p className="text-xs text-[#949599] uppercase tracking-wider">Organized by</p>
+                    <h3 className="text-sm font-semibold text-[#EFEFF1] group-hover:text-white group-hover:underline flex items-center gap-1.5 truncate">
+                      <span>{event.organizer.name}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-[#949599] group-hover:translate-x-0.5 transition-transform" />
+                    </h3>
                     <p className="text-xs text-[#949599] mt-0.5">
                       {followersCount.toLocaleString()} follower{followersCount !== 1 ? 's' : ''}
                     </p>
                   </div>
-                </div>
+                </Link>
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={handleFollow}
