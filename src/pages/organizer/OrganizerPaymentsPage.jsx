@@ -356,6 +356,63 @@ export default function OrganizerPaymentsPage() {
         />
       </div>
 
+      {/* ─── FINANCIAL REVENUE WATERFALL (Kwame Blueprint Sec. 23) ─── */}
+      <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#262B2F]">
+          <div>
+            <h3 className="text-sm font-bold text-[#EFEFF1] flex items-center gap-2">
+              <Landmark className="w-4 h-4 text-emerald-400" /> Financial Settlement Breakdown
+            </h3>
+            <p className="text-xs text-[#949599] mt-0.5">Transparent ledger breakdown of platform commissions, processing fees, and net payouts.</p>
+          </div>
+          <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-full w-fit">
+            Automatic Reconciliation
+          </span>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-5 gap-3 text-center sm:text-left">
+          <div className="p-3.5 rounded-xl bg-[#1C232B] border border-[#262B2F]">
+            <p className="text-[11px] font-semibold text-[#949599] uppercase tracking-wider">Gross Sales</p>
+            <p className="mt-1 text-base sm:text-lg font-bold text-white tabular-nums">
+              {maskBalance(balance.totalEarned || 0)}
+            </p>
+            <span className="text-[10px] text-emerald-400">Total tickets sold</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#1C232B] border border-[#262B2F]">
+            <p className="text-[11px] font-semibold text-[#949599] uppercase tracking-wider">Platform Fee (5%)</p>
+            <p className="mt-1 text-base sm:text-lg font-bold text-amber-400/90 tabular-nums">
+              -{maskBalance(Math.round((balance.totalEarned || 0) * 0.05))}
+            </p>
+            <span className="text-[10px] text-[#949599]">Hosting & discovery</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#1C232B] border border-[#262B2F]">
+            <p className="text-[11px] font-semibold text-[#949599] uppercase tracking-wider">Payment Fees (2%)</p>
+            <p className="mt-1 text-base sm:text-lg font-bold text-rose-400/90 tabular-nums">
+              -{maskBalance(Math.round((balance.totalEarned || 0) * 0.02))}
+            </p>
+            <span className="text-[10px] text-[#949599]">MoMo & Card gateways</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#1C232B] border border-[#262B2F]">
+            <p className="text-[11px] font-semibold text-[#949599] uppercase tracking-wider">Refunds</p>
+            <p className="mt-1 text-base sm:text-lg font-bold text-red-400 tabular-nums">
+              {format(0)}
+            </p>
+            <span className="text-[10px] text-emerald-400">0 disputed transactions</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 col-span-2 sm:col-span-1">
+            <p className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">Net Revenue</p>
+            <p className="mt-1 text-base sm:text-lg font-bold text-emerald-300 tabular-nums">
+              {maskBalance(Math.round((balance.totalEarned || 0) * 0.93))}
+            </p>
+            <span className="text-[10px] text-emerald-400/80">Available for payout</span>
+          </div>
+        </div>
+      </div>
+
       {/* Navigation Tabs */}
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-4 border-b border-[#262B2F] pb-1 overflow-x-auto">

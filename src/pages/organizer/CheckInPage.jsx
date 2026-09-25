@@ -151,6 +151,27 @@ export default function CheckInPage() {
     };
   }, [attendees]);
 
+  const tierBreakdown = useMemo(() => {
+    const map = {};
+    attendees.forEach((a) => {
+      const type = a.ticketType || a.ticket_type_name || 'Standard Admission';
+      if (!map[type]) {
+        map[type] = { total: 0, checkedIn: 0 };
+      }
+      map[type].total += 1;
+      if (a.checkedIn) {
+        map[type].checkedIn += 1;
+      }
+    });
+    return Object.entries(map).map(([name, data]) => ({
+      name,
+      total: data.total,
+      checkedIn: data.checkedIn,
+      remaining: Math.max(data.total - data.checkedIn, 0),
+      rate: data.total > 0 ? Math.round((data.checkedIn / data.total) * 100) : 0,
+    }));
+  }, [attendees]);
+
   // Handle barcode / QR verification & check-in
   const handleScan = useCallback(async (code) => {
     if (!code || isProcessingRef.current) return;
@@ -429,6 +450,30 @@ export default function CheckInPage() {
           <div className="h-full bg-gradient-to-r from-white to-emerald-400 rounded-full transition-all duration-500" style={{ width: `${stats.rate}%` }} />
         </div>
       </div>
+
+      {/* Admission by Ticket Tier (Kwame Blueprint Sec. 19) */}
+      {tierBreakdown.length > 0 && (
+        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
+          <p className="text-xs font-semibold text-[#949599] uppercase tracking-wider mb-3">Admission by Ticket Tier</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {tierBreakdown.map((tier) => (
+              <div key={tier.name} className="p-3.5 rounded-xl bg-[#1C232B] border border-[#262B2F] flex flex-col justify-between">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-[#EFEFF1] truncate">{tier.name}</span>
+                  <span className="text-xs font-semibold text-emerald-400 tabular-nums">{tier.rate}%</span>
+                </div>
+                <div className="mt-2.5 flex items-baseline justify-between text-xs">
+                  <span className="text-white font-semibold tabular-nums">{tier.checkedIn} checked</span>
+                  <span className="text-[#949599] tabular-nums">of {tier.total}</span>
+                </div>
+                <div className="mt-2 h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
+                  <div className="h-full bg-emerald-400 rounded-full transition-all duration-300" style={{ width: `${tier.rate}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#262B2F] w-fit">
