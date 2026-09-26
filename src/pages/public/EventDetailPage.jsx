@@ -17,6 +17,9 @@ import EmptyState from '@/components/common/EmptyState';
 import Badge from '@/components/common/Badge';
 import Modal from '@/components/common/Modal';
 import SocialShareModal from '@/components/common/SocialShareModal';
+import ReminderModal from '@/components/common/ReminderModal';
+import FollowArtistButton from '@/components/common/FollowArtistButton';
+import FollowCategoryButton from '@/components/common/FollowCategoryButton';
 import { getEvent, getTrendingEvents, toggleEventReminder, getEventReminderStatus } from '@/api/events';
 import { getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '@/utils/calendar';
 import { getTicketTypes } from '@/api/tickets';
@@ -150,6 +153,7 @@ export default function EventDetailPage() {
   const [socialTargetMeetup, setSocialTargetMeetup] = useState(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [isReminded, setIsReminded] = useState(false);
+  const [reminderModalOpen, setReminderModalOpen] = useState(false);
   const [reminderLoading, setReminderLoading] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
@@ -688,9 +692,14 @@ export default function EventDetailPage() {
             </Link>
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div className="max-w-2xl">
-                {event.category && (
-                  <Badge variant="gold" className="mb-3">{event.category}</Badge>
-                )}
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  {event.category && (
+                    <Badge variant="gold">{event.category}</Badge>
+                  )}
+                  {event.category && (
+                    <FollowCategoryButton categoryName={event.category} size="xs" />
+                  )}
+                </div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-[#EFEFF1] leading-tight">{event.title}</h1>
                 <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-[#949599]">
                   <span className="flex items-center gap-1.5">
@@ -709,23 +718,24 @@ export default function EventDetailPage() {
 
               {/* Action buttons */}
               <div className="flex items-center gap-2">
-                {/* Event Reminder Toggle */}
+                {/* Event Reminder Toggle & Preferences Modal */}
                 <motion.button
-                  onClick={handleToggleReminder}
+                  onClick={() => setReminderModalOpen(true)}
                   disabled={reminderLoading}
                   whileTap={{ scale: 0.88 }}
                   whileHover={{ y: -2 }}
-                  title={isReminded ? 'Event reminder active (click to remove)' : 'Set event reminder'}
-                  className={`w-11 h-11 rounded-lg backdrop-blur border flex items-center justify-center transition disabled:opacity-50 ${
+                  title={isReminded ? 'Event reminders active (Click to configure preferences)' : 'Set event reminder'}
+                  className={`relative w-11 h-11 rounded-lg backdrop-blur border flex items-center justify-center transition disabled:opacity-50 ${
                     isReminded
-                      ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
+                      ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-500/20'
                       : 'bg-[#171A1D]/90 border-[#494F55]/40 text-[#EFEFF1] hover:text-white hover:border-[#494F55]'
                   }`}
                 >
-                  {reminderLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : isReminded ? (
-                    <BellRing className="w-4 h-4" />
+                  {isReminded ? (
+                    <>
+                      <BellRing className="w-4 h-4 text-amber-400" />
+                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+                    </>
                   ) : (
                     <Bell className="w-4 h-4" />
                   )}
@@ -903,6 +913,37 @@ export default function EventDetailPage() {
                         {event.description || 'No description available for this event yet.'}
                       </p>
                     </div>
+
+                    {/* Featured Artists & Performers */}
+                    {(() => {
+                      const rawTags = event.tags || event.performers || [];
+                      let tagsList = [];
+                      if (Array.isArray(rawTags)) {
+                        tagsList = rawTags;
+                      } else if (typeof rawTags === 'string') {
+                        try {
+                          tagsList = rawTags.startsWith('[') ? JSON.parse(rawTags) : rawTags.split(',').map((s) => s.trim()).filter(Boolean);
+                        } catch {
+                          tagsList = rawTags.split(',').map((s) => s.trim()).filter(Boolean);
+                        }
+                      }
+                      if (!tagsList.length) return null;
+                      return (
+                        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4 sm:p-5">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-[#949599] flex items-center gap-2">
+                              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Featured Artists & Performers
+                            </h4>
+                            <span className="text-[11px] text-[#6B7278]">Follow an artist to be notified when they have new events</span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {tagsList.map((tag) => (
+                              <FollowArtistButton key={tag} artistName={tag} variant="chip" />
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {event.dressCode && (
@@ -1901,6 +1942,14 @@ export default function EventDetailPage() {
         onClose={() => { setSocialModalOpen(false); setSocialTargetMeetup(null); }}
         event={event}
         meetup={socialTargetMeetup}
+      />
+
+      {/* Event Reminders & Preferences Modal */}
+      <ReminderModal
+        open={reminderModalOpen}
+        onClose={() => setReminderModalOpen(false)}
+        event={event}
+        onStatusChange={(reminded) => setIsReminded(reminded)}
       />
     </>
   );

@@ -14,8 +14,22 @@ export const getFavorites = (params) => api.get('/users/favorites', { params });
 export const toggleFavorite = (eventId) => api.post('/users/favorites/toggle', { eventId });
 export const getFollowing = (params) => api.get('/users/following', { params });
 export const getFollowingEvents = (params) => api.get('/users/following/events', { params });
+export const getFollowingSummary = () => api.get('/users/following/summary');
 export const followOrganizer = (organizerId) => api.post(`/users/organizers/${organizerId}/follow`);
 export const unfollowOrganizer = (organizerId) => api.delete(`/users/organizers/${organizerId}/follow`);
+
+// Artist Following
+export const getFollowedArtists = () => api.get('/users/artists/following');
+export const checkArtistFollowStatus = (name) => api.get('/users/artists/check', { params: { name } });
+export const followArtist = (artistName) => api.post('/users/artists/follow', { artistName });
+export const unfollowArtist = (artistName) => api.delete('/users/artists/follow', { data: { artistName } });
+
+// Category Following
+export const getFollowedCategories = () => api.get('/users/categories/following');
+export const checkCategoryFollowStatus = (name) => api.get('/users/categories/check', { params: { name } });
+export const followCategory = (categoryName) => api.post('/users/categories/follow', { categoryName });
+export const unfollowCategory = (categoryName) => api.delete('/users/categories/follow', { data: { categoryName } });
+
 export const getNotifications = (params) => api.get('/users/notifications', { params });
 export const markNotificationRead = (id) => api.put(`/users/notifications/${id}/read`);
 export const markAllNotificationsRead = () => api.put('/users/notifications/read-all');
@@ -23,3 +37,4 @@ export const deleteNotification = (id) => api.delete(`/users/notifications/${id}
 export const createReview = (data) => api.post('/users/reviews', data);
 export const getReviews = (params) => api.get('/users/reviews', { params });
 export const deleteReview = (id) => api.delete(`/users/reviews/${id}`);
+
