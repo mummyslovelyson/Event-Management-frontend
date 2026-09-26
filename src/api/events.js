@@ -53,3 +53,5 @@ export const getPublicOrganizerProfile = (id) => api.get(`/events/organizers/${i
 export const toggleEventReminder = (id) => api.post(`/events/${id}/reminders`);
 export const getEventReminderStatus = (id) => api.get(`/events/${id}/reminders`);
 export const getUserReminders = () => api.get('/events/reminders/mine');
+export const trackEventView = (id) => api.post(`/events/${id}/view`);
+

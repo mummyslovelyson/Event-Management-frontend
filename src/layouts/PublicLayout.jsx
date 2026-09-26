@@ -10,6 +10,7 @@ import Logo from '@/components/common/Logo';
 const navLinks = [
   { to: '/', label: 'Home', end: true },
   { to: '/explore', label: 'Explore' },
+  { to: '/resale', label: 'Resale' },
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
 ];
@@ -202,7 +203,7 @@ export default function PublicLayout() {
             {/* Links */}
             {[
               { title: 'Company', links: [['About Us', '/about'], ['Contact', '/contact'], ['Careers', '#'], ['Blog', '#']] },
-              { title: 'Product', links: [['Explore Events', '/explore'], ['FAQ', '/faq'], ['Pricing', '/pricing']] },
+              { title: 'Product', links: [['Explore Events', '/explore'], ['Resale Marketplace', '/resale'], ['FAQ', '/faq'], ['Pricing', '/pricing']] },
               { title: 'Legal', links: [['Terms of Service', '/terms'], ['Privacy Policy', '/privacy'], ['Cookie Policy', '/cookies'], ['Refund Policy', '/refund']] },
             ].map(({ title, links }) => (
               <div key={title}>

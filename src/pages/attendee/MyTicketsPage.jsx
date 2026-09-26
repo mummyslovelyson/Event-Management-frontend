@@ -452,6 +452,8 @@ export default function MyTicketsPage() {
                 onViewEvent={() => setPreviewEvent(ticket.event)}
                 onInvoice={() => setInvoiceTicket(ticket)}
                 onSell={() => { setSellTarget(ticket); setSellPrice(''); }}
+                resaleListing={listings.find((l) => Number(l.ticketId) === Number(ticket.id) && l.status === 'active')}
+                onCancelResale={handleCancelListing}
               />
             </motion.div>
           ))}
@@ -532,57 +534,155 @@ export default function MyTicketsPage() {
         )}
       </motion.div>
 
-      {/* Sell ticket modal */}
+      {/* Sell ticket modal (Kwame Blueprint Sec. 10 - Ticket Resale Marketplace) */}
       <Modal
         open={!!sellTarget}
         onClose={() => { setSellTarget(null); setSellPrice(''); }}
-        title="Sell Ticket on Resale"
+        title="List Ticket on Resale Marketplace"
         footer={
-          <>
-            <button
-              onClick={() => { setSellTarget(null); setSellPrice(''); }}
-              className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSell}
-              disabled={selling}
-              className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
-            >
-              <Tag className="w-4 h-4" />
-              {selling ? 'Listing...' : 'List for Sale'}
-            </button>
-          </>
+          (() => {
+            const origPrice = Number(sellTarget?.price || sellTarget?.unitPrice || 0);
+            const maxCap = origPrice > 0 ? Math.round(origPrice * 1.25 * 100) / 100 : 0;
+            const entered = Number(sellPrice) || 0;
+            const isOverCap = maxCap > 0 && entered > maxCap;
+            const isInvalid = entered <= 0 || isOverCap || selling;
+
+            return (
+              <div className="w-full flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setSellTarget(null); setSellPrice(''); }}
+                  className="px-4 py-2.5 rounded-xl text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSell}
+                  disabled={isInvalid}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-[#1C232B] text-sm font-black hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-lg shadow-amber-500/20"
+                >
+                  <Tag className="w-4 h-4" />
+                  {selling ? 'Listing Ticket...' : 'Confirm Resale Listing'}
+                </button>
+              </div>
+            );
+          })()
         }
       >
-        {sellTarget && (
-          <div className="space-y-4">
-            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-3">
-              <p className="text-sm font-semibold text-[#EFEFF1]">{sellTarget.event?.title || sellTarget.eventName}</p>
-              <p className="text-xs text-[#949599] mt-0.5">
-                {sellTarget.ticketType || sellTarget.type} • #{String(sellTarget.ticketNumber || sellTarget.id).slice(-8).toUpperCase()}
-              </p>
+        {sellTarget && (() => {
+          const origPrice = Number(sellTarget.price || sellTarget.unitPrice || 0);
+          const maxCap = origPrice > 0 ? Math.round(origPrice * 1.25 * 100) / 100 : 0;
+          const entered = Number(sellPrice) || 0;
+          const fee = Math.round(entered * 0.05 * 100) / 100;
+          const netPayout = Math.round((entered - fee) * 100) / 100;
+          const isOverCap = maxCap > 0 && entered > maxCap;
+
+          return (
+            <div className="space-y-4">
+              {/* Event & Ticket Info */}
+              <div className="rounded-xl bg-[#1C232B] border border-[#262B2F] p-3.5">
+                <p className="text-sm font-bold text-white line-clamp-1">{sellTarget.event?.title || sellTarget.eventName}</p>
+                <div className="flex items-center gap-2 mt-1 text-xs text-[#949599]">
+                  <span className="font-semibold text-amber-400">{sellTarget.ticketType || sellTarget.type}</span>
+                  <span>•</span>
+                  <span className="font-mono text-[#CBD5E1]">#{String(sellTarget.ticketNumber || sellTarget.id).slice(-8).toUpperCase()}</span>
+                </div>
+              </div>
+
+              {/* Price Limits Breakdown */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 rounded-xl bg-[#14171A] border border-[#262B2F]">
+                  <p className="text-[11px] uppercase font-bold text-[#949599]">Original Face Value</p>
+                  <p className="text-base font-extrabold text-white mt-0.5">{origPrice > 0 ? format(origPrice) : 'GHS 0.00'}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                  <p className="text-[11px] uppercase font-bold text-amber-300">Max Allowed (+25% Cap)</p>
+                  <p className="text-base font-extrabold text-amber-400 mt-0.5">{maxCap > 0 ? format(maxCap) : 'N/A'}</p>
+                </div>
+              </div>
+
+              {/* Price Input */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#949599]">
+                    Resale Listing Price
+                  </label>
+                  {maxCap > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setSellPrice(String(maxCap))}
+                      className="text-[11px] font-bold text-amber-400 hover:underline"
+                    >
+                      Set Max Cap ({format(maxCap)})
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[#949599]">GHS</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max={maxCap > 0 ? maxCap : undefined}
+                    step="0.01"
+                    value={sellPrice}
+                    onChange={(e) => setSellPrice(e.target.value)}
+                    placeholder={origPrice > 0 ? String(origPrice) : '250'}
+                    className={`w-full pl-12 pr-4 py-2.5 rounded-xl bg-[#1C232B] border text-sm text-white placeholder-[#494F55] focus:outline-none transition ${
+                      isOverCap ? 'border-red-500 focus:border-red-500' : 'border-[#494F55]/40 focus:border-amber-400'
+                    }`}
+                  />
+                </div>
+                {isOverCap ? (
+                  <p className="text-xs text-red-400 mt-1.5 flex items-center gap-1">
+                    ⚠️ Price exceeds anti-scalping cap of {format(maxCap)} (max +25% markup).
+                  </p>
+                ) : (
+                  <p className="text-xs text-[#949599] mt-1.5">
+                    Example: Original price {origPrice > 0 ? format(origPrice) : 'GHS 200'} → Resale price {maxCap > 0 ? format(maxCap) : 'GHS 250'}.
+                  </p>
+                )}
+              </div>
+
+              {/* Financial Breakdown */}
+              {entered > 0 && !isOverCap && (
+                <div className="p-3.5 rounded-xl bg-[#14171A] border border-[#262B2F] space-y-2 text-xs">
+                  <div className="flex justify-between text-[#949599]">
+                    <span>Buyer Pays:</span>
+                    <span className="font-semibold text-white">{format(entered)}</span>
+                  </div>
+                  <div className="flex justify-between text-[#949599]">
+                    <span>Platform Service Fee (5%):</span>
+                    <span className="font-semibold text-rose-400">-{format(fee)}</span>
+                  </div>
+                  <div className="pt-2 border-t border-[#262B2F] flex justify-between text-sm font-bold">
+                    <span className="text-white">Net Wallet Payout:</span>
+                    <span className="text-emerald-400">{format(netPayout)}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Blueprint Rules Checklist */}
+              <div className="p-3.5 rounded-xl bg-white/[0.02] border border-[#262B2F] space-y-2 text-[11px] text-[#949599]">
+                <p className="font-bold text-white uppercase tracking-wider text-[10px]">Marketplace Rules</p>
+                <div className="space-y-1">
+                  <p className="flex items-center gap-1.5 text-[#CBD5E1]">
+                    <span className="text-amber-400 font-bold">✓</span> Maximum resale price (+25% anti-scalping policy)
+                  </p>
+                  <p className="flex items-center gap-1.5 text-[#CBD5E1]">
+                    <span className="text-amber-400 font-bold">✓</span> Organizer approved secondary market
+                  </p>
+                  <p className="flex items-center gap-1.5 text-[#CBD5E1]">
+                    <span className="text-amber-400 font-bold">✓</span> 5% platform service fee on successful sale
+                  </p>
+                  <p className="flex items-center gap-1.5 text-[#CBD5E1]">
+                    <span className="text-amber-400 font-bold">✓</span> Automatic ticket ownership transfer & instant wallet credit
+                  </p>
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-2">
-                Sale Price (₵)
-              </label>
-              <input
-                type="number"
-                min="1"
-                step="0.01"
-                value={sellPrice}
-                onChange={(e) => setSellPrice(e.target.value)}
-                placeholder="e.g. 45"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
-              />
-              <p className="text-xs text-[#494F55] mt-2">
-                Your ticket will appear in the event's Resale section. When someone buys it, the ticket transfers to them and you're notified.
-              </p>
-            </div>
-          </div>
-        )}
+          );
+        })()}
       </Modal>
 
       {/* Transfer modal (Kwame Blueprint Sec. 7) */}
@@ -802,7 +902,7 @@ export default function MyTicketsPage() {
   );
 }
 
-function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, onViewEvent, onInvoice }) {
+function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, onViewEvent, onInvoice, resaleListing, onCancelResale }) {
   const event = ticket.event || {};
   const eventDate = event.startDate || ticket.eventDate || ticket.startDate;
   const status = (ticket.status || 'valid').toLowerCase();
@@ -864,14 +964,21 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
         <div className="flex flex-col sm:flex-row gap-4 p-5">
           {/* Left: details */}
           <div className="flex-1 min-w-0 space-y-2.5">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-1.5">
               <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300 bg-amber-400/15 px-2.5 py-0.5 rounded-full border border-amber-400/30">
                 {ticket.ticketType || ticket.type || 'Standard Admission'}
               </span>
-              {(ticket.price !== undefined && ticket.price !== null && Number(ticket.price) > 0) && (
-                <span className="text-[11px] font-bold text-white bg-white/10 px-2 py-0.5 rounded">
-                  GHS {Number(ticket.price).toFixed(2).replace(/\.00$/, '')}
+              {resaleListing ? (
+                <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded-full border border-amber-400/50 flex items-center gap-1">
+                  <Store className="w-3 h-3 text-amber-400" />
+                  Listed • GHS {Number(resaleListing.price).toFixed(2)}
                 </span>
+              ) : (
+                (ticket.price !== undefined && ticket.price !== null && Number(ticket.price) > 0) && (
+                  <span className="text-[11px] font-bold text-white bg-white/10 px-2 py-0.5 rounded">
+                    GHS {Number(ticket.price).toFixed(2).replace(/\.00$/, '')}
+                  </span>
+                )
               )}
             </div>
 
@@ -1012,13 +1119,24 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
           >
             <Send className="w-3.5 h-3.5" /> Transfer
           </button>
-          <button
-            onClick={onSell}
-            disabled={isCancelled}
-            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-semibold hover:bg-white hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-          >
-            <Tag className="w-3.5 h-3.5" /> Sell
-          </button>
+          {resaleListing ? (
+            <button
+              onClick={() => onCancelResale(resaleListing)}
+              className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold hover:bg-amber-500/30 transition-colors"
+              title="Remove from Resale Marketplace"
+            >
+              <X className="w-3.5 h-3.5" /> Delist
+            </button>
+          ) : (
+            <button
+              onClick={onSell}
+              disabled={isCancelled || status === 'transferred'}
+              className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-gradient-to-r from-amber-400/20 to-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold hover:bg-amber-400 hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              title="Resell ticket on the secondary marketplace"
+            >
+              <Tag className="w-3.5 h-3.5" /> Resell
+            </button>
+          )}
         </div>
       </div>
     </motion.div>

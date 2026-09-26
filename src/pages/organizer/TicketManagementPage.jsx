@@ -5,11 +5,15 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import {
   Plus, Edit2, Trash2, Ticket as TicketIcon, Calendar, DollarSign, TrendingUp,
+  ShieldCheck, Check, X, User, AlertTriangle, RefreshCw, CheckCircle2,
 } from 'lucide-react';
 import { getOrganizerEvents } from '@/api/events';
 import {
   getTicketTypes, createTicketType, updateTicketType, deleteTicketType, getUploadedTickets,
 } from '@/api/tickets';
+import {
+  getOrganizerResaleListings, approveResaleListing, rejectResaleListing,
+} from '@/api/resale';
 import TicketFilesUploader from '@/components/organizer/TicketFilesUploader';
 import Modal from '@/components/common/Modal';
 import Badge from '@/components/common/Badge';
@@ -38,6 +42,10 @@ export default function TicketManagementPage() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(urlEventId || '');
   const [tickets, setTickets] = useState([]);
+  const [activeTab, setActiveTab] = useState('tiers'); // 'tiers' | 'resale'
+  const [resaleListings, setResaleListings] = useState([]);
+  const [loadingResale, setLoadingResale] = useState(false);
+  const [resaleActionId, setResaleActionId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingTickets, setLoadingTickets] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -88,8 +96,57 @@ export default function TicketManagementPage() {
     }
   }, [selectedEvent]);
 
+  const fetchResaleListings = useCallback(async () => {
+    setLoadingResale(true);
+    try {
+      const res = await getOrganizerResaleListings();
+      const list = res.data?.listings || res.data?.data || res.data || [];
+      setResaleListings(Array.isArray(list) ? list : []);
+    } catch (err) {
+      console.warn('Could not load resale listings:', err);
+      setResaleListings([]);
+    } finally {
+      setLoadingResale(false);
+    }
+  }, []);
+
   useEffect(() => { fetchEvents(); }, [fetchEvents]);
   useEffect(() => { fetchTickets(); }, [fetchTickets]);
+  useEffect(() => {
+    if (activeTab === 'resale') {
+      fetchResaleListings();
+    }
+  }, [activeTab, fetchResaleListings]);
+
+  const handleApproveResale = async (listingId) => {
+    setResaleActionId(listingId);
+    try {
+      await approveResaleListing(listingId);
+      toast.success('Resale listing approved! It is now active on the public marketplace.');
+      setResaleListings((prev) =>
+        prev.map((item) => (item.id === listingId ? { ...item, approval_status: 'approved' } : item))
+      );
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to approve resale listing');
+    } finally {
+      setResaleActionId(null);
+    }
+  };
+
+  const handleRejectResale = async (listingId) => {
+    setResaleActionId(listingId);
+    try {
+      await rejectResaleListing(listingId, 'Price exceeds organizer guidelines or invalid ticket.');
+      toast.success('Resale listing rejected.');
+      setResaleListings((prev) =>
+        prev.map((item) => (item.id === listingId ? { ...item, approval_status: 'rejected' } : item))
+      );
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to reject resale listing');
+    } finally {
+      setResaleActionId(null);
+    }
+  };
 
   const openAdd = () => {
     setEditTarget(null);
@@ -195,35 +252,209 @@ export default function TicketManagementPage() {
         icon={TicketIcon}
         accent="gold"
         title="Ticket Management"
-        subtitle="Manage ticket types, pricing, and availability."
+        subtitle="Manage ticket types, pricing, and approve secondary resale listings."
         actions={
-          <button onClick={openAdd} disabled={!selectedEvent} className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors shrink-0">
-            <Plus className="w-4 h-4" /> Add Ticket Type
-          </button>
+          activeTab === 'tiers' ? (
+            <button onClick={openAdd} disabled={!selectedEvent} className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors shrink-0">
+              <Plus className="w-4 h-4" /> Add Ticket Type
+            </button>
+          ) : (
+            <button onClick={fetchResaleListings} className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition-colors shrink-0">
+              <RefreshCw className="w-4 h-4" /> Refresh Resale List
+            </button>
+          )
         }
       />
 
-      {/* Event selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <label className="text-xs font-medium uppercase tracking-wider text-[#949599]">Select Event</label>
-        <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-4 py-3.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer">
-          <option value="">Choose an event...</option>
-          {events.map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
-        </select>
+      {/* Tabs */}
+      <div className="flex items-center gap-2 border-b border-[#262B2F] pb-1">
+        <button
+          onClick={() => setActiveTab('tiers')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition ${
+            activeTab === 'tiers'
+              ? 'bg-white text-[#1C232B]'
+              : 'text-[#949599] hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <TicketIcon className="w-4 h-4" />
+          Ticket Tiers &amp; Inventory
+        </button>
+        <button
+          onClick={() => setActiveTab('resale')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition relative ${
+            activeTab === 'resale'
+              ? 'bg-white text-[#1C232B]'
+              : 'text-[#949599] hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <ShieldCheck className="w-4 h-4" />
+          Resale Moderation &amp; Approvals
+          {resaleListings.filter((r) => r.approval_status === 'pending').length > 0 && (
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-black">
+              {resaleListings.filter((r) => r.approval_status === 'pending').length}
+            </span>
+          )}
+        </button>
       </div>
 
-      {events.length === 0 ? (
-        <EmptyState icon={TicketIcon} title="No events yet" description="Create an event first to manage tickets." className="py-16" />
-      ) : !selectedEvent ? (
-        <EmptyState icon={TicketIcon} title="Select an event" description="Choose an event above to view its ticket types." className="py-16" />
-      ) : loadingTickets ? (
-        <LoadingSpinner label="Loading ticket types..." className="py-16" />
-      ) : tickets.length === 0 ? (
-        <EmptyState icon={TicketIcon} title="No ticket types" description="Add ticket types like VIP, General, or Early Bird using the button above." className="py-16" />
+      {activeTab === 'resale' ? (
+        /* ─── RESALE APPROVALS TAB ─── */
+        <div className="space-y-5">
+          {/* Resale Summary Metrics */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
+              <div className="text-xs text-[#949599] uppercase tracking-wider font-semibold">Total Listed</div>
+              <p className="mt-1 text-2xl font-black text-white">{resaleListings.length}</p>
+            </div>
+            <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
+              <div className="text-xs text-[#949599] uppercase tracking-wider font-semibold">Pending Approval</div>
+              <p className="mt-1 text-2xl font-black text-amber-400">
+                {resaleListings.filter((r) => r.approval_status === 'pending').length}
+              </p>
+            </div>
+            <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
+              <div className="text-xs text-[#949599] uppercase tracking-wider font-semibold">Approved &amp; Live</div>
+              <p className="mt-1 text-2xl font-black text-emerald-400">
+                {resaleListings.filter((r) => r.approval_status === 'approved' && r.status === 'active').length}
+              </p>
+            </div>
+            <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
+              <div className="text-xs text-[#949599] uppercase tracking-wider font-semibold">Sold &amp; Transferred</div>
+              <p className="mt-1 text-2xl font-black text-blue-400">
+                {resaleListings.filter((r) => r.status === 'sold').length}
+              </p>
+            </div>
+          </div>
+
+          {loadingResale ? (
+            <LoadingSpinner label="Loading resale requests..." className="py-16" />
+          ) : resaleListings.length === 0 ? (
+            <EmptyState
+              icon={ShieldCheck}
+              title="No resale listings yet"
+              description="When attendees list spare tickets for resale within the +25% cap, they will appear here for your review and approval."
+              className="py-16"
+            />
+          ) : (
+            <div className="space-y-3">
+              {resaleListings.map((listing) => {
+                const orig = Number(listing.original_price || listing.ticket_type_price || 0);
+                const res = Number(listing.resale_price || listing.price || 0);
+                const markup = orig > 0 ? Math.round(((res - orig) / orig) * 100) : 0;
+                const isPending = listing.approval_status === 'pending';
+                const isApproved = listing.approval_status === 'approved';
+                const isRejected = listing.approval_status === 'rejected';
+
+                return (
+                  <motion.div
+                    key={listing.id}
+                    className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-[#494F55]/50 transition-colors"
+                  >
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h4 className="text-base font-bold text-white">{listing.event_title || listing.eventTitle || 'Event'}</h4>
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-white/10 text-[#EFEFF1]">
+                            {listing.ticket_type_name || listing.ticketTypeName || 'Pass'}
+                          </span>
+                          {isPending && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                              Pending Review
+                            </span>
+                          )}
+                          {isApproved && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                              Approved &amp; Live
+                            </span>
+                          )}
+                          {isRejected && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/40">
+                              Rejected
+                            </span>
+                          )}
+                          {listing.status === 'sold' && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40">
+                              Sold &amp; Transferred
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="mt-2.5 flex flex-wrap items-center gap-4 text-xs text-[#949599]">
+                          <span className="flex items-center gap-1">
+                            <User className="w-3.5 h-3.5 text-[#CBD5E1]" /> Seller: <strong className="text-[#CBD5E1]">{listing.seller_name || listing.seller?.name || 'Attendee'}</strong>
+                          </span>
+                          <span>
+                            Original Face: <strong className="text-white">{format(orig)}</strong>
+                          </span>
+                          <span>
+                            Resale Price: <strong className="text-emerald-400 font-bold">{format(res)}</strong>
+                          </span>
+                          <span className="text-[11px] text-amber-400">
+                            {markup > 0 ? `+${markup}% Markup (within +25% cap)` : 'Face value'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-[#262B2F]">
+                        {isPending && (
+                          <>
+                            <button
+                              onClick={() => handleApproveResale(listing.id)}
+                              disabled={resaleActionId === listing.id}
+                              className="px-4 py-2 rounded-lg bg-emerald-500 text-black text-xs font-bold hover:bg-emerald-400 transition flex items-center gap-1.5 disabled:opacity-50"
+                            >
+                              <Check className="w-3.5 h-3.5" /> Approve
+                            </button>
+                            <button
+                              onClick={() => handleRejectResale(listing.id)}
+                              disabled={resaleActionId === listing.id}
+                              className="px-4 py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-semibold hover:bg-red-500/30 transition flex items-center gap-1.5 disabled:opacity-50"
+                            >
+                              <X className="w-3.5 h-3.5" /> Reject
+                            </button>
+                          </>
+                        )}
+                        {isApproved && listing.status === 'active' && (
+                          <button
+                            onClick={() => handleRejectResale(listing.id)}
+                            disabled={resaleActionId === listing.id}
+                            className="px-3.5 py-2 rounded-lg bg-white/10 text-[#CBD5E1] text-xs font-medium hover:bg-red-500/20 hover:text-red-400 transition"
+                          >
+                            Revoke Approval
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       ) : (
+        /* ─── TIERS & INVENTORY TAB ─── */
         <>
-          {/* Summary */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Event selector */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <label className="text-xs font-medium uppercase tracking-wider text-[#949599]">Select Event</label>
+            <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-4 py-3.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer">
+              <option value="">Choose an event...</option>
+              {events.map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
+            </select>
+          </div>
+
+          {events.length === 0 ? (
+            <EmptyState icon={TicketIcon} title="No events yet" description="Create an event first to manage tickets." className="py-16" />
+          ) : !selectedEvent ? (
+            <EmptyState icon={TicketIcon} title="Select an event" description="Choose an event above to view its ticket types." className="py-16" />
+          ) : loadingTickets ? (
+            <LoadingSpinner label="Loading ticket types..." className="py-16" />
+          ) : tickets.length === 0 ? (
+            <EmptyState icon={TicketIcon} title="No ticket types" description="Add ticket types like VIP, General, or Early Bird using the button above." className="py-16" />
+          ) : (
+            <>
+              {/* Summary */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
               <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><TicketIcon className="w-4 h-4" /> Ticket Types</div>
               <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{tickets.length}</p>
@@ -311,6 +542,8 @@ export default function TicketManagementPage() {
           </div>
         </>
       )}
+      </>
+    )}
 
       {/* Add/Edit Modal */}
       <Modal

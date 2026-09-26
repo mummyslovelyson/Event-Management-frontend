@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, MapPin, Calendar, Tag, Ticket, Share2, Bell, BellRing } from 'lucide-react';
+import { Heart, MapPin, Calendar, Tag, Ticket, Share2, Bell, BellRing, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { toggleFavorite } from '@/api/users';
@@ -204,11 +204,19 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
                 <Ticket className="w-12 h-12 text-[#494F55]" />
               </div>
             )}
-            {event.category && (
-              <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wide bg-[#1C232B]/90 text-white backdrop-blur-sm">
-                {event.category}
-              </span>
-            )}
+            <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[70%] z-10">
+              {event.category && (
+                <span className="px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wide bg-[#1C232B]/90 text-white backdrop-blur-sm">
+                  {event.category}
+                </span>
+              )}
+              {event.recommendationBadge && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-gradient-to-r from-amber-500/90 to-orange-500/90 text-black backdrop-blur-md shadow-md shadow-amber-500/20">
+                  <Sparkles className="w-2.5 h-2.5 fill-black" />
+                  {event.recommendationBadge}
+                </span>
+              )}
+            </div>
             
             {/* Top Right Action Buttons (Reminder, Share & Favorite) */}
             <div className="absolute top-3 right-3 flex items-center gap-1.5">
@@ -259,7 +267,13 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
             <h3 className="text-base font-semibold text-[#EFEFF1] line-clamp-1 group-hover:text-white transition">
               {event.title}
             </h3>
-            <div className="mt-3 space-y-1.5">
+            {event.recommendationReason && (
+              <p className="mt-1 text-[11px] font-medium text-amber-300 flex items-center gap-1 line-clamp-1">
+                <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
+                <span>{event.recommendationReason}</span>
+              </p>
+            )}
+            <div className="mt-2.5 space-y-1.5">
               <p className="text-sm text-[#949599] flex items-center gap-1.5">
                 <Calendar className="w-4 h-4 text-[#494F55] shrink-0" />
                 <span className="truncate">{formattedDate}</span>

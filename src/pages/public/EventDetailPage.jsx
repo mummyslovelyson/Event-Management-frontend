@@ -1021,59 +1021,115 @@ export default function EventDetailPage() {
                     )}
 
                     {/* Resale marketplace */}
+                    {/* Resale marketplace */}
                     {resaleLoading ? (
                       <div className="mt-8 flex justify-center py-8">
                         <LoadingSpinner label="Loading resale tickets..." />
                       </div>
                     ) : resaleListings.length > 0 ? (
-                      <div className="mt-10">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="w-9 h-9 rounded-lg bg-[#242B32] border border-[#494F55]/40 flex items-center justify-center">
-                            <Ticket className="w-5 h-5 text-[#9AA1A6]" />
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-semibold text-[#EFEFF1]">Resale Tickets</h3>
-                            <p className="text-xs text-[#949599]">
-                              Tickets other attendees are reselling. Buy one and the ticket transfers to you instantly.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="space-y-3">
-                          {resaleListings.map((listing) => (
-                            <motion.div
-                              key={listing.id}
-                              whileHover={{ y: -2 }}
-                              className="rounded-xl bg-[#14171A] border border-[#262B2F] p-4 sm:p-5 hover:border-white/40 transition-colors"
-                            >
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <Badge variant="gold" size="sm">Resale</Badge>
-                                    <span className="text-sm font-semibold text-[#EFEFF1]">{listing.ticketTypeName || 'General Admission'}</span>
-                                  </div>
-                                  <p className="mt-1.5 text-xs text-[#949599] flex items-center gap-1.5">
-                                    <User className="w-3.5 h-3.5" /> Sold by {listing.seller?.name || 'another attendee'}
-                                  </p>
-                                </div>
-                                <div className="flex items-center gap-3 shrink-0">
-                                  <div className="text-right">
-                                    <span className="text-2xl font-bold text-white">{format(listing.price)}</span>
-                                  </div>
-                                  <button
-                                    onClick={() => handleBuyResale(listing)}
-                                    disabled={buyingResaleId === listing.id}
-                                    className="px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
-                                  >
-                                    {buyingResaleId === listing.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Ticket className="w-4 h-4" />}
-                                    {buyingResaleId === listing.id ? 'Buying...' : 'Buy'}
-                                  </button>
-                                </div>
+                      <div className="mt-10 rounded-2xl bg-[#14171A] border border-emerald-500/30 p-5 sm:p-6 shadow-xl shadow-black/40">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#262B2F]">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-lg font-bold text-[#EFEFF1]">Verified Secondary Resale</h3>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                                  Anti-Scalping Protected
+                                </span>
                               </div>
-                            </motion.div>
-                          ))}
+                              <p className="text-xs text-[#949599] mt-0.5">
+                                Authentic tickets listed by verified attendees. Instant QR code re-issuance &amp; 100% entry guarantee.
+                              </p>
+                            </div>
+                          </div>
+                          <Link
+                            to="/resale"
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition"
+                          >
+                            Explore Full Marketplace <ChevronRight className="w-3.5 h-3.5" />
+                          </Link>
+                        </div>
+
+                        <div className="space-y-3.5">
+                          {resaleListings.map((listing) => {
+                            const origPrice = Number(listing.original_price || listing.ticket_type_price || 0);
+                            const resPrice = Number(listing.resale_price || listing.price || 0);
+                            const markupPct = origPrice > 0 ? Math.round(((resPrice - origPrice) / origPrice) * 100) : 0;
+
+                            return (
+                              <motion.div
+                                key={listing.id}
+                                whileHover={{ y: -2 }}
+                                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4 sm:p-5 hover:border-emerald-500/40 transition-colors"
+                              >
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                  <div className="min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                        Verified Resale
+                                      </span>
+                                      <span className="text-sm font-bold text-[#EFEFF1]">
+                                        {listing.ticketTypeName || listing.ticket_type_name || 'General Admission'}
+                                      </span>
+                                      {listing.approval_status === 'approved' && (
+                                        <span className="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 flex items-center gap-1">
+                                          <CheckCircle2 className="w-2.5 h-2.5" /> Organizer Approved
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-[#949599]">
+                                      <span className="flex items-center gap-1">
+                                        <User className="w-3.5 h-3.5 text-[#CBD5E1]" /> Sold by {listing.seller?.name || listing.seller_name || 'verified attendee'}
+                                      </span>
+                                      {origPrice > 0 && (
+                                        <span className="text-[#949599]">
+                                          Original Price: <strong className="text-[#CBD5E1] line-through">{format(origPrice)}</strong>
+                                        </span>
+                                      )}
+                                      <span className="text-emerald-400 text-[11px] font-medium">
+                                        {markupPct > 0 ? `+${markupPct}% fair markup (max +25% cap)` : 'Face value pricing'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-4 shrink-0 justify-between sm:justify-end pt-3 sm:pt-0 border-t sm:border-t-0 border-[#262B2F]">
+                                    <div className="text-right">
+                                      <div className="text-[10px] uppercase font-semibold text-[#949599]">Resale Total</div>
+                                      <span className="text-2xl font-black text-white">{format(resPrice)}</span>
+                                    </div>
+                                    <button
+                                      onClick={() => handleBuyResale(listing)}
+                                      disabled={buyingResaleId === listing.id}
+                                      className="px-5 py-2.5 rounded-xl bg-emerald-500 text-black text-xs font-black hover:bg-emerald-400 transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2 shadow-lg shadow-emerald-500/20"
+                                    >
+                                      {buyingResaleId === listing.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Ticket className="w-4 h-4" />}
+                                      {buyingResaleId === listing.id ? 'Securing...' : 'Buy Resale Ticket'}
+                                    </button>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            );
+                          })}
                         </div>
                       </div>
-                    ) : null}
+                    ) : (
+                      <div className="mt-8 rounded-xl bg-[#14171A] border border-[#262B2F] p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#949599]">
+                        <div className="flex items-center gap-2.5">
+                          <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                          <span>
+                            Can’t attend? You can safely resell your ticket with fair price caps and instant ownership transfer.
+                          </span>
+                        </div>
+                        <Link
+                          to="/resale"
+                          className="text-white hover:text-emerald-400 font-semibold transition shrink-0 underline underline-offset-2"
+                        >
+                          Learn about Ticket Resale &rarr;
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 )}
 
