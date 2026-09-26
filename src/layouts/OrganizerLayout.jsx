@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   LayoutDashboard, CalendarDays, Ticket as TicketIcon, ShoppingBag, ScanLine,
   Users, Tag, BarChart3, Megaphone, UsersRound, Wallet, CreditCard, Settings, Menu, X,
-  LogOut, Search, ChevronDown, Bell, LifeBuoy, Layers, Globe, Clock,
+  LogOut, Search, ChevronDown, Bell, LifeBuoy, Layers, Globe, Clock, PlusCircle,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import CurrencyToggle from '@/components/common/CurrencyToggle';
@@ -12,20 +12,20 @@ import OrganizerPendingApproval from '@/components/organizer/OrganizerPendingApp
 
 const nav = [
   { to: '/organizer/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/', label: 'Public Website', icon: Globe },
   { to: '/organizer/events', label: 'Events', icon: CalendarDays },
-  { to: '/organizer/categories', label: 'Categories', icon: Layers },
-  { to: '/organizer/tickets', label: 'Ticket Management', icon: TicketIcon },
+  { to: '/organizer/tickets', label: 'Tickets', icon: TicketIcon },
   { to: '/organizer/orders', label: 'Orders', icon: ShoppingBag },
-  { to: '/organizer/check-in', label: 'Check-in', icon: ScanLine },
   { to: '/organizer/attendees', label: 'Attendees', icon: Users },
-  { to: '/organizer/promotions', label: 'Promotions', icon: Tag },
-  { to: '/organizer/marketing', label: 'Marketing', icon: Megaphone },
-  { to: '/organizer/reports', label: 'Reports', icon: BarChart3 },
+  { to: '/organizer/check-in', label: 'Check-in', icon: ScanLine },
   { to: '/organizer/payments', label: 'Payments', icon: CreditCard },
+  { to: '/organizer/analytics', label: 'Analytics', icon: BarChart3 },
+  { to: '/organizer/promotions', label: 'Promotions', icon: Tag },
+  { to: '/organizer/notifications', label: 'Notifications', icon: Bell },
   { to: '/organizer/team', label: 'Team', icon: UsersRound },
-  { to: '/organizer/support', label: 'Help & Support', icon: LifeBuoy },
   { to: '/organizer/settings', label: 'Settings', icon: Settings },
+  { to: '/organizer/categories', label: 'Categories', icon: Layers },
+  { to: '/organizer/support', label: 'Help & Support', icon: LifeBuoy },
+  { to: '/', label: 'Public Website', icon: Globe },
 ];
 
 const flatNav = nav;
@@ -100,10 +100,14 @@ export default function OrganizerLayout() {
 
               <CurrencyToggle />
 
-              <button aria-label="Notifications" className="relative p-2.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition">
+              <Link
+                to="/organizer/notifications"
+                aria-label="Notifications"
+                className="relative p-2.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition"
+              >
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-white rounded-full ring-2 ring-[#111417]" />
-              </button>
+              </Link>
 
               <div className="relative" ref={profileRef}>
                 <button onClick={() => setProfileOpen((v) => !v)} className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-[#262B2F] transition">
@@ -180,7 +184,9 @@ function SidebarContent({ user, initials, isApproved, onNavigate }) {
         {onNavigate && <button onClick={onNavigate} className="lg:hidden p-2.5 text-[#949599]"><X className="w-5 h-5" /></button>}
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+
+
+      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5">
         {visibleNav.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}

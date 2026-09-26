@@ -860,17 +860,30 @@ export default function EventDetailPage() {
             {event.organizer && (
               <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 mb-6 flex items-center justify-between gap-4 hover:border-white/40 transition-colors">
                 <Link to={`/organizers/${event.organizer.id}`} className="flex items-center gap-3 min-w-0 group cursor-pointer">
-                  <div className="w-12 h-12 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] flex items-center justify-center shrink-0 overflow-hidden group-hover:border-[#b21414] transition">
-                    {event.organizer.avatar ? (
-                      <img src={event.organizer.avatar} alt={event.organizer.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <User className="w-6 h-6" />
+                  <div className="relative shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-[#242B32] border border-[#494F55]/40 text-[#9AA1A6] flex items-center justify-center overflow-hidden group-hover:border-white/40 transition">
+                      {event.organizer.avatar ? (
+                        <img src={event.organizer.avatar} alt={event.organizer.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <User className="w-6 h-6" />
+                      )}
+                    </div>
+                    {(event.organizer.is_verified || event.organizer.isVerified) && (
+                      <div className="absolute -bottom-0.5 -right-0.5 bg-emerald-500 p-0.5 rounded-full ring-2 ring-[#171A1D]" title="Verified Organizer">
+                        <CheckCircle2 className="w-3 h-3 text-[#111417]" />
+                      </div>
                     )}
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs text-[#949599] uppercase tracking-wider">Organized by</p>
                     <h3 className="text-sm font-semibold text-[#EFEFF1] group-hover:text-white group-hover:underline flex items-center gap-1.5 truncate">
                       <span>{event.organizer.name}</span>
+                      {(event.organizer.is_verified || event.organizer.isVerified) && (
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 shrink-0" title="Verified Organizer">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                          Verified
+                        </span>
+                      )}
                       <ChevronRight className="w-3.5 h-3.5 text-[#949599] group-hover:translate-x-0.5 transition-transform" />
                     </h3>
                     <p className="text-xs text-[#949599] mt-0.5">

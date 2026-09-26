@@ -11,6 +11,7 @@ const navLinks = [
   { to: '/', label: 'Home', end: true },
   { to: '/explore', label: 'Explore' },
   { to: '/resale', label: 'Resale' },
+  { to: '/become-organizer', label: 'For Organizers' },
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
 ];

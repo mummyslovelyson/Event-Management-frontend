@@ -64,6 +64,8 @@ import OrganizerPaymentsPage from '@/pages/organizer/OrganizerPaymentsPage';
 import WalletPage from '@/pages/organizer/WalletPage';
 import OrganizerSettingsPage from '@/pages/organizer/OrganizerSettingsPage';
 import OrganizerCategoriesPage from '@/pages/organizer/OrganizerCategoriesPage';
+import OrganizerNotificationsPage from '@/pages/organizer/OrganizerNotificationsPage';
+import BecomeOrganizerPage from '@/pages/public/BecomeOrganizerPage';
 
 // Admin pages
 import AdminDashboard from '@/pages/admin/AdminDashboard';
@@ -139,6 +141,8 @@ function AppRoutes() {
             <Route path="/verify-ticket/:code" element={<VerifyTicketPage />} />
             <Route path="/organizers/:id" element={<OrganizerProfilePage />} />
             <Route path="/organizer/:id" element={<OrganizerProfilePage />} />
+            <Route path="/become-organizer" element={<BecomeOrganizerPage />} />
+            <Route path="/apply-organizer" element={<BecomeOrganizerPage />} />
             <Route path="/resale" element={<ResaleMarketplacePage />} />
             <Route path="/marketplace" element={<ResaleMarketplacePage />} />
           </Route>
@@ -197,6 +201,8 @@ function AppRoutes() {
             <Route path="/organizer/attendees" element={<AttendeesPage />} />
             <Route path="/organizer/promotions" element={<PromotionsPage />} />
             <Route path="/organizer/reports" element={<ReportsPage />} />
+            <Route path="/organizer/analytics" element={<ReportsPage />} />
+            <Route path="/organizer/notifications" element={<OrganizerNotificationsPage />} />
             <Route path="/organizer/marketing" element={<MarketingPage />} />
             <Route path="/organizer/team" element={<TeamPage />} />
             <Route path="/organizer/payments" element={<OrganizerPaymentsPage />} />

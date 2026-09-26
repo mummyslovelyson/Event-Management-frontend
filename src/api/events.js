@@ -18,6 +18,8 @@ const EVENT_FIELD_MAP = {
   dressCode: 'dress_code',
   isFeatured: 'is_featured',
   ticketTemplate: 'ticket_template',
+  locationType: 'location_type',
+  gpsLocation: 'gps_location',
 };
 
 const mapEventPayload = (data) => {

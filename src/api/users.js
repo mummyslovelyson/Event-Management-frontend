@@ -45,4 +45,8 @@ export const checkUserFollow = (userId) => api.get(`/users/friends/${userId}/sta
 export const followUser = (userId) => api.post(`/users/friends/${userId}/follow`);
 export const unfollowUser = (userId) => api.delete(`/users/friends/${userId}/follow`);
 
+// Organizer Application
+export const applyOrganizer = (data) => api.post('/users/apply-organizer', data);
+export const getOrganizerApplicationStatus = () => api.get('/users/organizer-status');
+
 

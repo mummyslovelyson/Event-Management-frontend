@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Clock, ShieldCheck, CheckCircle2, Building2, Mail, Phone,
   MapPin, Tag, Globe, RefreshCw, LogOut, ArrowRight, ExternalLink,
-  AlertCircle,
+  AlertCircle, XCircle, AlertTriangle, Edit3,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
@@ -14,6 +14,9 @@ export default function OrganizerPendingApproval() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(false);
 
+  const isRejected = user?.status === 'rejected';
+  const isSuspended = user?.status === 'suspended';
+
   const handleCheckStatus = async () => {
     setChecking(true);
     try {
@@ -21,6 +24,8 @@ export default function OrganizerPendingApproval() {
       if (updated?.is_approved || updated?.isApproved) {
         toast.success('Congratulations! Your organizer account has been approved. Welcome to your dashboard!', { duration: 6000 });
         window.location.reload();
+      } else if (updated?.status === 'rejected') {
+        toast.error('Your application has been reviewed and was not approved.');
       } else {
         toast('Your application is still under review by our operations team. We will notify you as soon as it is approved.', {
           icon: '⏳',
@@ -53,93 +58,174 @@ export default function OrganizerPendingApproval() {
         transition={{ duration: 0.4 }}
         className="w-full max-w-3xl space-y-6"
       >
-        {/* Main Status Hero */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#1C232B] to-[#161D22] border border-[#494F55]/40 shadow-2xl p-6 sm:p-8">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+        {/* REJECTED STATE */}
+        {isRejected && (
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-red-950/40 to-[#161D22] border border-red-500/40 shadow-2xl p-6 sm:p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#262B2F]">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+                  <XCircle className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-500/15 text-red-300 border border-red-500/30 mb-1">
+                    Application Rejected
+                  </span>
+                  <h1 className="text-xl sm:text-2xl font-bold text-[#EFEFF1]">
+                    Organizer Verification Not Approved
+                  </h1>
+                </div>
+              </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#262B2F]">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-                <Clock className="w-6 h-6 animate-pulse" />
+              <Link
+                to="/become-organizer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-[#111417] text-xs sm:text-sm font-bold hover:bg-[#CBD5E1] transition shadow-sm"
+              >
+                <Edit3 className="w-4 h-4" /> Edit &amp; Re-apply
+              </Link>
+            </div>
+
+            <div className="p-4 rounded-xl bg-[#111417]/80 border border-red-500/20 space-y-2">
+              <p className="text-xs text-red-300 uppercase tracking-wider font-semibold">Feedback from Compliance Team:</p>
+              <p className="text-sm text-white leading-relaxed">
+                {user?.suspend_reason || 'Your application did not satisfy verification criteria at this time.'}
+              </p>
+            </div>
+
+            <p className="text-xs text-[#949599]">
+              You may review and update your organization details (such as official website, social links, or phone number) and re-submit your verification application at any time.
+            </p>
+          </div>
+        )}
+
+        {/* SUSPENDED STATE */}
+        {isSuspended && (
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-rose-950/40 to-[#161D22] border border-rose-500/40 shadow-2xl p-6 sm:p-8 space-y-6">
+            <div className="flex items-center gap-3.5 pb-6 border-b border-[#262B2F]">
+              <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
+                <AlertTriangle className="w-6 h-6" />
               </div>
               <div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 mb-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-                  Account Under Review
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30 mb-1">
+                  Account Suspended
                 </span>
                 <h1 className="text-xl sm:text-2xl font-bold text-[#EFEFF1]">
-                  Organizer Application Pending Approval
+                  Organizer Privileges Suspended
                 </h1>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 self-start sm:self-center">
-              <button
-                onClick={handleCheckStatus}
-                disabled={checking}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-xs sm:text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50 shadow-sm"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${checking ? 'animate-spin' : ''}`} />
-                {checking ? 'Checking...' : 'Check Status'}
-              </button>
+            <div className="p-4 rounded-xl bg-[#111417]/80 border border-rose-500/20 space-y-2">
+              <p className="text-xs text-rose-300 uppercase tracking-wider font-semibold">Suspension Reason:</p>
+              <p className="text-sm text-white leading-relaxed">
+                {user?.suspend_reason || 'Policy violation or safety hold.'}
+              </p>
             </div>
-          </div>
 
-          {/* Explanation banner */}
-          <div className="mt-6 p-4 rounded-xl bg-[#111417]/80 border border-[#262B2F] flex items-start gap-3.5">
-            <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-            <p className="text-xs sm:text-sm text-[#949599] leading-relaxed">
-              Welcome, <strong className="text-[#EFEFF1]">{user?.name || 'Organizer'}</strong>! Your account has been verified. To maintain trust and event safety across Tribes &amp; Cliqs, our administration team reviews all organizer submissions before granting access to publish events and sell tickets.
+            <p className="text-xs text-[#949599]">
+              Please contact the support team at <a href="mailto:support@tribesandcliqs.com" className="text-white underline">support@tribesandcliqs.com</a> to appeal or resolve this issue.
             </p>
           </div>
+        )}
 
-          {/* Live Step Progress */}
-          <div className="mt-8">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-4">
-              Application Progress Timeline
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {/* Step 1 */}
-              <div className="p-3.5 rounded-xl bg-[#171A1D] border border-emerald-500/30 relative">
-                <div className="flex items-center gap-2 text-emerald-400 mb-1">
-                  <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Step 1 · Completed</span>
+        {/* PENDING STATE (Default) */}
+        {!isRejected && !isSuspended && (
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#1C232B] to-[#161D22] border border-[#494F55]/40 shadow-2xl p-6 sm:p-8">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#262B2F]">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                  <Clock className="w-6 h-6 animate-pulse" />
                 </div>
-                <p className="text-sm font-semibold text-[#EFEFF1]">Account &amp; Verification</p>
-                <p className="text-xs text-[#949599] mt-0.5">Email &amp; phone OTP verified</p>
+                <div>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 mb-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                    Account Under Review
+                  </span>
+                  <h1 className="text-xl sm:text-2xl font-bold text-[#EFEFF1]">
+                    Organizer Application Pending Approval
+                  </h1>
+                </div>
               </div>
 
-              {/* Step 2 */}
-              <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/40 relative">
-                <div className="flex items-center gap-2 text-amber-400 mb-1">
-                  <Clock className="w-4 h-4 shrink-0 animate-spin" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Step 2 · In Progress</span>
-                </div>
-                <p className="text-sm font-semibold text-amber-200">Admin KYC Review</p>
-                <p className="text-xs text-[#949599] mt-0.5">Operations team review</p>
+              <div className="flex items-center gap-2 self-start sm:self-center">
+                <button
+                  onClick={handleCheckStatus}
+                  disabled={checking}
+                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-xs sm:text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50 shadow-sm"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${checking ? 'animate-spin' : ''}`} />
+                  {checking ? 'Checking...' : 'Check Status'}
+                </button>
               </div>
+            </div>
 
-              {/* Step 3 */}
-              <div className="p-3.5 rounded-xl bg-[#171A1D]/60 border border-[#262B2F] opacity-75">
-                <div className="flex items-center gap-2 text-[#6B7278] mb-1">
-                  <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Step 3 · Pending</span>
+            {/* Explanation banner */}
+            <div className="mt-6 p-4 rounded-xl bg-[#111417]/80 border border-[#262B2F] flex items-start gap-3.5">
+              <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <p className="text-xs sm:text-sm text-[#949599] leading-relaxed">
+                Welcome, <strong className="text-[#EFEFF1]">{user?.name || 'Organizer'}</strong>! To maintain trust, event safety, and ticketing integrity across Tribes &amp; Cliqs, our administration board reviews all organizer submissions before granting access to publish events and sell tickets.
+              </p>
+            </div>
+
+            {/* Live Step Progress */}
+            <div className="mt-8">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-4">
+                Application Progress Timeline
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Step 1 */}
+                <div className="p-3.5 rounded-xl bg-[#171A1D] border border-emerald-500/30 relative">
+                  <div className="flex items-center gap-2 text-emerald-400 mb-1">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Step 1 · Completed</span>
+                  </div>
+                  <p className="text-sm font-semibold text-[#EFEFF1]">Account &amp; Verification</p>
+                  <p className="text-xs text-[#949599] mt-0.5">Email &amp; phone verified</p>
                 </div>
-                <p className="text-sm font-semibold text-[#949599]">Dashboard &amp; Ticketing</p>
-                <p className="text-xs text-[#6B7278] mt-0.5">Unlocks upon approval</p>
+
+                {/* Step 2 */}
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/40 relative">
+                  <div className="flex items-center gap-2 text-amber-400 mb-1">
+                    <Clock className="w-4 h-4 shrink-0 animate-spin" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Step 2 · In Progress</span>
+                  </div>
+                  <p className="text-sm font-semibold text-amber-200">Admin KYC Review</p>
+                  <p className="text-xs text-[#949599] mt-0.5">Operations team review</p>
+                </div>
+
+                {/* Step 3 */}
+                <div className="p-3.5 rounded-xl bg-[#171A1D]/60 border border-[#262B2F] opacity-75">
+                  <div className="flex items-center gap-2 text-[#6B7278] mb-1">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Step 3 · Pending</span>
+                  </div>
+                  <p className="text-sm font-semibold text-[#949599]">Dashboard &amp; Ticketing</p>
+                  <p className="text-xs text-[#6B7278] mt-0.5">Unlocks upon verification</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Summary of Submitted Data */}
         <div className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-6 sm:p-7">
-          <h2 className="text-sm font-semibold text-[#EFEFF1] mb-1">
-            Submitted Organization Details
-          </h2>
-          <p className="text-xs text-[#949599] mb-5">
-            Below is the information you provided during registration, currently visible to the admin review board.
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-sm font-semibold text-[#EFEFF1] mb-1">
+                Submitted Organization Details
+              </h2>
+              <p className="text-xs text-[#949599]">
+                Visible to the admin verification board.
+              </p>
+            </div>
+            <Link
+              to="/become-organizer"
+              className="text-xs text-white hover:underline flex items-center gap-1 font-semibold"
+            >
+              <Edit3 className="w-3.5 h-3.5" /> Edit Details
+            </Link>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div className="p-3 rounded-xl bg-[#1C232B] border border-[#262B2F]">
@@ -160,26 +246,14 @@ export default function OrganizerPendingApproval() {
               <div className="flex items-center gap-2 text-xs text-[#949599] mb-1">
                 <Mail className="w-3.5 h-3.5" /> Verified Email
               </div>
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium text-[#EFEFF1] truncate">{user?.email}</p>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shrink-0 font-semibold">
-                  Verified
-                </span>
-              </div>
+              <p className="text-sm font-medium text-[#EFEFF1] truncate">{user?.email}</p>
             </div>
 
             <div className="p-3 rounded-xl bg-[#1C232B] border border-[#262B2F]">
               <div className="flex items-center gap-2 text-xs text-[#949599] mb-1">
                 <Phone className="w-3.5 h-3.5" /> Contact Phone
               </div>
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium text-[#EFEFF1]">{user?.phone || '—'}</p>
-                {user?.phone && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shrink-0 font-semibold">
-                    Verified
-                  </span>
-                )}
-              </div>
+              <p className="text-sm font-medium text-[#EFEFF1]">{user?.phone || '—'}</p>
             </div>
 
             <div className="p-3 rounded-xl bg-[#1C232B] border border-[#262B2F]">
@@ -224,7 +298,7 @@ export default function OrganizerPendingApproval() {
                 Automatic Notification Alert
               </p>
               <p className="text-xs text-[#949599] mt-0.5 leading-relaxed">
-                As soon as an administrator approves your account, you will immediately receive an <strong>Email and SMS alert</strong> notifying you that your dashboard is active and ready for event publishing.
+                As soon as an administrator verifies your account, you will receive an <strong>Email and SMS alert</strong> granting full access to publish events and sell tickets.
               </p>
             </div>
           </div>
