@@ -111,58 +111,7 @@ export default function OrganizerDashboard() {
         </div>
       </motion.div>
 
-      {/* ─── QUICK COMMAND HUB (Kwame Blueprint Sec. 14) ─── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
-        <Link
-          to="/organizer/events/new"
-          className="p-3 rounded-xl bg-white text-[#1C232B] font-bold text-xs flex flex-col items-center justify-center gap-1.5 hover:bg-[#CBD5E1] transition shadow-md active:scale-95 group text-center"
-        >
-          <PlusCircle className="w-5 h-5 text-[#1C232B]" />
-          <span>Create Event</span>
-        </Link>
-        <Link
-          to="/organizer/check-in"
-          className="p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-emerald-500/40 text-xs font-semibold text-[#EFEFF1] flex flex-col items-center justify-center gap-1.5 transition active:scale-95 group text-center"
-        >
-          <ScanLine className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
-          <span>Door Check-in</span>
-        </Link>
-        <Link
-          to="/organizer/tickets"
-          className="p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/30 text-xs font-semibold text-[#EFEFF1] flex flex-col items-center justify-center gap-1.5 transition active:scale-95 group text-center"
-        >
-          <TicketIcon className="w-5 h-5 text-amber-400 group-hover:scale-110 transition-transform" />
-          <span>Tickets & Tiers</span>
-        </Link>
-        <Link
-          to="/organizer/attendees"
-          className="p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/30 text-xs font-semibold text-[#EFEFF1] flex flex-col items-center justify-center gap-1.5 transition active:scale-95 group text-center"
-        >
-          <Users className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
-          <span>Guest Roster</span>
-        </Link>
-        <Link
-          to="/organizer/payments"
-          className="p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/30 text-xs font-semibold text-[#EFEFF1] flex flex-col items-center justify-center gap-1.5 transition active:scale-95 group text-center"
-        >
-          <Wallet className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
-          <span>Settlement</span>
-        </Link>
-        <Link
-          to="/organizer/promotions"
-          className="p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/30 text-xs font-semibold text-[#EFEFF1] flex flex-col items-center justify-center gap-1.5 transition active:scale-95 group text-center"
-        >
-          <Tag className="w-5 h-5 text-purple-400 group-hover:scale-110 transition-transform" />
-          <span>Promotions</span>
-        </Link>
-        <Link
-          to={`/organizers/${data?.organization?.id || user?.id || 'profile'}`}
-          className="p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/30 text-xs font-semibold text-[#EFEFF1] flex flex-col items-center justify-center gap-1.5 transition active:scale-95 group text-center col-span-2 sm:col-span-1"
-        >
-          <UsersRound className="w-5 h-5 text-rose-400 group-hover:scale-110 transition-transform" />
-          <span>Public Profile</span>
-        </Link>
-      </div>
+
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
