@@ -16,15 +16,17 @@ import EmptyState from '@/components/common/EmptyState';
 const FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'unread', label: 'Unread' },
-  { value: 'ticket', label: 'Ticket Confirmations' },
-  { value: 'reminder', label: 'Event Reminders' },
+  { value: 'ticket', label: 'Purchases & Tickets' },
+  { value: 'reminder', label: 'Reminders & Alerts' },
+  { value: 'event', label: 'Organizer & Events' },
   { value: 'promotion', label: 'Promotions' },
 ];
 
 const TYPE_CONFIG = {
-  ticket: { icon: TicketIcon, color: 'text-white', bg: 'bg-white/10' },
-  reminder: { icon: CalendarClock, color: 'text-white', bg: 'bg-white/10' },
-  promotion: { icon: Tag, color: 'text-white', bg: 'bg-white/10' },
+  ticket: { icon: TicketIcon, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+  reminder: { icon: CalendarClock, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+  event: { icon: Bell, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+  promotion: { icon: Tag, color: 'text-purple-400', bg: 'bg-purple-500/10' },
   alert: { icon: AlertCircle, color: 'text-amber-400', bg: 'bg-amber-500/10' },
   info: { icon: Info, color: 'text-[#949599]', bg: 'bg-[#494F55]/30' },
   system: { icon: Bell, color: 'text-[#949599]', bg: 'bg-[#494F55]/30' },
@@ -65,7 +67,7 @@ export default function NotificationsPage() {
       try {
         const res = await getNotifications({ limit: 100 });
         const data = res.data?.notifications ?? res.data ?? [];
-        setNotifications(Array.isArray(data) ? data : []);
+        setNotifications(Array.isArray(data) ? data.map((n) => ({ ...n, read: Boolean(n.read || n.is_read) })) : []);
       } catch (err) {
         toast.error('Failed to load notifications');
         setNotifications([]);
@@ -77,13 +79,18 @@ export default function NotificationsPage() {
 
   const filtered = useMemo(() => {
     return notifications.filter((n) => {
+      const isRead = Boolean(n.read || n.is_read);
       if (filter === 'all') return true;
-      if (filter === 'unread') return !n.read;
+      if (filter === 'unread') return !isRead;
+      if (filter === 'ticket') return ['ticket', 'payment', 'order', 'purchase'].includes(n.type);
+      if (filter === 'reminder') return ['reminder', 'alert', 'price_change'].includes(n.type);
+      if (filter === 'event') return ['event', 'announcement', 'social'].includes(n.type);
+      if (filter === 'promotion') return ['promotion', 'marketing'].includes(n.type);
       return (n.type || '').toLowerCase() === filter;
     });
   }, [notifications, filter]);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read && !n.is_read).length;
 
   const handleMarkRead = async (id) => {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));

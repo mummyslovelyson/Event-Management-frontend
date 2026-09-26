@@ -28,6 +28,7 @@ export const rejectOrganizer = (id, data) => api.post(`/admin/organizers/${id}/r
 
 export const getAdminEvents = (params) => api.get('/admin/events', { params });
 export const approveEvent = (id) => api.post(`/admin/events/${id}/approve`);
+export const requestEventChanges = (id, data) => api.post(`/admin/events/${id}/request-changes`, data);
 export const rejectEvent = (id, data) => api.post(`/admin/events/${id}/reject`, data);
 export const toggleEventFeatured = (id, featured) => api.post(`/admin/events/${id}/feature`, { featured });
 export const suspendEvent = (id) => api.post(`/admin/events/${id}/suspend`);

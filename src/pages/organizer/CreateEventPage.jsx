@@ -1122,7 +1122,7 @@ const StepPublish = ({ onSaveDraft, onSubmitApproval, submitting, eventId, event
 /* =========================================================================
    MAIN CREATE EVENT PAGE COMPONENT
    ========================================================================= */
-export default function CreateEventPage({ initialValues, eventId, onSubmit: customSubmit, eventStatus } = {}) {
+export default function CreateEventPage({ initialValues, eventId, onSubmit: customSubmit, eventStatus, rejectionReason } = {}) {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [categories, setCategories] = useState([]);
@@ -1365,10 +1365,39 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
   return (
     <FormProvider {...methods}>
       <form onSubmit={(e) => { e.preventDefault(); }} className="space-y-6">
+        {eventStatus === 'changes_requested' && (
+          <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-300 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-amber-400" />
+            <div>
+              <p className="font-semibold text-amber-200">Admin Requested Changes</p>
+              <p className="text-xs text-amber-200/90 mt-1 leading-relaxed">
+                {rejectionReason || 'Please review the requested changes below, make the modifications, and submit for approval.'}
+              </p>
+            </div>
+          </div>
+        )}
+
         {eventStatus === 'rejected' && (
-          <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-400 flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-            <span>This event was previously rejected. Review the feedback, make any requested adjustments, and resubmit for approval.</span>
+          <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-400 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-red-400" />
+            <div>
+              <p className="font-semibold text-red-300">Event Submission Rejected</p>
+              <p className="text-xs text-red-200/90 mt-1 leading-relaxed">
+                {rejectionReason ? `Reason: ${rejectionReason}` : 'Review the feedback, make any requested adjustments, and resubmit for approval.'}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {eventStatus === 'pending' && (
+          <div className="rounded-xl border border-blue-500/40 bg-blue-500/10 p-4 text-sm text-blue-300 flex items-start gap-3">
+            <Clock className="w-5 h-5 shrink-0 mt-0.5 text-blue-400" />
+            <div>
+              <p className="font-semibold text-blue-200">Event Currently Under Review</p>
+              <p className="text-xs text-blue-200/90 mt-1 leading-relaxed">
+                This event has been submitted to the platform admin team for moderation. You can still make updates and resubmit anytime.
+              </p>
+            </div>
           </div>
         )}
 

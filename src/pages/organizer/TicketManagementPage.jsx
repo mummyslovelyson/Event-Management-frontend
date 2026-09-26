@@ -243,8 +243,12 @@ export default function TicketManagementPage() {
 
   if (loading) return <LoadingSpinner label="Loading..." className="py-20" />;
 
-  const totalSold = tickets.reduce((s, t) => s + (t.sold || t.soldCount || 0), 0);
-  const totalAvail = tickets.reduce((s, t) => s + Math.max(0, (t.quantity || t.totalQuantity || 0) - (t.sold || t.soldCount || 0)), 0);
+  const totalSold = tickets.reduce((s, t) => s + (t.sold || t.soldCount || t.quantity_sold || 0), 0);
+  const totalRemaining = tickets.reduce((s, t) => s + (t.remaining ?? Math.max(0, (t.quantity || t.totalQuantity || 0) - (t.sold || t.soldCount || t.quantity_sold || 0))), 0);
+  const totalReserved = tickets.reduce((s, t) => s + (t.reserved || 0), 0);
+  const totalCancelled = tickets.reduce((s, t) => s + (t.cancelled || 0), 0);
+  const totalRefunded = tickets.reduce((s, t) => s + (t.refunded || 0), 0);
+  const totalRevenue = tickets.reduce((s, t) => s + (t.revenue || ((t.sold || t.quantity_sold || 0) * (Number(t.price) || 0))), 0);
 
   return (
     <div className="space-y-5">
@@ -252,7 +256,7 @@ export default function TicketManagementPage() {
         icon={TicketIcon}
         accent="gold"
         title="Ticket Management"
-        subtitle="Manage ticket types, pricing, and approve secondary resale listings."
+        subtitle="Monitor sales, remaining capacity, reservations, cancellations, and ticket tier revenue."
         actions={
           activeTab === 'tiers' ? (
             <button onClick={openAdd} disabled={!selectedEvent} className="inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors shrink-0">
@@ -453,97 +457,155 @@ export default function TicketManagementPage() {
             <EmptyState icon={TicketIcon} title="No ticket types" description="Add ticket types like VIP, General, or Early Bird using the button above." className="py-16" />
           ) : (
             <>
-              {/* Summary */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-              <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><TicketIcon className="w-4 h-4" /> Ticket Types</div>
-              <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{tickets.length}</p>
-            </div>
-            <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-              <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><TrendingUp className="w-4 h-4" /> Sold</div>
-              <p className="mt-2 text-xl font-bold text-emerald-400">{totalSold}</p>
-            </div>
-            <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-              <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><TicketIcon className="w-4 h-4" /> Available</div>
-              <p className="mt-2 text-xl font-bold text-[#EFEFF1]">{totalAvail}</p>
-            </div>
-            <div className="rounded-xl bg-gradient-to-br from-white/10 to-[#171A1D] border border-white/20 p-4">
-              <div className="flex items-center gap-2 text-xs text-white uppercase tracking-wider"><DollarSign className="w-4 h-4" /> Price Range</div>
-              <p className="mt-2 text-xl font-bold text-[#EFEFF1]">
-                {tickets.some((t) => Number(t.price) > 0)
-                  ? `${format(Math.min(...tickets.filter((t) => Number(t.price) > 0).map((t) => Number(t.price))))} - ${format(Math.max(...tickets.map((t) => Number(t.price) || 0)))}`
-                  : 'On uploaded passes'}
-              </p>
-            </div>
-          </div>
+              {/* Comprehensive 6-Metric Event Monitor */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="rounded-xl bg-[#171A1D] border border-emerald-500/30 p-3.5">
+                  <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 uppercase tracking-wider font-semibold">
+                    <TrendingUp className="w-3.5 h-3.5" /> Tickets Sold
+                  </div>
+                  <p className="mt-1 text-2xl font-black text-emerald-400">{totalSold}</p>
+                </div>
+                <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-3.5">
+                  <div className="flex items-center gap-1.5 text-[11px] text-[#949599] uppercase tracking-wider font-semibold">
+                    <TicketIcon className="w-3.5 h-3.5" /> Remaining
+                  </div>
+                  <p className="mt-1 text-2xl font-black text-white">{totalRemaining}</p>
+                </div>
+                <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-3.5">
+                  <div className="flex items-center gap-1.5 text-[11px] text-amber-400 uppercase tracking-wider font-semibold">
+                    <Clock className="w-3.5 h-3.5" /> Reserved
+                  </div>
+                  <p className="mt-1 text-2xl font-black text-amber-300">{totalReserved}</p>
+                </div>
+                <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-3.5">
+                  <div className="flex items-center gap-1.5 text-[11px] text-rose-400 uppercase tracking-wider font-semibold">
+                    <X className="w-3.5 h-3.5" /> Cancelled
+                  </div>
+                  <p className="mt-1 text-2xl font-black text-rose-300">{totalCancelled}</p>
+                </div>
+                <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-3.5">
+                  <div className="flex items-center gap-1.5 text-[11px] text-blue-400 uppercase tracking-wider font-semibold">
+                    <RefreshCw className="w-3.5 h-3.5" /> Refunded
+                  </div>
+                  <p className="mt-1 text-2xl font-black text-blue-300">{totalRefunded}</p>
+                </div>
+                <div className="rounded-xl bg-gradient-to-br from-white/10 to-[#171A1D] border border-white/20 p-3.5">
+                  <div className="flex items-center gap-1.5 text-[11px] text-white uppercase tracking-wider font-semibold">
+                    <DollarSign className="w-3.5 h-3.5" /> Total Revenue
+                  </div>
+                  <p className="mt-1 text-xl font-black text-[#EFEFF1] truncate">{format(totalRevenue)}</p>
+                </div>
+              </div>
 
-          {/* Ticket types list */}
-          <div className="space-y-3">
-            <AnimatePresence>
-              {tickets.map((t, idx) => {
-                const total = t.quantity || t.totalQuantity || 0;
-                const sold = t.sold || t.soldCount || 0;
-                const avail = Math.max(0, total - sold);
-                const pct = total > 0 ? Math.min(100, Math.round((sold / total) * 100)) : 0;
-                const ss = saleStatus(t);
-                const hasUploaded = (t.uploadedTickets && t.uploadedTickets.length > 0) || (t.uploaded_tickets && t.uploaded_tickets.length > 0);
-                return (
-                  <motion.div
-                    key={t.id || idx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-[#494F55]/50 transition-colors"
-                  >
-                    <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3">
-                          <h3 className="text-base font-semibold text-[#EFEFF1]">{t.name}</h3>
-                          <Badge variant={ss.v} size="sm">{ss.label}</Badge>
+              {/* Ticket types list */}
+              <div className="space-y-3">
+                <AnimatePresence>
+                  {tickets.map((t, idx) => {
+                    const total = Number(t.quantity || t.totalQuantity || 0);
+                    const sold = Number(t.sold || t.soldCount || t.quantity_sold || 0);
+                    const remaining = t.remaining !== undefined ? Number(t.remaining) : Math.max(0, total - sold);
+                    const reserved = Number(t.reserved || 0);
+                    const cancelled = Number(t.cancelled || 0);
+                    const refunded = Number(t.refunded || 0);
+                    const revenue = Number(t.revenue !== undefined ? t.revenue : (sold * (Number(t.price) || 0)));
+                    const pct = total > 0 ? Math.min(100, Math.round((sold / total) * 100)) : 0;
+                    const ss = saleStatus(t);
+                    const hasUploaded = (t.uploadedTickets && t.uploadedTickets.length > 0) || (t.uploaded_tickets && t.uploaded_tickets.length > 0);
+
+                    return (
+                      <motion.div
+                        key={t.id || idx}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-[#494F55]/50 transition-colors"
+                      >
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-3">
+                              <h3 className="text-lg font-bold text-[#EFEFF1]">{t.name}</h3>
+                              <Badge variant={ss.v} size="sm">{ss.label}</Badge>
+                            </div>
+                            {t.description && <p className="mt-1 text-sm text-[#949599] line-clamp-1">{t.description}</p>}
+                            <div className="mt-2 flex items-center gap-4 text-xs text-[#949599]">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-3.5 h-3.5" />
+                                {t.saleStartDate ? new Date(t.saleStartDate).toLocaleDateString('en-GB') : '—'} → {t.saleEndDate ? new Date(t.saleEndDate).toLocaleDateString('en-GB') : '—'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-6">
+                            <div className="text-right">
+                              <p className="text-[10px] text-[#949599] uppercase tracking-wider font-semibold">Unit Price</p>
+                              <p className="text-base font-bold text-white">
+                                {Number(t.price) > 0 ? (
+                                  format(t.price)
+                                ) : hasUploaded ? (
+                                  <span className="text-amber-400 text-sm font-semibold">On pass</span>
+                                ) : (
+                                  'Free'
+                                )}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-[10px] text-white uppercase tracking-wider font-semibold">Tier Revenue</p>
+                              <p className="text-lg font-black text-white">{format(revenue)}</p>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => openEdit(t)} className="p-2 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit"><Edit2 className="w-4 h-4" /></button>
+                              <button onClick={() => setDeleteTarget(t)} className="p-2 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                            </div>
+                          </div>
                         </div>
-                        {t.description && <p className="mt-1 text-sm text-[#949599] line-clamp-1">{t.description}</p>}
-                        <div className="mt-2 flex items-center gap-4 text-xs text-[#949599]">
-                          <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {t.saleStartDate ? new Date(t.saleStartDate).toLocaleDateString('en-GB') : '—'} → {t.saleEndDate ? new Date(t.saleEndDate).toLocaleDateString('en-GB') : '—'}</span>
+
+                        {/* Granular Tier Metrics Breakdown */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-4 pt-4 border-t border-[#262B2F] text-xs">
+                          <div className="p-2.5 rounded-lg bg-[#14171A] border border-[#262B2F]/60">
+                            <span className="text-[#949599] text-[10px] uppercase font-bold tracking-wider block">Total</span>
+                            <span className="text-white font-black text-sm">{total}</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-[#14171A] border border-emerald-500/20">
+                            <span className="text-emerald-400 text-[10px] uppercase font-bold tracking-wider block">Sold</span>
+                            <span className="text-emerald-400 font-black text-sm">{sold}</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-[#14171A] border border-[#262B2F]/60">
+                            <span className="text-[#CBD5E1] text-[10px] uppercase font-bold tracking-wider block">Remaining</span>
+                            <span className="text-white font-black text-sm">{remaining}</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-[#14171A] border border-[#262B2F]/60">
+                            <span className="text-amber-400 text-[10px] uppercase font-bold tracking-wider block">Reserved</span>
+                            <span className="text-amber-300 font-black text-sm">{reserved}</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-[#14171A] border border-[#262B2F]/60">
+                            <span className="text-rose-400 text-[10px] uppercase font-bold tracking-wider block">Cancelled</span>
+                            <span className="text-rose-300 font-black text-sm">{cancelled}</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-[#14171A] border border-[#262B2F]/60">
+                            <span className="text-blue-400 text-[10px] uppercase font-bold tracking-wider block">Refunded</span>
+                            <span className="text-blue-300 font-black text-sm">{refunded}</span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-center">
-                          <p className="text-xs text-[#949599] uppercase tracking-wider">Price</p>
-                          <p className="text-lg font-bold text-white">
-                            {Number(t.price) > 0 ? (
-                              format(t.price)
-                            ) : hasUploaded ? (
-                              <span className="text-amber-400 text-sm font-semibold">On pass</span>
-                            ) : (
-                              'Free'
-                            )}
-                          </p>
-                        </div>
-                        <div className="min-w-[140px]">
-                          <div className="flex items-center justify-between text-xs mb-1">
-                            <span className="text-[#949599]">{sold} sold</span>
-                            <span className="text-[#949599]">{avail} left</span>
+
+                        {/* Inventory Progress Bar */}
+                        <div className="mt-3">
+                          <div className="flex items-center justify-between text-[11px] mb-1 text-[#949599]">
+                            <span>{sold} of {total} Sold ({pct}%)</span>
+                            <span>{remaining} Remaining</span>
                           </div>
                           <div className="h-2 rounded-full bg-[#494F55]/30 overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-white to-[#c4a030] rounded-full transition-all" style={{ width: `${pct}%` }} />
+                            <div className="h-full bg-gradient-to-r from-emerald-500 to-white rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
                           </div>
-                          <p className="mt-1 text-[10px] text-[#494F55] text-center">of {total} total</p>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <button onClick={() => openEdit(t)} className="p-2 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit"><Edit2 className="w-4 h-4" /></button>
-                          <button onClick={() => setDeleteTarget(t)} className="p-2 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete"><Trash2 className="w-4 h-4" /></button>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            </>
+          )}
         </>
       )}
-      </>
-    )}
 
       {/* Add/Edit Modal */}
       <Modal

@@ -192,11 +192,13 @@ export default function CheckInPage() {
   const stats = useMemo(() => {
     const total = attendees.length;
     const checkedIn = attendees.filter((a) => a.checkedIn).length;
+    const notArrived = Math.max(total - checkedIn, 0);
+    const rate = total > 0 ? ((checkedIn / total) * 100).toFixed(1) : '0.0';
     return {
       total,
       checkedIn,
-      notArrived: Math.max(total - checkedIn, 0),
-      rate: total > 0 ? Math.round((checkedIn / total) * 100) : 0,
+      notArrived,
+      rate,
     };
   }, [attendees]);
 
@@ -484,23 +486,35 @@ export default function CheckInPage() {
         </div>
       </div>
 
-      {/* Attendance Stats */}
+      {/* Live Check-in Statistics (Section 19) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-          <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><Users className="w-4 h-4" /> Total Sold</div>
-          <p className="mt-2 text-2xl font-bold text-[#EFEFF1]">{stats.total}</p>
+          <div className="flex items-center gap-2 text-xs text-[#949599] font-bold uppercase tracking-wider">
+            <Users className="w-4 h-4 text-sky-400" /> TOTAL TICKETS
+          </div>
+          <p className="mt-2 text-3xl font-extrabold text-[#EFEFF1] tabular-nums">{stats.total.toLocaleString()}</p>
+          <span className="text-[11px] text-[#6B7278]">Total event registrations</span>
         </div>
         <div className="rounded-xl bg-[#171A1D] border border-emerald-500/30 p-4">
-          <div className="flex items-center gap-2 text-xs text-emerald-400 uppercase tracking-wider"><UserCheck className="w-4 h-4" /> Admitted Inside</div>
-          <p className="mt-2 text-2xl font-bold text-emerald-400">{stats.checkedIn}</p>
+          <div className="flex items-center gap-2 text-xs text-emerald-400 font-bold uppercase tracking-wider">
+            <UserCheck className="w-4 h-4" /> CHECKED IN
+          </div>
+          <p className="mt-2 text-3xl font-extrabold text-emerald-400 tabular-nums">{stats.checkedIn.toLocaleString()}</p>
+          <span className="text-[11px] text-emerald-500/70">Scanned & admitted inside</span>
         </div>
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-          <div className="flex items-center gap-2 text-xs text-[#949599] uppercase tracking-wider"><Clock className="w-4 h-4" /> Pending Entry</div>
-          <p className="mt-2 text-2xl font-bold text-[#EFEFF1]">{stats.notArrived}</p>
+        <div className="rounded-xl bg-[#171A1D] border border-amber-500/30 p-4">
+          <div className="flex items-center gap-2 text-xs text-amber-400 font-bold uppercase tracking-wider">
+            <Clock className="w-4 h-4" /> NOT CHECKED IN
+          </div>
+          <p className="mt-2 text-3xl font-extrabold text-amber-300 tabular-nums">{stats.notArrived.toLocaleString()}</p>
+          <span className="text-[11px] text-amber-500/70">Awaiting arrival</span>
         </div>
-        <div className="rounded-xl bg-gradient-to-br from-white/10 to-[#171A1D] border border-white/20 p-4">
-          <div className="flex items-center gap-2 text-xs text-white uppercase tracking-wider"><Zap className="w-4 h-4" /> Turnout Rate</div>
-          <p className="mt-2 text-2xl font-bold text-[#EFEFF1]">{stats.rate}%</p>
+        <div className="rounded-xl bg-gradient-to-br from-emerald-500/20 via-[#171A1D] to-[#1C232B] border border-emerald-500/40 p-4">
+          <div className="flex items-center gap-2 text-xs text-emerald-300 font-bold uppercase tracking-wider">
+            <Zap className="w-4 h-4 text-emerald-400" /> ATTENDANCE RATE
+          </div>
+          <p className="mt-2 text-3xl font-black text-white tabular-nums">{stats.rate}%</p>
+          <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">{stats.rate}% ATTENDANCE</span>
         </div>
       </div>
 

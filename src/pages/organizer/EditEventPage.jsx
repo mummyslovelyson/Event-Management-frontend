@@ -11,6 +11,7 @@ export default function EditEventPage() {
   const navigate = useNavigate();
   const [initialValues, setInitialValues] = useState(null);
   const [eventStatus, setEventStatus] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchEvent = useCallback(async () => {
@@ -23,6 +24,7 @@ export default function EditEventPage() {
       }
 
       setEventStatus(e.status || null);
+      setRejectionReason(e.rejection_reason || null);
 
       // Load uploaded tickets inventory for each ticket type if present
       const rawTypes = e.ticket_types || e.ticketTypes || [];
@@ -115,6 +117,7 @@ export default function EditEventPage() {
       eventId={id}
       onSubmit={handleSubmit}
       eventStatus={eventStatus}
+      rejectionReason={rejectionReason}
     />
   );
 }

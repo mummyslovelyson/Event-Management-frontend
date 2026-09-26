@@ -4,10 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, Search, Download, FileText, CheckCircle2, Clock, UserX,
   Mail, Phone, Ticket as TicketIcon, MapPin, Calendar, X, ChevronDown,
+  FileSpreadsheet, ShieldCheck, CreditCard,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getOrganizerEvents } from '@/api/events';
-import { getAttendees, exportAttendees, exportAttendeesPDF } from '@/api/organizer';
+import { getAttendees, exportAttendees, exportAttendeesExcel, exportAttendeesPDF } from '@/api/organizer';
 import Badge from '@/components/common/Badge';
 import Modal from '@/components/common/Modal';
 import EmptyState from '@/components/common/EmptyState';
@@ -29,13 +30,15 @@ const downloadBlob = (blob, filename) => {
 const normalizeAttendee = (a) => {
   const isCheckedIn = Boolean(a.checked_in || a.checkedIn || a.status === 'used' || a.checkInStatus === 'checked_in' || a.checked_in_at);
   const fullName = a.attendee_name || a.attendeeName || a.name || `${a.firstName || ''} ${a.lastName || ''}`.trim() || 'Attendee';
-  const email = a.email || '—';
-  const phone = a.phone || a.phoneNumber || '—';
+  const email = a.email || a.attendee_email || '—';
+  const phone = a.phone || a.attendee_phone || a.phoneNumber || '—';
   const ticketType = a.ticket_type || a.ticketType || a.ticket_type_name || a.ticket?.type || 'Standard Entry';
   const orderId = a.order_reference || a.orderReference || a.ticket_number || a.ticketNumber || (a.order_id ? String(a.order_id) : '—');
   const checkInTime = a.checked_in_at || a.checkInTime || null;
   const seatNumber = a.seat_number || a.seatNumber || a.seat || '—';
   const ticketNumber = a.ticket_number || a.ticketNumber || (a.id ? `TC-${a.id}` : '—');
+  const purchaseDate = a.purchase_date || a.purchaseDate || a.created_at || a.createdAt || null;
+  const paymentStatus = (a.payment_status || a.paymentStatus || (a.status === 'refunded' ? 'refunded' : 'completed')).toLowerCase();
 
   return {
     ...a,
@@ -48,6 +51,8 @@ const normalizeAttendee = (a) => {
     checkInTime,
     seatNumber,
     ticketNumber,
+    purchaseDate,
+    paymentStatus,
   };
 };
 
@@ -128,11 +133,23 @@ export default function AttendeesPage() {
 
   const handleExportCSV = async () => {
     if (!selectedEvent) { toast.error('Select an event first'); return; }
-    const t = toast.loading('Preparing Excel/CSV...');
+    const t = toast.loading('Preparing CSV...');
     try {
       const res = await exportAttendees(selectedEvent);
       downloadBlob(res.data, `attendees-${selectedEvent}.csv`);
       toast.success('Attendees exported to CSV', { id: t });
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Export failed', { id: t });
+    }
+  };
+
+  const handleExportExcel = async () => {
+    if (!selectedEvent) { toast.error('Select an event first'); return; }
+    const t = toast.loading('Generating Excel spreadsheet...');
+    try {
+      const res = await exportAttendeesExcel(selectedEvent);
+      downloadBlob(res.data, `attendees-${selectedEvent}.xlsx`);
+      toast.success('Attendees exported to Excel', { id: t });
     } catch (err) {
       toast.error(err.response?.data?.message || 'Export failed', { id: t });
     }
@@ -159,24 +176,34 @@ export default function AttendeesPage() {
         icon={Users}
         accent="sky"
         title="Attendees"
-        subtitle="View and manage event registrations and check-ins."
+        subtitle="View and manage event registrations, payment status, and check-ins."
         actions={
-          <>
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={handleExportCSV}
               disabled={!selectedEvent}
-              className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 disabled:opacity-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs md:text-sm font-medium text-white border border-[#494F55]/40 hover:bg-white/10 disabled:opacity-50 transition-colors"
+              title="Download attendee list as CSV"
             >
-              <Download className="w-4 h-4" /> Export CSV
+              <Download className="w-4 h-4 text-sky-400" /> Export CSV
+            </button>
+            <button
+              onClick={handleExportExcel}
+              disabled={!selectedEvent}
+              className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs md:text-sm font-medium text-white border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 disabled:opacity-50 transition-colors"
+              title="Download attendee list as Excel workbook (.xlsx)"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-400" /> Export Excel
             </button>
             <button
               onClick={handleExportPDF}
               disabled={!selectedEvent}
-              className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white text-[#1C232B] text-xs md:text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition-colors shadow-sm"
+              title="Download attendee list as printable PDF"
             >
-              <FileText className="w-4 h-4" /> Export PDF
+              <FileText className="w-4 h-4 text-rose-600" /> Export PDF
             </button>
-          </>
+          </div>
         }
       />
 
@@ -301,21 +328,24 @@ export default function AttendeesPage() {
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                <th className="px-4 py-3 font-medium">Name</th>
+              <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F] bg-[#14171A]">
+                <th className="px-4 py-3 font-medium">Full Name</th>
+                <th className="px-4 py-3 font-medium">Phone</th>
                 <th className="px-4 py-3 font-medium">Email</th>
-                <th className="hidden md:table-cell px-4 py-3 font-medium">Phone</th>
-                <th className="hidden md:table-cell px-4 py-3 font-medium">Ticket Type</th>
-                <th className="hidden md:table-cell px-4 py-3 font-medium">Order ID</th>
-                <th className="px-4 py-3 font-medium">Check-in</th>
-                <th className="hidden md:table-cell px-4 py-3 font-medium">Check-in Time</th>
-                <th className="hidden md:table-cell px-4 py-3 font-medium">Seat</th>
+                <th className="px-4 py-3 font-medium">Ticket Type</th>
+                <th className="px-4 py-3 font-medium">Purchase Date</th>
+                <th className="px-4 py-3 font-medium">Payment Status</th>
+                <th className="px-4 py-3 font-medium">Check-in Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#262B2F]/70">
               {filtered.map((a, idx) => {
                 const isCheckedIn = Boolean(a.isCheckedIn);
                 const fullName = a.fullName || '—';
+                const paymentStatus = a.paymentStatus || 'completed';
+                const isPaid = paymentStatus === 'completed' || paymentStatus === 'paid' || paymentStatus === 'success';
+                const isRefunded = paymentStatus === 'refunded';
+
                 return (
                   <tr
                     key={a.id || idx}
@@ -335,19 +365,26 @@ export default function AttendeesPage() {
                         </div>
                       </div>
                     </td>
+                    <td className="px-4 py-3 text-[#949599] font-mono text-xs">{a.phone || '—'}</td>
                     <td className="px-4 py-3 text-[#949599]">{a.email || '—'}</td>
-                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.phone || '—'}</td>
-                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.ticketType || '—'}</td>
-                    <td className="hidden md:table-cell px-4 py-3 font-mono text-xs text-[#949599]">#{a.orderId || '—'}</td>
                     <td className="px-4 py-3">
-                      <Badge variant={isCheckedIn ? 'success' : 'pending'} size="sm">
-                        {isCheckedIn ? 'Checked In' : 'Not Arrived'}
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-400/10 text-amber-300 border border-amber-400/20">
+                        {a.ticketType || 'Standard Entry'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-xs text-[#949599]">
+                      {a.purchaseDate ? new Date(a.purchaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge variant={isPaid ? 'success' : isRefunded ? 'danger' : 'warning'} size="sm">
+                        {isPaid ? 'Paid' : isRefunded ? 'Refunded' : (paymentStatus || 'Pending')}
                       </Badge>
                     </td>
-                    <td className="hidden md:table-cell px-4 py-3 text-xs text-[#949599]">
-                      {isCheckedIn ? (a.checkInTime ? new Date(a.checkInTime).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—') : '—'}
+                    <td className="px-4 py-3">
+                      <Badge variant={isCheckedIn ? 'success' : 'pending'} size="sm">
+                        {isCheckedIn ? 'Checked In' : 'Not Checked In'}
+                      </Badge>
                     </td>
-                    <td className="hidden md:table-cell px-4 py-3 text-[#949599]">{a.seatNumber || '—'}</td>
                   </tr>
                 );
               })}
@@ -373,9 +410,12 @@ export default function AttendeesPage() {
                 <h3 className="text-lg font-semibold text-[#EFEFF1]">
                   {detail.fullName || 'Attendee'}
                 </h3>
-                <div className="mt-1">
+                <div className="mt-1.5 flex flex-wrap items-center gap-2">
                   <Badge variant={detail.isCheckedIn ? 'success' : 'pending'} dot>
-                    {detail.isCheckedIn ? 'Checked In' : 'Not Arrived'}
+                    {detail.isCheckedIn ? 'Checked In' : 'Not Checked In'}
+                  </Badge>
+                  <Badge variant={detail.paymentStatus === 'refunded' ? 'danger' : 'success'} size="sm">
+                    Payment: {detail.paymentStatus || 'Paid'}
                   </Badge>
                 </div>
               </div>
@@ -385,10 +425,12 @@ export default function AttendeesPage() {
               <InfoRow icon={Mail} label="Email" value={detail.email} />
               <InfoRow icon={Phone} label="Phone" value={detail.phone} />
               <InfoRow icon={TicketIcon} label="Ticket Type" value={detail.ticketType} />
+              <InfoRow icon={CreditCard} label="Payment Status" value={detail.paymentStatus ? (detail.paymentStatus.charAt(0).toUpperCase() + detail.paymentStatus.slice(1)) : 'Paid'} />
+              <InfoRow icon={Calendar} label="Purchase Date" value={detail.purchaseDate ? new Date(detail.purchaseDate).toLocaleString('en-GB') : '—'} />
+              <InfoRow icon={CheckCircle2} label="Check-in Status" value={detail.isCheckedIn ? `Checked In (${detail.checkInTime ? new Date(detail.checkInTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : 'Verified'})` : 'Not Checked In'} />
               <InfoRow icon={MapPin} label="Seat" value={detail.seatNumber} />
               <InfoRow icon={TicketIcon} label="Ticket Number" value={detail.ticketNumber} mono />
               <InfoRow icon={TicketIcon} label="Order Reference" value={detail.orderId} mono />
-              <InfoRow icon={Calendar} label="Check-in Time" value={detail.checkInTime ? new Date(detail.checkInTime).toLocaleString('en-GB') : null} />
             </div>
 
             {detail.event && (

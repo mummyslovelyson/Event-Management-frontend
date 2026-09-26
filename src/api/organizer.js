@@ -19,6 +19,7 @@ export const removeTeamMember = (id) => api.delete(`/organizer/team/${id}`);
 export const getMarketingCampaigns = (params) => api.get('/organizer/marketing', { params });
 export const createMarketingCampaign = (data) => api.post('/organizer/marketing', data);
 export const exportAttendees = (eventId) => api.get(`/organizer/attendees/${eventId}/export`, { responseType: 'blob' });
+export const exportAttendeesExcel = (eventId) => api.get(`/organizer/attendees/${eventId}/export`, { params: { format: 'excel' }, responseType: 'blob' });
 export const exportAttendeesPDF = (eventId) => api.get(`/organizer/attendees/${eventId}/export`, { params: { format: 'pdf' }, responseType: 'blob' });
 
 export const getFlashSales = (params) => api.get('/organizer/flash-sales', { params });

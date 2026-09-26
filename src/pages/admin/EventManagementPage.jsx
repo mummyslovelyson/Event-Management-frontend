@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   CalendarDays, Search, Eye, CheckCircle2, XCircle, Ban, Trash2, Star, RotateCcw,
-  Image as ImageIcon, Layers, DollarSign,
+  Image as ImageIcon, Layers, DollarSign, MessageSquare, AlertCircle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
   getAdminEvents, approveEvent, rejectEvent, toggleEventFeatured,
-  suspendEvent, unsuspendEvent, adminDeleteEvent,
+  suspendEvent, unsuspendEvent, adminDeleteEvent, requestEventChanges,
 } from '@/api/admin';
 import Badge from '@/components/common/Badge';
 import EmptyState from '@/components/common/EmptyState';
@@ -20,7 +20,8 @@ import { useCurrency } from '@/context/CurrencyContext';
 
 const tabs = [
   { key: 'all', label: 'All' },
-  { key: 'pending', label: 'Pending' },
+  { key: 'pending', label: 'Pending Review' },
+  { key: 'changes_requested', label: 'Changes Requested' },
   { key: 'published', label: 'Published' },
   { key: 'suspended', label: 'Suspended' },
   { key: 'completed', label: 'Completed' },
@@ -31,6 +32,7 @@ const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-GB', { day: '2-di
 const statusVariant = (s) => ({
   pending: 'pending', published: 'success', approved: 'success',
   suspended: 'error', completed: 'neutral', rejected: 'error',
+  changes_requested: 'warning',
 }[s] || 'neutral');
 
 export default function EventManagementPage() {
@@ -47,6 +49,8 @@ export default function EventManagementPage() {
   const [selected, setSelected] = useState(new Set());
   const [rejectTarget, setRejectTarget] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
+  const [changesTarget, setChangesTarget] = useState(null);
+  const [changesReason, setChangesReason] = useState('');
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
   const [bulkLoading, setBulkLoading] = useState(false);
@@ -77,10 +81,30 @@ export default function EventManagementPage() {
     setActionLoading(`approve-${id}`);
     try {
       await approveEvent(id);
-      toast.success('Event approved');
+      toast.success('Event approved and published');
       fetchEvents();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to approve');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRequestChanges = async () => {
+    if (!changesTarget) return;
+    if (!changesReason.trim()) {
+      toast.error('Please specify what changes are needed');
+      return;
+    }
+    setActionLoading(`changes-${changesTarget.id}`);
+    try {
+      await requestEventChanges(changesTarget.id, { reason: changesReason.trim() });
+      toast.success('Changes requested from organizer');
+      setChangesTarget(null);
+      setChangesReason('');
+      fetchEvents();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to request changes');
     } finally {
       setActionLoading(null);
     }
@@ -332,7 +356,18 @@ export default function EventManagementPage() {
                     <td className="hidden md:table-cell px-4 py-3 text-xs text-[#949599]">{fmtDate(ev.startDate || ev.date)}</td>
                     <td className="hidden md:table-cell px-4 py-3 text-center text-[#949599]">{ev.ticketsSold ?? ev.tickets ?? 0}</td>
                     <td className="hidden md:table-cell px-4 py-3 text-right font-medium text-[#EFEFF1]">{format(ev.revenue)}</td>
-                    <td className="px-4 py-3"><Badge variant={statusVariant(ev.status)} size="sm" dot>{ev.status || 'pending'}</Badge></td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col gap-0.5 items-start">
+                        <Badge variant={statusVariant(ev.status)} size="sm" dot>
+                          {ev.status === 'changes_requested' ? 'Changes Requested' : (ev.status || 'pending')}
+                        </Badge>
+                        {ev.rejection_reason && (ev.status === 'changes_requested' || ev.status === 'rejected') && (
+                          <span className="text-[11px] text-amber-400/90 max-w-[170px] truncate" title={ev.rejection_reason}>
+                            {ev.rejection_reason}
+                          </span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1.5">
                         <Link to={`/events/${ev.id}`} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View">
@@ -346,14 +381,23 @@ export default function EventManagementPage() {
                         >
                           <Star className="w-4 h-4" fill={ev.is_featured ? 'currentColor' : 'none'} />
                         </button>
-                        {ev.status === 'pending' && (
+                        {(ev.status === 'pending' || ev.status === 'changes_requested') && (
                           <button
                             onClick={() => handleApprove(ev.id)}
                             disabled={actionLoading === `approve-${ev.id}`}
                             className="p-2.5 rounded-md text-emerald-400 hover:bg-emerald-500/15 transition disabled:opacity-50"
-                            title="Approve"
+                            title="Approve & Publish"
                           >
                             <CheckCircle2 className="w-4 h-4" />
+                          </button>
+                        )}
+                        {(ev.status === 'pending' || ev.status === 'changes_requested') && (
+                          <button
+                            onClick={() => { setChangesTarget(ev); setChangesReason(ev.rejection_reason || ''); }}
+                            className="p-2.5 rounded-md text-amber-400 hover:bg-amber-500/15 transition"
+                            title="Request Changes"
+                          >
+                            <MessageSquare className="w-4 h-4" />
                           </button>
                         )}
                         {ev.status !== 'rejected' && (
@@ -407,6 +451,35 @@ export default function EventManagementPage() {
           </div>
         )}
       </div>
+
+      {/* Request Changes Modal */}
+      <Modal
+        open={!!changesTarget}
+        onClose={() => setChangesTarget(null)}
+        title="Request Changes from Organizer"
+        footer={
+          <>
+            <button onClick={() => setChangesTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
+            <button
+              onClick={handleRequestChanges}
+              disabled={actionLoading === `changes-${changesTarget?.id}`}
+              className="px-4 py-2 rounded-lg bg-amber-500 text-black text-sm font-semibold hover:bg-amber-400 transition disabled:opacity-50"
+            >
+              Send Request
+            </button>
+          </>
+        }
+      >
+        <p className="text-sm text-[#EFEFF1]">Request changes for <span className="font-semibold">{changesTarget?.title}</span></p>
+        <p className="text-xs text-[#949599] mt-1">Specify what the organizer needs to modify before this event can be approved and published.</p>
+        <textarea
+          value={changesReason}
+          onChange={(e) => setChangesReason(e.target.value)}
+          placeholder="e.g. Please provide a higher resolution flyer, clarify entry requirements, or update ticket tiers..."
+          className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 resize-none"
+          rows={4}
+        />
+      </Modal>
 
       {/* Reject Modal */}
       <Modal
