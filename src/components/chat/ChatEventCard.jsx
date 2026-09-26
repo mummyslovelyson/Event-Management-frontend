@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Ticket, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { Calendar, MapPin, Ticket, ArrowRight, ChevronDown, ChevronUp, Zap } from 'lucide-react';
 import { formatCurrency } from '@/utils/formatters';
 
-export default function ChatEventCard({ event, onNavigate }) {
+export default function ChatEventCard({ event, onNavigate, onBookNow }) {
   const [showTiers, setShowTiers] = useState(false);
 
   if (!event) return null;
@@ -14,10 +14,10 @@ export default function ChatEventCard({ event, onNavigate }) {
     weekday: 'short',
   }) : '';
 
-  const priceDisplay = event.minPrice === 0 ? 'Free' : formatCurrency(event.minPrice);
+  const priceDisplay = event.minPrice === 0 ? 'Free' : `From ${formatCurrency(event.minPrice)}`;
 
   return (
-    <div className="rounded-xl overflow-hidden bg-[#161D22] border border-[#2E363E] hover:border-white/30 transition-all group flex flex-col my-2 shadow-md">
+    <div className="rounded-xl overflow-hidden bg-[#161D22] border border-[#2E363E] hover:border-white/30 transition-all group flex flex-col my-2 shadow-lg">
       {/* Flyer header */}
       <div className="h-28 bg-[#242B32] relative overflow-hidden">
         {event.image ? (
@@ -32,8 +32,8 @@ export default function ChatEventCard({ event, onNavigate }) {
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#161D22] via-transparent to-transparent" />
-        
-        {/* Top Badges: Category */}
+
+        {/* Top Badges */}
         <div className="absolute top-2 left-2 flex items-center gap-1.5 flex-wrap">
           {event.category && (
             <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#1C232B]/90 text-white backdrop-blur border border-white/10">
@@ -57,20 +57,20 @@ export default function ChatEventCard({ event, onNavigate }) {
           <div className="mt-1.5 space-y-0.5 text-[11px] text-[#949599]">
             {eventDate && (
               <p className="flex items-center gap-1.5">
-                <Calendar className="w-3 h-3 text-[#494F55] shrink-0" />
-                <span>{eventDate} {event.time ? `• ${event.time}` : ''}</span>
+                <Calendar className="w-3 h-3 text-amber-400 shrink-0" />
+                <span className="text-[#CBD5E1] font-medium">{eventDate} {event.time ? `• ${event.time}` : ''}</span>
               </p>
             )}
             {(event.venue || event.city) && (
               <p className="flex items-center gap-1.5 line-clamp-1">
-                <MapPin className="w-3 h-3 text-[#494F55] shrink-0" />
+                <MapPin className="w-3 h-3 text-blue-400 shrink-0" />
                 <span>{[event.venue, event.city].filter(Boolean).join(', ')}</span>
               </p>
             )}
           </div>
         </div>
 
-        {/* Sell-out Velocity / Demand pill */}
+        {/* Demand pill */}
         {event.demandBadge && (
           <div className="px-2 py-1 rounded-lg bg-[#1C232B] border border-[#2E363E] text-[10px] text-[#CBD5E1] font-semibold flex items-center justify-between">
             <span>{event.demandBadge}</span>
@@ -83,9 +83,9 @@ export default function ChatEventCard({ event, onNavigate }) {
             <button
               type="button"
               onClick={() => setShowTiers((v) => !v)}
-              className="w-full flex items-center justify-between text-[10px] font-semibold text-[#EFEFF1] hover:text-white py-0.5"
+              className="w-full flex items-center justify-between text-[10px] font-semibold text-[#CBD5E1] hover:text-white py-0.5"
             >
-              <span>{showTiers ? 'Hide Ticket Tiers' : `Preview Ticket Tiers (${event.ticketTiers.length})`}</span>
+              <span>{showTiers ? 'Hide Ticket Tiers' : `View Tiers (${event.ticketTiers.length})`}</span>
               {showTiers ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             </button>
             {showTiers && (
@@ -93,7 +93,7 @@ export default function ChatEventCard({ event, onNavigate }) {
                 {event.ticketTiers.map((t, i) => (
                   <div key={i} className="flex items-center justify-between text-[11px]">
                     <span className="text-white font-medium truncate max-w-[65%]">{t.name}</span>
-                    <span className="text-[#EFEFF1] font-bold">{formatCurrency(t.price)}</span>
+                    <span className="text-emerald-400 font-bold">{formatCurrency(t.price)}</span>
                   </div>
                 ))}
               </div>
@@ -101,14 +101,25 @@ export default function ChatEventCard({ event, onNavigate }) {
           </div>
         )}
 
-        <Link
-          to={`/events/${event.id}`}
-          onClick={onNavigate}
-          className="w-full mt-0.5 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition-all border border-transparent shadow"
-        >
-          <span>View &amp; Buy Tickets</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
+        {/* Action Buttons: [View Event] [Book Now] */}
+        <div className="mt-1 pt-2 border-t border-white/10 grid grid-cols-2 gap-2">
+          <Link
+            to={`/events/${event.id}`}
+            onClick={onNavigate}
+            className="flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-lg bg-white/10 hover:bg-white/15 text-white text-xs font-semibold transition border border-white/10"
+          >
+            <span>View Event</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => onBookNow?.(event)}
+            className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition shadow"
+          >
+            <Zap className="w-3 h-3 fill-[#1C232B]" />
+            <span>Book Now</span>
+          </button>
+        </div>
       </div>
     </div>
   );

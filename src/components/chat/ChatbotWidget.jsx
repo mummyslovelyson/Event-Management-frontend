@@ -2,20 +2,28 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  X, Send, Trash2, Loader2, ArrowRight, MessageSquare, Mic, ChevronRight,
+  X, Send, Trash2, Loader2, ArrowRight, MessageSquare, Mic, ChevronRight, QrCode, CheckCircle2, AlertCircle,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { sendChatMessage } from '@/api/chat';
+import {
+  sendChatMessage,
+  createAgentBookingHold,
+  verifyAgentPayment,
+  resendAgentTicket,
+} from '@/api/chat';
 import ChatEventCard from './ChatEventCard';
 import ChatTicketCard from './ChatTicketCard';
+import ChatBookingCard from './ChatBookingCard';
+import ChatSpendingCard from './ChatSpendingCard';
 import VoiceAgentModal from './VoiceAgentModal';
 
 const DEFAULT_SUGGESTIONS = [
   'What’s happening this weekend?',
+  'Concerts in Kumasi this weekend',
   'Concerts and live shows in Accra',
   'Show my active tickets',
-  'How do I transfer a ticket?',
-  'How does resale work?',
+  'When is my next event?',
+  'How much have I spent on events this month?',
 ];
 
 const stripEmojis = (str) => {
@@ -34,6 +42,9 @@ export default function ChatbotWidget() {
   const [hasUnread, setHasUnread] = useState(true);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [activeBooking, setActiveBooking] = useState(null);
+  const [verifyingOrderId, setVerifyingOrderId] = useState(null);
+  const [selectedQR, setSelectedQR] = useState(null);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -73,17 +84,20 @@ export default function ChatbotWidget() {
     }
     if (isExplorePage) {
       return [
+        'Concerts in Kumasi this weekend',
+        'Book 2 VIP tickets',
         'What’s happening this weekend?',
-        'Concerts and live music',
-        'Free events in Accra',
+        'Concerts and live music in Accra',
         'Show my tickets',
       ];
     }
     if (user) {
       return [
+        'Concerts in Kumasi this weekend',
+        'Book 2 VIP tickets',
         'Show my active tickets',
-        'What’s happening this weekend?',
-        'Concerts and live shows',
+        'When is my next event?',
+        'How much have I spent on events this month?',
         'How do I transfer a ticket?',
       ];
     }
@@ -150,9 +164,14 @@ export default function ChatbotWidget() {
         isOrganizerPage,
         userId: user?.id,
         mode: 'chat',
+        booking: activeBooking,
       });
 
       const data = res.data;
+      if (data.booking) {
+        setActiveBooking(data.booking);
+      }
+
       const cleanReply = stripEmojis(data.reply || 'Here is what I found for you:');
       const cleanActions = data.actions
         ? data.actions.map((act) => ({ ...act, label: stripEmojis(act.label) }))
@@ -166,6 +185,8 @@ export default function ChatbotWidget() {
         intent: data.intent || 'GENERAL',
         events: data.events || null,
         tickets: data.tickets || null,
+        booking: data.booking || null,
+        spending: data.spending || null,
         actions: cleanActions,
         suggestions: cleanSuggestions,
         timestamp: new Date().toISOString(),
@@ -185,6 +206,120 @@ export default function ChatbotWidget() {
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleBookNow = (event) => {
+    if (!event) return;
+    handleSendMessage(`Book tickets for ${event.title}`);
+  };
+
+  const handleContinuePayment = async (booking) => {
+    if (!booking) return;
+    if (!user) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
+          sender: 'bot',
+          text: 'Please sign in or create an account to reserve your tickets and guarantee your spot.',
+          actions: [{ type: 'NAVIGATE', label: 'Sign In to Book', path: '/login' }],
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await createAgentBookingHold({
+        eventId: booking.eventId,
+        ticketTypeId: booking.tierId,
+        quantity: booking.quantity || 1,
+        callbackUrl: `${window.location.origin}/attendee/tickets`,
+      });
+
+      const reservedBooking = {
+        ...res.data.booking,
+        status: 'reserved',
+      };
+      setActiveBooking(reservedBooking);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
+          sender: 'bot',
+          text: `Your tickets have been reserved for 10 minutes. Please complete payment using the checkout button below:`,
+          booking: reservedBooking,
+          suggestions: [
+            'I have paid / Verify Payment',
+            'Can I get a refund?',
+            'Show my tickets',
+          ],
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+    } catch (err) {
+      console.error('[handleContinuePayment]', err);
+      const errMsg = err.response?.data?.error || 'Unable to reserve tickets. Please select another tier or try again.';
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
+          sender: 'bot',
+          text: errMsg,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyPayment = async (booking) => {
+    if (!booking) return;
+    setVerifyingOrderId(booking.orderId);
+
+    try {
+      const res = await verifyAgentPayment({
+        orderId: booking.orderId,
+        reference: booking.reference,
+      });
+
+      const verifiedBooking = res.data.booking;
+      setActiveBooking(verifiedBooking);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
+          sender: 'bot',
+          text: `Payment confirmed! Your booking #${verifiedBooking.orderNumber || verifiedBooking.orderId} is confirmed and your tickets have been generated.`,
+          booking: verifiedBooking,
+          suggestions: [
+            'Show me my tickets',
+            'When is my event?',
+            'How much have I spent on events this month?',
+          ],
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+    } catch (err) {
+      console.error('[handleVerifyPayment]', err);
+      const errMsg = err.response?.data?.error || 'Payment not completed or still processing. Please approve the payment prompt on your phone or complete the transaction, then click verify again.';
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
+          sender: 'bot',
+          text: errMsg,
+          suggestions: ['Verify Payment again', 'Can I get a refund?'],
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+    } finally {
+      setVerifyingOrderId(null);
     }
   };
 
@@ -222,9 +357,13 @@ export default function ChatbotWidget() {
           isOrganizerPage,
           userId: user?.id,
           mode: 'voice',
+          booking: activeBooking,
         }
       );
       const data = res?.data || res;
+      if (data?.booking) {
+        setActiveBooking(data.booking);
+      }
       setMessages((prev) => [
         ...prev,
         {
@@ -239,6 +378,8 @@ export default function ChatbotWidget() {
           text: data?.reply || 'Here is what I found for you:',
           events: data?.events || [],
           tickets: data?.tickets || [],
+          booking: data?.booking || null,
+          spending: data?.spending || null,
           actions: data?.actions || [],
           timestamp: new Date().toISOString(),
         },
@@ -431,9 +572,30 @@ export default function ChatbotWidget() {
                                 key={ev.id}
                                 event={ev}
                                 onNavigate={() => setIsOpen(false)}
+                                onBookNow={handleBookNow}
                               />
                             ))}
                           </div>
+                        )}
+
+                        {/* Embedded Booking Card (Order Breakdown / Reserved Hold / Confirmed QR) */}
+                        {msg.booking && (
+                          <ChatBookingCard
+                            booking={msg.booking}
+                            onContinuePayment={handleContinuePayment}
+                            onVerifyPayment={handleVerifyPayment}
+                            onNavigate={() => setIsOpen(false)}
+                            onShowQR={(tickets) => setSelectedQR(tickets)}
+                            verifying={verifyingOrderId === msg.booking.orderId}
+                          />
+                        )}
+
+                        {/* Embedded Monthly Spending Card */}
+                        {msg.spending && (
+                          <ChatSpendingCard
+                            spending={msg.spending}
+                            onNavigate={() => setIsOpen(false)}
+                          />
                         )}
                       </div>
                     </div>
@@ -637,6 +799,67 @@ export default function ChatbotWidget() {
           user,
         }}
       />
+
+      {/* QR Code Pass Modal */}
+      {selectedQR && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="bg-[#14181C] border border-[#2E363E] rounded-2xl max-w-sm w-full p-5 shadow-2xl relative text-left">
+            <button
+              type="button"
+              onClick={() => setSelectedQR(null)}
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-[#949599] hover:text-white hover:bg-white/10 transition cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex flex-col items-center text-center">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-3">
+                <QrCode className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-white mb-1">Official Event Pass</h3>
+              <p className="text-xs text-[#949599] mb-4">Present this QR code at the event entrance for scanning.</p>
+
+              {Array.isArray(selectedQR) ? (
+                <div className="space-y-3 w-full max-h-72 overflow-y-auto pr-1">
+                  {selectedQR.map((t, idx) => (
+                    <div key={idx} className="bg-white p-3.5 rounded-xl text-center flex flex-col items-center shadow">
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(t.qr_code || t.ticket_number || 'TICKET')}`}
+                        alt="QR Code"
+                        className="w-32 h-32 object-contain"
+                      />
+                      <span className="mt-2 font-mono text-xs font-bold text-[#1C232B]">{t.ticket_number || `Pass #${idx + 1}`}</span>
+                      <span className="text-[11px] text-[#494F55] font-semibold">{t.ticket_type_name || 'General Admission'}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white p-4 rounded-xl text-center flex flex-col items-center w-full shadow">
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(selectedQR.qr_code || selectedQR.ticket_number || 'TICKET')}`}
+                    alt="QR Code"
+                    className="w-36 h-36 object-contain"
+                  />
+                  <span className="mt-2 font-mono text-xs font-bold text-[#1C232B]">{selectedQR.ticket_number}</span>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedQR(null);
+                  setIsOpen(false);
+                  navigate('/attendee/tickets');
+                }}
+                className="mt-4 w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer"
+              >
+                <span>View All Tickets in Wallet</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
     </>
   );
