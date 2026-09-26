@@ -455,6 +455,73 @@ export default function PromotionsPage() {
         }
       >
         <form onSubmit={submitCoupon} className="space-y-4">
+          {/* Quick Presets (Kwame Blueprint Sec. 21) */}
+          {!editingCoupon && (
+            <div className="p-3 rounded-lg bg-[#14181C] border border-[#262B2F] space-y-2">
+              <span className="text-[11px] font-semibold text-[#949599] uppercase tracking-wider block">
+                Quick Preset Templates
+              </span>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const d = new Date();
+                    d.setDate(d.getDate() + 14);
+                    setCForm({
+                      code: 'EARLYBIRD20',
+                      type: 'percentage',
+                      value: '20',
+                      maxUses: '100',
+                      validFrom: new Date().toISOString().slice(0, 10),
+                      validTo: d.toISOString().slice(0, 10),
+                      scope: 'all',
+                      eventId: '',
+                    });
+                  }}
+                  className="px-2.5 py-1 rounded bg-[#1C232B] hover:bg-white/10 border border-[#494F55]/40 text-xs text-amber-300 font-medium transition"
+                >
+                  ⚡ Early Bird (20% Off)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCForm({
+                      code: 'GROUP10',
+                      type: 'percentage',
+                      value: '10',
+                      maxUses: '50',
+                      validFrom: '',
+                      validTo: '',
+                      scope: 'all',
+                      eventId: '',
+                    });
+                  }}
+                  className="px-2.5 py-1 rounded bg-[#1C232B] hover:bg-white/10 border border-[#494F55]/40 text-xs text-blue-300 font-medium transition"
+                >
+                  👥 Group Bundle (10% Off)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCForm({
+                      code: 'VIP15',
+                      type: 'percentage',
+                      value: '15',
+                      maxUses: '25',
+                      validFrom: '',
+                      validTo: '',
+                      scope: 'all',
+                      eventId: '',
+                    });
+                  }}
+                  className="px-2.5 py-1 rounded bg-[#1C232B] hover:bg-white/10 border border-[#494F55]/40 text-xs text-purple-300 font-medium transition"
+                >
+                  🎟️ VIP Launch (15% Off)
+                </button>
+              </div>
+            </div>
+          )}
+
           <div>
             <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Code</label>
             <div className="flex gap-2">

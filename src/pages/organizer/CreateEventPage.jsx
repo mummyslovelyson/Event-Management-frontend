@@ -9,6 +9,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { createEvent, getEvent, getCategories, publishEvent, uploadImage } from '@/api/events';
+import { POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import TicketFilesUploader from '@/components/organizer/TicketFilesUploader';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
@@ -599,8 +600,18 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
   // load categories
   useEffect(() => {
     getCategories()
-      .then((res) => setCategories(Array.isArray(res.data) ? res.data : res.data?.categories || []))
-      .catch(() => setCategories([]));
+      .then((res) => {
+        const apiCats = Array.isArray(res.data) ? res.data : res.data?.categories || [];
+        const existingNames = new Set(apiCats.map((c) => (c.name || c).toLowerCase()));
+        const merged = [...apiCats];
+        POPULAR_CATEGORY_LIST.forEach((item) => {
+          if (!existingNames.has(item.name.toLowerCase())) {
+            merged.push({ id: item.slug, name: item.name });
+          }
+        });
+        setCategories(merged);
+      })
+      .catch(() => setCategories(POPULAR_CATEGORY_LIST.map((item) => ({ id: item.slug, name: item.name }))));
   }, []);
 
   const stepFields = {
