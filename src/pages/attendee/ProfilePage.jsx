@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
   User, Shield, CreditCard, Bell, Camera, Save, Lock, Mail, Phone, MapPin,
-  Calendar, FileText, Check, Smartphone, Plus, Trash2, Eye, EyeOff,
+  Calendar, FileText, Check, Smartphone, Plus, Trash2, Eye, EyeOff, Sparkles, Tag,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -183,6 +183,21 @@ export default function ProfilePage() {
   );
 }
 
+const AVAILABLE_CATEGORIES = [
+  'Music',
+  'Technology',
+  'Festivals',
+  'Nightlife',
+  'Business',
+  'Sports',
+  'Arts & Culture',
+  'Food & Drink',
+  'Conferences',
+  'Workshops',
+  'Networking',
+  'Community',
+];
+
 /* ============== Personal Info Tab ============== */
 function PersonalInfoTab({ profile, setProfile }) {
   const { user, setUser } = useAuth();
@@ -193,10 +208,28 @@ function PersonalInfoTab({ profile, setProfile }) {
     bio: profile.bio || '',
     location: profile.location || '',
     dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '',
+    favoriteCategories: Array.isArray(profile.favoriteCategories)
+      ? profile.favoriteCategories
+      : (Array.isArray(profile.favorite_categories)
+        ? profile.favorite_categories
+        : (typeof profile.favorite_categories === 'string'
+          ? JSON.parse(profile.favorite_categories || '[]')
+          : [])),
   });
   const [saving, setSaving] = useState(false);
 
   const handleChange = (key, value) => setForm((f) => ({ ...f, [key]: value }));
+
+  const toggleCategory = (cat) => {
+    setForm((prev) => {
+      const current = prev.favoriteCategories || [];
+      const exists = current.some((c) => c.toLowerCase() === cat.toLowerCase());
+      const next = exists
+        ? current.filter((c) => c.toLowerCase() !== cat.toLowerCase())
+        : [...current, cat];
+      return { ...prev, favoriteCategories: next };
+    });
+  };
 
   const handleSave = async (e) => {
     e?.preventDefault();
@@ -206,7 +239,7 @@ function PersonalInfoTab({ profile, setProfile }) {
       const updated = res.data?.user ?? res.data ?? { ...profile, ...form };
       setProfile(updated);
       if (setUser) setUser({ ...user, ...updated });
-      toast.success('Profile updated successfully');
+      toast.success('Profile and preferences updated successfully');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to update profile');
     } finally {
@@ -215,7 +248,7 @@ function PersonalInfoTab({ profile, setProfile }) {
   };
 
   return (
-    <form onSubmit={handleSave} className="max-w-2xl space-y-5">
+    <form onSubmit={handleSave} className="max-w-2xl space-y-6">
       <div className="grid sm:grid-cols-2 gap-5">
         <Field icon={User} label="Full Name">
           <input
@@ -242,12 +275,12 @@ function PersonalInfoTab({ profile, setProfile }) {
             className={inputClass}
           />
         </Field>
-        <Field icon={MapPin} label="Location">
+        <Field icon={MapPin} label="Location (City, Country)">
           <input
             type="text"
             value={form.location}
             onChange={(e) => handleChange('location', e.target.value)}
-            placeholder="City, Country"
+            placeholder="e.g. Accra, Ghana"
             className={inputClass}
           />
         </Field>
@@ -259,6 +292,45 @@ function PersonalInfoTab({ profile, setProfile }) {
             className={inputClass}
           />
         </Field>
+      </div>
+
+      {/* Favorite Categories */}
+      <div className="rounded-xl p-4 bg-[#171A1D] border border-[#262B2F] space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span className="text-sm font-semibold text-[#EFEFF1]">Favorite Categories</span>
+          </div>
+          <span className="text-xs text-[#949599]">
+            {form.favoriteCategories?.length || 0} selected
+          </span>
+        </div>
+        <p className="text-xs text-[#949599]">
+          Select the event categories you enjoy. We use this to tailor your personalized recommendations and "Matches Your Favorite Categories" feed.
+        </p>
+        <div className="flex flex-wrap gap-2 pt-1">
+          {AVAILABLE_CATEGORIES.map((cat) => {
+            const isSelected = (form.favoriteCategories || []).some(
+              (c) => c.toLowerCase() === cat.toLowerCase(),
+            );
+            return (
+              <button
+                type="button"
+                key={cat}
+                onClick={() => toggleCategory(cat)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  isSelected
+                    ? 'bg-amber-400 text-black shadow-md shadow-amber-400/20 ring-1 ring-amber-300'
+                    : 'bg-[#1C232B] text-[#949599] border border-[#262B2F] hover:text-[#EFEFF1] hover:border-[#494F55]'
+                }`}
+              >
+                <Tag className="w-3 h-3" />
+                {cat}
+                {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <Field icon={FileText} label="Bio">
@@ -275,7 +347,7 @@ function PersonalInfoTab({ profile, setProfile }) {
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition shadow-md shadow-white/10"
         >
           <Save className="w-4 h-4" />
           {saving ? 'Saving...' : 'Save Changes'}

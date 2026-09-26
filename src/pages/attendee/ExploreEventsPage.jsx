@@ -52,6 +52,7 @@ export default function ExploreEventsPage() {
   const { isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(true);
   const [recommended, setRecommended] = useState([]);
+  const [recommendedSections, setRecommendedSections] = useState([]);
   const [recommendedLoading, setRecommendedLoading] = useState(false);
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -88,10 +89,11 @@ export default function ExploreEventsPage() {
     setRecommendedLoading(true);
     (async () => {
       try {
-        const res = await getRecommendedEvents({ limit: 3 });
+        const res = await getRecommendedEvents({ limit: 6 });
         if (!active) return;
         const data = res.data?.events ?? res.data ?? [];
         setRecommended(Array.isArray(data) ? data : []);
+        setRecommendedSections(res.data?.sections || []);
       } catch {
         /* non-fatal */
       } finally {
@@ -163,39 +165,50 @@ export default function ExploreEventsPage() {
       {/* Recommended for you */}
       {isAuthenticated && (recommendedLoading || recommended.length > 0) && (
         <motion.section variants={itemFade} className="rounded-xl bg-gradient-to-br from-white/10 via-[#171A1D] to-[#171A1D] border border-white/20 p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-3 mb-4">
-            <div className="flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center">
-                <Compass className="w-4 h-4" />
-              </span>
-              <div>
-                <h2 className="text-base font-bold text-[#EFEFF1]">Recommended For You</h2>
-                <p className="text-xs text-[#949599]">Based on your favorites, past events, and location</p>
-              </div>
-            </div>
-            <Link
-              to="/attendee/favorites"
-              className="text-xs font-medium text-white hover:underline underline-offset-4 decoration-white/ shrink-0"
-            >
-              Manage preferences
-            </Link>
-          </div>
-          {recommendedLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="rounded-xl bg-[#1C232B]/60 border border-[#262B2F] p-4 animate-pulse">
-                  <div className="h-20 bg-[#242B32] rounded-lg mb-3" />
-                  <div className="h-3 bg-[#242B32] rounded w-3/4" />
+          {(() => {
+            const topSec = recommendedSections[0];
+            const title = topSec ? topSec.title : 'Recommended For You';
+            const subtitle = topSec ? topSec.subtitle : 'Based on your favorites, past attendance, and location';
+            const displayEvents = topSec?.events?.length > 0 ? topSec.events.slice(0, 3) : recommended.slice(0, 3);
+
+            return (
+              <>
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center">
+                      <Compass className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <h2 className="text-base font-bold text-[#EFEFF1]">{title}</h2>
+                      <p className="text-xs text-[#949599]">{subtitle}</p>
+                    </div>
+                  </div>
+                  <Link
+                    to="/attendee/profile"
+                    className="text-xs font-medium text-amber-400 hover:underline underline-offset-4 shrink-0"
+                  >
+                    Manage preferences
+                  </Link>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {recommended.map((event) => (
-                <EventCard key={event.id} event={event} compact />
-              ))}
-            </div>
-          )}
+                {recommendedLoading ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i} className="rounded-xl bg-[#1C232B]/60 border border-[#262B2F] p-4 animate-pulse">
+                        <div className="h-20 bg-[#242B32] rounded-lg mb-3" />
+                        <div className="h-3 bg-[#242B32] rounded w-3/4" />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {displayEvents.map((event) => (
+                      <EventCard key={event.id} event={event} compact />
+                    ))}
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </motion.section>
       )}
 

@@ -6,7 +6,7 @@ import {
   CalendarCheck, Mic2, Trophy, PartyPopper as FestivalIcon, Presentation,
   GraduationCap, Wrench, Drama, Church, Heart, Mail, Shirt,
   TrendingUp, Users, Building2, ChevronRight, CheckCircle2, Shield,
-  CreditCard, QrCode, LayoutGrid, Music, Flame,
+  CreditCard, QrCode, LayoutGrid, Music, Flame, Sparkles,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -85,6 +85,7 @@ export default function HomePage() {
   const [featured, setFeatured] = useState([]);
   const [trending, setTrending] = useState([]);
   const [recommended, setRecommended] = useState([]);
+  const [recommendedSections, setRecommendedSections] = useState([]);
   const [categories, setCategories] = useState([]);
   const [featuredOrganizers, setFeaturedOrganizers] = useState([]);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
@@ -118,8 +119,11 @@ export default function HomePage() {
     };
     const loadRecommended = async () => {
       try {
-        const res = await getRecommendedEvents({ limit: 8 });
-        if (active) setRecommended(res.data?.events || res.data?.data || res.data || []);
+        const res = await getRecommendedEvents({ limit: 12 });
+        if (active) {
+          setRecommended(res.data?.events || res.data?.data || res.data || []);
+          setRecommendedSections(res.data?.sections || []);
+        }
       } catch {
         // fail gracefully
       } finally {
@@ -379,27 +383,123 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── RECOMMENDED FOR YOU ─── */}
-      {recommended.length > 0 && (
-        <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#262B2F]">
-          <div className="flex items-end justify-between mb-8">
+      {/* ─── RECOMMENDED FOR YOU (CATEGORIZED RAILS) ─── */}
+      {(recommendedSections.length > 0 || recommended.length > 0) && (
+        <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#262B2F] space-y-12">
+          {/* Main Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-[#262B2F]/60">
             <div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-white">
-                <Compass className="w-3.5 h-3.5" /> Tailored Picks
-              </span>
-              <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Recommended For You</h2>
-              <p className="mt-1 text-xs sm:text-sm text-[#949599]">Personalized events matched to your favorite categories, city, and attendance history.</p>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 border border-amber-500/30">
+                  <Compass className="w-3.5 h-3.5 text-amber-400" /> Personalized Engine
+                </span>
+                <span className="hidden sm:inline-block text-xs text-[#949599]">• Smart curation</span>
+              </div>
+              <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Recommended For You</h2>
+              <p className="mt-1 text-xs sm:text-sm text-[#949599]">
+                Tailored live experiences matched to your attendance history, favorite categories, searches, and creators you follow.
+              </p>
             </div>
-            <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
-              Explore more <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link to="/profile" className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition">
+                Manage preferences
+              </Link>
+              <Link to="/explore" className="group flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
+                Explore all <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {recommended.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
+          {/* Contextual Recommendation Sections */}
+          {recommendedSections.length > 0 ? (
+            recommendedSections.map((sec) => {
+              const isAttended = sec.type === 'because_you_attended';
+              const isFollowed = sec.type === 'organizers_followed';
+              const isFavCat = sec.type === 'favorite_categories';
+              const isSearch = sec.type === 'search_history';
+
+              return (
+                <div
+                  key={sec.id}
+                  className={`rounded-2xl p-5 sm:p-6 transition-all ${
+                    isAttended
+                      ? 'bg-gradient-to-br from-[#191D22] via-[#161B20] to-[#12161A] border border-amber-500/30 shadow-lg shadow-amber-950/20'
+                      : 'bg-[#161D22] border border-[#262B2F]'
+                  }`}
+                >
+                  {/* Rail Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                        {isAttended && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                            <Ticket className="w-3 h-3 text-amber-400" /> Because you attended
+                          </span>
+                        )}
+                        {isFollowed && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                            <Users className="w-3 h-3 text-purple-400" /> Following
+                          </span>
+                        )}
+                        {isFavCat && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                            <Sparkles className="w-3 h-3 text-blue-400" /> Saved Interests
+                          </span>
+                        )}
+                        {isSearch && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                            <Search className="w-3 h-3 text-emerald-400" /> Search Match
+                          </span>
+                        )}
+                        {sec.category && (
+                          <span className="text-[11px] text-[#949599] font-medium">
+                            Category: <span className="text-white font-semibold">{sec.category}</span>
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className="text-xl sm:text-2xl font-bold text-[#EFEFF1]">
+                        {sec.title}
+                      </h3>
+                      {sec.subtitle && (
+                        <p className="mt-0.5 text-xs sm:text-sm text-[#949599]">
+                          {sec.subtitle}
+                        </p>
+                      )}
+                    </div>
+
+                    {isFavCat && sec.categories && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {sec.categories.map((c) => (
+                          <Link
+                            key={c}
+                            to={`/explore?category=${encodeURIComponent(c)}`}
+                            className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#1C232B] text-amber-300 border border-amber-500/20 hover:border-amber-400 transition"
+                          >
+                            {c}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Rail Events Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    {sec.events?.map((event) => (
+                      <EventCard key={event.id} event={event} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            /* Flat Fallback Grid */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {recommended.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          )}
         </section>
       )}
 

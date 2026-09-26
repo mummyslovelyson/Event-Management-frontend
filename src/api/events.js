@@ -54,4 +54,5 @@ export const toggleEventReminder = (id) => api.post(`/events/${id}/reminders`);
 export const getEventReminderStatus = (id) => api.get(`/events/${id}/reminders`);
 export const getUserReminders = () => api.get('/events/reminders/mine');
 export const trackEventView = (id) => api.post(`/events/${id}/view`);
+export const logSearchQuery = (data) => api.post('/events/search/log', data);
 

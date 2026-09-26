@@ -4,14 +4,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, SlidersHorizontal, X, MapPin, Calendar, Tag, ChevronDown,
   ArrowUpDown, Inbox, Flame, LayoutGrid, List, RotateCcw,
-  Check, DollarSign, Clock, Compass, ChevronRight,
+  Check, DollarSign, Clock, Compass, ChevronRight, Sparkles, Ticket, Users,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import EventCard from '@/components/common/EventCard';
 import EmptyState from '@/components/common/EmptyState';
 import Pagination from '@/components/common/Pagination';
 import EventDiscoveryMap from '@/components/events/EventDiscoveryMap';
-import { getEvents, getCategories } from '@/api/events';
+import { getEvents, getCategories, getRecommendedEvents, logSearchQuery } from '@/api/events';
 import { POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
@@ -107,8 +107,9 @@ export default function ExplorePage() {
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
   const [showFiltersMobile, setShowFiltersMobile] = useState(false);
   const [availableCategories, setAvailableCategories] = useState([]);
+  const [recommendedSections, setRecommendedSections] = useState([]);
 
-  // Fetch real categories from database
+  // Fetch real categories and personalized recommendation sections
   useEffect(() => {
     let active = true;
     getCategories()
@@ -120,21 +121,39 @@ export default function ExplorePage() {
       .catch(() => {
         if (active) setAvailableCategories([]);
       });
+
+    getRecommendedEvents({ limit: 8 })
+      .then((res) => {
+        if (!active) return;
+        setRecommendedSections(res.data?.sections || []);
+      })
+      .catch(() => {
+        if (active) setRecommendedSections([]);
+      });
+
     return () => {
       active = false;
     };
   }, []);
 
-  // Debounce search typing by 350ms
+  // Debounce search typing by 350ms & track search query for personalization
   useEffect(() => {
     const timer = setTimeout(() => {
       setFilters((prev) => {
         if (prev.search === searchInput) return prev;
         return { ...prev, search: searchInput, page: 1 };
       });
+
+      if (searchInput && searchInput.trim().length >= 3) {
+        logSearchQuery({
+          query: searchInput.trim(),
+          category: filters.categories?.[0] || null,
+          city: filters.city || null,
+        }).catch(() => {});
+      }
     }, 350);
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, filters.categories, filters.city]);
 
   // Handle Date presets
   const handleDatePreset = (preset) => {
@@ -692,6 +711,39 @@ export default function ExplorePage() {
               </div>
             ) : (
               <div className="space-y-8">
+                {/* Personalized Context Rail (e.g. Because you attended...) */}
+                {filters.page === 1 && !filters.search && recommendedSections.length > 0 && (
+                  <div className="mb-2">
+                    {recommendedSections.slice(0, 1).map((sec) => (
+                      <div
+                        key={sec.id}
+                        className="rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-[#191D22] via-[#161B20] to-[#12161A] border border-amber-500/30 shadow-md shadow-amber-950/20"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                              <Sparkles className="w-3 h-3 text-amber-400" /> {sec.type === 'because_you_attended' ? 'Attendance Match' : 'Personalized Pick'}
+                            </span>
+                            <span className="text-sm font-bold text-[#EFEFF1]">
+                              {sec.title}
+                            </span>
+                          </div>
+                          {sec.subtitle && (
+                            <span className="text-xs text-[#949599]">
+                              {sec.subtitle}
+                            </span>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                          {sec.events?.slice(0, 3).map((event) => (
+                            <EventCard key={event.id} event={event} />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
