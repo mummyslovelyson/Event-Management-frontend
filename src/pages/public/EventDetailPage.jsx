@@ -20,7 +20,12 @@ import SocialShareModal from '@/components/common/SocialShareModal';
 import ReminderModal from '@/components/common/ReminderModal';
 import FollowArtistButton from '@/components/common/FollowArtistButton';
 import FollowCategoryButton from '@/components/common/FollowCategoryButton';
+import FriendsAttendingBanner from '@/components/common/FriendsAttendingBanner';
+import InviteFriendsModal from '@/components/common/InviteFriendsModal';
+import FollowUserButton from '@/components/common/FollowUserButton';
+import SquadChatModal from '@/components/events/SquadChatModal';
 import { getEvent, getTrendingEvents, toggleEventReminder, getEventReminderStatus } from '@/api/events';
+
 import { getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '@/utils/calendar';
 import { getTicketTypes } from '@/api/tickets';
 import { toggleFavorite, followOrganizer, unfollowOrganizer } from '@/api/users';
@@ -165,6 +170,13 @@ export default function EventDetailPage() {
   const [createMeetupOpen, setCreateMeetupOpen] = useState(false);
   const [meetupForm, setMeetupForm] = useState({ title: '', description: '', meetingSpot: '', meetAt: '', maxMembers: '', type: 'general' });
   const [meetupBusy, setMeetupBusy] = useState(false);
+
+  // Social & Tribes state
+  const [inviteFriendsOpen, setInviteFriendsOpen] = useState(false);
+  const [inviteTargetMeetup, setInviteTargetMeetup] = useState(null);
+  const [squadChatOpen, setSquadChatOpen] = useState(false);
+  const [activeSquadChat, setActiveSquadChat] = useState(null);
+
 
   // Community / Attendees / Discussion state
   const [attendees, setAttendees] = useState([]);
@@ -802,6 +814,18 @@ export default function EventDetailPage() {
                   <Share2 className="w-4 h-4" />
                 </motion.button>
 
+                {/* Invite Friends / Tribes Button */}
+                <motion.button
+                  onClick={() => { setInviteTargetMeetup(null); setInviteFriendsOpen(true); }}
+                  whileTap={{ scale: 0.88 }}
+                  whileHover={{ y: -2 }}
+                  title="Invite Friends to Event"
+                  className="w-11 h-11 rounded-lg bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center text-[#EFEFF1] hover:text-white hover:bg-white/20 transition"
+                >
+                  <UserPlus className="w-4 h-4" />
+                </motion.button>
+
+
                 {/* Favorite Toggle */}
                 <motion.button
                   onClick={handleFavorite}
@@ -875,8 +899,22 @@ export default function EventDetailPage() {
               </div>
             )}
 
+            {/* Friends Attending Banner ("5 of your friends are attending this event") */}
+            {event && (
+              <FriendsAttendingBanner
+                eventId={event.id}
+                onInviteClick={() => {
+                  setInviteTargetMeetup(null);
+                  setInviteFriendsOpen(true);
+                }}
+                onShareClick={() => setSocialModalOpen(true)}
+                className="mb-6"
+              />
+            )}
+
             {/* Tabs */}
             <div id="event-tabs-section" className="flex items-center gap-1 border-b border-[#262B2F] mb-6 overflow-x-auto no-scrollbar">
+
               {TABS.map((tab) => (
                 <button
                   key={tab}
@@ -1306,15 +1344,25 @@ export default function EventDetailPage() {
                               </div>
 
                               {/* Squad Action Buttons */}
-                              <div className="mt-4 pt-3 border-t border-[#262B2F] flex items-center justify-between gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => { setSocialTargetMeetup(m); setSocialModalOpen(true); }}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-semibold hover:bg-white/20 transition"
-                                >
-                                  <Share2 className="w-3.5 h-3.5" /> Invite
-                                </button>
+                              <div className="mt-4 pt-3 border-t border-[#262B2F] flex flex-wrap items-center justify-between gap-2">
+                                <div className="flex items-center gap-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => { setActiveSquadChat(m); setSquadChatOpen(true); }}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/15 text-blue-300 border border-blue-500/30 text-xs font-semibold hover:bg-blue-500/25 transition"
+                                  >
+                                    <MessageSquare className="w-3.5 h-3.5" /> Chat
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => { setInviteTargetMeetup(m); setInviteFriendsOpen(true); }}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-semibold hover:bg-white/20 transition"
+                                  >
+                                    <UserPlus className="w-3.5 h-3.5" /> Invite
+                                  </button>
+                                </div>
                                 <div className="flex items-center gap-2">
+
                                   {m.hostId === currentUser?.id && (
                                     <button
                                       type="button"
@@ -1396,8 +1444,10 @@ export default function EventDetailPage() {
                               <span className="text-[9px] uppercase tracking-wider text-[#949599] font-bold">
                                 {att.role === 'organizer' ? 'Host' : 'Going'}
                               </span>
+                              <FollowUserButton userId={att.id} size="sm" className="mt-1 w-full" />
                             </div>
                           ))}
+
                         </div>
                       )}
                     </div>
@@ -1951,9 +2001,27 @@ export default function EventDetailPage() {
         event={event}
         onStatusChange={(reminded) => setIsReminded(reminded)}
       />
+
+      {/* Invite Friends & Tribes Modal */}
+      <InviteFriendsModal
+        isOpen={inviteFriendsOpen}
+        onClose={() => { setInviteFriendsOpen(false); setInviteTargetMeetup(null); }}
+        event={event}
+        meetup={inviteTargetMeetup}
+        onOpenSocialShare={() => setSocialModalOpen(true)}
+      />
+
+      {/* Squad / Group Outing Chat Modal */}
+      <SquadChatModal
+        isOpen={squadChatOpen}
+        onClose={() => { setSquadChatOpen(false); setActiveSquadChat(null); }}
+        meetup={activeSquadChat}
+        event={event}
+      />
     </>
   );
 }
+
 
 function InfoRow({ icon: Icon, label, value }) {
   return (

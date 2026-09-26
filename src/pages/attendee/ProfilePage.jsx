@@ -3,20 +3,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
   User, Shield, CreditCard, Bell, Camera, Save, Lock, Mail, Phone, MapPin,
-  Calendar, FileText, Check, Smartphone, Plus, Trash2, Eye, EyeOff, Sparkles, Tag,
+  Calendar, FileText, Check, Smartphone, Plus, Trash2, Eye, EyeOff, Sparkles, Tag, Users,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import {
   getProfile, updateProfile, updatePassword, uploadAvatar,
 } from '@/api/users';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
+import TribesAndInvitesTab from '@/components/common/TribesAndInvitesTab';
 
 const TABS = [
   { value: 'personal', label: 'Personal Info', icon: User },
+  { value: 'tribes', label: 'My Tribe & Invites', icon: Users },
   { value: 'security', label: 'Security', icon: Shield },
   { value: 'payments', label: 'Payment Methods', icon: CreditCard },
   { value: 'notifications', label: 'Notifications', icon: Bell },
 ];
+
 
 const containerStagger = {
   hidden: { opacity: 0 },
@@ -174,9 +177,11 @@ export default function ProfilePage() {
           transition={{ duration: 0.2 }}
         >
           {tab === 'personal' && <PersonalInfoTab profile={profile} setProfile={setProfile} />}
+          {tab === 'tribes' && <TribesAndInvitesTab />}
           {tab === 'security' && <SecurityTab profile={profile} />}
           {tab === 'payments' && <PaymentMethodsTab profile={profile} />}
           {tab === 'notifications' && <NotificationSettingsTab profile={profile} setProfile={setProfile} />}
+
         </motion.div>
       </AnimatePresence>
     </motion.div>

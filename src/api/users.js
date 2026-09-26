@@ -38,3 +38,11 @@ export const createReview = (data) => api.post('/users/reviews', data);
 export const getReviews = (params) => api.get('/users/reviews', { params });
 export const deleteReview = (id) => api.delete(`/users/reviews/${id}`);
 
+// Friends & Tribes (Social)
+export const getFriendsList = () => api.get('/users/friends/list');
+export const searchFriends = (q) => api.get('/users/friends/search', { params: { q } });
+export const checkUserFollow = (userId) => api.get(`/users/friends/${userId}/status`);
+export const followUser = (userId) => api.post(`/users/friends/${userId}/follow`);
+export const unfollowUser = (userId) => api.delete(`/users/friends/${userId}/follow`);
+
+

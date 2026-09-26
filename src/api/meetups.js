@@ -9,3 +9,16 @@ export const getMyMeetups = (params) => api.get('/meetups/mine', { params });
 export const getEventAttendees = (eventId) => api.get(`/meetups/event/${eventId}/attendees`);
 export const getEventDiscussions = (eventId) => api.get(`/meetups/event/${eventId}/discussions`);
 export const postEventDiscussion = (eventId, data) => api.post(`/meetups/event/${eventId}/discussions`, data);
+
+// Friends Attending ("5 of your friends are attending this event")
+export const getFriendsAttending = (eventId) => api.get(`/meetups/event/${eventId}/friends-attending`);
+
+// Event Invites
+export const inviteFriendsToEvent = (eventId, data) => api.post(`/meetups/event/${eventId}/invite`, data);
+export const getMyEventInvites = () => api.get('/meetups/invites/mine');
+export const respondToEventInvite = (inviteId, status) => api.put(`/meetups/invites/${inviteId}/respond`, { status });
+
+// Squad / Group Outing Chat
+export const getMeetupMessages = (meetupId) => api.get(`/meetups/${meetupId}/messages`);
+export const postMeetupMessage = (meetupId, message) => api.post(`/meetups/${meetupId}/messages`, { message });
+
