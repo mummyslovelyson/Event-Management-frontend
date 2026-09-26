@@ -307,10 +307,61 @@ const StepTickets = () => {
       uploadedTickets: [],
     });
 
+  const populateGhanaianStandardTiers = () => {
+    setValue('ticketTypes', [
+      {
+        name: 'Regular Ticket',
+        price: 100,
+        quantity: 200,
+        section_type: 'General',
+        description: 'Standard admission pass with full event and venue access.',
+        saleStartDate: '',
+        saleEndDate: '',
+        uploadedTickets: [],
+      },
+      {
+        name: 'VIP Ticket',
+        price: 250,
+        quantity: 80,
+        section_type: 'VIP',
+        description: 'Express queue entry, designated VIP lounge access, and complimentary welcome drink.',
+        saleStartDate: '',
+        saleEndDate: '',
+        uploadedTickets: [],
+      },
+      {
+        name: 'VVIP Ticket',
+        price: 500,
+        quantity: 25,
+        section_type: 'VVIP',
+        description: 'Front-row seating, dedicated concierge, priority backstage pass, and luxury hospitality.',
+        saleStartDate: '',
+        saleEndDate: '',
+        uploadedTickets: [],
+      },
+    ], { shouldValidate: true, shouldDirty: true });
+    toast.success('Loaded standard tiers: Regular GHS 100, VIP GHS 250, VVIP GHS 500');
+  };
+
   return (
     <div className="space-y-4">
+      {/* 1-Click Ghanaian Standard Tiers Preset */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-[#1C232B] to-[#1C232B] border border-amber-500/25">
+        <div>
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-400">Ghanaian Market Standard</div>
+          <p className="text-xs text-[#949599] mt-0.5">Quickly load the standard admission tier matrix</p>
+        </div>
+        <button
+          type="button"
+          onClick={populateGhanaianStandardTiers}
+          className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-amber-400/15 hover:bg-amber-400/25 text-amber-300 text-xs font-semibold border border-amber-400/30 transition shadow-sm"
+        >
+          ⚡ Load Standard Tiers (Regular GHS 100 &bull; VIP GHS 250 &bull; VVIP GHS 500)
+        </button>
+      </div>
+
       {fields.length === 0 && (
-        <div className="text-center py-8 text-sm text-[#949599]">No ticket types added yet. Click below to add one.</div>
+        <div className="text-center py-8 text-sm text-[#949599]">No ticket types added yet. Click above or below to add tickets.</div>
       )}
       <AnimatePresence>
         {fields.map((f, i) => {

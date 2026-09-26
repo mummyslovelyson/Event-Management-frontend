@@ -35,9 +35,27 @@ import InteractiveSeatMap from '@/components/events/InteractiveSeatMap';
 const TABS = ['Overview', 'Tickets', 'Seating & VIP Sections', 'Squads & Group Outings', 'Community & Attendees', 'FAQs'];
 
 const PAYMENT_METHODS = [
-  { id: 'paystack', label: 'Paystack', icon: ShieldCheck },
-  { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone },
-  { id: 'card', label: 'Card', icon: CreditCard },
+  {
+    id: 'paystack',
+    label: 'Paystack Multi-Channel',
+    sub: 'Ghana Mobile Money, Bank Cards & USSD',
+    badges: ['MoMo', 'Cards', 'Instant'],
+    icon: ShieldCheck,
+  },
+  {
+    id: 'mobile_money',
+    label: 'Mobile Money (Prompt to Phone)',
+    sub: 'MTN Mobile Money, Telecel Cash, AT Money',
+    badges: ['MTN MoMo', 'Telecel Cash', 'AT Money'],
+    icon: Smartphone,
+  },
+  {
+    id: 'card',
+    label: 'Debit / Credit Card',
+    sub: 'Visa, Mastercard with 3D Secure verification',
+    badges: ['Visa', 'Mastercard'],
+    icon: CreditCard,
+  },
 ];
 
 function EventCardSkeleton() {
@@ -1693,32 +1711,47 @@ export default function EventDetailPage() {
 
             {/* Payment method */}
             <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2 block">Payment Method</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2 block">Payment Method (Ghana)</label>
               <div className="space-y-2">
-                {PAYMENT_METHODS.map((m) => (
-                  <motion.label
-                    key={m.id}
-                    whileTap={{ scale: 0.99 }}
-                    animate={{ scale: paymentMethod === m.id ? [1, 1.02, 1] : 1 }}
-                    transition={{ duration: 0.25 }}
-                    className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                      paymentMethod === m.id
-                        ? 'border-white/20 bg-white/10'
-                        : 'border-[#494F55]/40 hover:border-[#494F55]'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment"
-                      value={m.id}
-                      checked={paymentMethod === m.id}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="w-4 h-4 text-white focus:ring-white/30 focus:ring-offset-0"
-                    />
-                    <m.icon className="w-5 h-5 text-[#494F55]" />
-                    <span className="text-sm text-[#EFEFF1]">{m.label}</span>
-                  </motion.label>
-                ))}
+                {PAYMENT_METHODS.map((m) => {
+                  const isSelected = paymentMethod === m.id;
+                  return (
+                    <motion.label
+                      key={m.id}
+                      whileTap={{ scale: 0.99 }}
+                      animate={{ scale: isSelected ? [1, 1.01, 1] : 1 }}
+                      transition={{ duration: 0.2 }}
+                      className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                        isSelected
+                          ? 'border-amber-400/60 bg-amber-400/10 shadow-sm'
+                          : 'border-[#494F55]/40 hover:border-[#494F55] bg-[#171A1D]/60'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="payment"
+                        value={m.id}
+                        checked={isSelected}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="w-4 h-4 mt-0.5 text-amber-400 focus:ring-amber-400/30 focus:ring-offset-0"
+                      />
+                      <m.icon className={`w-5 h-5 mt-0.5 shrink-0 ${isSelected ? 'text-amber-400' : 'text-[#949599]'}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`text-sm font-semibold ${isSelected ? 'text-white' : 'text-[#EFEFF1]'}`}>{m.label}</span>
+                          <div className="flex items-center gap-1 shrink-0">
+                            {m.badges?.map((b) => (
+                              <span key={b} className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white font-medium">
+                                {b}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        {m.sub && <p className="text-xs text-[#949599] mt-0.5">{m.sub}</p>}
+                      </div>
+                    </motion.label>
+                  );
+                })}
               </div>
             </div>
 
