@@ -23,11 +23,12 @@ import { useCurrency } from '@/context/CurrencyContext';
 import Badge from '@/components/common/Badge';
 
 const TABS = [
-  { value: 'all', label: 'All Tickets' },
   { value: 'upcoming', label: 'Upcoming' },
   { value: 'past', label: 'Past' },
-  { value: 'reminders', label: 'Event Reminders' },
+  { value: 'transferred', label: 'Transferred' },
   { value: 'cancelled', label: 'Cancelled' },
+  { value: 'all', label: 'All Tickets' },
+  { value: 'reminders', label: 'Event Reminders' },
 ];
 
 // The tickets API returns flat snake_case columns (event_title, event_venue,
@@ -86,10 +87,12 @@ export default function MyTicketsPage() {
   const { format } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [tickets, setTickets] = useState([]);
-  const [tab, setTab] = useState('all');
+  const [tab, setTab] = useState('upcoming');
   const [search, setSearch] = useState('');
   const [transferTarget, setTransferTarget] = useState(null);
+  const [transferName, setTransferName] = useState('');
   const [transferEmail, setTransferEmail] = useState('');
+  const [transferPhone, setTransferPhone] = useState('');
   const [transferring, setTransferring] = useState(false);
   const [printTicket, setPrintTicket] = useState(null);
   const [shareTicket, setShareTicket] = useState(null);
@@ -177,8 +180,9 @@ export default function MyTicketsPage() {
       const status = (t.status || '').toLowerCase();
       const matchesTab =
         tab === 'all' ? true
-        : tab === 'upcoming' ? (eventDate ? new Date(eventDate) >= now : false) && status !== 'cancelled'
-        : tab === 'past' ? (eventDate ? new Date(eventDate) < now : false) && status !== 'cancelled'
+        : tab === 'upcoming' ? (eventDate ? new Date(eventDate) >= now : true) && status !== 'cancelled' && status !== 'transferred' && status !== 'used'
+        : tab === 'past' ? ((eventDate ? new Date(eventDate) < now : false) || status === 'used') && status !== 'cancelled' && status !== 'transferred'
+        : tab === 'transferred' ? status === 'transferred'
         : tab === 'cancelled' ? status === 'cancelled' || status === 'void'
         : true;
       if (!matchesTab) return false;
@@ -188,24 +192,39 @@ export default function MyTicketsPage() {
         (t.event?.title || t.eventName || '').toLowerCase().includes(q) ||
         (t.event?.venue || t.venue || '').toLowerCase().includes(q) ||
         (t.ticketType || t.type || '').toLowerCase().includes(q) ||
-        (t.ticketNumber || t.id || '').toString().toLowerCase().includes(q)
+        (t.ticketNumber || t.id || '').toString().toLowerCase().includes(q) ||
+        (t.attendeeName || '').toLowerCase().includes(q)
       );
     });
   }, [tickets, tab, search]);
 
   const handleTransfer = async () => {
     if (!transferTarget) return;
-    if (!transferEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(transferEmail)) {
+    if (!transferName.trim()) {
+      toast.error('Recipient name is required');
+      return;
+    }
+    if (!transferEmail.trim() && !transferPhone.trim()) {
+      toast.error('Please enter recipient email or phone number');
+      return;
+    }
+    if (transferEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(transferEmail.trim())) {
       toast.error('Please enter a valid email address');
       return;
     }
     setTransferring(true);
     try {
-      await transferTicket(transferTarget.id, { recipientEmail: transferEmail.trim() });
-      toast.success(`Ticket transfer initiated to ${transferEmail}`);
+      const res = await transferTicket(transferTarget.id, {
+        recipientName: transferName.trim(),
+        recipientEmail: transferEmail.trim() || undefined,
+        recipientPhone: transferPhone.trim() || undefined,
+      });
+      toast.success(res.data?.message || `Ticket transferred to ${transferName}! Original QR code invalidated.`);
       setTickets((prev) => prev.map((t) => (t.id === transferTarget.id ? { ...t, status: 'transferred' } : t)));
       setTransferTarget(null);
+      setTransferName('');
       setTransferEmail('');
+      setTransferPhone('');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to transfer ticket');
     } finally {
@@ -566,51 +585,107 @@ export default function MyTicketsPage() {
         )}
       </Modal>
 
-      {/* Transfer modal */}
+      {/* Transfer modal (Kwame Blueprint Sec. 7) */}
       <Modal
         open={!!transferTarget}
-        onClose={() => { setTransferTarget(null); setTransferEmail(''); }}
-        title="Transfer Ticket"
+        onClose={() => {
+          setTransferTarget(null);
+          setTransferName('');
+          setTransferEmail('');
+          setTransferPhone('');
+        }}
+        title="Transfer Ticket Ownership"
         footer={
           <>
             <button
-              onClick={() => { setTransferTarget(null); setTransferEmail(''); }}
+              onClick={() => {
+                setTransferTarget(null);
+                setTransferName('');
+                setTransferEmail('');
+                setTransferPhone('');
+              }}
               className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
             >
               Cancel
             </button>
             <button
               onClick={handleTransfer}
-              disabled={transferring}
-              className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition"
+              disabled={transferring || !transferName.trim() || (!transferEmail.trim() && !transferPhone.trim())}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] disabled:opacity-50 transition shadow-md"
             >
               <Send className="w-4 h-4" />
-              {transferring ? 'Sending...' : 'Transfer Ticket'}
+              {transferring ? 'Transferring...' : 'Confirm & Transfer Ticket'}
             </button>
           </>
         }
       >
         {transferTarget && (
           <div className="space-y-4">
-            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-3">
-              <p className="text-sm font-semibold text-[#EFEFF1]">{transferTarget.event?.title || transferTarget.eventName}</p>
-              <p className="text-xs text-[#949599] mt-0.5">
-                {transferTarget.ticketType || transferTarget.type} • #{(transferTarget.ticketNumber || transferTarget.id).toString().slice(-8).toUpperCase()}
+            {/* User Quote Context */}
+            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs">
+              <p className="italic text-amber-300 font-medium">"I can't attend the event anymore."</p>
+              <p className="text-[#949599] mt-1">
+                Transfer ticket ownership to a friend, colleague, or attendee.
               </p>
             </div>
+
+            {/* Target Ticket Card Info */}
+            <div className="rounded-xl bg-[#1C232B] border border-[#262B2F] p-3.5 space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">Selected Pass</span>
+              <p className="text-sm font-bold text-white">{transferTarget.event?.title || transferTarget.eventName}</p>
+              <p className="text-xs text-[#949599]">
+                {transferTarget.ticketType || transferTarget.type} • ID: <span className="font-mono text-white">#{transferTarget.ticketNumber || transferTarget.id}</span>
+              </p>
+            </div>
+
+            {/* Recipient Full Name */}
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-2">
-                Recipient Email
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">
+                Recipient Full Name (New Ticket Holder) *
               </label>
               <input
-                type="email"
-                value={transferEmail}
-                onChange={(e) => setTransferEmail(e.target.value)}
-                placeholder="Enter recipient email"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+                type="text"
+                required
+                value={transferName}
+                onChange={(e) => setTransferName(e.target.value)}
+                placeholder="e.g. John Doe"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
               />
-              <p className="text-xs text-[#494F55] mt-2">
-                The recipient will receive an email to accept this ticket transfer.
+            </div>
+
+            {/* Recipient Email & Phone Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">
+                  Recipient Email *
+                </label>
+                <input
+                  type="email"
+                  value={transferEmail}
+                  onChange={(e) => setTransferEmail(e.target.value)}
+                  placeholder="recipient@example.com"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">
+                  Recipient Phone (MoMo / SMS)
+                </label>
+                <input
+                  type="tel"
+                  value={transferPhone}
+                  onChange={(e) => setTransferPhone(e.target.value)}
+                  placeholder="024XXXXXXX"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+                />
+              </div>
+            </div>
+
+            {/* Anti-Fraud Notice */}
+            <div className="p-3 rounded-xl bg-[#171A1D] border border-rose-500/25 flex items-start gap-2.5 text-xs text-[#949599]">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <p>
+                <strong className="text-white">Anti-Fraud Protection:</strong> Your current QR code will become <span className="text-rose-400 font-semibold">invalid</span> immediately. A brand new ticket pass with a fresh QR code will be generated exclusively for the recipient.
               </p>
             </div>
           </div>
@@ -790,59 +865,95 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
           {/* Left: details */}
           <div className="flex-1 min-w-0 space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-white">
-                {ticket.ticketType || ticket.type || 'General'}
+              <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300 bg-amber-400/15 px-2.5 py-0.5 rounded-full border border-amber-400/30">
+                {ticket.ticketType || ticket.type || 'Standard Admission'}
               </span>
               {(ticket.price !== undefined && ticket.price !== null && Number(ticket.price) > 0) && (
-                <span className="text-[11px] font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
+                <span className="text-[11px] font-bold text-white bg-white/10 px-2 py-0.5 rounded">
                   GHS {Number(ticket.price).toFixed(2).replace(/\.00$/, '')}
                 </span>
               )}
             </div>
+
+            {/* Event Name */}
             <h3
               onClick={onViewEvent}
-              className="text-base font-bold text-[#EFEFF1] line-clamp-2 hover:text-white cursor-pointer transition flex items-center gap-1.5"
+              className="text-lg font-black text-white uppercase tracking-tight line-clamp-2 hover:text-amber-300 cursor-pointer transition flex items-center gap-1.5"
               title="Click to view event details"
             >
-              <span>{event.title || ticket.eventName || 'Event'}</span>
+              <span>{event.title || ticket.eventName || 'Event Pass'}</span>
               <Info className="w-3.5 h-3.5 text-[#949599] shrink-0 hover:text-white" />
             </h3>
-            <div className="space-y-1.5 text-sm">
-              <p className="text-[#949599] flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-[#494F55] shrink-0" />
+
+            {/* Ticket Holder & ID */}
+            <div className="space-y-1 py-1">
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-[#949599]">Ticket Holder:</span>
+                <span className="font-semibold text-white">{ticket.attendeeName || 'Registered Attendee'}</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-[#949599]">Ticket ID:</span>
+                <span className="font-mono font-bold text-amber-400 tracking-wider">
+                  {ticket.ticketNumber || ticketNumber}
+                </span>
+              </div>
+            </div>
+
+            {/* Date & Venue */}
+            <div className="space-y-1.5 text-xs pt-2 border-t border-[#494F55]/20">
+              <p className="text-white flex items-center gap-1.5 font-medium">
+                <Calendar className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                 <span className="truncate">
-                  {eventDate ? new Date(eventDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'TBA'}
+                  {eventDate ? new Date(eventDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Date TBA'}
+                  {event.startTime ? ` • ${event.startTime}` : ''}
                 </span>
               </p>
-              <p className="text-[#949599] flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-[#494F55] shrink-0" />
-                <span className="truncate">{event.venue || ticket.venue || 'Venue TBA'}</span>
+              <p className="text-[#CBD5E1] flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                <span className="truncate">{event.venue || ticket.venue || 'Accra, Ghana'}</span>
               </p>
               {seat && (
-                <p className="text-[#949599] flex items-center gap-1.5">
-                  <Armchair className="w-4 h-4 text-[#494F55] shrink-0" />
+                <p className="text-amber-300 flex items-center gap-1.5">
+                  <Armchair className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   <span className="truncate">Seat: {seat}</span>
                 </p>
               )}
             </div>
-            <div className="pt-2">
-              <p className="text-[10px] uppercase tracking-wider text-[#494F55]">Ticket No.</p>
-              <p className="text-sm font-mono font-semibold text-[#EFEFF1]">#{ticketNumber.slice(-8).toUpperCase()}</p>
-            </div>
           </div>
 
-          {/* Right: QR code */}
-          <div className="shrink-0 flex sm:flex-col items-center justify-between sm:justify-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#262B2F]">
+          {/* Right: QR Code & Status */}
+          <div className="shrink-0 flex sm:flex-col items-center justify-between sm:justify-center gap-2.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#262B2F]">
             <motion.div
-              whileHover={{ scale: 1.08 }}
+              whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 400, damping: 18 }}
-              className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-white p-2 flex items-center justify-center ring-1 ring-transparent hover:ring-white/40 transition-shadow"
+              className={`p-2.5 rounded-xl flex items-center justify-center transition-all ${
+                isCancelled || status === 'transferred'
+                  ? 'bg-zinc-800 border border-zinc-700 opacity-60'
+                  : 'bg-white shadow-md border-2 border-white'
+              }`}
             >
-              <QRCodeSVG value={qrValue} size={88} level="M" includeMargin={false} />
+              <QRCodeSVG
+                value={ticket.qrCode || qrValue}
+                size={96}
+                level="M"
+                includeMargin={false}
+              />
             </motion.div>
-            <p className="text-[10px] text-[#949599] flex items-center gap-1">
-              <QrCode className="w-3 h-3" /> Scan at entry
-            </p>
+            <div className="text-center">
+              <span
+                className={`inline-block text-[11px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full ${
+                  status === 'valid' || status === 'active'
+                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                    : status === 'used' || status === 'checked_in'
+                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                    : status === 'transferred'
+                    ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                    : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                }`}
+              >
+                {status === 'active' ? 'VALID' : status.toUpperCase()}
+              </span>
+            </div>
           </div>
         </div>
 

@@ -53,9 +53,58 @@ const playSound = (type = 'success') => {
 };
 
 const scanResultState = (type) => {
-  if (type === 'success') return { icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', label: 'Checked In Successfully' };
-  if (type === 'used') return { icon: AlertTriangle, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30', label: 'Ticket Already Used' };
-  return { icon: XCircle, color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/30', label: 'Invalid / Unrecognized Ticket' };
+  if (type === 'success' || type === 'valid') {
+    return {
+      icon: CheckCircle2,
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-500/10',
+      border: 'border-emerald-500/40',
+      label: '✅ Valid Ticket — Entry Approved',
+    };
+  }
+  if (type === 'used' || type === 'already_used') {
+    return {
+      icon: AlertTriangle,
+      color: 'text-amber-400',
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/40',
+      label: '❌ Ticket Already Used',
+    };
+  }
+  if (type === 'transferred') {
+    return {
+      icon: XCircle,
+      color: 'text-rose-400',
+      bg: 'bg-rose-500/10',
+      border: 'border-rose-500/40',
+      label: '❌ Ticket Transferred — Old QR Code Invalidated',
+    };
+  }
+  if (type === 'cancelled') {
+    return {
+      icon: XCircle,
+      color: 'text-red-400',
+      bg: 'bg-red-500/10',
+      border: 'border-red-500/40',
+      label: '❌ Ticket Cancelled — Entry Denied',
+    };
+  }
+  if (type === 'unpaid') {
+    return {
+      icon: AlertTriangle,
+      color: 'text-amber-400',
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/40',
+      label: '❌ Payment Unconfirmed — Admission Denied',
+    };
+  }
+  return {
+    icon: XCircle,
+    color: 'text-red-400',
+    bg: 'bg-red-500/10',
+    border: 'border-red-500/40',
+    label: '❌ Invalid / Unrecognized Ticket',
+  };
 };
 
 const normalizeCheckInAttendee = (a) => {
@@ -199,29 +248,39 @@ export default function CheckInPage() {
     try {
       const res = await verifyTicket(encodeURIComponent(cleanCode));
       const ticket = res.data?.ticket || res.data;
+      const vStatus = res.data?.status || ticket?.status;
 
       if (!ticket || !ticket.id) {
         throw new Error('Ticket not found');
       }
 
-      const isAlreadyCheckedIn = Boolean(
-        ticket.checkedIn ||
-        ticket.checkInStatus === 'checked_in' ||
-        ticket.checked_in ||
-        ticket.status === 'used' ||
-        ticket.checkedInAt ||
-        ticket.checked_in_at
-      );
-
-      if (isAlreadyCheckedIn) {
+      // 1. Check if already scanned / used
+      if (vStatus === 'used' || ticket.status === 'used' || ticket.checkedIn) {
         setScanResult({ type: 'used', ticket });
         if (soundEnabled) playSound('error');
-        toast.error('Ticket already checked in');
+        toast.error('❌ Ticket Already Used');
+      } else if (vStatus === 'transferred' || ticket.status === 'transferred') {
+        // 2. Check if transferred (old QR code invalidated)
+        setScanResult({ type: 'transferred', ticket });
+        if (soundEnabled) playSound('error');
+        toast.error('❌ Ticket Transferred — Old QR Code Invalidated');
+      } else if (vStatus === 'cancelled' || ticket.status === 'cancelled') {
+        // 3. Check if cancelled
+        setScanResult({ type: 'cancelled', ticket });
+        if (soundEnabled) playSound('error');
+        toast.error('❌ Ticket Cancelled — Entry Denied');
+      } else if (vStatus === 'unpaid') {
+        // 4. Check if payment unconfirmed
+        setScanResult({ type: 'unpaid', ticket });
+        if (soundEnabled) playSound('error');
+        toast.error('❌ Payment Unconfirmed — Admission Denied');
       } else {
-        await checkIn(ticket.id || ticket.ticketId, { eventId: selectedEvent, method: 'qr' });
-        setScanResult({ type: 'success', ticket });
+        // 5. Valid Ticket — Entry Approved
+        const checkInRes = await checkIn(ticket.id || ticket.ticketId, { eventId: selectedEvent, method: 'qr' });
+        const confirmedTicket = checkInRes.data?.ticket || ticket;
+        setScanResult({ type: 'success', ticket: confirmedTicket });
         if (soundEnabled) playSound('success');
-        toast.success(`${ticket.attendeeName || ticket.name || 'Attendee'} checked in!`);
+        toast.success(`✅ Valid Ticket — Entry Approved (${ticket.attendeeName || 'Attendee'})`);
         setLog((l) => [
           {
             name: ticket.attendeeName || ticket.name || 'Attendee',
@@ -235,9 +294,14 @@ export default function CheckInPage() {
         fetchAttendees();
       }
     } catch (err) {
-      setScanResult({ type: 'invalid', ticket: null });
+      const msg = err.response?.data?.message || 'Invalid or unrecognized ticket';
+      const errStatus = err.response?.data?.status;
+      setScanResult({
+        type: errStatus === 'used' ? 'used' : errStatus === 'transferred' ? 'transferred' : errStatus === 'cancelled' ? 'cancelled' : 'invalid',
+        ticket: null,
+      });
       if (soundEnabled) playSound('error');
-      toast.error(err.response?.data?.message || 'Invalid or unrecognized ticket');
+      toast.error(msg);
     } finally {
       setScanning(false);
       setQrInput('');
