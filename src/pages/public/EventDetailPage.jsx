@@ -161,6 +161,21 @@ export default function EventDetailPage() {
   const [couponLoading, setCouponLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('paystack');
   const [placingOrder, setPlacingOrder] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({
+    name: '',
+    email: '',
+    phone: '',
+  });
+
+  useEffect(() => {
+    if (currentUser) {
+      setCustomerInfo({
+        name: currentUser.name || '',
+        email: currentUser.email || '',
+        phone: currentUser.phone || '',
+      });
+    }
+  }, [currentUser]);
 
   // Resale marketplace state
   const [resaleListings, setResaleListings] = useState([]);
@@ -556,6 +571,16 @@ export default function EventDetailPage() {
       toast.error('Please select at least one ticket');
       return;
     }
+
+    if (!customerInfo.name.trim()) {
+      toast.error('Please enter the ticket holder full name');
+      return;
+    }
+    if (!customerInfo.email.trim() || !customerInfo.email.includes('@')) {
+      toast.error('Please enter a valid email for ticket delivery');
+      return;
+    }
+
     setPlacingOrder(true);
     try {
       const orderRes = await createOrder({
@@ -563,6 +588,9 @@ export default function EventDetailPage() {
         items: [{ ticketTypeId: purchaseModal.id, quantity: selectedQty }],
         couponCode: couponDiscount > 0 ? coupon : undefined,
         paymentMethod,
+        customerName: customerInfo.name.trim(),
+        customerEmail: customerInfo.email.trim(),
+        customerPhone: customerInfo.phone.trim(),
       });
       const order = orderRes.data?.data || orderRes.data;
       // createOrder already initialises the Paystack session server-side and
@@ -1594,6 +1622,47 @@ export default function EventDetailPage() {
                   >
                     <Plus className="w-4 h-4" />
                   </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Customer Information (Kwame Blueprint Sec. 4) */}
+            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4 space-y-3">
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#949599] flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-rose-400" /> Customer Information
+              </label>
+              <div>
+                <label className="block text-[11px] text-[#949599] mb-1">Full Name (Ticket Holder) *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Kwame Mensah"
+                  value={customerInfo.name}
+                  onChange={(e) => setCustomerInfo((c) => ({ ...c, name: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/50 transition"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] text-[#949599] mb-1">Email (Ticket Delivery) *</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="kwame@example.com"
+                    value={customerInfo.email}
+                    onChange={(e) => setCustomerInfo((c) => ({ ...c, email: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/50 transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-[#949599] mb-1">Mobile Money / Phone *</label>
+                  <input
+                    type="tel"
+                    placeholder="024XXXXXXX"
+                    value={customerInfo.phone}
+                    onChange={(e) => setCustomerInfo((c) => ({ ...c, phone: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/50 transition"
+                  />
                 </div>
               </div>
             </div>
