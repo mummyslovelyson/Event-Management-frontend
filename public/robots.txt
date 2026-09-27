@@ -1,0 +1,13 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /events
+Allow: /explore
+Allow: /login
+Allow: /register
+Disallow: /admin/
+Disallow: /organizer/
+Disallow: /attendee/
+Disallow: /checkout/
+
+Sitemap: https://tribesandcliqs.com/sitemap.xml

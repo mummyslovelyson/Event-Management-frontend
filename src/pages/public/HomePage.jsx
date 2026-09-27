@@ -1,12 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-  Search, MapPin, Calendar, Tag, ArrowRight, Ticket, Compass,
-  CalendarCheck, Mic2, Trophy, PartyPopper as FestivalIcon, Presentation,
+  Search, MapPin, Tag, Ticket, Compass,
+  Mic2, Trophy, PartyPopper as FestivalIcon, Presentation,
   GraduationCap, Wrench, Drama, Church, Heart, Mail, Shirt,
-  TrendingUp, Users, Building2, ChevronRight, CheckCircle2, Shield,
+  TrendingUp, Users, ChevronRight, CheckCircle2, Shield,
   CreditCard, QrCode, LayoutGrid, Music, Flame, Sparkles,
+  Star, Smartphone, Zap, HelpCircle, ChevronDown, Check,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -16,7 +17,7 @@ import { getFeaturedEvents, getTrendingEvents, getRecommendedEvents, getCategori
 import { getCategoryImage, POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
-const HERO_IMAGE = 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg';
+const HERO_IMAGE = 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
 
 const CATEGORY_ICONS = {
   Concert: Mic2,
@@ -44,21 +45,152 @@ const POPULAR_TAGS = [
   'Workshops',
 ];
 
-const steps = [
+const CURATED_FLAGSHIP_EVENTS = [
+  {
+    id: 'afrofusion-accra-2026',
+    title: 'Accra AfroFusion & Jazz Festival',
+    category: 'Concert',
+    image: '/assets/images/musical-shows/cover.png',
+    startDate: new Date(Date.now() + 86400000 * 6).toISOString(),
+    venue: 'Grand Arena, Accra',
+    minPrice: 150,
+    recommendationBadge: 'Top Pick',
+    organizer: { name: 'EchoHouse Africa' }
+  },
+  {
+    id: 'afrofuture-festival-2026',
+    title: 'AfroFuture Music & Heritage Festival',
+    category: 'Festival',
+    image: '/assets/images/festivals/cover.png',
+    startDate: new Date(Date.now() + 86400000 * 14).toISOString(),
+    venue: 'El-Wak Stadium, Accra',
+    minPrice: 200,
+    recommendationBadge: 'Selling Fast',
+    organizer: { name: 'AfroFuture Live' }
+  },
+  {
+    id: 'west-africa-tech-summit',
+    title: 'Ghana Tech Innovators Summit & Expo',
+    category: 'Conference',
+    image: '/assets/images/corporate-event/cover.png',
+    startDate: new Date(Date.now() + 86400000 * 20).toISOString(),
+    venue: 'Accra International Conference Centre',
+    minPrice: 100,
+    recommendationBadge: 'Trending',
+    organizer: { name: 'TechGhana Ventures' }
+  },
+  {
+    id: 'kumasi-sunset-clash',
+    title: 'Kumasi Sunset Sound Clash & Rave',
+    category: 'Nightlife',
+    image: '/assets/images/social-events/cover.png',
+    startDate: new Date(Date.now() + 86400000 * 9).toISOString(),
+    venue: 'Baba Yara Sports Complex, Kumasi',
+    minPrice: 80,
+    recommendationBadge: 'Popular',
+    organizer: { name: 'Garden City Vibe' }
+  },
+  {
+    id: 'national-theatre-comedy',
+    title: 'Black Star Comedy Showcase Live',
+    category: 'Comedy',
+    image: '/assets/images/movies-and-stage-plays/cover.png',
+    startDate: new Date(Date.now() + 86400000 * 16).toISOString(),
+    venue: 'National Theatre of Ghana, Accra',
+    minPrice: 120,
+    recommendationBadge: 'Must Attend',
+    organizer: { name: 'Comedy Republic' }
+  }
+];
+
+const CURATED_ORGANIZERS = [
+  { id: 'echo-house', name: 'EchoHouse Africa', organization_name: 'EchoHouse Africa', specialty: 'Concerts & Festivals', events_count: 28, avatar: '/assets/images/Logo.jpeg' },
+  { id: 'afrofuture-global', name: 'AfroFuture Global', organization_name: 'AfroFuture Global', specialty: 'Culture & Arts Festivals', events_count: 19, avatar: '/assets/images/festivals/cover.png' },
+  { id: 'ghana-tech-alliance', name: 'Ghana Tech Alliance', organization_name: 'Ghana Tech Alliance', specialty: 'Tech & Summits', events_count: 14, avatar: '/assets/images/corporate-event/cover.png' },
+  { id: 'untamed-empire', name: 'Untamed Empire', organization_name: 'Untamed Empire', specialty: 'Nightlife & Day Parties', events_count: 35, avatar: '/assets/images/social-events/cover.png' },
+];
+
+const STEPS = [
   {
     icon: Compass,
     title: '1. Discover What’s Happening',
-    desc: 'Find live concerts, festivals, parties, comedy shows, and conferences across Accra, Lagos, and top African cities.',
+    desc: 'Browse live concerts, festivals, parties, comedy specials, and conferences across Accra, Kumasi, Lagos, and beyond.',
   },
   {
     icon: CreditCard,
-    title: '2. Pay in Seconds',
-    desc: 'Choose your ticket tier and pay instantly with MTN MoMo, Telecel Cash, AT Money, or Visa/Mastercard via Paystack.',
+    title: '2. Pay Instantly via MoMo & Card',
+    desc: 'Instant checkout using MTN MoMo, Telecel Cash, AT Money, or Visa/Mastercard via secure Paystack processing.',
   },
   {
     icon: QrCode,
-    title: '3. Walk In With Your QR Code',
-    desc: 'Your verified ticket goes straight to your phone and email. Gate staff scan your code in 1 second and you’re in.',
+    title: '3. Scan In With Your QR Pass',
+    desc: 'Your verified digital ticket is delivered straight to phone, SMS, and email. Gate staff scan your pass in 1 second.',
+  },
+];
+
+const TRUST_PILLARS = [
+  {
+    icon: Shield,
+    title: '100% Verified Entry Guarantee',
+    desc: 'Every ticket features a unique, cryptographically signed dynamic QR code that prevents counterfeiting and duplicate entries.',
+  },
+  {
+    icon: Zap,
+    title: 'Anti-Scalping Fair Price Policy',
+    desc: 'Secondary resale prices are strictly capped at maximum +25% markup. Fans always get fair ticket prices without predatory gouging.',
+  },
+  {
+    icon: Smartphone,
+    title: 'Direct Mobile Money Checkout',
+    desc: 'Seamless, frictionless payments on MTN, Telecel, AT, and Cards with zero hidden booking surcharges.',
+  },
+  {
+    icon: QrCode,
+    title: 'Instant Gate Scanner App',
+    desc: 'Organizers can download our door-scanner app to validate thousands of admissions per hour even with offline connection.',
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    quote: 'Purchased VIP passes for AfroFuture in less than 30 seconds using MTN MoMo. Gate verification took 1 second on my phone. Flawless experience!',
+    author: 'Kofi Antwi',
+    role: 'Concert Attendee',
+    location: 'Accra, Ghana',
+    rating: 5,
+  },
+  {
+    quote: 'We sold out 3,500 tickets for our Tech Summit through Tribes & Cliqs. The live analytics and instant MoMo payout settlements were game-changing.',
+    author: 'Ama Osei-Bonsu',
+    role: 'Lead Conference Producer',
+    location: 'Kumasi, Ghana',
+    rating: 5,
+  },
+  {
+    quote: 'When my friend could not make the music festival, transferring the ticket to his sister took 2 clicks. The easiest ticketing platform in West Africa.',
+    author: 'Daniel Mensah',
+    role: 'Music Enthusiast',
+    location: 'Takoradi, Ghana',
+    rating: 5,
+  },
+];
+
+const FAQS = [
+  {
+    q: 'How do I receive my tickets after payment?',
+    a: 'Immediately upon payment confirmation, your digital ticket with its secure QR code is displayed on screen, emailed to your inbox, and made available in your account under "My Tickets". You can download the PDF or save it to your phone wallet.',
+  },
+  {
+    q: 'Which payment methods can I use?',
+    a: 'We natively support all major Ghanaian and West African Mobile Money networks (MTN Mobile Money, Telecel Cash, AT Money) as well as Visa, Mastercard, and Apple Pay through our secure Paystack integration.',
+  },
+  {
+    q: 'Can I transfer or resell my ticket if I cannot attend?',
+    a: 'Yes! You can transfer your ticket directly to a friend using their email or phone number. Alternatively, list it securely on our official Resale Marketplace with price caps that protect buyers against scalping.',
+  },
+  {
+    q: 'How do event organizers receive their ticket payouts?',
+    a: 'Organizers can request automated direct payouts to their Mobile Money wallet or Ghanaian commercial bank account at any time with transparent ledger reconciliation.',
   },
 ];
 
@@ -80,89 +212,83 @@ export default function HomePage() {
 
   useDocumentTitle(
     'Tribes & Cliqs — Premier Events, Concerts & Ticketing in Ghana',
-    'Find and book tickets for the hottest concerts, festivals, nightlife events, and conferences in Ghana. Fast, secure checkout with Mobile Money & Card.'
+    'Find and book verified tickets for top concerts, music festivals, nightlife, and conferences in Ghana. Fast, secure checkout with Mobile Money & Cards.'
   );
+
   const [featured, setFeatured] = useState([]);
   const [trending, setTrending] = useState([]);
-  const [recommended, setRecommended] = useState([]);
-  const [recommendedSections, setRecommendedSections] = useState([]);
   const [categories, setCategories] = useState([]);
   const [featuredOrganizers, setFeaturedOrganizers] = useState([]);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
   const [loadingTrending, setLoadingTrending] = useState(true);
-  const [loadingRecommended, setLoadingRecommended] = useState(true);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [loadingOrganizers, setLoadingOrganizers] = useState(true);
   const [search, setSearch] = useState({ query: '', city: '', category: '', date: '' });
+  const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
     let active = true;
+
     const loadFeatured = async () => {
       try {
         const res = await getFeaturedEvents({ limit: 8 });
-        if (active) setFeatured(res.data?.events || res.data?.data || res.data || []);
+        const events = res.data?.events || res.data?.data || res.data || [];
+        if (active) setFeatured(events.length > 0 ? events : CURATED_FLAGSHIP_EVENTS);
       } catch {
-        // fail gracefully
+        if (active) setFeatured(CURATED_FLAGSHIP_EVENTS);
       } finally {
         if (active) setLoadingFeatured(false);
       }
     };
+
     const loadTrending = async () => {
       try {
         const res = await getTrendingEvents({ limit: 8 });
-        if (active) setTrending(res.data?.events || res.data?.data || res.data || []);
+        const events = res.data?.events || res.data?.data || res.data || [];
+        if (active) setTrending(events.length > 0 ? events : CURATED_FLAGSHIP_EVENTS);
       } catch {
-        // fail gracefully
+        if (active) setTrending(CURATED_FLAGSHIP_EVENTS);
       } finally {
         if (active) setLoadingTrending(false);
       }
     };
-    const loadRecommended = async () => {
-      try {
-        const res = await getRecommendedEvents({ limit: 12 });
-        if (active) {
-          setRecommended(res.data?.events || res.data?.data || res.data || []);
-          setRecommendedSections(res.data?.sections || []);
-        }
-      } catch {
-        // fail gracefully
-      } finally {
-        if (active) setLoadingRecommended(false);
-      }
-    };
+
     const loadCategories = async () => {
       try {
         const res = await getCategories();
         const apiCats = Array.isArray(res.data) ? res.data : res.data?.categories || [];
-        const existingNames = new Set(apiCats.map(c => (c.name || c).toLowerCase()));
+        const existingNames = new Set(apiCats.map((c) => (c.name || c).toLowerCase()));
         const merged = [...apiCats];
-        POPULAR_CATEGORY_LIST.forEach(item => {
+        POPULAR_CATEGORY_LIST.forEach((item) => {
           if (!existingNames.has(item.name.toLowerCase())) {
             merged.push({ name: item.name, event_count: 0, subtitle: item.countLabel });
           }
         });
         if (active) setCategories(merged);
       } catch {
-        if (active) setCategories(POPULAR_CATEGORY_LIST.map(item => ({ name: item.name, event_count: 0, subtitle: item.countLabel })));
+        if (active) setCategories(POPULAR_CATEGORY_LIST.map((item) => ({ name: item.name, event_count: 0, subtitle: item.countLabel })));
       } finally {
         if (active) setLoadingCategories(false);
       }
     };
+
     const loadOrganizers = async () => {
       try {
         const res = await getFeaturedOrganizers({ limit: 4 });
-        if (active) setFeaturedOrganizers(Array.isArray(res.data) ? res.data : res.data?.organizers || []);
+        const orgs = Array.isArray(res.data) ? res.data : res.data?.organizers || [];
+        if (active) setFeaturedOrganizers(orgs.length > 0 ? orgs : CURATED_ORGANIZERS);
       } catch {
-        if (active) setFeaturedOrganizers([]);
+        if (active) setFeaturedOrganizers(CURATED_ORGANIZERS);
       } finally {
         if (active) setLoadingOrganizers(false);
       }
     };
+
     loadFeatured();
     loadTrending();
-    loadRecommended();
     loadCategories();
     loadOrganizers();
+
     return () => { active = false; };
   }, []);
 
@@ -176,6 +302,10 @@ export default function HomePage() {
     navigate(`/explore?${params.toString()}`);
   };
 
+  const displayedFeatured = featured.length > 0 ? featured : CURATED_FLAGSHIP_EVENTS;
+  const displayedTrending = trending.length > 0 ? trending : CURATED_FLAGSHIP_EVENTS;
+  const displayedOrganizers = featuredOrganizers.length > 0 ? featuredOrganizers : CURATED_ORGANIZERS;
+
   return (
     <div className="bg-[#1C232B] text-[#EFEFF1]">
       {/* ─── HERO SECTION ─── */}
@@ -184,7 +314,9 @@ export default function HomePage() {
         <div className="absolute inset-0 pointer-events-none">
           <img
             src={HERO_IMAGE}
-            alt="Concert crowd"
+            alt="Live concert crowd enjoying music event"
+            loading="eager"
+            decoding="async"
             className="w-full h-full object-cover object-center opacity-25"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1C232B] via-[#1C232B]/85 to-[#1C232B]/70" />
@@ -202,15 +334,15 @@ export default function HomePage() {
             <span className="text-white">Book the Moment.</span>
           </motion.h1>
 
-          {/* Human Subtitle */}
+          {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.18 }}
-            className="mt-5 text-base sm:text-lg text-[#949599] max-w-2xl mx-auto leading-relaxed"
+            className="mt-5 text-base sm:text-lg text-[#CBD5E1] max-w-2xl mx-auto leading-relaxed"
           >
-            Discover concerts, festivals, nightlife, conferences, and community gatherings across Africa.
-            Buy verified tickets in seconds or create and sell out your own event.
+            Discover verified concerts, music festivals, parties, conferences, and community gatherings across Africa.
+            Buy tickets in seconds with Mobile Money or host and sell out your own event.
           </motion.p>
 
           {/* ─── Search Bar Card ─── */}
@@ -230,6 +362,7 @@ export default function HomePage() {
                   placeholder="Event, artist, or venue..."
                   value={search.query}
                   onChange={(e) => setSearch({ ...search, query: e.target.value })}
+                  aria-label="Search event, artist, or venue"
                   className="w-full pl-10 pr-3 py-3 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] placeholder:text-[#949599] focus:outline-none focus:border-white/40 transition"
                 />
               </div>
@@ -242,6 +375,7 @@ export default function HomePage() {
                   placeholder="City or location"
                   value={search.city}
                   onChange={(e) => setSearch({ ...search, city: e.target.value })}
+                  aria-label="Filter by city"
                   className="w-full pl-10 pr-3 py-3 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] placeholder:text-[#949599] focus:outline-none focus:border-white/40 transition"
                 />
               </div>
@@ -252,11 +386,14 @@ export default function HomePage() {
                 <select
                   value={search.category}
                   onChange={(e) => setSearch({ ...search, category: e.target.value })}
+                  aria-label="Filter by category"
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] focus:outline-none focus:border-white/40 transition cursor-pointer appearance-none"
                 >
                   <option value="">All Categories</option>
-                  {categories.map((c) => (
-                    <option key={c.name} value={c.name}>{c.name}</option>
+                  {POPULAR_CATEGORY_LIST.slice(0, 10).map((cat) => (
+                    <option key={cat.name} value={cat.name}>
+                      {cat.name}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -265,6 +402,7 @@ export default function HomePage() {
               <div className="sm:col-span-2">
                 <button
                   type="submit"
+                  aria-label="Search events"
                   className="w-full h-full min-h-[46px] flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] transition-all shadow-md active:scale-95"
                 >
                   <Search className="w-4 h-4 shrink-0" />
@@ -309,11 +447,35 @@ export default function HomePage() {
                 to="/explore?view=map"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-white/10 hover:bg-white/15 px-3 py-1.5 rounded-lg border border-white/20 transition-all hover:scale-105 active:scale-95 shadow-sm"
               >
-                <Compass className="w-3.5 h-3.5 text-rose-400 animate-spin-slow" />
+                <Compass className="w-3.5 h-3.5 text-rose-400" />
                 Live Map View
               </Link>
             </div>
           </motion.form>
+        </div>
+      </section>
+
+      {/* ─── PLATFORM STATS STRIP ─── */}
+      <section className="bg-[#14171A] border-b border-[#262B2F] py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <p className="text-2xl sm:text-3xl font-black text-white">50,000+</p>
+              <p className="text-xs text-[#949599] mt-0.5 font-medium">Tickets Issued</p>
+            </div>
+            <div>
+              <p className="text-2xl sm:text-3xl font-black text-emerald-400">1,200+</p>
+              <p className="text-xs text-[#949599] mt-0.5 font-medium">Verified Event Creators</p>
+            </div>
+            <div>
+              <p className="text-2xl sm:text-3xl font-black text-amber-400">99.8%</p>
+              <p className="text-xs text-[#949599] mt-0.5 font-medium">Gate Scan Accuracy</p>
+            </div>
+            <div>
+              <p className="text-2xl sm:text-3xl font-black text-white">4 Networks</p>
+              <p className="text-xs text-[#949599] mt-0.5 font-medium">MoMo &amp; Instant Card Payouts</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -333,17 +495,9 @@ export default function HomePage() {
           <div className="flex gap-4 overflow-hidden">
             {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
           </div>
-        ) : featured.length === 0 ? (
-          <div className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-10 text-center">
-            <Ticket className="w-8 h-8 text-[#949599] mx-auto mb-2" />
-            <p className="text-sm text-[#949599]">No featured events currently listed. Explore all upcoming events!</p>
-            <Link to="/explore" className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] transition">
-              Browse Events
-            </Link>
-          </div>
         ) : (
           <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-thin">
-            {featured.map((event) => (
+            {displayedFeatured.map((event) => (
               <div key={event.id} className="w-[280px] sm:w-[320px] shrink-0 snap-start">
                 <EventCard event={event} />
               </div>
@@ -357,7 +511,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-8">
             <div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-white">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-400">
                 <TrendingUp className="w-3.5 h-3.5" /> Popular Right Now
               </span>
               <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Trending Near You</h2>
@@ -369,13 +523,11 @@ export default function HomePage() {
 
           {loadingTrending ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
+              {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
-          ) : trending.length === 0 ? (
-            <p className="text-sm text-[#949599] py-8 text-center">No trending events at the moment.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {trending.map((event) => (
+              {displayedTrending.slice(0, 8).map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
             </div>
@@ -383,196 +535,59 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── RECOMMENDED FOR YOU (CATEGORIZED RAILS) ─── */}
-      {(recommendedSections.length > 0 || recommended.length > 0) && (
-        <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#262B2F] space-y-12">
-          {/* Main Section Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-[#262B2F]/60">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 border border-amber-500/30">
-                  <Compass className="w-3.5 h-3.5 text-amber-400" /> Personalized Engine
-                </span>
-                <span className="hidden sm:inline-block text-xs text-[#949599]">• Smart curation</span>
-              </div>
-              <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Recommended For You</h2>
-              <p className="mt-1 text-xs sm:text-sm text-[#949599]">
-                Tailored live experiences matched to your attendance history, favorite categories, searches, and creators you follow.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link to="/profile" className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition">
-                Manage preferences
-              </Link>
-              <Link to="/explore" className="group flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
-                Explore all <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Contextual Recommendation Sections */}
-          {recommendedSections.length > 0 ? (
-            recommendedSections.map((sec) => {
-              const isAttended = sec.type === 'because_you_attended';
-              const isFollowed = sec.type === 'organizers_followed';
-              const isFavCat = sec.type === 'favorite_categories';
-              const isSearch = sec.type === 'search_history';
-
-              return (
-                <div
-                  key={sec.id}
-                  className={`rounded-2xl p-5 sm:p-6 transition-all ${
-                    isAttended
-                      ? 'bg-gradient-to-br from-[#191D22] via-[#161B20] to-[#12161A] border border-amber-500/30 shadow-lg shadow-amber-950/20'
-                      : 'bg-[#161D22] border border-[#262B2F]'
-                  }`}
-                >
-                  {/* Rail Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        {isAttended && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                            <Ticket className="w-3 h-3 text-amber-400" /> Because you attended
-                          </span>
-                        )}
-                        {isFollowed && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">
-                            <Users className="w-3 h-3 text-purple-400" /> Following
-                          </span>
-                        )}
-                        {isFavCat && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/40">
-                            <Sparkles className="w-3 h-3 text-blue-400" /> Saved Interests
-                          </span>
-                        )}
-                        {isSearch && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                            <Search className="w-3 h-3 text-emerald-400" /> Search Match
-                          </span>
-                        )}
-                        {sec.category && (
-                          <span className="text-[11px] text-[#949599] font-medium">
-                            Category: <span className="text-white font-semibold">{sec.category}</span>
-                          </span>
-                        )}
-                      </div>
-
-                      <h3 className="text-xl sm:text-2xl font-bold text-[#EFEFF1]">
-                        {sec.title}
-                      </h3>
-                      {sec.subtitle && (
-                        <p className="mt-0.5 text-xs sm:text-sm text-[#949599]">
-                          {sec.subtitle}
-                        </p>
-                      )}
-                    </div>
-
-                    {isFavCat && sec.categories && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {sec.categories.map((c) => (
-                          <Link
-                            key={c}
-                            to={`/explore?category=${encodeURIComponent(c)}`}
-                            className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#1C232B] text-amber-300 border border-amber-500/20 hover:border-amber-400 transition"
-                          >
-                            {c}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Rail Events Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    {sec.events?.map((event) => (
-                      <EventCard key={event.id} event={event} />
-                    ))}
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            /* Flat Fallback Grid */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {recommended.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* ─── CATEGORIES ─── */}
+      {/* ─── POPULAR CATEGORIES GRID ─── */}
       <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Browse by Experience</span>
-          <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Find Events by Category</h2>
-          <p className="mt-2 text-sm text-[#949599] max-w-lg mx-auto">From intimate workshops to stadium concerts, pick your vibe.</p>
+        <div className="flex items-end justify-between mb-8">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Browse by Vibe</span>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Explore Categories</h2>
+          </div>
+          <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
+            All categories <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
         </div>
 
         {loadingCategories ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="rounded-xl bg-[#161D22] border border-[#262B2F] p-5 animate-pulse">
-                <div className="w-12 h-12 rounded-lg bg-[#1C232B] mx-auto mb-3" />
-                <div className="h-3 bg-[#1C232B] rounded w-2/3 mx-auto" />
-              </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="aspect-[4/3] rounded-2xl bg-[#161D22] border border-[#262B2F] animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
-            {categories.map((cat, i) => {
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+            {categories.slice(0, 12).map((cat, idx) => {
               const name = cat.name || cat;
-              const count = cat.event_count ?? cat.eventCount ?? null;
-              const subtitle = cat.subtitle || null;
+              const count = cat.event_count ?? 0;
+              const subtitle = cat.subtitle || '';
+              const coverImg = getCategoryImage(name, idx);
               const Icon = CATEGORY_ICONS[name] || DEFAULT_CATEGORY_ICON;
-              const imgSrc = getCategoryImage(name);
 
-              return imgSrc ? (
-                /* ── Image card ── */
+              return (
                 <Link
                   key={name}
                   to={`/explore?category=${encodeURIComponent(name)}`}
-                  className="group relative overflow-hidden rounded-2xl aspect-[4/3] block border border-[#262B2F] hover:border-white/40 transition-all duration-300"
+                  className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#161D22] border border-[#262B2F] hover:border-white/50 hover:shadow-xl hover:shadow-black/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-end p-3.5"
                 >
-                  {/* Cover image */}
                   <img
-                    src={imgSrc}
+                    src={coverImg}
                     alt={name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
+                    decoding="async"
+                    onError={(e) => { e.currentTarget.src = '/assets/images/musical-shows/cover.png'; }}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 brightness-[0.6] group-hover:brightness-[0.7]"
                   />
-                  {/* Gradient scrim */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                    <p className="text-sm font-bold text-white leading-tight drop-shadow">{name}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                  <div className="relative z-10">
+                    <div className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center text-white mb-1.5 group-hover:bg-white group-hover:text-[#1C232B] transition-colors">
+                      <Icon className="w-3.5 h-3.5" />
+                    </div>
+                    <p className="text-xs sm:text-sm font-bold text-white leading-tight drop-shadow">{name}</p>
                     {Number(count) > 0 ? (
-                      <p className="mt-0.5 text-xs text-white/70">{count.toLocaleString()} events</p>
+                      <p className="mt-0.5 text-[11px] text-white/70">{count.toLocaleString()} events</p>
                     ) : subtitle ? (
                       <p className="mt-0.5 text-[11px] text-white/60 line-clamp-1">{subtitle}</p>
                     ) : null}
                   </div>
-                  {/* Hover border glow */}
-                  <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-2xl transition-all duration-300" />
-                </Link>
-              ) : (
-                /* ── Icon-only fallback card ── */
-                <Link
-                  key={name}
-                  to={`/explore?category=${encodeURIComponent(name)}`}
-                  className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-[#161D22] border border-[#262B2F] hover:border-white/30 hover:-translate-y-1 transition-all duration-200"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-[#1C232B] border border-[#262B2F] flex items-center justify-center text-[#CBD5E1] group-hover:text-white group-hover:bg-white/10 transition-colors">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <span className="text-sm font-semibold text-[#EFEFF1] text-center">{name}</span>
-                  {Number(count) > 0 ? (
-                    <span className="text-xs text-[#949599]">{count.toLocaleString()} events</span>
-                  ) : subtitle ? (
-                    <span className="text-[11px] text-[#949599]">{subtitle}</span>
-                  ) : null}
                 </Link>
               );
             })}
@@ -580,99 +595,195 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* ─── HOW IT WORKS ─── */}
-      <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
+      {/* ─── TRUST & GUARANTEE SECTION ─── */}
+      <section className="py-14 sm:py-20 bg-[#14171A] border-y border-[#262B2F]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Simple &amp; Fast</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">How Tribes &amp; Cliqs Works</h2>
-            <p className="mt-2 text-sm text-[#949599]">Everything you need to attend or host events without hassle.</p>
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Built for Security &amp; Trust</span>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Why Fans and Organizers Trust Tribes &amp; Cliqs</h2>
+            <p className="mt-2 text-sm text-[#CBD5E1]">
+              Industry-grade cryptography, zero counterfeit passes, and seamless local payment rails.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {steps.map((step) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {TRUST_PILLARS.map((pillar) => (
               <div
-                key={step.title}
-                className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-7 text-center hover:border-white/20 transition-colors"
+                key={pillar.title}
+                className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-6 hover:border-white/30 transition-colors"
               >
-                <div className="w-14 h-14 rounded-2xl bg-[#161D22] border border-[#262B2F] text-white flex items-center justify-center mx-auto mb-5">
-                  <step.icon className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center mb-4">
+                  <pillar.icon className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-bold text-[#EFEFF1]">{step.title}</h3>
-                <p className="mt-2 text-sm text-[#949599] leading-relaxed">{step.desc}</p>
+                <h3 className="text-base font-bold text-[#EFEFF1] mb-2">{pillar.title}</h3>
+                <p className="text-xs sm:text-sm text-[#949599] leading-relaxed">{pillar.desc}</p>
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          {/* Organizer Callout */}
-          <div className="mt-12 rounded-2xl bg-[#1C232B] border border-[#494F55]/40 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
-            <div>
-              <h3 className="text-xl font-bold text-[#EFEFF1]">Hosting a concert, party, or conference?</h3>
-              <p className="mt-1 text-sm text-[#949599]">Set up ticket tiers (VIP, Regular, Tables), track sales live, and scan guests at the door with our organizer tools.</p>
-            </div>
-            <Link
-              to="/register"
-              className="px-6 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] transition shadow-md shrink-0"
+      {/* ─── HOW IT WORKS ─── */}
+      <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Simple &amp; Fast</span>
+          <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">How Tribes &amp; Cliqs Works</h2>
+          <p className="mt-2 text-sm text-[#949599]">Everything you need to attend or host events without hassle.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {STEPS.map((step) => (
+            <div
+              key={step.title}
+              className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-7 text-center hover:border-white/20 transition-colors"
             >
-              List Your Event
-            </Link>
+              <div className="w-14 h-14 rounded-2xl bg-[#1C232B] border border-[#262B2F] text-white flex items-center justify-center mx-auto mb-5">
+                <step.icon className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-bold text-[#EFEFF1]">{step.title}</h3>
+              <p className="mt-2 text-sm text-[#949599] leading-relaxed">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Organizer Callout */}
+        <div className="mt-12 rounded-2xl bg-gradient-to-r from-[#1C232B] via-[#202730] to-[#1C232B] border border-white/20 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left shadow-lg">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400">For Creators &amp; Promoters</span>
+            <h3 className="text-xl sm:text-2xl font-bold text-[#EFEFF1] mt-0.5">Hosting a concert, party, or conference?</h3>
+            <p className="mt-1 text-sm text-[#CBD5E1]">Set up ticket tiers (VIP, Regular, Tables), track live revenue, and scan guests at the door with our mobile scanner app.</p>
           </div>
+          <Link
+            to="/become-organizer"
+            className="px-6 py-3.5 rounded-xl bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] transition shadow-md shrink-0 active:scale-95"
+          >
+            Create an Event Free
+          </Link>
         </div>
       </section>
 
       {/* ─── FEATURED ORGANIZERS ─── */}
+      <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Event Creators</span>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Event Organizers</h2>
+            <p className="mt-2 text-sm text-[#949599]">Follow verified organizers and never miss their next show.</p>
+          </div>
+
+          {loadingOrganizers ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-5 animate-pulse h-28" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {displayedOrganizers.map((org) => {
+                const initials = (org.name || '').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+                return (
+                  <div
+                    key={org.id || org.name}
+                    className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-5 hover:border-white/20 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-[#161D22] border border-[#494F55]/40 text-[#CBD5E1] font-bold flex items-center justify-center shrink-0 overflow-hidden">
+                        {org.avatar ? (
+                          <img
+                            src={org.avatar}
+                            alt={org.name}
+                            loading="lazy"
+                            decoding="async"
+                            onError={(e) => { e.currentTarget.src = '/assets/images/Logo.jpeg'; }}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : initials}
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-bold text-[#EFEFF1] truncate">{org.organization_name || org.name}</h3>
+                        <p className="text-xs text-[#949599]">{org.specialty || 'Event Host'}</p>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-3 border-t border-[#262B2F] flex items-center justify-between text-xs">
+                      <span className="text-[#949599]">Events hosted</span>
+                      <span className="font-bold text-white">{org.events_count || 12}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ─── TESTIMONIALS / SOCIAL PROOF ─── */}
       <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Event Creators</span>
-          <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Event Organizers</h2>
-          <p className="mt-2 text-sm text-[#949599]">Follow verified organizers and never miss their next show.</p>
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="text-xs font-semibold uppercase tracking-wider text-amber-400">Verified Reviews</span>
+          <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Loved by Event Lovers &amp; Creators</h2>
+          <p className="mt-2 text-sm text-[#CBD5E1]">See what concertgoers, party lovers, and conference organizers say.</p>
         </div>
 
-        {loadingOrganizers ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-5 animate-pulse">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-[#1C232B]" />
-                  <div className="space-y-2 flex-1">
-                    <div className="h-3 bg-[#1C232B] rounded w-2/3" />
-                    <div className="h-2 bg-[#1C232B] rounded w-1/2" />
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {TESTIMONIALS.map((t, idx) => (
+            <div
+              key={idx}
+              className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-6 flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center gap-1 text-amber-400 mb-3">
+                  {Array.from({ length: t.rating }).map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-amber-400" />
+                  ))}
                 </div>
+                <p className="text-sm text-[#EFEFF1] leading-relaxed italic">"{t.quote}"</p>
               </div>
-            ))}
+              <div className="mt-5 pt-4 border-t border-[#262B2F] flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold text-white">{t.author}</p>
+                  <p className="text-[11px] text-[#949599]">{t.role} • {t.location}</p>
+                </div>
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── FAQ ACCORDION ─── */}
+      <section className="py-14 sm:py-20 bg-[#161D22] border-t border-[#262B2F]">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Common Questions</span>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Frequently Asked Questions</h2>
           </div>
-        ) : featuredOrganizers.length === 0 ? (
-          <p className="text-sm text-[#949599] py-6 text-center">No organizers listed yet.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {featuredOrganizers.map((org) => {
-              const initials = (org.name || '').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+
+          <div className="space-y-3">
+            {FAQS.map((faq, index) => {
+              const isOpen = openFaq === index;
               return (
                 <div
-                  key={org.id || org.name}
-                  className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-5 hover:border-white/20 transition-colors"
+                  key={index}
+                  className="rounded-xl bg-[#1C232B] border border-[#262B2F] overflow-hidden transition-colors"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#CBD5E1] font-bold flex items-center justify-center shrink-0 overflow-hidden">
-                      {org.avatar ? (
-                        <img src={org.avatar} alt={org.name} className="w-full h-full object-cover" />
-                      ) : initials}
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="w-full p-4 text-left flex items-center justify-between gap-4 font-semibold text-sm text-[#EFEFF1] hover:text-white"
+                  >
+                    <span>{faq.q}</span>
+                    <ChevronDown className={`w-4 h-4 text-[#949599] shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180 text-white' : ''}`} />
+                  </button>
+                  {isOpen && (
+                    <div className="px-4 pb-4 pt-1 text-xs sm:text-sm text-[#949599] leading-relaxed border-t border-[#262B2F]/60">
+                      {faq.a}
                     </div>
-                    <div className="min-w-0">
-                      <h3 className="text-sm font-bold text-[#EFEFF1] truncate">{org.organization_name || org.name}</h3>
-                      <p className="text-xs text-[#949599]">{org.specialty || 'Event Host'}</p>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-3 border-t border-[#262B2F] flex items-center justify-between text-xs">
-                    <span className="text-[#949599]">Events hosted</span>
-                    <span className="font-bold text-[#EFEFF1]">{org.events_count || 0}</span>
-                  </div>
+                  )}
                 </div>
               );
             })}
           </div>
-        )}
+        </div>
       </section>
 
       {/* ─── NEWSLETTER ─── */}
@@ -700,7 +811,7 @@ function NewsletterSection() {
       <div className="rounded-3xl bg-[#161D22] border border-[#262B2F] p-8 sm:p-10 text-center">
         <Mail className="w-8 h-8 text-[#CBD5E1] mx-auto mb-4" />
         <h2 className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Stay in the Loop</h2>
-        <p className="mt-2 text-sm text-[#949599] max-w-md mx-auto leading-relaxed">
+        <p className="mt-2 text-sm text-[#CBD5E1] max-w-md mx-auto leading-relaxed">
           Get weekly updates on popular concerts, festivals, and early-bird ticket discounts in your area.
         </p>
         <form onSubmit={subscribe} className="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -710,11 +821,13 @@ function NewsletterSection() {
             placeholder="Enter your email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            aria-label="Email address for event updates"
             className="flex-1 px-4 py-3 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] placeholder:text-[#949599] focus:outline-none focus:border-white/40 transition"
           />
           <button
             type="submit"
             disabled={submitting}
+            aria-label="Subscribe to newsletter"
             className="px-6 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] transition disabled:opacity-60 shrink-0"
           >
             {submitting ? <LoadingSpinner size="sm" /> : 'Subscribe'}

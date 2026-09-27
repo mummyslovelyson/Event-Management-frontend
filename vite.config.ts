@@ -15,20 +15,38 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  optimizeDeps: {
-    exclude: ['lucide-react'],
-  },
   build: {
-    chunkSizeWarningLimit: 1500,
+    target: 'es2020',
+    cssCodeSplit: true,
+    sourcemap: false,
+    minify: 'esbuild',
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'icons': ['lucide-react'],
-          'charts': ['recharts'],
-          'utils': ['axios', 'framer-motion', 'react-hook-form', 'react-hot-toast', 'qrcode.react'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react/') || id.includes('react-dom') || id.includes('react-router-dom')) {
+              return 'vendor-react';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+            if (id.includes('framer-motion')) {
+              return 'vendor-motion';
+            }
+            if (id.includes('recharts') || id.includes('d3-')) {
+              return 'vendor-charts';
+            }
+            if (id.includes('axios') || id.includes('react-hot-toast') || id.includes('qrcode.react') || id.includes('react-hook-form')) {
+              return 'vendor-utils';
+            }
+          }
         },
       },
     },
+  },
+  esbuild: {
+    legalComments: 'none',
+    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
   },
 });

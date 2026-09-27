@@ -14,12 +14,16 @@
     <meta name="author" content="Tribes &amp; Cliqs" />
     <meta name="robots" content="index, follow" />
 
+    <link rel="canonical" href="https://tribesandcliqs.com" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Tribes &amp; Cliqs" />
     <meta property="og:title" content="Tribes &amp; Cliqs — Discover Events &amp; Book Tickets" />
     <meta property="og:description" content="Discover the best events, concerts, parties, and conferences. Secure instant tickets with Mobile Money and Card." />
     <meta property="og:image" content="/assets/images/Logo.jpeg" />
+    <meta property="og:url" content="https://tribesandcliqs.com" />
+    <meta property="og:locale" content="en_GH" />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -28,9 +32,49 @@
     <meta name="twitter:description" content="Discover the hottest events in Ghana. Fast, seamless booking with MoMo &amp; Cards." />
     <meta name="twitter:image" content="/assets/images/Logo.jpeg" />
 
+    <!-- Non-render-blocking Google Fonts with preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    </noscript>
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://tribesandcliqs.com/#organization",
+          "name": "Tribes & Cliqs",
+          "url": "https://tribesandcliqs.com",
+          "logo": "https://tribesandcliqs.com/assets/images/Logo.jpeg",
+          "description": "Ghana's premier self-ticketing and live event discovery platform.",
+          "sameAs": [
+            "https://twitter.com/TribesAndCliqs",
+            "https://instagram.com/TribesAndCliqs",
+            "https://facebook.com/TribesAndCliqs"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://tribesandcliqs.com/#website",
+          "url": "https://tribesandcliqs.com",
+          "name": "Tribes & Cliqs",
+          "description": "Discover live events, music festivals, conferences, and buy tickets securely with Mobile Money.",
+          "publisher": { "@id": "https://tribesandcliqs.com/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://tribesandcliqs.com/explore?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

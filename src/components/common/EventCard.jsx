@@ -76,7 +76,16 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
           className="flex gap-3 p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/40 transition group"
         >
           <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-[#1C232B]">
-            {img && <img src={img} alt={event.title} className="w-full h-full object-cover" />}
+            {img && (
+              <img
+                src={img}
+                alt={event.title}
+                loading="lazy"
+                decoding="async"
+                onError={(e) => { e.currentTarget.src = '/assets/images/musical-shows/cover.png'; }}
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
           <div className="min-w-0 flex-1">
             <span className="text-[10px] font-semibold uppercase tracking-wide text-white">{event.category}</span>
@@ -104,6 +113,9 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
                 <img
                   src={img}
                   alt={event.title}
+                  loading="lazy"
+                  decoding="async"
+                  onError={(e) => { e.currentTarget.src = '/assets/images/musical-shows/cover.png'; }}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               ) : (
@@ -133,6 +145,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
                   <button
                     onClick={handleReminder}
                     disabled={reminderLoading}
+                    aria-label={`Set reminder for ${event.title}`}
                     className={`p-2 rounded-full backdrop-blur-sm transition ${
                       reminded ? 'bg-amber-500/30 text-amber-400' : 'bg-[#1C232B] text-[#949599] hover:text-white'
                     }`}
@@ -142,6 +155,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
                   </button>
                   <button
                     onClick={handleShareClick}
+                    aria-label={`Share ${event.title}`}
                     className="p-2 rounded-full bg-[#1C232B] text-[#949599] hover:text-white transition"
                     title="Share"
                   >
@@ -150,6 +164,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
                   <button
                     onClick={handleFav}
                     disabled={loading}
+                    aria-label={`Save ${event.title} to favorites`}
                     className="p-2 rounded-full bg-[#1C232B] text-[#949599] hover:text-white transition"
                     title="Favorite"
                   >
@@ -197,6 +212,9 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
               <img
                 src={img}
                 alt={event.title}
+                loading="lazy"
+                decoding="async"
+                onError={(e) => { e.currentTarget.src = '/assets/images/musical-shows/cover.png'; }}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             ) : (
