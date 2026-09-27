@@ -455,29 +455,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── PLATFORM STATS STRIP ─── */}
-      <section className="bg-[#14171A] border-b border-[#262B2F] py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-              <p className="text-2xl sm:text-3xl font-black text-white">50,000+</p>
-              <p className="text-xs text-[#949599] mt-0.5 font-medium">Tickets Issued</p>
-            </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-black text-emerald-400">1,200+</p>
-              <p className="text-xs text-[#949599] mt-0.5 font-medium">Verified Event Creators</p>
-            </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-black text-amber-400">99.8%</p>
-              <p className="text-xs text-[#949599] mt-0.5 font-medium">Gate Scan Accuracy</p>
-            </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-black text-white">4 Networks</p>
-              <p className="text-xs text-[#949599] mt-0.5 font-medium">MoMo &amp; Instant Card Payouts</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ─── FEATURED EVENTS ─── */}
       <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
