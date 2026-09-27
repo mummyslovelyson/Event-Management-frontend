@@ -400,7 +400,7 @@ export default function VerifyEmailPage() {
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder="e.g. +233 24 123 4567"
+                        placeholder="+233 24 123 4567"
                         className="bg-transparent text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none flex-1"
                         autoFocus
                       />

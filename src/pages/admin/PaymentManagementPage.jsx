@@ -758,7 +758,7 @@ export default function PaymentManagementPage() {
                 type="text"
                 value={payoutRef}
                 onChange={(e) => setPayoutRef(e.target.value)}
-                placeholder="e.g. TRX-982173 or Paystack Transfer ID"
+                placeholder="Transaction reference or Transfer ID"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-[#14181C] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40"
               />
             </div>
@@ -815,7 +815,7 @@ export default function PaymentManagementPage() {
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="e.g. Account name does not match Mobile Money registration..."
+              placeholder="Reason for rejecting withdrawal request..."
               rows={3}
               className="w-full px-3.5 py-2.5 rounded-xl bg-[#14181C] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40 resize-none"
             />
@@ -866,7 +866,7 @@ export default function PaymentManagementPage() {
               <textarea
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
-                placeholder="e.g. Event date rescheduled / customer cancellation request..."
+                placeholder="Reason for issuing refund..."
                 rows={3}
                 className="w-full px-3.5 py-2 rounded-xl bg-[#14181C] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40 resize-none"
               />

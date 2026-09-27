@@ -575,7 +575,7 @@ export default function SystemSettingsPage() {
                           type="tel"
                           value={testPhoneNum}
                           onChange={(e) => setTestPhoneNum(e.target.value)}
-                          placeholder="024XXXXXXX or +233XXXXXXXXX"
+                          placeholder="024 123 4567 or +233 24 123 4567"
                           className="flex-1 px-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50"
                         />
                         <button

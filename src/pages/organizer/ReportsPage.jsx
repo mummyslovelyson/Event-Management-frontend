@@ -255,11 +255,10 @@ export default function ReportsPage() {
                       style={{ width: `${Math.min(100, Math.max(6, ticketsSoldPct))}%` }}
                     />
                   </div>
-                  {/* Blueprint visual representation: ████████████████████ 4,215 */}
-                  <p className="mt-2 text-xs font-mono text-emerald-400 tracking-wider flex items-center gap-2 truncate">
-                    <span>{Array(Math.max(1, Math.min(22, Math.round((ticketsSoldPct || 10) / 4.5)))).fill('█').join('')}</span>
-                    <span className="text-white font-bold">{totalTicketsSold.toLocaleString()}</span>
-                  </p>
+                  <div className="mt-2 flex items-center justify-between text-xs text-[#949599]">
+                    <span>Capacity reached</span>
+                    <span className="text-white font-semibold">{ticketsSoldPct}%</span>
+                  </div>
                 </div>
               </div>
               <div className="mt-4 pt-4 border-t border-[#262B2F] grid grid-cols-2 gap-2 text-xs text-[#949599]">

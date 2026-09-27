@@ -762,7 +762,7 @@ export default function UserManagementPage() {
               type="text"
               value={createAdminData.name}
               onChange={(e) => setCreateAdminData((p) => ({ ...p, name: e.target.value }))}
-              placeholder="e.g. Operations Staff"
+              placeholder="Full name"
               className={inputCls}
               required
             />
@@ -773,7 +773,7 @@ export default function UserManagementPage() {
               type="email"
               value={createAdminData.email}
               onChange={(e) => setCreateAdminData((p) => ({ ...p, email: e.target.value }))}
-              placeholder="e.g. ops@tribesandcliqs.com"
+              placeholder="staff@tribesandcliqs.com"
               className={inputCls}
               required
             />
@@ -784,7 +784,7 @@ export default function UserManagementPage() {
               type="tel"
               value={createAdminData.phone}
               onChange={(e) => setCreateAdminData((p) => ({ ...p, phone: e.target.value }))}
-              placeholder="+233..."
+              placeholder="+233 24 123 4567"
               className={inputCls}
             />
           </div>

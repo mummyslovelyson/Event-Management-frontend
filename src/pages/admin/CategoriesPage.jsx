@@ -226,7 +226,7 @@ export default function CategoriesPage() {
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value, slug: slugify(e.target.value) }))}
-              placeholder="e.g. Music & Concerts"
+              placeholder="Category name"
               className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
             />
           </div>

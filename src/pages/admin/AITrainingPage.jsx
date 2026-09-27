@@ -483,7 +483,7 @@ export default function AITrainingPage() {
                 rows={6}
                 value={customInstructions}
                 onChange={(e) => setCustomInstructions(e.target.value)}
-                placeholder="e.g. Tone: Energetic, friendly, luxury hospitality guide. Provide concise answers with clear next steps. Always mention that doors open 1 hour before showtime..."
+                placeholder="Define bot tone, hospitality guidelines, ticket policy rules, and formatting preferences..."
                 className="w-full p-4 rounded-xl bg-[#1C232B] border border-[#2E363E] text-xs text-white placeholder-[#494F55] focus:outline-none focus:border-white/40 leading-relaxed"
               />
             </div>
@@ -539,7 +539,7 @@ export default function AITrainingPage() {
                   rows={3}
                   value={testQuery}
                   onChange={(e) => setTestQuery(e.target.value)}
-                  placeholder="e.g. Can I resell my ticket if I cannot make it?"
+                  placeholder="Type a test customer question here..."
                   className="w-full p-3 rounded-xl bg-[#1C232B] border border-[#2E363E] text-xs text-white placeholder-[#494F55] focus:outline-none focus:border-white/40"
                 />
               </div>
@@ -895,7 +895,7 @@ export default function AITrainingPage() {
               required
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="e.g. VIP Lounge Parking & Valet"
+              placeholder="Knowledge rule title"
               className="w-full px-3.5 py-2.5 rounded-xl bg-[#161D22] border border-[#2E363E] text-xs text-white placeholder-[#494F55] focus:outline-none focus:border-white/40"
             />
           </div>

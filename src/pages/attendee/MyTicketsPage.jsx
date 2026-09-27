@@ -657,7 +657,7 @@ export default function MyTicketsPage() {
         )}
       </motion.div>
 
-      {/* Sell ticket modal (Kwame Blueprint Sec. 10 - Ticket Resale Marketplace) */}
+      {/* Sell ticket modal - Ticket Resale Marketplace */}
       <Modal
         open={!!sellTarget}
         onClose={() => { setSellTarget(null); setSellPrice(''); }}
@@ -785,7 +785,7 @@ export default function MyTicketsPage() {
                 </div>
               )}
 
-              {/* Blueprint Rules Checklist */}
+              {/* Marketplace Rules Checklist */}
               <div className="p-3.5 rounded-xl bg-white/[0.02] border border-[#262B2F] space-y-2 text-[11px] text-[#949599]">
                 <p className="font-bold text-white uppercase tracking-wider text-[10px]">Marketplace Rules</p>
                 <div className="space-y-1">
@@ -808,7 +808,7 @@ export default function MyTicketsPage() {
         })()}
       </Modal>
 
-      {/* Transfer modal (Kwame Blueprint Sec. 7) */}
+      {/* Transfer modal */}
       <Modal
         open={!!transferTarget}
         onClose={() => {

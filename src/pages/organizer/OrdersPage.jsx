@@ -343,7 +343,7 @@ export default function OrdersPage() {
               <textarea
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
-                placeholder="e.g. Customer requested cancellation / emergency..."
+                placeholder="Reason for cancellation or refund..."
                 rows={3}
                 className="w-full px-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40 resize-none"
               />

@@ -321,15 +321,15 @@ export default function FavoritesPage() {
       {/* ──────────────── TAB 2: FOLLOWED ARTISTS ──────────────── */}
       {activeTab === 'artists' && (
         <div className="space-y-6">
-          {/* Blueprint Hero / Follow New Artist Banner */}
+          {/* Follow New Artist Banner */}
           <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20">
             <div className="max-w-2xl space-y-3">
               <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
                 <Sparkles className="w-4 h-4" /> Smart Artist Tracking
               </div>
-              <h3 className="text-xl font-bold text-[#EFEFF1]">Never miss your favorite artist in Accra</h3>
+              <h3 className="text-xl font-bold text-[#EFEFF1]">Never miss your favorite artists</h3>
               <p className="text-sm text-[#949599] leading-relaxed">
-                Follow artists like Sarkodie, Stonebwoy, or Black Sherif. When a new event featuring them is created or announced, you will get an instant notification: <span className="text-white italic font-medium">"Sarkodie has a new event in Accra."</span>
+                Follow your favorite artists and performers. You will receive instant alerts and early-access ticket notifications the moment they announce or publish a new event.
               </p>
 
               {/* Add Custom Artist Form */}
@@ -340,7 +340,7 @@ export default function FavoritesPage() {
                     type="text"
                     value={newArtistName}
                     onChange={(e) => setNewArtistName(e.target.value)}
-                    placeholder="Enter artist name (e.g. Sarkodie)..."
+                    placeholder="Search or enter artist name..."
                     className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#171A1D] border border-[#2E353B] text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-amber-400/60 transition"
                   />
                 </div>

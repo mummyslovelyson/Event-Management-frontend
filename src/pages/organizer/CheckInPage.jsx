@@ -529,7 +529,7 @@ export default function CheckInPage() {
         </div>
       </div>
 
-      {/* Admission by Ticket Tier (Kwame Blueprint Sec. 19) */}
+      {/* Admission by Ticket Tier */}
       {tierBreakdown.length > 0 && (
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
           <p className="text-xs font-semibold text-[#949599] uppercase tracking-wider mb-3">Admission by Ticket Tier</p>

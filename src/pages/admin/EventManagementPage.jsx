@@ -475,7 +475,7 @@ export default function EventManagementPage() {
         <textarea
           value={changesReason}
           onChange={(e) => setChangesReason(e.target.value)}
-          placeholder="e.g. Please provide a higher resolution flyer, clarify entry requirements, or update ticket tiers..."
+          placeholder="Describe the required updates or modifications needed before approval..."
           className="mt-3 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 resize-none"
           rows={4}
         />

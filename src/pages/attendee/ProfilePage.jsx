@@ -285,7 +285,7 @@ function PersonalInfoTab({ profile, setProfile }) {
             type="text"
             value={form.location}
             onChange={(e) => handleChange('location', e.target.value)}
-            placeholder="e.g. Accra, Ghana"
+            placeholder="City, Country"
             className={inputClass}
           />
         </Field>

@@ -1266,7 +1266,7 @@ export default function OrganizerApprovalsPage() {
                   type="text"
                   value={editForm.city}
                   onChange={(e) => setEditForm((f) => ({ ...f, city: e.target.value }))}
-                  placeholder="e.g. Accra, Lagos, London"
+                  placeholder="Operating city or region"
                   className={inputCls}
                 />
               </div>
@@ -1381,7 +1381,7 @@ export default function OrganizerApprovalsPage() {
                   rows={3}
                   value={suspendReason}
                   onChange={(e) => setSuspendReason(e.target.value)}
-                  placeholder="e.g. Terms violation, ticket disputes, or identity audit..."
+                  placeholder="Reason for suspension..."
                   className={`${inputCls} resize-none`}
                 />
               </div>
@@ -1424,7 +1424,7 @@ export default function OrganizerApprovalsPage() {
                 rows={3}
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
-                placeholder="e.g. Incomplete business documents, unverified contact, or ineligible event category..."
+                placeholder="Reason for application rejection..."
                 className={`${inputCls} resize-none`}
               />
             </div>

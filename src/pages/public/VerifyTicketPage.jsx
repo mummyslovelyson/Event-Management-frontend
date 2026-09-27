@@ -297,7 +297,7 @@ export default function VerifyTicketPage() {
                 type="text"
                 value={inputCode}
                 onChange={(e) => setInputCode(e.target.value)}
-                placeholder="Enter Ticket # (e.g. TC-00012345) or paste QR code..."
+                placeholder="Enter ticket number or paste QR code..."
                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-amber-400/50 transition font-mono"
               />
             </div>

@@ -1712,7 +1712,7 @@ export default function EventDetailPage() {
               type="text"
               value={meetupForm.title}
               onChange={(e) => setMeetupForm((f) => ({ ...f, title: e.target.value }))}
-              placeholder="e.g. Pre-show dinner at the Grand Arena"
+              placeholder="Pre-show dinner, after-party, or meet-up title"
               className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
             />
           </div>
@@ -1733,7 +1733,7 @@ export default function EventDetailPage() {
                 type="text"
                 value={meetupForm.meetingSpot}
                 onChange={(e) => setMeetupForm((f) => ({ ...f, meetingSpot: e.target.value }))}
-                placeholder="e.g. Main entrance, VIP lounge"
+                placeholder="Main entrance, lounge area, or landmark"
                 className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
               />
             </div>
@@ -1754,7 +1754,7 @@ export default function EventDetailPage() {
               min="1"
               value={meetupForm.maxMembers}
               onChange={(e) => setMeetupForm((f) => ({ ...f, maxMembers: e.target.value }))}
-              placeholder="e.g. 12"
+              placeholder="Capacity limit"
               className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
             />
           </div>
@@ -1805,7 +1805,7 @@ export default function EventDetailPage() {
               </div>
             </div>
 
-            {/* Customer Information (Kwame Blueprint Sec. 4) */}
+            {/* Customer Information */}
             <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4 space-y-3">
               <label className="text-xs font-semibold uppercase tracking-wider text-[#949599] flex items-center gap-1.5">
                 <User className="w-3.5 h-3.5 text-rose-400" /> Customer Information
@@ -1815,7 +1815,7 @@ export default function EventDetailPage() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Kwame Mensah"
+                  placeholder="Full name"
                   value={customerInfo.name}
                   onChange={(e) => setCustomerInfo((c) => ({ ...c, name: e.target.value }))}
                   className="w-full px-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/50 transition"

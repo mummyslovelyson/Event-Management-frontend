@@ -513,7 +513,7 @@ export default function MobileAppManagementPage() {
                     onChange={(e) =>
                       setSettings({ ...settings, mobile_announcement_text: e.target.value })
                     }
-                    placeholder="e.g. 🎉 Flash Ticket Discount! Use promo code CLIQS20 today at checkout."
+                    placeholder="Announce flash sales, venue directions, or important updates..."
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#161D22] border border-[#2E363E] text-white text-sm focus:outline-none focus:border-accent"
                   />
                 </div>
@@ -547,7 +547,7 @@ export default function MobileAppManagementPage() {
                       onChange={(e) =>
                         setSettings({ ...settings, mobile_announcement_link: e.target.value })
                       }
-                      placeholder="e.g. /explore or https://..."
+                      placeholder="/explore or https://..."
                       className="w-full px-3.5 py-2.5 rounded-xl bg-[#161D22] border border-[#2E363E] text-white text-sm focus:outline-none focus:border-accent"
                     />
                   </div>
@@ -849,7 +849,7 @@ export default function MobileAppManagementPage() {
               required
               value={bannerForm.title}
               onChange={(e) => setBannerForm({ ...bannerForm, title: e.target.value })}
-              placeholder="e.g. Accra Music Festival 2026"
+              placeholder="Banner headline title"
               className="w-full px-3.5 py-2.5 rounded-xl bg-[#161D22] border border-[#2E363E] text-white text-sm focus:outline-none focus:border-accent"
             />
           </div>
@@ -862,7 +862,7 @@ export default function MobileAppManagementPage() {
               type="text"
               value={bannerForm.subtitle}
               onChange={(e) => setBannerForm({ ...bannerForm, subtitle: e.target.value })}
-              placeholder="e.g. Early Bird 30% Off ending this Sunday!"
+              placeholder="Subtitle or promotional copy"
               className="w-full px-3.5 py-2.5 rounded-xl bg-[#161D22] border border-[#2E363E] text-white text-sm focus:outline-none focus:border-accent"
             />
           </div>
@@ -906,7 +906,7 @@ export default function MobileAppManagementPage() {
                 type="text"
                 value={bannerForm.link_target}
                 onChange={(e) => setBannerForm({ ...bannerForm, link_target: e.target.value })}
-                placeholder={bannerForm.link_type === 'event' ? 'e.g. 14' : bannerForm.link_type === 'category' ? 'Music' : 'URL or Target'}
+                placeholder={bannerForm.link_type === 'event' ? 'Event ID number' : bannerForm.link_type === 'category' ? 'Category slug' : 'URL or target path'}
                 className="w-full px-3.5 py-2.5 rounded-xl bg-[#161D22] border border-[#2E363E] text-white text-sm focus:outline-none focus:border-accent"
               />
             </div>

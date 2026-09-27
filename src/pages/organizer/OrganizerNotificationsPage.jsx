@@ -342,7 +342,7 @@ export default function OrganizerNotificationsPage() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Gate Openings & Parking Directions"
+                    placeholder="Announcement subject or headline"
                     value={broadcastTitle}
                     onChange={(e) => setBroadcastTitle(e.target.value)}
                     className="w-full h-10 px-3.5 rounded-xl bg-[#1C232B] border border-[#3A4045] text-sm text-white placeholder-[#6B7278] focus:outline-none focus:border-white transition"

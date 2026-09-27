@@ -138,7 +138,7 @@ const StepBasicInfo = ({ categories = [] }) => {
       <Field
         name="title"
         label="Event Name *"
-        placeholder="e.g. Accra AfroFusion & Jazz Festival 2026"
+        placeholder="Enter event name or festival title"
         validation={{
           required: 'Event name is required',
           minLength: { value: 5, message: 'Event name must be at least 5 characters' }
@@ -386,7 +386,7 @@ const StepLocation = () => {
           <Field
             name="venue"
             label="Venue Name *"
-            placeholder="e.g. National Theatre / Labadi Beach Hotel / Untamed Empire"
+            placeholder="Venue, hall, or arena name"
             validation={{ required: 'Venue name is required' }}
             helperText="The official hall, building, or location name."
           />
@@ -397,7 +397,7 @@ const StepLocation = () => {
               <Field
                 name="address"
                 label="Address *"
-                placeholder="e.g. South Liberia Road, Ministries / 1st Labadi Bypass"
+                placeholder="Street address or landmark"
                 validation={{ required: 'Street address is required' }}
               />
             </div>
@@ -405,7 +405,7 @@ const StepLocation = () => {
               <Field
                 name="city"
                 label="City *"
-                placeholder="e.g. Accra, Kumasi, Takoradi"
+                placeholder="City or town"
                 validation={{ required: 'City is required' }}
               />
             </div>
@@ -429,7 +429,7 @@ const StepLocation = () => {
               <input
                 type="text"
                 {...register('gpsLocation')}
-                placeholder="e.g. 5.55602, -0.19690 or GhanaPost GPS (GA-183-9204)"
+                placeholder="GPS coordinates or Digital Address"
                 className={inputCls}
               />
               <div className="absolute right-3 top-2.5 text-xs text-[#6B7278]">
@@ -447,7 +447,7 @@ const StepLocation = () => {
           <Field
             name="venue"
             label="Streaming Platform / Venue *"
-            placeholder="e.g. Zoom Webinar / YouTube Live / Google Meet"
+            placeholder="Platform (Zoom, YouTube Live, Google Meet)"
             validation={{ required: 'Streaming platform is required' }}
             helperText="Specify where the online session will take place."
           />
@@ -456,7 +456,7 @@ const StepLocation = () => {
           <Field
             name="address"
             label="Meeting Link or Access Instructions *"
-            placeholder="e.g. https://zoom.us/j/123456789 or Access link sent via ticket confirmation"
+            placeholder="Access link or instructions sent via ticket confirmation"
             validation={{ required: 'Access link or instructions are required' }}
             helperText="Attendees receive this link on their tickets upon purchase."
           />
@@ -466,12 +466,12 @@ const StepLocation = () => {
               name="city"
               label="Region / Target Audience"
               placeholder="Online / Global"
-              helperText="E.g. Ghana & Diaspora, Global, West Africa"
+              helperText="Primary target geographic audience or community"
             />
             <Field
               name="gpsLocation"
               label="Virtual Portal / Channel URL (Optional)"
-              placeholder="e.g. https://tribesandcliqs.com/live"
+              placeholder="https://..."
             />
           </div>
         </>
@@ -609,7 +609,7 @@ const StepDateTime = () => {
         <Field
           name="dressCode"
           label="Dress Code / Theme (Optional)"
-          placeholder="e.g. All White / Black Tie / African Chic / Casual"
+          placeholder="Suggested attire or theme (e.g. All White, Casual)"
           helperText="Suggested attire for attendees."
         />
 
@@ -794,7 +794,7 @@ const StepTickets = () => {
                     <label className={labelCls}>Ticket Name *</label>
                     <input
                       {...register(`ticketTypes.${i}.name`, { required: 'Ticket name is required' })}
-                      placeholder="e.g. Regular, VIP, VVIP, Early Bird"
+                      placeholder="Ticket tier name (e.g. VIP, Regular)"
                       className={inputCls}
                     />
                     {ticketErr?.name && <p className={errCls}>{ticketErr.name.message}</p>}
@@ -812,7 +812,7 @@ const StepTickets = () => {
                           required: 'Price is required (enter 0 for free)',
                           min: { value: 0, message: 'Price cannot be negative' }
                         })}
-                        placeholder="100"
+                        placeholder="0.00"
                         className={`${inputCls} pl-12`}
                       />
                     </div>
@@ -829,7 +829,7 @@ const StepTickets = () => {
                         min: { value: 1, message: 'Minimum 1 ticket required' }
                       })}
                       readOnly={hasUploaded}
-                      placeholder="1000"
+                      placeholder="Capacity limit"
                       className={`${inputCls} ${hasUploaded ? 'bg-[#12161A] text-amber-300 font-bold border-amber-400/30' : ''}`}
                     />
                     {ticketErr?.quantity && <p className={errCls}>{ticketErr.quantity.message}</p>}
@@ -862,7 +862,7 @@ const StepTickets = () => {
                   <input
                     type="text"
                     {...register(`ticketTypes.${i}.description`)}
-                    placeholder="e.g. Complimentary welcome cocktail, VIP lounge access, fast-track entrance"
+                    placeholder="Included perks, VIP access, or special accommodations"
                     className={inputCls}
                   />
                 </div>

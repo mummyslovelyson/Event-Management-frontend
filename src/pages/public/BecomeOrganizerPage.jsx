@@ -424,7 +424,7 @@ export default function BecomeOrganizerPage() {
                       type="text"
                       name="organizationName"
                       required
-                      placeholder="e.g. Echo House, AfroFuture, Groove Nation"
+                      placeholder="Enter your organization or brand name"
                       value={formData.organizationName}
                       onChange={handleChange}
                       className="w-full h-11 px-4 rounded-xl bg-[#1C232B] border border-[#3A4045] text-sm text-white placeholder-[#6B7278] focus:outline-none focus:border-white transition"
@@ -471,7 +471,7 @@ export default function BecomeOrganizerPage() {
                     <input
                       type="url"
                       name="logoUrl"
-                      placeholder="https://example.com/logo.png"
+                      placeholder="https://yourwebsite.com/logo.png"
                       value={formData.logoUrl}
                       onChange={handleChange}
                       className="flex-1 h-11 px-4 rounded-xl bg-[#1C232B] border border-[#3A4045] text-sm text-white placeholder-[#6B7278] focus:outline-none focus:border-white transition"
@@ -515,7 +515,7 @@ export default function BecomeOrganizerPage() {
                       type="text"
                       name="location"
                       required
-                      placeholder="e.g. Accra, Ghana or Lagos, Nigeria"
+                      placeholder="Enter primary city / region"
                       value={formData.location}
                       onChange={handleChange}
                       className="w-full h-11 px-4 rounded-xl bg-[#1C232B] border border-[#3A4045] text-sm text-white placeholder-[#6B7278] focus:outline-none focus:border-white transition"

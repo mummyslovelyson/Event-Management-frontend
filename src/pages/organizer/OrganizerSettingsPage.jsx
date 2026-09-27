@@ -322,7 +322,7 @@ export default function OrganizerSettingsPage() {
                   <label className={labelCls}>Mobile Money Number</label>
                   <div className="relative">
                     <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-                    <input value={payment.mobileMoney} onChange={(e) => setPayment((p) => ({ ...p, mobileMoney: e.target.value }))} placeholder="024 xxx xxxx" className={`${inputCls} pl-10`} />
+                    <input value={payment.mobileMoney} onChange={(e) => setPayment((p) => ({ ...p, mobileMoney: e.target.value }))} placeholder="024 123 4567" className={`${inputCls} pl-10`} />
                   </div>
                 </div>
 

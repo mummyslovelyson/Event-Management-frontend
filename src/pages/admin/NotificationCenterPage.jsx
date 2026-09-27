@@ -742,7 +742,7 @@ export default function NotificationCenterPage() {
               type="text"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="e.g. Schedule Update for Ghana Music Festival"
+              placeholder="Notification subject or title"
               className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] placeholder-[#6B7278] focus:outline-none focus:border-white/50 transition"
             />
           </div>

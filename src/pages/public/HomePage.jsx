@@ -239,7 +239,7 @@ export default function HomePage() {
                 <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#949599]" />
                 <input
                   type="text"
-                  placeholder="City (e.g. Accra, Lagos)"
+                  placeholder="City or location"
                   value={search.city}
                   onChange={(e) => setSearch({ ...search, city: e.target.value })}
                   className="w-full pl-10 pr-3 py-3 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] placeholder:text-[#949599] focus:outline-none focus:border-white/40 transition"

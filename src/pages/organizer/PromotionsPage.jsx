@@ -798,7 +798,7 @@ export default function PromotionsPage() {
         }
       >
         <form onSubmit={submitCoupon} className="space-y-4">
-          {/* Quick Presets (Kwame Blueprint Sec. 21) */}
+          {/* Quick Presets */}
           {!editingCoupon && (
             <div className="p-3 rounded-lg bg-[#14181C] border border-[#262B2F] space-y-2">
               <span className="text-[11px] font-semibold text-[#949599] uppercase tracking-wider block">
@@ -998,7 +998,7 @@ export default function PromotionsPage() {
             <input
               value={fForm.ticketType}
               onChange={(e) => setFForm((f) => ({ ...f, ticketType: e.target.value }))}
-              placeholder="e.g. VIP, General Admission"
+              placeholder="Ticket tier name"
               className={inputCls}
             />
           </div>
@@ -1011,7 +1011,7 @@ export default function PromotionsPage() {
                 max="100"
                 value={fForm.discountPct}
                 onChange={(e) => setFForm((f) => ({ ...f, discountPct: e.target.value }))}
-                placeholder="30"
+                placeholder="Discount %"
                 className={inputCls}
               />
             </div>
@@ -1022,7 +1022,7 @@ export default function PromotionsPage() {
                 min="1"
                 value={fForm.durationHours}
                 onChange={(e) => setFForm((f) => ({ ...f, durationHours: e.target.value }))}
-                placeholder="24"
+                placeholder="Duration in hours"
                 className={inputCls}
               />
             </div>
@@ -1030,7 +1030,7 @@ export default function PromotionsPage() {
         </form>
       </Modal>
 
-      {/* Early-Bird Configuration Modal (Section 21) */}
+      {/* Early-Bird Configuration Modal */}
       <Modal
         open={ebModal}
         onClose={() => setEbModal(false)}
@@ -1068,7 +1068,7 @@ export default function PromotionsPage() {
                 required
                 value={ebForm.earlyBirdPrice}
                 onChange={(e) => setEbForm((f) => ({ ...f, earlyBirdPrice: e.target.value }))}
-                placeholder="80"
+                placeholder="Early-bird price"
                 className={`${inputCls} border-emerald-500/40 text-emerald-300 font-semibold`}
               />
             </div>
@@ -1083,7 +1083,7 @@ export default function PromotionsPage() {
               onChange={(e) => setEbForm((f) => ({ ...f, earlyBirdDeadline: e.target.value }))}
               className={inputCls}
             />
-            <p className="mt-1 text-[11px] text-[#949599]">e.g. 30 October. After this date, price returns to standard.</p>
+            <p className="mt-1 text-[11px] text-[#949599]">After this date, price returns to standard rate.</p>
           </div>
 
           <div>
@@ -1093,14 +1093,14 @@ export default function PromotionsPage() {
               min="1"
               value={ebForm.earlyBirdMaxQty}
               onChange={(e) => setEbForm((f) => ({ ...f, earlyBirdMaxQty: e.target.value }))}
-              placeholder="e.g. 100"
+              placeholder="Maximum available tickets"
               className={inputCls}
             />
           </div>
         </form>
       </Modal>
 
-      {/* Group Discount Rule Modal (Section 21) */}
+      {/* Group Discount Rule Modal */}
       <Modal
         open={groupModal}
         onClose={() => setGroupModal(false)}

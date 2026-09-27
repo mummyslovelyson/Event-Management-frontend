@@ -356,7 +356,7 @@ export default function OrganizerPaymentsPage() {
         />
       </div>
 
-      {/* ─── FINANCIAL REVENUE WATERFALL (Kwame Blueprint Sec. 23) ─── */}
+      {/* ─── FINANCIAL REVENUE WATERFALL ─── */}
       <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 shadow-lg">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#262B2F]">
           <div>
@@ -901,7 +901,7 @@ export default function OrganizerPaymentsPage() {
                   type="tel"
                   value={payoutForm.accountNumber}
                   onChange={(e) => setPayoutForm((f) => ({ ...f, accountNumber: e.target.value }))}
-                  placeholder="e.g. 0244123456"
+                  placeholder="024 123 4567"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#14181C] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40"
                   required
                 />
@@ -927,7 +927,7 @@ export default function OrganizerPaymentsPage() {
                   type="text"
                   value={payoutForm.accountNumber}
                   onChange={(e) => setPayoutForm((f) => ({ ...f, accountNumber: e.target.value }))}
-                  placeholder="e.g. 10111222333"
+                  placeholder="Enter account number"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#14181C] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40"
                   required
                 />
@@ -941,7 +941,7 @@ export default function OrganizerPaymentsPage() {
               type="text"
               value={payoutForm.accountName}
               onChange={(e) => setPayoutForm((f) => ({ ...f, accountName: e.target.value }))}
-              placeholder="e.g. Kwame Mensah"
+              placeholder="Account holder's full name"
               className="w-full px-3.5 py-2.5 rounded-xl bg-[#14181C] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40"
               required
             />
@@ -1002,7 +1002,7 @@ export default function OrganizerPaymentsPage() {
               <textarea
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
-                placeholder="e.g. Customer emergency / cancellation request..."
+                placeholder="Reason for refund request..."
                 rows={3}
                 className="w-full px-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40 resize-none"
               />
