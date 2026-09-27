@@ -27,3 +27,11 @@ Event-App/
 *.sln
 *.sw?
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+credentials.json
+serviceAccountKey.json

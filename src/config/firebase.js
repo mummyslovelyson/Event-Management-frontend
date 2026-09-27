@@ -6,13 +6,13 @@ import {
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyCDJhySkTFz2E613-bLXeGs_bHwS_RUVHQ',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'tribes-aand-cliqs.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'tribes-aand-cliqs',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'tribes-aand-cliqs.firebasestorage.app',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '493987932876',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:493987932876:web:b4c2b4e415474c01337069',
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-HVGEZ5M2GS',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || '',
 };
 
 export const isFirebaseConfigured = Boolean(
