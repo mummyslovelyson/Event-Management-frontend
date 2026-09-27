@@ -276,7 +276,7 @@ function PersonalInfoTab({ profile, setProfile }) {
             type="tel"
             value={form.phone}
             onChange={(e) => handleChange('phone', e.target.value)}
-            placeholder="+1 234 567 8900"
+            placeholder="Phone number"
             className={inputClass}
           />
         </Field>

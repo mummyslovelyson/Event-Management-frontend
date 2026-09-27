@@ -750,7 +750,7 @@ export default function MyTicketsPage() {
                     step="0.01"
                     value={sellPrice}
                     onChange={(e) => setSellPrice(e.target.value)}
-                    placeholder={origPrice > 0 ? String(origPrice) : '250'}
+                    placeholder={origPrice > 0 ? String(origPrice) : 'Enter price'}
                     className={`w-full pl-12 pr-4 py-2.5 rounded-xl bg-[#1C232B] border text-sm text-white placeholder-[#494F55] focus:outline-none transition ${
                       isOverCap ? 'border-red-500 focus:border-red-500' : 'border-[#494F55]/40 focus:border-amber-400'
                     }`}
@@ -762,7 +762,7 @@ export default function MyTicketsPage() {
                   </p>
                 ) : (
                   <p className="text-xs text-[#949599] mt-1.5">
-                    Example: Original price {origPrice > 0 ? format(origPrice) : 'GHS 200'} → Resale price {maxCap > 0 ? format(maxCap) : 'GHS 250'}.
+                    {maxCap > 0 ? `Fair pricing policy: Resale price cannot exceed ${format(maxCap)}.` : 'Must adhere to organizer resale policy.'}
                   </p>
                 )}
               </div>
@@ -874,7 +874,7 @@ export default function MyTicketsPage() {
                 required
                 value={transferName}
                 onChange={(e) => setTransferName(e.target.value)}
-                placeholder="Enter recipient's full name"
+                placeholder="Recipient's legal full name"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
               />
             </div>
@@ -889,7 +889,7 @@ export default function MyTicketsPage() {
                   type="email"
                   value={transferEmail}
                   onChange={(e) => setTransferEmail(e.target.value)}
-                  placeholder="recipient@gmail.com"
+                  placeholder="recipient@domain.com"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
                 />
               </div>
@@ -901,7 +901,7 @@ export default function MyTicketsPage() {
                   type="tel"
                   value={transferPhone}
                   onChange={(e) => setTransferPhone(e.target.value)}
-                  placeholder="024 123 4567"
+                  placeholder="Phone number"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
                 />
               </div>
