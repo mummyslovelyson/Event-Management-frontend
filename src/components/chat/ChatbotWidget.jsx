@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X, Send, Trash2, Loader2, ArrowRight, MessageSquare, Mic, ChevronRight, QrCode, CheckCircle2, AlertCircle,
+  History, Clock, Plus, ArrowLeft, RotateCcw,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -22,6 +23,18 @@ const stripEmojis = (str) => {
   return str.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}\u{1F100}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{200D}\u{FE0F}]/gu, '').trim();
 };
 
+const getStorageKey = (userId) => `cliqs_chat_active_${userId || 'guest'}`;
+const getSessionsKey = (userId) => `cliqs_chat_sessions_${userId || 'guest'}`;
+
+const createWelcomeMessage = (userName) => ({
+  id: 'welcome-1',
+  sender: 'bot',
+  text: userName
+    ? `Hi **${userName}**! How can I help you find events or tickets today?`
+    : `Hello! Welcome to Tribes & Cliqs. What event or tickets are you looking for?`,
+  timestamp: new Date().toISOString(),
+});
+
 export default function ChatbotWidget() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,6 +43,7 @@ export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [hasUnread, setHasUnread] = useState(true);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -46,16 +60,38 @@ export default function ChatbotWidget() {
   const isOrganizerPage = location.pathname.startsWith('/organizer');
   const isExplorePage = location.pathname.startsWith('/explore');
 
-  const [messages, setMessages] = useState(() => [
-    {
-      id: 'welcome-1',
-      sender: 'bot',
-      text: user
-        ? `Hi **${user.name || 'there'}**! How can I help you find events or tickets today?`
-        : `Hello! Welcome to Tribes & Cliqs. What event or tickets are you looking for?`,
-      timestamp: new Date().toISOString(),
-    },
-  ]);
+  // Load saved sessions from localStorage
+  const [sessions, setSessions] = useState(() => {
+    try {
+      const saved = localStorage.getItem(getSessionsKey(user?.id));
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Load active chat or start with welcome greeting
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem(getStorageKey(user?.id));
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [createWelcomeMessage(user?.name)];
+  });
+
+  // Persist active messages to localStorage
+  useEffect(() => {
+    try {
+      if (messages && messages.length > 0) {
+        localStorage.setItem(getStorageKey(user?.id), JSON.stringify(messages));
+      }
+    } catch (e) {
+      console.warn('[ChatbotWidget] Failed to save active messages to localStorage:', e);
+    }
+  }, [messages, user?.id]);
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
@@ -256,13 +292,20 @@ export default function ChatbotWidget() {
       ]);
     } catch (err) {
       console.error('[handleVerifyPayment]', err);
-      const errMsg = err.response?.data?.error || 'Payment not completed or still processing. Please approve the payment prompt on your phone or complete the transaction, then click verify again.';
+      const isTimeout = err.code === 'ECONNABORTED' || err.message?.includes('timeout') || err.message?.includes('Network Error');
+      const errMsg = isTimeout
+        ? 'Connection timed out while reaching payment provider. If your MoMo prompt was approved, click Retry Verification below or check My Tickets.'
+        : (err.response?.data?.error || err.response?.data?.message || 'Payment not completed or still processing. Please approve the payment prompt on your phone or complete the transaction, then click verify again.');
       setMessages((prev) => [
         ...prev,
         {
           id: `bot-${Date.now()}`,
           sender: 'bot',
           text: errMsg,
+          actions: [
+            booking.reference ? { type: 'VERIFY_PAYMENT', label: 'Retry Verification', reference: booking.reference } : null,
+            { type: 'NAVIGATE', label: 'View My Tickets', path: '/attendee/tickets' },
+          ].filter(Boolean),
           timestamp: new Date().toISOString(),
         },
       ]);
@@ -275,7 +318,6 @@ export default function ChatbotWidget() {
     if (!action) return;
     if (action.type === 'NAVIGATE' && action.path) {
       navigate(action.path);
-      // Auto-collapse on small screens
       if (window.innerWidth < 640) {
         setIsOpen(false);
       }
@@ -331,7 +373,7 @@ export default function ChatbotWidget() {
         {
           id: `voice-b-${Date.now() + 1}`,
           sender: 'bot',
-          text: data?.reply || 'Here is what I found for you:',
+          text: data?.reply || 'Here are the matching events:',
           events: data?.events || [],
           tickets: data?.tickets || [],
           booking: data?.booking || null,
@@ -347,15 +389,68 @@ export default function ChatbotWidget() {
     }
   };
 
-  const clearChat = () => {
-    setMessages([
-      {
-        id: 'welcome-reset',
-        sender: 'bot',
-        text: 'Chat cleared. How can I help you find events or tickets today?',
+  const archiveCurrentChat = () => {
+    const userMessages = messages.filter((m) => m.sender === 'user');
+    if (userMessages.length > 0) {
+      const firstUserMsg = userMessages[0]?.text || 'Event Inquiry';
+      const cleanTitle = firstUserMsg.slice(0, 36) + (firstUserMsg.length > 36 ? '...' : '');
+      const newSession = {
+        id: `sess-${Date.now()}`,
+        title: cleanTitle,
         timestamp: new Date().toISOString(),
-      },
-    ]);
+        messages: [...messages],
+        messageCount: messages.length,
+      };
+      setSessions((prev) => {
+        const filtered = prev.filter((s) => s.id !== newSession.id);
+        const updated = [newSession, ...filtered].slice(0, 25);
+        try {
+          localStorage.setItem(getSessionsKey(user?.id), JSON.stringify(updated));
+        } catch {}
+        return updated;
+      });
+    }
+  };
+
+  const startNewChat = () => {
+    archiveCurrentChat();
+    const freshMessages = [createWelcomeMessage(user?.name)];
+    setMessages(freshMessages);
+    try {
+      localStorage.setItem(getStorageKey(user?.id), JSON.stringify(freshMessages));
+    } catch {}
+    setIsHistoryOpen(false);
+  };
+
+  const loadPastSession = (session) => {
+    if (!session || !session.messages) return;
+    setMessages(session.messages);
+    setIsHistoryOpen(false);
+  };
+
+  const deleteSession = (sessionId, e) => {
+    e?.stopPropagation();
+    setSessions((prev) => {
+      const updated = prev.filter((s) => s.id !== sessionId);
+      try {
+        localStorage.setItem(getSessionsKey(user?.id), JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  const clearAllHistory = () => {
+    setSessions([]);
+    try {
+      localStorage.removeItem(getSessionsKey(user?.id));
+      localStorage.removeItem(getStorageKey(user?.id));
+    } catch {}
+    setMessages([createWelcomeMessage(user?.name)]);
+    setIsHistoryOpen(false);
+  };
+
+  const clearChat = () => {
+    startNewChat();
   };
 
   // Helper to format basic markdown (bolding, code, links) with contrast-aware colors
@@ -447,6 +542,19 @@ export default function ChatbotWidget() {
               <div className="flex items-center gap-1.5 text-[#949599] shrink-0">
                 <button
                   type="button"
+                  onClick={() => setIsHistoryOpen((prev) => !prev)}
+                  title="View chat history"
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                    isHistoryOpen
+                      ? 'bg-white text-[#1C232B]'
+                      : 'bg-white/10 hover:bg-white text-white hover:text-[#1C232B]'
+                  }`}
+                >
+                  <History className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">History</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => {
                     setIsOpen(false);
                     setIsVoiceOpen(true);
@@ -460,7 +568,7 @@ export default function ChatbotWidget() {
                 <button
                   type="button"
                   onClick={clearChat}
-                  title="Clear conversation"
+                  title="New conversation"
                   className="p-1.5 rounded-lg hover:bg-white/10 hover:text-white transition cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -476,7 +584,102 @@ export default function ChatbotWidget() {
               </div>
             </div>
 
-            {/* Chat Messages Feed */}
+            {/* Chat History Panel vs Active Chat Feed */}
+            {isHistoryOpen ? (
+              <div className="flex-1 flex flex-col overflow-hidden bg-[#14181C]">
+                {/* History Header */}
+                <div className="p-3 px-4 bg-[#1A2127] border-b border-[#2E363E] flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsHistoryOpen(false)}
+                      className="p-1 rounded-lg hover:bg-white/10 text-white transition cursor-pointer"
+                      title="Back to conversation"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                    </button>
+                    <span className="text-xs font-bold text-white">Chat History</span>
+                    {sessions.length > 0 && (
+                      <span className="px-1.5 py-0.5 rounded-md text-[10px] font-semibold bg-white/10 text-[#CBD5E1]">
+                        {sessions.length}
+                      </span>
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={startNewChat}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold transition shadow-sm cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>New Chat</span>
+                  </button>
+                </div>
+
+                {/* Sessions List */}
+                <div className="flex-1 overflow-y-auto p-3 space-y-2 no-scrollbar text-xs">
+                  {sessions.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-center p-6 text-[#949599]">
+                      <div className="w-12 h-12 rounded-2xl bg-[#1C232B] border border-[#2E363E] flex items-center justify-center text-[#949599] mb-3">
+                        <Clock className="w-6 h-6" />
+                      </div>
+                      <p className="text-sm font-semibold text-white">No saved chats yet</p>
+                      <p className="text-xs mt-1 text-[#949599] max-w-[220px]">
+                        Your previous inquiries, event discoveries, and ticket orders will be stored here.
+                      </p>
+                    </div>
+                  ) : (
+                    sessions.map((sess) => (
+                      <div
+                        key={sess.id}
+                        onClick={() => loadPastSession(sess)}
+                        className="group p-3 rounded-xl bg-[#1C232B] border border-[#2E363E] hover:border-white/40 transition cursor-pointer relative text-left"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs font-bold text-white truncate">{sess.title || 'Event Inquiry'}</p>
+                            <div className="flex items-center gap-2 mt-1 text-[10px] text-[#949599]">
+                              <span>
+                                {new Date(sess.timestamp).toLocaleDateString([], {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                              <span>•</span>
+                              <span>{sess.messageCount || sess.messages?.length || 0} messages</span>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => deleteSession(sess.id, e)}
+                            title="Delete this chat"
+                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-[#949599] hover:text-red-400 hover:bg-white/5 transition cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {sessions.length > 0 && (
+                  <div className="p-2.5 border-t border-[#2E363E] bg-[#181D22] text-center">
+                    <button
+                      type="button"
+                      onClick={clearAllHistory}
+                      className="text-xs text-[#949599] hover:text-red-400 transition cursor-pointer"
+                    >
+                      Clear all chat history
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                {/* Chat Messages Feed */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs select-text no-scrollbar">
               {messages.map((msg) => {
                 const isUser = msg.sender === 'user';
@@ -636,7 +839,9 @@ export default function ChatbotWidget() {
                 <span>Press Enter to send</span>
               </div>
             </div>
-          </motion.div>
+          </>
+        )}
+      </motion.div>
         )}
       </AnimatePresence>
 
