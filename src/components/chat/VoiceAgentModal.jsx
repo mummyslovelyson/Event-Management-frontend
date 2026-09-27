@@ -672,8 +672,16 @@ export default function VoiceAgentModal({
               <button
                 key={i}
                 type="button"
-                onClick={() => {
-                  if (act.path) {
+                onClick={async () => {
+                  if (act.url) {
+                    window.open(act.url, '_blank');
+                  } else if (act.type === 'CONTINUE_PAYMENT' && act.data) {
+                    const res = await onContinuePayment?.(act.data);
+                    if (res) setLastBooking(res);
+                  } else if (act.type === 'VERIFY_PAYMENT') {
+                    const res = await onVerifyPayment?.({ reference: act.reference });
+                    if (res) setLastBooking(res);
+                  } else if (act.path) {
                     window.location.href = act.path;
                   }
                 }}

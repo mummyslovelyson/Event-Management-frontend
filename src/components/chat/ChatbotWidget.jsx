@@ -331,6 +331,14 @@ export default function ChatbotWidget() {
       if (window.innerWidth < 640) {
         setIsOpen(false);
       }
+    } else if (action.type === 'CONTINUE_PAYMENT' && action.data) {
+      handleContinuePayment(action.data);
+    } else if (action.type === 'PAY_NOW' && action.url) {
+      window.open(action.url, '_blank');
+    } else if (action.type === 'VERIFY_PAYMENT') {
+      handleVerifyPayment(action.reference ? { reference: action.reference } : activeBooking);
+    } else if (action.type === 'PREVIEW_QR') {
+      setSelectedQR(action.tickets || []);
     }
   };
 
