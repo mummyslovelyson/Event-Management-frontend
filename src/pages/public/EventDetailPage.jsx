@@ -1827,7 +1827,7 @@ export default function EventDetailPage() {
                   <input
                     type="email"
                     required
-                    placeholder="kwame@example.com"
+                    placeholder="yourname@gmail.com"
                     value={customerInfo.email}
                     onChange={(e) => setCustomerInfo((c) => ({ ...c, email: e.target.value }))}
                     className="w-full px-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/50 transition"
@@ -1837,7 +1837,7 @@ export default function EventDetailPage() {
                   <label className="block text-[11px] text-[#949599] mb-1">Mobile Money / Phone *</label>
                   <input
                     type="tel"
-                    placeholder="024XXXXXXX"
+                    placeholder="024 123 4567"
                     value={customerInfo.phone}
                     onChange={(e) => setCustomerInfo((c) => ({ ...c, phone: e.target.value }))}
                     className="w-full px-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder:text-[#494F55] focus:outline-none focus:border-white/50 transition"

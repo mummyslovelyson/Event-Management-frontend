@@ -844,12 +844,15 @@ export default function MyTicketsPage() {
       >
         {transferTarget && (
           <div className="space-y-4">
-            {/* User Quote Context */}
-            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs">
-              <p className="italic text-amber-300 font-medium">"I can't attend the event anymore."</p>
-              <p className="text-[#949599] mt-1">
-                Transfer ticket ownership to a friend, colleague, or attendee.
-              </p>
+            {/* Transfer Context Banner */}
+            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs flex items-start gap-2.5">
+              <Send className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-white font-semibold">Direct Ticket Transfer</p>
+                <p className="text-[#949599] mt-0.5">
+                  Transfer this admission pass to another attendee. They will receive the updated digital pass and QR code directly.
+                </p>
+              </div>
             </div>
 
             {/* Target Ticket Card Info */}
@@ -864,14 +867,14 @@ export default function MyTicketsPage() {
             {/* Recipient Full Name */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">
-                Recipient Full Name (New Ticket Holder) *
+                Recipient Full Name *
               </label>
               <input
                 type="text"
                 required
                 value={transferName}
                 onChange={(e) => setTransferName(e.target.value)}
-                placeholder="e.g. John Doe"
+                placeholder="Enter recipient's full name"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
               />
             </div>
@@ -880,13 +883,13 @@ export default function MyTicketsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">
-                  Recipient Email *
+                  Recipient Email
                 </label>
                 <input
                   type="email"
                   value={transferEmail}
                   onChange={(e) => setTransferEmail(e.target.value)}
-                  placeholder="recipient@example.com"
+                  placeholder="recipient@gmail.com"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
                 />
               </div>
@@ -898,7 +901,7 @@ export default function MyTicketsPage() {
                   type="tel"
                   value={transferPhone}
                   onChange={(e) => setTransferPhone(e.target.value)}
-                  placeholder="024XXXXXXX"
+                  placeholder="024 123 4567"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
                 />
               </div>
