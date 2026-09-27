@@ -1,23 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
-  Search, MapPin, Tag, Ticket, Compass,
-  Mic2, Trophy, PartyPopper as FestivalIcon, Presentation,
+  Compass, Mic2, Trophy, PartyPopper as FestivalIcon, Presentation,
   GraduationCap, Wrench, Drama, Church, Heart, Mail, Shirt,
-  TrendingUp, Users, ChevronRight, CheckCircle2, Shield,
-  CreditCard, QrCode, LayoutGrid, Music, Flame, Sparkles,
-  Star, Smartphone, Zap, HelpCircle, ChevronDown, Check,
+  TrendingUp, ChevronRight, CreditCard, QrCode, LayoutGrid, Music, Flame,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import EventCard from '@/components/common/EventCard';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
-import { getFeaturedEvents, getTrendingEvents, getRecommendedEvents, getCategories, getFeaturedOrganizers } from '@/api/events';
+import HeroSection from '@/components/home/HeroSection';
+import { getFeaturedEvents, getTrendingEvents, getCategories, getFeaturedOrganizers } from '@/api/events';
 import { getCategoryImage, POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-
-const HERO_IMAGE = 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
 
 const CATEGORY_ICONS = {
   Concert: Mic2,
@@ -35,80 +30,6 @@ const CATEGORY_ICONS = {
 };
 
 const DEFAULT_CATEGORY_ICON = LayoutGrid;
-
-const POPULAR_TAGS = [
-  'Concerts',
-  'Festivals',
-  'Nightlife',
-  'Conferences',
-  'Sports',
-  'Workshops',
-];
-
-const CURATED_FLAGSHIP_EVENTS = [
-  {
-    id: 'afrofusion-accra-2026',
-    title: 'Accra AfroFusion & Jazz Festival',
-    category: 'Concert',
-    image: '/assets/images/musical-shows/cover.png',
-    startDate: new Date(Date.now() + 86400000 * 6).toISOString(),
-    venue: 'Grand Arena, Accra',
-    minPrice: 150,
-    recommendationBadge: 'Top Pick',
-    organizer: { name: 'EchoHouse Africa' }
-  },
-  {
-    id: 'afrofuture-festival-2026',
-    title: 'AfroFuture Music & Heritage Festival',
-    category: 'Festival',
-    image: '/assets/images/festivals/cover.png',
-    startDate: new Date(Date.now() + 86400000 * 14).toISOString(),
-    venue: 'El-Wak Stadium, Accra',
-    minPrice: 200,
-    recommendationBadge: 'Selling Fast',
-    organizer: { name: 'AfroFuture Live' }
-  },
-  {
-    id: 'west-africa-tech-summit',
-    title: 'Ghana Tech Innovators Summit & Expo',
-    category: 'Conference',
-    image: '/assets/images/corporate-event/cover.png',
-    startDate: new Date(Date.now() + 86400000 * 20).toISOString(),
-    venue: 'Accra International Conference Centre',
-    minPrice: 100,
-    recommendationBadge: 'Trending',
-    organizer: { name: 'TechGhana Ventures' }
-  },
-  {
-    id: 'kumasi-sunset-clash',
-    title: 'Kumasi Sunset Sound Clash & Rave',
-    category: 'Nightlife',
-    image: '/assets/images/social-events/cover.png',
-    startDate: new Date(Date.now() + 86400000 * 9).toISOString(),
-    venue: 'Baba Yara Sports Complex, Kumasi',
-    minPrice: 80,
-    recommendationBadge: 'Popular',
-    organizer: { name: 'Garden City Vibe' }
-  },
-  {
-    id: 'national-theatre-comedy',
-    title: 'Black Star Comedy Showcase Live',
-    category: 'Comedy',
-    image: '/assets/images/movies-and-stage-plays/cover.png',
-    startDate: new Date(Date.now() + 86400000 * 16).toISOString(),
-    venue: 'National Theatre of Ghana, Accra',
-    minPrice: 120,
-    recommendationBadge: 'Must Attend',
-    organizer: { name: 'Comedy Republic' }
-  }
-];
-
-const CURATED_ORGANIZERS = [
-  { id: 'echo-house', name: 'EchoHouse Africa', organization_name: 'EchoHouse Africa', specialty: 'Concerts & Festivals', events_count: 28, avatar: '/assets/images/Logo.jpeg' },
-  { id: 'afrofuture-global', name: 'AfroFuture Global', organization_name: 'AfroFuture Global', specialty: 'Culture & Arts Festivals', events_count: 19, avatar: '/assets/images/festivals/cover.png' },
-  { id: 'ghana-tech-alliance', name: 'Ghana Tech Alliance', organization_name: 'Ghana Tech Alliance', specialty: 'Tech & Summits', events_count: 14, avatar: '/assets/images/corporate-event/cover.png' },
-  { id: 'untamed-empire', name: 'Untamed Empire', organization_name: 'Untamed Empire', specialty: 'Nightlife & Day Parties', events_count: 35, avatar: '/assets/images/social-events/cover.png' },
-];
 
 const STEPS = [
   {
@@ -128,72 +49,6 @@ const STEPS = [
   },
 ];
 
-const TRUST_PILLARS = [
-  {
-    icon: Shield,
-    title: '100% Verified Entry Guarantee',
-    desc: 'Every ticket features a unique, cryptographically signed dynamic QR code that prevents counterfeiting and duplicate entries.',
-  },
-  {
-    icon: Zap,
-    title: 'Anti-Scalping Fair Price Policy',
-    desc: 'Secondary resale prices are strictly capped at maximum +25% markup. Fans always get fair ticket prices without predatory gouging.',
-  },
-  {
-    icon: Smartphone,
-    title: 'Direct Mobile Money Checkout',
-    desc: 'Seamless, frictionless payments on MTN, Telecel, AT, and Cards with zero hidden booking surcharges.',
-  },
-  {
-    icon: QrCode,
-    title: 'Instant Gate Scanner App',
-    desc: 'Organizers can download our door-scanner app to validate thousands of admissions per hour even with offline connection.',
-  },
-];
-
-const TESTIMONIALS = [
-  {
-    quote: 'Purchased VIP passes for AfroFuture in less than 30 seconds using MTN MoMo. Gate verification took 1 second on my phone. Flawless experience!',
-    author: 'Kofi Antwi',
-    role: 'Concert Attendee',
-    location: 'Accra, Ghana',
-    rating: 5,
-  },
-  {
-    quote: 'We sold out 3,500 tickets for our Tech Summit through Tribes & Cliqs. The live analytics and instant MoMo payout settlements were game-changing.',
-    author: 'Ama Osei-Bonsu',
-    role: 'Lead Conference Producer',
-    location: 'Kumasi, Ghana',
-    rating: 5,
-  },
-  {
-    quote: 'When my friend could not make the music festival, transferring the ticket to his sister took 2 clicks. The easiest ticketing platform in West Africa.',
-    author: 'Daniel Mensah',
-    role: 'Music Enthusiast',
-    location: 'Takoradi, Ghana',
-    rating: 5,
-  },
-];
-
-const FAQS = [
-  {
-    q: 'How do I receive my tickets after payment?',
-    a: 'Immediately upon payment confirmation, your digital ticket with its secure QR code is displayed on screen, emailed to your inbox, and made available in your account under "My Tickets". You can download the PDF or save it to your phone wallet.',
-  },
-  {
-    q: 'Which payment methods can I use?',
-    a: 'We natively support all major Ghanaian and West African Mobile Money networks (MTN Mobile Money, Telecel Cash, AT Money) as well as Visa, Mastercard, and Apple Pay through our secure Paystack integration.',
-  },
-  {
-    q: 'Can I transfer or resell my ticket if I cannot attend?',
-    a: 'Yes! You can transfer your ticket directly to a friend using their email or phone number. Alternatively, list it securely on our official Resale Marketplace with price caps that protect buyers against scalping.',
-  },
-  {
-    q: 'How do event organizers receive their ticket payouts?',
-    a: 'Organizers can request automated direct payouts to their Mobile Money wallet or Ghanaian commercial bank account at any time with transparent ledger reconciliation.',
-  },
-];
-
 function SkeletonCard() {
   return (
     <div className="w-[280px] shrink-0 rounded-2xl overflow-hidden bg-[#161D22] border border-[#262B2F]">
@@ -208,8 +63,6 @@ function SkeletonCard() {
 }
 
 export default function HomePage() {
-  const navigate = useNavigate();
-
   useDocumentTitle(
     'Tribes & Cliqs — Premier Events, Concerts & Ticketing in Ghana',
     'Find and book verified tickets for top concerts, music festivals, nightlife, and conferences in Ghana. Fast, secure checkout with Mobile Money & Cards.'
@@ -223,8 +76,6 @@ export default function HomePage() {
   const [loadingTrending, setLoadingTrending] = useState(true);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [loadingOrganizers, setLoadingOrganizers] = useState(true);
-  const [search, setSearch] = useState({ query: '', city: '', category: '', date: '' });
-  const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -232,10 +83,10 @@ export default function HomePage() {
     const loadFeatured = async () => {
       try {
         const res = await getFeaturedEvents({ limit: 8 });
-        const events = res.data?.events || res.data?.data || res.data || [];
-        if (active) setFeatured(events.length > 0 ? events : CURATED_FLAGSHIP_EVENTS);
+        const events = res.data?.events || res.data?.data || (Array.isArray(res.data) ? res.data : []);
+        if (active) setFeatured(events);
       } catch {
-        if (active) setFeatured(CURATED_FLAGSHIP_EVENTS);
+        if (active) setFeatured([]);
       } finally {
         if (active) setLoadingFeatured(false);
       }
@@ -244,10 +95,10 @@ export default function HomePage() {
     const loadTrending = async () => {
       try {
         const res = await getTrendingEvents({ limit: 8 });
-        const events = res.data?.events || res.data?.data || res.data || [];
-        if (active) setTrending(events.length > 0 ? events : CURATED_FLAGSHIP_EVENTS);
+        const events = res.data?.events || res.data?.data || (Array.isArray(res.data) ? res.data : []);
+        if (active) setTrending(events);
       } catch {
-        if (active) setTrending(CURATED_FLAGSHIP_EVENTS);
+        if (active) setTrending([]);
       } finally {
         if (active) setLoadingTrending(false);
       }
@@ -274,11 +125,11 @@ export default function HomePage() {
 
     const loadOrganizers = async () => {
       try {
-        const res = await getFeaturedOrganizers({ limit: 4 });
+        const res = await getFeaturedOrganizers({ limit: 8 });
         const orgs = Array.isArray(res.data) ? res.data : res.data?.organizers || [];
-        if (active) setFeaturedOrganizers(orgs.length > 0 ? orgs : CURATED_ORGANIZERS);
+        if (active) setFeaturedOrganizers(orgs);
       } catch {
-        if (active) setFeaturedOrganizers(CURATED_ORGANIZERS);
+        if (active) setFeaturedOrganizers([]);
       } finally {
         if (active) setLoadingOrganizers(false);
       }
@@ -292,225 +143,70 @@ export default function HomePage() {
     return () => { active = false; };
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    const params = new URLSearchParams();
-    if (search.query) params.set('search', search.query);
-    if (search.city) params.set('city', search.city);
-    if (search.category) params.set('category', search.category);
-    if (search.date) params.set('date', search.date);
-    navigate(`/explore?${params.toString()}`);
-  };
-
-  const displayedFeatured = featured.length > 0 ? featured : CURATED_FLAGSHIP_EVENTS;
-  const displayedTrending = trending.length > 0 ? trending : CURATED_FLAGSHIP_EVENTS;
-  const displayedOrganizers = featuredOrganizers.length > 0 ? featuredOrganizers : CURATED_ORGANIZERS;
-
   return (
     <div className="bg-[#1C232B] text-[#EFEFF1]">
-      {/* ─── HERO SECTION ─── */}
-      <section className="relative pt-28 pb-16 sm:pt-36 sm:pb-24 overflow-hidden border-b border-[#262B2F]">
-        {/* Background Image & Scrim */}
-        <div className="absolute inset-0 pointer-events-none">
-          <img
-            src={HERO_IMAGE}
-            alt="Live concert crowd enjoying music event"
-            loading="eager"
-            decoding="async"
-            className="w-full h-full object-cover object-center opacity-25"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1C232B] via-[#1C232B]/85 to-[#1C232B]/70" />
-        </div>
-
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* Main Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#EFEFF1] leading-[1.12]"
-          >
-            Find Your Tribe. <br />
-            <span className="text-white">Book the Moment.</span>
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.18 }}
-            className="mt-5 text-base sm:text-lg text-[#CBD5E1] max-w-2xl mx-auto leading-relaxed"
-          >
-            Discover verified concerts, music festivals, parties, conferences, and community gatherings across Africa.
-            Buy tickets in seconds with Mobile Money or host and sell out your own event.
-          </motion.p>
-
-          {/* ─── Search Bar Card ─── */}
-          <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.25 }}
-            onSubmit={handleSearch}
-            className="mt-8 rounded-2xl bg-[#161D22] border border-[#494F55]/60 p-3 sm:p-4 shadow-2xl shadow-black/50 text-left"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
-              {/* Event / Artist Keyword */}
-              <div className="sm:col-span-4 relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#949599]" />
-                <input
-                  type="text"
-                  placeholder="Event, artist, or venue..."
-                  value={search.query}
-                  onChange={(e) => setSearch({ ...search, query: e.target.value })}
-                  aria-label="Search event, artist, or venue"
-                  className="w-full pl-10 pr-3 py-3 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] placeholder:text-[#949599] focus:outline-none focus:border-white/40 transition"
-                />
-              </div>
-
-              {/* City Filter */}
-              <div className="sm:col-span-3 relative">
-                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#949599]" />
-                <input
-                  type="text"
-                  placeholder="City or location"
-                  value={search.city}
-                  onChange={(e) => setSearch({ ...search, city: e.target.value })}
-                  aria-label="Filter by city"
-                  className="w-full pl-10 pr-3 py-3 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] placeholder:text-[#949599] focus:outline-none focus:border-white/40 transition"
-                />
-              </div>
-
-              {/* Category Dropdown */}
-              <div className="sm:col-span-3 relative">
-                <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#949599]" />
-                <select
-                  value={search.category}
-                  onChange={(e) => setSearch({ ...search, category: e.target.value })}
-                  aria-label="Filter by category"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] focus:outline-none focus:border-white/40 transition cursor-pointer appearance-none"
-                >
-                  <option value="">All Categories</option>
-                  {POPULAR_CATEGORY_LIST.slice(0, 10).map((cat) => (
-                    <option key={cat.name} value={cat.name}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Submit Button */}
-              <div className="sm:col-span-2">
-                <button
-                  type="submit"
-                  aria-label="Search events"
-                  className="w-full h-full min-h-[46px] flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] transition-all shadow-md active:scale-95"
-                >
-                  <Search className="w-4 h-4 shrink-0" />
-                  <span>Search</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Popular Quick-Filter Pills */}
-            <div className="mt-3 pt-3 border-t border-[#262B2F] flex flex-wrap items-center gap-2">
-              <span className="text-xs font-semibold text-[#949599] uppercase tracking-wider mr-1">Trending:</span>
-              {POPULAR_TAGS.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => navigate(`/explore?category=${encodeURIComponent(tag)}`)}
-                  className="px-3 py-1 rounded-lg bg-[#1C232B] border border-[#262B2F] text-xs font-medium text-[#CBD5E1] hover:text-white hover:border-white/40 transition"
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-
-            {/* City Quick Pills & Map Link */}
-            <div className="mt-2.5 pt-2.5 border-t border-[#262B2F]/60 flex flex-wrap items-center justify-between gap-2">
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs font-semibold text-[#949599] uppercase tracking-wider mr-1 flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-rose-500" /> Cities:
-                </span>
-                {['Accra', 'Kumasi', 'Takoradi', 'Tema', 'Cape Coast', 'Tamale'].map((city) => (
-                  <button
-                    key={city}
-                    type="button"
-                    onClick={() => navigate(`/explore?city=${encodeURIComponent(city)}`)}
-                    className="px-2.5 py-1 rounded-lg bg-[#1C232B] border border-[#262B2F] text-xs font-medium text-[#CBD5E1] hover:text-white hover:border-white/40 transition"
-                  >
-                    {city}
-                  </button>
-                ))}
-              </div>
-              <Link
-                to="/explore?view=map"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-white/10 hover:bg-white/15 px-3 py-1.5 rounded-lg border border-white/20 transition-all hover:scale-105 active:scale-95 shadow-sm"
-              >
-                <Compass className="w-3.5 h-3.5 text-rose-400" />
-                Live Map View
-              </Link>
-            </div>
-          </motion.form>
-        </div>
-      </section>
-
+      {/* ─── HERO SECTION (Extracted to separate component) ─── */}
+      <HeroSection />
 
       {/* ─── FEATURED EVENTS ─── */}
-      <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Curated Selection</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Events</h2>
-          </div>
-          <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
-            View all events <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-        </div>
-
-        {loadingFeatured ? (
-          <div className="flex gap-4 overflow-hidden">
-            {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        ) : (
-          <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-thin">
-            {displayedFeatured.map((event) => (
-              <div key={event.id} className="w-[280px] sm:w-[320px] shrink-0 snap-start">
-                <EventCard event={event} />
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* ─── TRENDING EVENTS ─── */}
-      <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {(loadingFeatured || featured.length > 0) && (
+        <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-8">
             <div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-400">
-                <TrendingUp className="w-3.5 h-3.5" /> Popular Right Now
-              </span>
-              <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Trending Near You</h2>
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Curated Selection</span>
+              <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Events</h2>
             </div>
             <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
-              Explore all <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              View all events <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
 
-          {loadingTrending ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {loadingFeatured ? (
+            <div className="flex gap-4 overflow-hidden">
               {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {displayedTrending.slice(0, 8).map((event) => (
-                <EventCard key={event.id} event={event} />
+            <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-thin">
+              {featured.map((event) => (
+                <div key={event.id} className="w-[280px] sm:w-[320px] shrink-0 snap-start">
+                  <EventCard event={event} />
+                </div>
               ))}
             </div>
           )}
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* ─── TRENDING EVENTS ─── */}
+      {(loadingTrending || trending.length > 0) && (
+        <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-400">
+                  <TrendingUp className="w-3.5 h-3.5" /> Popular Right Now
+                </span>
+                <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Trending Near You</h2>
+              </div>
+              <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
+                Explore all <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+
+            {loadingTrending ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {trending.slice(0, 8).map((event) => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ─── POPULAR CATEGORIES GRID ─── */}
       <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -572,34 +268,6 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* ─── TRUST & GUARANTEE SECTION ─── */}
-      <section className="py-14 sm:py-20 bg-[#14171A] border-y border-[#262B2F]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Built for Security &amp; Trust</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Why Fans and Organizers Trust Tribes &amp; Cliqs</h2>
-            <p className="mt-2 text-sm text-[#CBD5E1]">
-              Industry-grade cryptography, zero counterfeit passes, and seamless local payment rails.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {TRUST_PILLARS.map((pillar) => (
-              <div
-                key={pillar.title}
-                className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-6 hover:border-white/30 transition-colors"
-              >
-                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center mb-4">
-                  <pillar.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-base font-bold text-[#EFEFF1] mb-2">{pillar.title}</h3>
-                <p className="text-xs sm:text-sm text-[#949599] leading-relaxed">{pillar.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ─── HOW IT WORKS ─── */}
       <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
@@ -639,129 +307,63 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── FEATURED ORGANIZERS ─── */}
-      <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Event Creators</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Event Organizers</h2>
-            <p className="mt-2 text-sm text-[#949599]">Follow verified organizers and never miss their next show.</p>
-          </div>
-
-          {loadingOrganizers ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-5 animate-pulse h-28" />
-              ))}
+      {/* ─── FEATURED ORGANIZERS (Rendered only when real organizers exist) ─── */}
+      {(loadingOrganizers || featuredOrganizers.length > 0) && (
+        <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-10">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Event Creators</span>
+              <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Event Organizers</h2>
+              <p className="mt-2 text-sm text-[#949599]">Follow verified organizers and never miss their next show.</p>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {displayedOrganizers.map((org) => {
-                const initials = (org.name || '').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
-                return (
-                  <div
-                    key={org.id || org.name}
-                    className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-5 hover:border-white/20 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-[#161D22] border border-[#494F55]/40 text-[#CBD5E1] font-bold flex items-center justify-center shrink-0 overflow-hidden">
-                        {org.avatar ? (
-                          <img
-                            src={org.avatar}
-                            alt={org.name}
-                            loading="lazy"
-                            decoding="async"
-                            onError={(e) => { e.currentTarget.src = '/assets/images/Logo.jpeg'; }}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : initials}
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-bold text-[#EFEFF1] truncate">{org.organization_name || org.name}</h3>
-                        <p className="text-xs text-[#949599]">{org.specialty || 'Event Host'}</p>
-                      </div>
-                    </div>
-                    <div className="mt-4 pt-3 border-t border-[#262B2F] flex items-center justify-between text-xs">
-                      <span className="text-[#949599]">Events hosted</span>
-                      <span className="font-bold text-white">{org.events_count || 12}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
 
-      {/* ─── TESTIMONIALS / SOCIAL PROOF ─── */}
-      <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs font-semibold uppercase tracking-wider text-amber-400">Verified Reviews</span>
-          <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Loved by Event Lovers &amp; Creators</h2>
-          <p className="mt-2 text-sm text-[#CBD5E1]">See what concertgoers, party lovers, and conference organizers say.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t, idx) => (
-            <div
-              key={idx}
-              className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-6 flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center gap-1 text-amber-400 mb-3">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400" />
-                  ))}
-                </div>
-                <p className="text-sm text-[#EFEFF1] leading-relaxed italic">"{t.quote}"</p>
+            {loadingOrganizers ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-5 animate-pulse h-28" />
+                ))}
               </div>
-              <div className="mt-5 pt-4 border-t border-[#262B2F] flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold text-white">{t.author}</p>
-                  <p className="text-[11px] text-[#949599]">{t.role} • {t.location}</p>
-                </div>
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── FAQ ACCORDION ─── */}
-      <section className="py-14 sm:py-20 bg-[#161D22] border-t border-[#262B2F]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Common Questions</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Frequently Asked Questions</h2>
-          </div>
-
-          <div className="space-y-3">
-            {FAQS.map((faq, index) => {
-              const isOpen = openFaq === index;
-              return (
-                <div
-                  key={index}
-                  className="rounded-xl bg-[#1C232B] border border-[#262B2F] overflow-hidden transition-colors"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaq(isOpen ? null : index)}
-                    className="w-full p-4 text-left flex items-center justify-between gap-4 font-semibold text-sm text-[#EFEFF1] hover:text-white"
-                  >
-                    <span>{faq.q}</span>
-                    <ChevronDown className={`w-4 h-4 text-[#949599] shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180 text-white' : ''}`} />
-                  </button>
-                  {isOpen && (
-                    <div className="px-4 pb-4 pt-1 text-xs sm:text-sm text-[#949599] leading-relaxed border-t border-[#262B2F]/60">
-                      {faq.a}
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {featuredOrganizers.map((org) => {
+                  const initials = (org.name || '').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+                  return (
+                    <div
+                      key={org.id || org.name}
+                      className="rounded-2xl bg-[#1C232B] border border-[#262B2F] p-5 hover:border-white/20 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-[#161D22] border border-[#494F55]/40 text-[#CBD5E1] font-bold flex items-center justify-center shrink-0 overflow-hidden">
+                          {org.avatar ? (
+                            <img
+                              src={org.avatar}
+                              alt={org.name}
+                              loading="lazy"
+                              decoding="async"
+                              onError={(e) => { e.currentTarget.src = '/assets/images/Logo.jpeg'; }}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : initials}
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="text-sm font-bold text-[#EFEFF1] truncate">{org.organization_name || org.name}</h3>
+                          <p className="text-xs text-[#949599]">{org.specialty || 'Event Host'}</p>
+                        </div>
+                      </div>
+                      {org.events_count !== undefined && (
+                        <div className="mt-4 pt-3 border-t border-[#262B2F] flex items-center justify-between text-xs">
+                          <span className="text-[#949599]">Events hosted</span>
+                          <span className="font-bold text-white">{org.events_count}</span>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ─── NEWSLETTER ─── */}
       <NewsletterSection />
@@ -805,7 +407,7 @@ function NewsletterSection() {
             type="submit"
             disabled={submitting}
             aria-label="Subscribe to newsletter"
-            className="px-6 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] transition disabled:opacity-60 shrink-0"
+            className="px-6 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] transition disabled:opacity-60 shrink-0 cursor-pointer"
           >
             {submitting ? <LoadingSpinner size="sm" /> : 'Subscribe'}
           </button>

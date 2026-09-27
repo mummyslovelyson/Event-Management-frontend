@@ -23,7 +23,7 @@ export default function VoiceAgentModal({
   const [agentState, setAgentState] = useState('idle'); // 'idle' | 'listening' | 'thinking' | 'speaking' | 'paused'
   const [transcript, setTranscript] = useState('');
   const [lastAgentReply, setLastAgentReply] = useState(
-    "Hey! I'm Cliqs Agent, your personal event booking assistant. Tell me what experience you want, and I'll handle the rest."
+    "Hello, welcome to Tribes & Cliqs. What event or tickets can I help you find today?"
   );
   const [lastEvents, setLastEvents] = useState([]);
   const [lastTickets, setLastTickets] = useState([]);
@@ -521,7 +521,7 @@ export default function VoiceAgentModal({
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>Cliqs Agent Voice</span>
             </span>
-            <span className="text-[11px] text-[#949599]">Your personal event booking assistant</span>
+            <span className="text-[11px] text-[#949599]">Ticket &amp; event assistant</span>
           </div>
 
           <div className="flex items-center gap-1 text-[#949599]">

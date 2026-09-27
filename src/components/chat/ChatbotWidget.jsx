@@ -51,8 +51,8 @@ export default function ChatbotWidget() {
       id: 'welcome-1',
       sender: 'bot',
       text: user
-        ? `Hey **${user.name || 'there'}**! I'm **Cliqs Agent**, your personal event booking assistant. Tell me what you're looking for and I'll take care of the rest!`
-        : `Welcome! I'm **Cliqs Agent**, your personal event booking assistant. Tell me what event or tickets you need, and I'll take care of the rest!`,
+        ? `Hi **${user.name || 'there'}**! How can I help you find events or tickets today?`
+        : `Hello! Welcome to Tribes & Cliqs. What event or tickets are you looking for?`,
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -137,7 +137,7 @@ export default function ChatbotWidget() {
       const errorMsg = {
         id: `bot-${Date.now()}`,
         sender: 'bot',
-        text: 'I ran into a quick connection hiccup. Please ask again or explore upcoming events!',
+        text: 'Sorry, I had trouble connecting. Please check your internet connection or try again in a moment.',
         actions: [{ type: 'NAVIGATE', label: 'Explore Events', path: '/explore' }],
         timestamp: new Date().toISOString(),
       };
@@ -160,7 +160,7 @@ export default function ChatbotWidget() {
         {
           id: `bot-${Date.now()}`,
           sender: 'bot',
-          text: 'Please sign in or create an account to reserve your tickets and complete Paystack payment.',
+          text: 'Please sign in or create an account to reserve your tickets and complete payment.',
           actions: [{ type: 'NAVIGATE', label: 'Sign In to Book', path: '/login' }],
           timestamp: new Date().toISOString(),
         },
@@ -198,17 +198,12 @@ export default function ChatbotWidget() {
         {
           id: `bot-${Date.now()}`,
           sender: 'bot',
-          text: `Your tickets are reserved for 10 minutes! Opening Paystack secure checkout for GHS ${Number(reservedBooking.total || 0).toFixed(2)}... If not redirected automatically, click the button below:`,
+          text: `Your tickets are reserved for 10 minutes (Total: GHS ${Number(reservedBooking.total || 0).toFixed(2)}). Redirecting to secure Paystack checkout... If not redirected, click the button below:`,
           booking: reservedBooking,
           actions: [
-            paystackUrl ? { type: 'PAY_NOW', label: `Pay Now with Paystack (GHS ${Number(reservedBooking.total || 0).toFixed(2)})`, url: paystackUrl } : null,
+            paystackUrl ? { type: 'PAY_NOW', label: `Pay Now (GHS ${Number(reservedBooking.total || 0).toFixed(2)})`, url: paystackUrl } : null,
             { type: 'VERIFY_PAYMENT', label: 'Verify Payment', reference: reservedBooking.reference },
           ].filter(Boolean),
-          suggestions: [
-            'I have paid / Verify Payment',
-            'Can I get a refund?',
-            'Show my tickets',
-          ],
           timestamp: new Date().toISOString(),
         },
       ]);
@@ -254,13 +249,8 @@ export default function ChatbotWidget() {
         {
           id: `bot-${Date.now()}`,
           sender: 'bot',
-          text: `Payment confirmed! Your booking #${verifiedBooking.orderNumber || verifiedBooking.orderId} is confirmed and your tickets have been generated.`,
+          text: `Payment confirmed! Order #${verifiedBooking.orderNumber || verifiedBooking.orderId} is complete. Your tickets are ready under My Tickets.`,
           booking: verifiedBooking,
-          suggestions: [
-            'Show me my tickets',
-            'When is my event?',
-            'How much have I spent on events this month?',
-          ],
           timestamp: new Date().toISOString(),
         },
       ]);
@@ -273,7 +263,6 @@ export default function ChatbotWidget() {
           id: `bot-${Date.now()}`,
           sender: 'bot',
           text: errMsg,
-          suggestions: ['Verify Payment again', 'Can I get a refund?'],
           timestamp: new Date().toISOString(),
         },
       ]);
@@ -363,7 +352,7 @@ export default function ChatbotWidget() {
       {
         id: 'welcome-reset',
         sender: 'bot',
-        text: `Chat cleared! How can **Cliqs Agent** help you today?`,
+        text: 'Chat cleared. How can I help you find events or tickets today?',
         timestamp: new Date().toISOString(),
       },
     ]);
@@ -450,7 +439,7 @@ export default function ChatbotWidget() {
                 <div className="min-w-0">
                   <h3 className="text-sm font-bold text-white tracking-tight leading-tight">Cliqs Agent</h3>
                   <p className="text-[11px] text-[#949599] truncate mt-0.5">
-                    {isEventPage ? 'Ask about this event' : 'Your personal event booking assistant'}
+                    {isEventPage ? 'Ask about this event' : 'Ticket & event assistant'}
                   </p>
                 </div>
               </div>
@@ -617,8 +606,8 @@ export default function ChatbotWidget() {
                   onKeyDown={handleKeyDown}
                   placeholder={
                     isEventPage
-                      ? 'Ask Cliqs Agent about tickets, start time, dress code, VIP...'
-                      : 'Tell Cliqs Agent what you need (e.g. concert in Kumasi this weekend)...'
+                      ? 'Ask about tickets, schedule, or venue...'
+                      : 'Search events, ask for tickets, or check schedule...'
                   }
                   className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#14181C] border border-[#2E363E] focus:border-white/50 text-xs text-[#EFEFF1] placeholder-[#494F55] focus:outline-none transition"
                 />
