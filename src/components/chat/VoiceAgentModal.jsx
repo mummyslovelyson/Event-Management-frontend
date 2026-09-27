@@ -23,7 +23,7 @@ export default function VoiceAgentModal({
   const [agentState, setAgentState] = useState('idle'); // 'idle' | 'listening' | 'thinking' | 'speaking' | 'paused'
   const [transcript, setTranscript] = useState('');
   const [lastAgentReply, setLastAgentReply] = useState(
-    "Hey! I'm Cliq AI, your personal event booking assistant. Tell me what experience you want, and I'll handle the rest."
+    "Hey! I'm Cliqs Agent, your personal event booking assistant. Tell me what experience you want, and I'll handle the rest."
   );
   const [lastEvents, setLastEvents] = useState([]);
   const [lastTickets, setLastTickets] = useState([]);
@@ -519,7 +519,7 @@ export default function VoiceAgentModal({
           <div className="flex items-center gap-2">
             <span className="p-1.5 rounded-xl bg-[#242B32] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-bold flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Cliq AI Voice</span>
+              <span>Cliqs Agent Voice</span>
             </span>
             <span className="text-[11px] text-[#949599]">Your personal event booking assistant</span>
           </div>
@@ -634,7 +634,7 @@ export default function VoiceAgentModal({
 
         {/* Agent Answer Transcript Box */}
         <div className="w-full overflow-y-auto max-h-40 px-4 py-3 rounded-2xl bg-[#1C232B] border border-[#2E363E] text-left text-xs text-[#EFEFF1] leading-relaxed mb-3">
-          <p className="font-semibold text-emerald-400 text-[11px] mb-1">Cliq AI</p>
+          <p className="font-semibold text-emerald-400 text-[11px] mb-1">Cliqs Agent</p>
           <p>{lastAgentReply}</p>
         </div>
 

@@ -17,15 +17,6 @@ import ChatBookingCard from './ChatBookingCard';
 import ChatSpendingCard from './ChatSpendingCard';
 import VoiceAgentModal from './VoiceAgentModal';
 
-const DEFAULT_SUGGESTIONS = [
-  'What’s happening this weekend?',
-  'Concerts in Kumasi this weekend',
-  'Concerts and live shows in Accra',
-  'Show my active tickets',
-  'When is my next event?',
-  'How much have I spent on events this month?',
-];
-
 const stripEmojis = (str) => {
   if (!str || typeof str !== 'string') return str;
   return str.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}\u{1F100}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{200D}\u{FE0F}]/gu, '').trim();
@@ -55,63 +46,13 @@ export default function ChatbotWidget() {
   const isOrganizerPage = location.pathname.startsWith('/organizer');
   const isExplorePage = location.pathname.startsWith('/explore');
 
-  // Dynamic context-aware starter suggestions
-  const contextualSuggestions = useMemo(() => {
-    if (isEventPage) {
-      return [
-        'What time does this event start?',
-        'Ticket tiers & pricing',
-        'Where is the venue located?',
-        'Is there a dress code?',
-        'Can I get a refund?',
-      ];
-    }
-    if (isTicketsPage) {
-      return [
-        'Show my active tickets',
-        'How do I transfer a ticket?',
-        'How does resale work?',
-        'Download my ticket PDF receipt',
-      ];
-    }
-    if (isOrganizerPage) {
-      return [
-        'How are my ticket sales?',
-        'Open check-in scanner',
-        'Create a promo code',
-        'View attendee list',
-      ];
-    }
-    if (isExplorePage) {
-      return [
-        'Concerts in Kumasi this weekend',
-        'Book 2 VIP tickets',
-        'What’s happening this weekend?',
-        'Concerts and live music in Accra',
-        'Show my tickets',
-      ];
-    }
-    if (user) {
-      return [
-        'Concerts in Kumasi this weekend',
-        'Book 2 VIP tickets',
-        'Show my active tickets',
-        'When is my next event?',
-        'How much have I spent on events this month?',
-        'How do I transfer a ticket?',
-      ];
-    }
-    return DEFAULT_SUGGESTIONS;
-  }, [isEventPage, isTicketsPage, isOrganizerPage, isExplorePage, user]);
-
   const [messages, setMessages] = useState(() => [
     {
       id: 'welcome-1',
       sender: 'bot',
       text: user
-        ? `Hey **${user.name || 'there'}**! I'm **Cliq AI**, your personal event booking assistant. Tell Cliq what you want, and I'll handle the rest — from discovery to tickets and payment!`
-        : `Hey! I'm **Cliq AI**, your personal event booking assistant. Tell Cliq what you want, and I'll handle the rest — from event discovery to tickets, payment, and QR passes.`,
-      suggestions: contextualSuggestions,
+        ? `Hey **${user.name || 'there'}**! I'm **Cliqs Agent**, your personal event booking assistant. Tell me what you're looking for and I'll take care of the rest!`
+        : `Welcome! I'm **Cliqs Agent**, your personal event booking assistant. Tell me what event or tickets you need, and I'll take care of the rest!`,
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -176,7 +117,6 @@ export default function ChatbotWidget() {
       const cleanActions = data.actions
         ? data.actions.map((act) => ({ ...act, label: stripEmojis(act.label) }))
         : null;
-      const cleanSuggestions = (data.suggestions || contextualSuggestions).map(stripEmojis);
 
       const botMsg = {
         id: `bot-${Date.now()}`,
@@ -188,7 +128,6 @@ export default function ChatbotWidget() {
         booking: data.booking || null,
         spending: data.spending || null,
         actions: cleanActions,
-        suggestions: cleanSuggestions,
         timestamp: new Date().toISOString(),
       };
 
@@ -200,7 +139,6 @@ export default function ChatbotWidget() {
         sender: 'bot',
         text: 'I ran into a quick connection hiccup. Please ask again or explore upcoming events!',
         actions: [{ type: 'NAVIGATE', label: 'Explore Events', path: '/explore' }],
-        suggestions: contextualSuggestions.map(stripEmojis),
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorMsg]);
@@ -425,15 +363,14 @@ export default function ChatbotWidget() {
       {
         id: 'welcome-reset',
         sender: 'bot',
-        text: `Chat cleared! What can I help you discover or accomplish next?`,
-        suggestions: contextualSuggestions,
+        text: `Chat cleared! How can **Cliqs Agent** help you today?`,
         timestamp: new Date().toISOString(),
       },
     ]);
   };
 
-  // Helper to format basic markdown (bolding, code, links)
-  const renderFormattedText = (text) => {
+  // Helper to format basic markdown (bolding, code, links) with contrast-aware colors
+  const renderFormattedText = (text, isUser = false) => {
     if (!text) return null;
     const lines = text.split('\n');
 
@@ -443,16 +380,30 @@ export default function ChatbotWidget() {
         <p key={lineIdx} className={lineIdx > 0 ? 'mt-1.5' : ''}>
           {parts.map((part, partIdx) => {
             if (part.startsWith('**') && part.endsWith('**')) {
-              return <strong key={partIdx} className="font-bold text-white">{part.slice(2, -2)}</strong>;
+              return (
+                <strong
+                  key={partIdx}
+                  className={`font-bold ${isUser ? 'text-zinc-950' : 'text-white'}`}
+                >
+                  {part.slice(2, -2)}
+                </strong>
+              );
             }
             if (part.startsWith('`') && part.endsWith('`')) {
               return (
-                <code key={partIdx} className="px-1 py-0.5 rounded bg-black/40 text-[11px] font-mono text-[#EFEFF1]">
+                <code
+                  key={partIdx}
+                  className={`px-1 py-0.5 rounded text-[11px] font-mono ${
+                    isUser
+                      ? 'bg-zinc-200 text-zinc-950 font-semibold'
+                      : 'bg-black/40 text-[#EFEFF1]'
+                  }`}
+                >
                   {part.slice(1, -1)}
                 </code>
               );
             }
-            return part;
+            return <span key={partIdx} className={isUser ? 'text-zinc-950' : ''}>{part}</span>;
           })}
         </p>
       );
@@ -469,7 +420,7 @@ export default function ChatbotWidget() {
         />
       )}
 
-      <aside aria-label="Cliqs Bot" className="fixed bottom-5 right-5 z-50 flex flex-col items-end pointer-events-auto select-none">
+      <aside aria-label="Cliqs Agent" className="fixed bottom-5 right-5 z-50 flex flex-col items-end pointer-events-auto select-none">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -491,13 +442,13 @@ export default function ChatbotWidget() {
                 <div className="relative shrink-0">
                   <img
                     src="/assets/images/Logo.jpeg"
-                    alt="Cliq AI"
+                    alt="Cliqs Agent"
                     className="w-9 h-9 rounded-xl object-cover ring-1 ring-[#3A4045] shadow-md"
                   />
                   <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 border-2 border-[#1A2127]" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm font-bold text-white tracking-tight leading-tight">Cliq AI</h3>
+                  <h3 className="text-sm font-bold text-white tracking-tight leading-tight">Cliqs Agent</h3>
                   <p className="text-[11px] text-[#949599] truncate mt-0.5">
                     {isEventPage ? 'Ask about this event' : 'Your personal event booking assistant'}
                   </p>
@@ -549,19 +500,19 @@ export default function ChatbotWidget() {
                       {!isUser && (
                         <img
                           src="/assets/images/Logo.jpeg"
-                          alt="Cliqs Bot"
+                          alt="Cliqs Agent"
                           className="w-6 h-6 rounded-lg object-cover ring-1 ring-white/10 shrink-0 mt-0.5 shadow-sm"
                         />
                       )}
 
                       <div
-                        className={`p-3 rounded-2xl leading-relaxed text-[#EFEFF1] shadow-sm relative ${
+                        className={`p-3 rounded-2xl leading-relaxed shadow-sm relative ${
                           isUser
-                            ? 'bg-white text-[#1C232B] font-medium rounded-tr-none'
-                            : 'bg-[#1C232B] border border-[#2E363E] rounded-tl-none'
+                            ? 'bg-white text-zinc-950 font-semibold rounded-tr-none'
+                            : 'bg-[#1C232B] border border-[#2E363E] text-[#EFEFF1] rounded-tl-none'
                         }`}
                       >
-                        {renderFormattedText(msg.text)}
+                        {renderFormattedText(msg.text, isUser)}
 
                         {/* Interactive Action Chips */}
                         {msg.actions && msg.actions.length > 0 && (
@@ -571,10 +522,10 @@ export default function ChatbotWidget() {
                                 key={i}
                                 type="button"
                                 onClick={() => handleExecuteAction(action)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#CBD5E1] text-[#1C232B] font-bold text-xs transition border border-transparent shadow-sm"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition border border-transparent shadow-sm cursor-pointer"
                               >
-                                <span>{stripEmojis(action.label) || 'View'}</span>
-                                <ArrowRight className="w-3.5 h-3.5" />
+                                <span className="text-zinc-950 font-bold">{stripEmojis(action.label) || 'View'}</span>
+                                <ArrowRight className="w-3.5 h-3.5 text-zinc-950" />
                               </button>
                             ))}
                           </div>
@@ -628,22 +579,6 @@ export default function ChatbotWidget() {
                         )}
                       </div>
                     </div>
-
-                    {/* Quick Follow-up Suggestions */}
-                    {msg.suggestions && msg.suggestions.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-2.5 max-w-[95%]">
-                        {msg.suggestions.map((sug, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            onClick={() => handleSendMessage(sug)}
-                            className="px-2.5 py-1 rounded-lg bg-[#1A2127] border border-[#2E363E] hover:border-white/40 hover:text-white text-[11px] text-[#949599] transition-colors shadow-sm"
-                          >
-                            {sug}
-                          </button>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 );
               })}
@@ -682,8 +617,8 @@ export default function ChatbotWidget() {
                   onKeyDown={handleKeyDown}
                   placeholder={
                     isEventPage
-                      ? 'Ask about tickets, start time, dress code, VIP...'
-                      : 'Tell Cliq what you want (e.g. concert in Kumasi this weekend)...'
+                      ? 'Ask Cliqs Agent about tickets, start time, dress code, VIP...'
+                      : 'Tell Cliqs Agent what you need (e.g. concert in Kumasi this weekend)...'
                   }
                   className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#14181C] border border-[#2E363E] focus:border-white/50 text-xs text-[#EFEFF1] placeholder-[#494F55] focus:outline-none transition"
                 />
@@ -738,8 +673,8 @@ export default function ChatbotWidget() {
                 <MessageSquare className="w-4 h-4" />
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-xs font-semibold text-white tracking-tight">Chat</span>
-                <span className="text-[10px] text-[#949599]">Type your message</span>
+                <span className="text-xs font-semibold text-white tracking-tight">Cliqs Agent Chat</span>
+                <span className="text-[10px] text-[#949599]">Type what you need</span>
               </div>
             </button>
 
@@ -757,7 +692,7 @@ export default function ChatbotWidget() {
                 <Mic className="w-4 h-4" />
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-xs font-semibold text-white tracking-tight">Voice</span>
+                <span className="text-xs font-semibold text-white tracking-tight">Cliqs Agent Voice</span>
                 <span className="text-[10px] text-[#949599]">Talk hands-free</span>
               </div>
             </button>
@@ -781,7 +716,7 @@ export default function ChatbotWidget() {
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.94 }}
           className="relative group p-1 rounded-2xl bg-[#171A1D] shadow-2xl shadow-black/80 border border-[#2E363E] hover:border-white/40 flex items-center justify-center transition-all cursor-pointer"
-          title={isOpen || isSelectorOpen || isVoiceOpen ? 'Close' : 'Help & Support'}
+          title={isOpen || isSelectorOpen || isVoiceOpen ? 'Close' : 'Cliqs Agent'}
         >
           <div className="w-12 h-12 rounded-xl overflow-hidden relative flex items-center justify-center bg-[#1C232B] shadow-inner">
             {isOpen || isSelectorOpen ? (
@@ -805,7 +740,7 @@ export default function ChatbotWidget() {
           {!isOpen && !isSelectorOpen && !isVoiceOpen && (
             <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-[#14181C] border border-[#2E363E] text-white text-xs font-semibold whitespace-nowrap shadow-xl opacity-0 group-hover:opacity-100 transition pointer-events-none flex items-center gap-1.5">
               <MessageSquare className="w-3.5 h-3.5 text-[#949599]" />
-              <span>Need help?</span>
+              <span>Chat with Cliqs Agent</span>
             </span>
           )}
         </motion.button>
