@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { QRCodeSVG } from 'qrcode.react';
@@ -7,9 +7,10 @@ import {
   Ticket as TicketIcon, Search, Download, Send, Calendar, MapPin, Armchair,
   X, Printer, CheckCircle2, Clock, XCircle, QrCode, Tag, Store, BadgeDollarSign,
   ChevronDown, Loader2, CalendarPlus, Share2, Bell, BellRing, ExternalLink,
-  Info, ShieldCheck, FileText,
+  Info, ShieldCheck, FileText, Sparkles,
 } from 'lucide-react';
 import { getUserTickets, transferTicket, downloadTicket } from '@/api/tickets';
+import { verifyPayment } from '@/api/orders';
 import { getMyResale, createResaleListing, cancelResaleListing } from '@/api/resale';
 import { getUserReminders, toggleEventReminder } from '@/api/events';
 import { getGoogleCalendarUrl, downloadIcsFile } from '@/utils/calendar';
@@ -65,13 +66,88 @@ const normalizeTicket = (t) => {
       title: t.event?.title || t.event_title || t.event_name || t.eventName || 'Event',
       venue: t.event?.venue || t.event_venue || t.venue || 'Venue TBA',
       startDate: t.event?.startDate || t.event?.start_date || t.startDate || t.start_date || t.eventDate,
+      endDate: t.event?.endDate || t.event?.end_date || t.endDate || t.end_date,
       startTime: t.event?.startTime || t.event?.start_time || t.startTime || t.start_time,
+      endTime: t.event?.endTime || t.event?.end_time || t.endTime || t.end_time,
       image: t.event?.image || t.banner_image || t.event?.banner_image || t.image,
       ticketTemplate: template,
       category: t.event?.category || t.category,
       city: t.event?.city || t.city,
+      status: t.event?.status || t.event_status,
     },
   };
+};
+
+/**
+ * Accurately determines if a ticket or its event is truly in the past.
+ * An event is NEVER past if it is happening today or in the future.
+ */
+export const isTicketPast = (ticket) => {
+  if (!ticket) return false;
+  const status = (ticket.status || '').toLowerCase();
+
+  // Transferred or cancelled tickets have their own dedicated filter tabs
+  if (status === 'cancelled' || status === 'void' || status === 'transferred') {
+    return false;
+  }
+
+  // If the attendee already checked in and used the ticket, treat as completed/past
+  if (status === 'used' || status === 'checked_in') {
+    return true;
+  }
+
+  const now = new Date();
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const ev = ticket.event || {};
+  const endRaw = ev.endDate || ticket.endDate || ticket.end_date;
+  const startRaw = ev.startDate || ticket.startDate || ticket.start_date || ticket.eventDate;
+
+  // 1. If an explicit end date is set, check whether the event has fully concluded
+  if (endRaw) {
+    const end = new Date(endRaw);
+    if (!isNaN(end.getTime())) {
+      const endTime = ev.endTime || ticket.endTime || ticket.end_time;
+      if (endTime && typeof endTime === 'string' && endTime.includes(':')) {
+        const [h, m] = endTime.split(':');
+        end.setHours(parseInt(h, 10) || 23, parseInt(m, 10) || 59, 59, 999);
+      } else {
+        end.setHours(23, 59, 59, 999);
+      }
+      return end.getTime() < now.getTime();
+    }
+  }
+
+  // 2. If only start date is set
+  if (startRaw) {
+    const start = new Date(startRaw);
+    if (!isNaN(start.getTime())) {
+      const eventDayMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+
+      // If the event date is on a future day -> definitely upcoming
+      if (eventDayMidnight.getTime() > todayMidnight.getTime()) {
+        return false;
+      }
+
+      // If the event date is TODAY -> active and upcoming!
+      if (eventDayMidnight.getTime() === todayMidnight.getTime()) {
+        const endTime = ev.endTime || ticket.endTime || ticket.end_time;
+        if (endTime && typeof endTime === 'string' && endTime.includes(':')) {
+          const [h, m] = endTime.split(':');
+          const eventEndToday = new Date(todayMidnight);
+          eventEndToday.setHours(parseInt(h, 10) || 23, parseInt(m, 10) || 59, 59, 999);
+          return eventEndToday.getTime() < now.getTime();
+        }
+        // Event is today with no specific end time -> active and valid all day!
+        return false;
+      }
+
+      // Start date was yesterday or earlier
+      return true;
+    }
+  }
+
+  return false;
 };
 
 const containerStagger = {
@@ -85,6 +161,10 @@ const itemFade = {
 
 export default function MyTicketsPage() {
   const { format } = useCurrency();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const paymentRef = searchParams.get('reference') || searchParams.get('trxref');
+  const [verifyingPayment, setVerifyingPayment] = useState(Boolean(paymentRef));
+
   const [loading, setLoading] = useState(true);
   const [tickets, setTickets] = useState([]);
   const [tab, setTab] = useState('upcoming');
@@ -160,6 +240,44 @@ export default function MyTicketsPage() {
     loadReminders();
   }, []);
 
+  // Auto-verify transaction if returning from Paystack checkout (?reference=... or ?trxref=...)
+  useEffect(() => {
+    if (!paymentRef) return;
+    let isCancelled = false;
+
+    const verifyAndLoad = async () => {
+      setVerifyingPayment(true);
+      const toastId = toast.loading('Confirming payment & issuing your admission passes...');
+      try {
+        const res = await verifyPayment({ reference: paymentRef });
+        if (
+          res.data?.status === 'success' ||
+          res.data?.message?.toLowerCase().includes('verified') ||
+          res.data?.orderId ||
+          (res.data?.tickets && res.data.tickets.length > 0)
+        ) {
+          toast.success('Payment verified! Your ticket pass is ready.', { id: toastId });
+        } else {
+          toast.dismiss(toastId);
+        }
+      } catch (err) {
+        console.warn('[MyTicketsPage] Payment verify notice:', err.message);
+        toast.dismiss(toastId);
+      } finally {
+        if (!isCancelled) {
+          setVerifyingPayment(false);
+          setSearchParams({}, { replace: true });
+          loadTickets();
+        }
+      }
+    };
+
+    verifyAndLoad();
+    return () => {
+      isCancelled = true;
+    };
+  }, [paymentRef]);
+
   const handleRemoveReminder = async (eventId) => {
     setTogglingReminderId(eventId);
     try {
@@ -174,14 +292,13 @@ export default function MyTicketsPage() {
   };
 
   const filtered = useMemo(() => {
-    const now = new Date();
     return tickets.filter((t) => {
-      const eventDate = t.event?.startDate || t.eventDate || t.startDate;
+      const isPast = isTicketPast(t);
       const status = (t.status || '').toLowerCase();
       const matchesTab =
         tab === 'all' ? true
-        : tab === 'upcoming' ? (eventDate ? new Date(eventDate) >= now : true) && status !== 'cancelled' && status !== 'transferred' && status !== 'used'
-        : tab === 'past' ? ((eventDate ? new Date(eventDate) < now : false) || status === 'used') && status !== 'cancelled' && status !== 'transferred'
+        : tab === 'upcoming' ? !isPast && status !== 'cancelled' && status !== 'void' && status !== 'transferred'
+        : tab === 'past' ? isPast && status !== 'cancelled' && status !== 'void' && status !== 'transferred'
         : tab === 'transferred' ? status === 'transferred'
         : tab === 'cancelled' ? status === 'cancelled' || status === 'void'
         : true;
@@ -275,8 +392,14 @@ export default function MyTicketsPage() {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner size="lg" label="Loading your tickets..." className="py-24" />;
+  if (loading || verifyingPayment) {
+    return (
+      <LoadingSpinner
+        size="lg"
+        label={verifyingPayment ? 'Confirming your payment and issuing your ticket passes...' : 'Loading your tickets...'}
+        className="py-24"
+      />
+    );
   }
 
   return (
