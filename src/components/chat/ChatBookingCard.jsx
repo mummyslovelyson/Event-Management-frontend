@@ -54,12 +54,12 @@ export default function ChatBookingCard({
               <Ticket className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-[#949599] block">Order Breakdown</span>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#949599] block">Order Summary</span>
               <span className="text-xs font-bold text-white line-clamp-1">{booking.eventTitle}</span>
             </div>
           </div>
           <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400/10 text-amber-300 border border-amber-400/20">
-            Selection Ready
+            Awaiting Confirmation
           </span>
         </div>
 
@@ -67,16 +67,12 @@ export default function ChatBookingCard({
         <div className="space-y-2 bg-[#1C232B] p-3 rounded-lg border border-[#2A333D]">
           <div className="flex items-center justify-between text-xs">
             <span className="text-[#CBD5E1] font-semibold">{booking.quantity} × {booking.tierName}</span>
-            <span className="text-white font-mono font-medium">{formatCurrency(booking.unitPrice)} each</span>
+            <span className="text-white font-mono font-medium">{formatCurrency(booking.subtotal)}</span>
           </div>
 
           <div className="border-t border-white/10 pt-2 space-y-1 text-xs">
             <div className="flex justify-between text-[#949599]">
-              <span>Subtotal</span>
-              <span className="font-mono text-[#CBD5E1]">{formatCurrency(booking.subtotal)}</span>
-            </div>
-            <div className="flex justify-between text-[#949599]">
-              <span>Service Fee</span>
+              <span>Service fee</span>
               <span className="font-mono text-[#CBD5E1]">{formatCurrency(booking.serviceFee)}</span>
             </div>
             <div className="border-t border-white/10 pt-1.5 flex justify-between text-sm font-bold text-white">
@@ -84,14 +80,23 @@ export default function ChatBookingCard({
               <span className="font-mono text-emerald-400">{formatCurrency(booking.total)}</span>
             </div>
           </div>
+
+          <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-[#949599]">
+            <span>Payment method:</span>
+            <span className="text-[#CBD5E1] font-medium flex items-center gap-1">
+              <Smartphone className="w-3 h-3 text-amber-400" />
+              <span>{booking.paymentMethod || 'MTN MoMo / Telecel / Card'}</span>
+            </span>
+          </div>
         </div>
 
         <button
           type="button"
           onClick={() => onContinuePayment?.(booking)}
-          className="mt-3 w-full py-2.5 px-4 rounded-lg bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition flex items-center justify-center gap-2 shadow"
+          className="mt-3 w-full py-2.5 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer"
         >
-          <span>Continue to Payment</span>
+          <CreditCard className="w-4 h-4" />
+          <span>Confirm &amp; Pay {formatCurrency(booking.total)}</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

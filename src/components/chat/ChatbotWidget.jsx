@@ -109,8 +109,8 @@ export default function ChatbotWidget() {
       id: 'welcome-1',
       sender: 'bot',
       text: user
-        ? `Hey **${user.name || 'there'}**! I'm **Cliqs Bot**. Need help finding live events, checking your tickets, or managing your passes today?`
-        : `Hey! I'm **Cliqs Bot**. Whether you're hunting for live concerts, club nights, or need a hand with tickets and bookings, I'm here to help.`,
+        ? `Hey **${user.name || 'there'}**! I'm **Cliq AI**, your personal event booking assistant. Tell Cliq what you want, and I'll handle the rest — from discovery to tickets and payment!`
+        : `Hey! I'm **Cliq AI**, your personal event booking assistant. Tell Cliq what you want, and I'll handle the rest — from event discovery to tickets, payment, and QR passes.`,
       suggestions: contextualSuggestions,
       timestamp: new Date().toISOString(),
     },
@@ -462,15 +462,15 @@ export default function ChatbotWidget() {
                 <div className="relative shrink-0">
                   <img
                     src="/assets/images/Logo.jpeg"
-                    alt="Cliqs Bot"
+                    alt="Cliq AI"
                     className="w-9 h-9 rounded-xl object-cover ring-1 ring-[#3A4045] shadow-md"
                   />
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#EFEFF1] border-2 border-[#1A2127]" />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 border-2 border-[#1A2127]" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm font-bold text-white tracking-tight leading-tight">Cliqs Bot</h3>
+                  <h3 className="text-sm font-bold text-white tracking-tight leading-tight">Cliq AI</h3>
                   <p className="text-[11px] text-[#949599] truncate mt-0.5">
-                    {isEventPage ? 'Ask about this event' : 'Tribes & Cliqs Assistant'}
+                    {isEventPage ? 'Ask about this event' : 'Your personal event booking assistant'}
                   </p>
                 </div>
               </div>
@@ -653,8 +653,8 @@ export default function ChatbotWidget() {
                   onKeyDown={handleKeyDown}
                   placeholder={
                     isEventPage
-                      ? 'Ask about ticket prices, start times, venue...'
-                      : 'Ask about events, tickets, VIP sections...'
+                      ? 'Ask about tickets, start time, dress code, VIP...'
+                      : 'Tell Cliq what you want (e.g. concert in Kumasi this weekend)...'
                   }
                   className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#14181C] border border-[#2E363E] focus:border-white/50 text-xs text-[#EFEFF1] placeholder-[#494F55] focus:outline-none transition"
                 />
@@ -791,6 +791,10 @@ export default function ChatbotWidget() {
           setIsOpen(true);
         }}
         onSendMessage={handleVoiceMessage}
+        onContinuePayment={handleContinuePayment}
+        onVerifyPayment={handleVerifyPayment}
+        onShowQR={(tickets) => setSelectedQR(tickets)}
+        verifyingOrderId={verifyingOrderId}
         activeContext={{
           isEventPage,
           isTicketsPage,

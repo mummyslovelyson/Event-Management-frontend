@@ -6,22 +6,30 @@ import {
 } from 'lucide-react';
 import ChatEventCard from './ChatEventCard';
 import ChatTicketCard from './ChatTicketCard';
+import ChatBookingCard from './ChatBookingCard';
+import ChatSpendingCard from './ChatSpendingCard';
 
 export default function VoiceAgentModal({
   isOpen,
   onClose,
   onSwitchToChat,
   onSendMessage,
+  onContinuePayment,
+  onVerifyPayment,
+  onShowQR,
+  verifyingOrderId,
   activeContext = {},
 }) {
   const [agentState, setAgentState] = useState('idle'); // 'idle' | 'listening' | 'thinking' | 'speaking' | 'paused'
   const [transcript, setTranscript] = useState('');
   const [lastAgentReply, setLastAgentReply] = useState(
-    "Welcome to Tribes & Cliqs! How can I help you find events or tickets today?"
+    "Hey! I'm Cliq AI, your personal event booking assistant. Tell me what experience you want, and I'll handle the rest."
   );
   const [lastEvents, setLastEvents] = useState([]);
   const [lastTickets, setLastTickets] = useState([]);
   const [lastActions, setLastActions] = useState([]);
+  const [lastBooking, setLastBooking] = useState(null);
+  const [lastSpending, setLastSpending] = useState(null);
   const [isMuted, setIsMuted] = useState(false);
   const [micError, setMicError] = useState(null);
 
@@ -234,6 +242,8 @@ export default function VoiceAgentModal({
         setLastEvents(res.events || []);
         setLastTickets(res.tickets || []);
         setLastActions(res.actions || []);
+        setLastBooking(res.booking || null);
+        setLastSpending(res.spending || null);
         speakResponse(res.reply);
       } else {
         speakResponse("I found some details for you.");
@@ -508,10 +518,10 @@ export default function VoiceAgentModal({
         <div className="w-full flex items-center justify-between z-10 mb-2">
           <div className="flex items-center gap-2">
             <span className="p-1.5 rounded-xl bg-[#242B32] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-bold flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#949599]" />
-              <span>Voice Agent Mode</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Cliq AI Voice</span>
             </span>
-            <span className="text-[11px] text-[#949599]">Real-Time Audio</span>
+            <span className="text-[11px] text-[#949599]">Your personal event booking assistant</span>
           </div>
 
           <div className="flex items-center gap-1 text-[#949599]">
@@ -624,9 +634,36 @@ export default function VoiceAgentModal({
 
         {/* Agent Answer Transcript Box */}
         <div className="w-full overflow-y-auto max-h-40 px-4 py-3 rounded-2xl bg-[#1C232B] border border-[#2E363E] text-left text-xs text-[#EFEFF1] leading-relaxed mb-3">
-          <p className="font-semibold text-[#EFEFF1] text-[11px] mb-1">Cliqs Bot</p>
+          <p className="font-semibold text-emerald-400 text-[11px] mb-1">Cliq AI</p>
           <p>{lastAgentReply}</p>
         </div>
+
+        {/* Interactive Order & Payment Confirmation Screen (Voice Safe Approval Checkpoint) */}
+        {lastBooking && (
+          <div className="w-full my-2 text-left max-h-72 overflow-y-auto pr-1">
+            <ChatBookingCard
+              booking={lastBooking}
+              onContinuePayment={async (b) => {
+                const res = await onContinuePayment?.(b);
+                if (res) setLastBooking(res);
+              }}
+              onVerifyPayment={async (b) => {
+                const res = await onVerifyPayment?.(b);
+                if (res) setLastBooking(res);
+              }}
+              onNavigate={onClose}
+              onShowQR={(t) => onShowQR?.(t)}
+              verifying={verifyingOrderId === lastBooking?.orderId}
+            />
+          </div>
+        )}
+
+        {/* Monthly Spending Card */}
+        {lastSpending && (
+          <div className="w-full my-2 text-left">
+            <ChatSpendingCard spending={lastSpending} onNavigate={onClose} />
+          </div>
+        )}
 
         {/* Action chips if agent suggested actions */}
         {lastActions && lastActions.length > 0 && (
