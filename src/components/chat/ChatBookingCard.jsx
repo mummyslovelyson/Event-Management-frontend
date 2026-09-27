@@ -93,10 +93,10 @@ export default function ChatBookingCard({
         <button
           type="button"
           onClick={() => onContinuePayment?.(booking)}
-          className="mt-3 w-full py-2.5 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer"
+          className="mt-3 w-full py-2.5 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer"
         >
           <CreditCard className="w-4 h-4" />
-          <span>Confirm &amp; Pay {formatCurrency(booking.total)}</span>
+          <span>Pay with Paystack • {formatCurrency(booking.total)}</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
@@ -147,16 +147,17 @@ export default function ChatBookingCard({
         {/* Action buttons */}
         <div className="space-y-2">
           {booking.authorizationUrl && (
-            <a
-              href={booking.authorizationUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full py-2.5 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow"
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = booking.authorizationUrl;
+              }}
+              className="w-full py-2.5 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow cursor-pointer"
             >
               <CreditCard className="w-4 h-4" />
-              <span>Complete Payment ({formatCurrency(booking.total)})</span>
+              <span>Initiate Paystack Payment ({formatCurrency(booking.total)})</span>
               <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+            </button>
           )}
 
           <button

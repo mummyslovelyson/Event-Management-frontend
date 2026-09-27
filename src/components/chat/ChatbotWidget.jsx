@@ -222,12 +222,19 @@ export default function ChatbotWidget() {
         {
           id: `bot-${Date.now()}`,
           sender: 'bot',
-          text: 'Please sign in or create an account to reserve your tickets and guarantee your spot.',
+          text: 'Please sign in or create an account to reserve your tickets and complete Paystack payment.',
           actions: [{ type: 'NAVIGATE', label: 'Sign In to Book', path: '/login' }],
           timestamp: new Date().toISOString(),
         },
       ]);
       return;
+    }
+
+    // If booking already has an authorization URL, initiate Paystack immediately!
+    const existingAuthUrl = booking.authorizationUrl || booking.authorization_url;
+    if (existingAuthUrl) {
+      window.location.href = existingAuthUrl;
+      return booking;
     }
 
     setLoading(true);
@@ -239,19 +246,26 @@ export default function ChatbotWidget() {
         callbackUrl: `${window.location.origin}/attendee/tickets`,
       });
 
+      const holdData = res.data?.booking || res.data?.data || res.data;
       const reservedBooking = {
-        ...res.data.booking,
+        ...holdData,
         status: 'reserved',
       };
       setActiveBooking(reservedBooking);
+
+      const paystackUrl = reservedBooking.authorizationUrl || reservedBooking.authorization_url;
 
       setMessages((prev) => [
         ...prev,
         {
           id: `bot-${Date.now()}`,
           sender: 'bot',
-          text: `Your tickets have been reserved for 10 minutes. Please complete payment using the checkout button below:`,
+          text: `Your tickets are reserved for 10 minutes! Opening Paystack secure checkout for GHS ${Number(reservedBooking.total || 0).toFixed(2)}... If not redirected automatically, click the button below:`,
           booking: reservedBooking,
+          actions: [
+            paystackUrl ? { type: 'PAY_NOW', label: `Pay Now with Paystack (GHS ${Number(reservedBooking.total || 0).toFixed(2)})`, url: paystackUrl } : null,
+            { type: 'VERIFY_PAYMENT', label: 'Verify Payment', reference: reservedBooking.reference },
+          ].filter(Boolean),
           suggestions: [
             'I have paid / Verify Payment',
             'Can I get a refund?',
@@ -260,9 +274,16 @@ export default function ChatbotWidget() {
           timestamp: new Date().toISOString(),
         },
       ]);
+
+      // Initiate Paystack payment immediately
+      if (paystackUrl) {
+        window.location.href = paystackUrl;
+      }
+
+      return reservedBooking;
     } catch (err) {
       console.error('[handleContinuePayment]', err);
-      const errMsg = err.response?.data?.error || 'Unable to reserve tickets. Please select another tier or try again.';
+      const errMsg = err.response?.data?.message || err.response?.data?.error || err.message || 'Unable to reserve tickets. Please select another tier or try again.';
       setMessages((prev) => [
         ...prev,
         {
