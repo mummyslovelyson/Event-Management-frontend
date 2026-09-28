@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Share2, MessageCircle, Send as TelegramIcon, Twitter, Facebook,
   Linkedin, MessageSquare, Link2, Copy, Check, Download,
-  Users, MapPin, Calendar, QrCode, X,
+  Users, MapPin, Calendar, QrCode, X, Search, UserCheck, Loader2, Sparkles, Send,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Modal from './Modal';
+import { getFriendsList, searchFriends } from '@/api/users';
+import { inviteFriendsToEvent } from '@/api/meetups';
 
 export default function SocialShareModal({
   open,
@@ -17,7 +19,82 @@ export default function SocialShareModal({
 }) {
   const [copied, setCopied] = useState(false);
   const [copiedMsg, setCopiedMsg] = useState(false);
-  const [activeTab, setActiveTab] = useState('platforms'); // 'platforms' | 'squad' | 'story'
+  const [activeTab, setActiveTab] = useState('friends'); // 'friends' | 'platforms' | 'squad'
+  
+  // In-app Friends State
+  const [friends, setFriends] = useState([]);
+  const [loadingFriends, setLoadingFriends] = useState(false);
+  const [friendSearch, setFriendSearch] = useState('');
+  const [selectedFriends, setSelectedFriends] = useState(new Set());
+  const [inviteNote, setInviteNote] = useState('');
+  const [sendingInvites, setSendingInvites] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setLoadingFriends(true);
+      getFriendsList()
+        .then((res) => {
+          if (res.data) {
+            const list = res.data.following || res.data.friends || [];
+            setFriends(Array.isArray(list) ? list : []);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoadingFriends(false));
+    } else {
+      setSelectedFriends(new Set());
+      setFriendSearch('');
+      setInviteNote('');
+    }
+  }, [open]);
+
+  const handleFriendSearch = async (q) => {
+    setFriendSearch(q);
+    if (!q.trim()) {
+      getFriendsList().then((res) => {
+        if (res.data) setFriends(res.data.following || res.data.friends || []);
+      });
+      return;
+    }
+    try {
+      const res = await searchFriends(q.trim());
+      if (res.data?.users) {
+        setFriends(res.data.users);
+      }
+    } catch {}
+  };
+
+  const toggleSelectFriend = (id) => {
+    setSelectedFriends((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleSendInAppInvites = async () => {
+    if (selectedFriends.size === 0) {
+      toast.error('Select at least one friend to invite');
+      return;
+    }
+    setSendingInvites(true);
+    try {
+      const recipientIds = Array.from(selectedFriends);
+      await inviteFriendsToEvent(event.id, {
+        recipientIds,
+        meetupId: meetup?.id || null,
+        note: inviteNote.trim() || undefined,
+      });
+      toast.success(`Invitation sent to ${recipientIds.length} friend${recipientIds.length > 1 ? 's' : ''}! 🎉`);
+      setSelectedFriends(new Set());
+      setInviteNote('');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not send event invites');
+    } finally {
+      setSendingInvites(false);
+    }
+  };
 
   if (!event) return null;
 
@@ -153,7 +230,7 @@ export default function SocialShareModal({
     <Modal
       open={open}
       onClose={onClose}
-      title="Share & Invite Your Squad"
+      title="Invite Friends to Event"
       size="md"
     >
       <div className="space-y-5">
@@ -173,7 +250,7 @@ export default function SocialShareModal({
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-white">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
               {event.category || 'Tribes & Cliqs Event'}
             </span>
             <h4 className="text-sm font-bold text-[#EFEFF1] truncate">{eventTitle}</h4>
@@ -192,6 +269,17 @@ export default function SocialShareModal({
         <div className="flex rounded-lg bg-[#161D22] p-1 border border-[#262B2F]">
           <button
             type="button"
+            onClick={() => setActiveTab('friends')}
+            className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition ${
+              activeTab === 'friends'
+                ? 'bg-white text-[#1C232B] shadow-sm'
+                : 'text-[#949599] hover:text-[#EFEFF1]'
+            }`}
+          >
+            Tribes &amp; Friends
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab('platforms')}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition ${
               activeTab === 'platforms'
@@ -199,7 +287,7 @@ export default function SocialShareModal({
                 : 'text-[#949599] hover:text-[#EFEFF1]'
             }`}
           >
-            Social Apps
+            WhatsApp &amp; Social
           </button>
           <button
             type="button"
@@ -210,11 +298,103 @@ export default function SocialShareModal({
                 : 'text-[#949599] hover:text-[#EFEFF1]'
             }`}
           >
-            Squad Invite Text
+            Invite Message
           </button>
         </div>
 
-        {/* Tab 1: Direct Social Channels */}
+        {/* Tab 1: In-App Friends Invitation */}
+        {activeTab === 'friends' && (
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#949599]" />
+              <input
+                type="text"
+                value={friendSearch}
+                onChange={(e) => handleFriendSearch(e.target.value)}
+                placeholder="Search friends by name or username..."
+                className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#161D22] border border-[#262B2F] text-xs text-white placeholder-[#949599] focus:outline-none focus:border-amber-400/50"
+              />
+            </div>
+
+            {/* Friends list */}
+            <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1">
+              {loadingFriends ? (
+                <div className="py-8 text-center text-xs text-[#949599] flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
+                  <span>Loading friends...</span>
+                </div>
+              ) : friends.length === 0 ? (
+                <div className="py-6 text-center text-xs text-[#949599] bg-[#161D22] rounded-xl border border-[#262B2F] p-4">
+                  <p className="text-[#EFEFF1] font-semibold">No friends found</p>
+                  <p className="mt-1">Follow other attendees on Tribes &amp; Cliqs or share the event link below.</p>
+                </div>
+              ) : (
+                friends.map((f) => {
+                  const isSelected = selectedFriends.has(f.id);
+                  const initials = (f.name || f.username || 'F').slice(0, 2).toUpperCase();
+                  return (
+                    <div
+                      key={f.id}
+                      onClick={() => toggleSelectFriend(f.id)}
+                      className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition ${
+                        isSelected
+                          ? 'bg-amber-500/10 border-amber-500/40 text-white'
+                          : 'bg-[#161D22] border-[#262B2F] text-[#CBD5E1] hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-white/10 text-white text-xs font-bold flex items-center justify-center shrink-0">
+                          {f.avatar ? (
+                            <img src={f.avatar} alt={f.name} className="w-full h-full rounded-full object-cover" />
+                          ) : (
+                            initials
+                          )}
+                        </div>
+                        <div className="truncate text-left">
+                          <p className="text-xs font-bold text-white truncate">{f.name || f.username}</p>
+                          <p className="text-[10px] text-[#949599] truncate">@{f.username || 'attendee'}</p>
+                        </div>
+                      </div>
+                      <div
+                        className={`w-5 h-5 rounded-md flex items-center justify-center border transition ${
+                          isSelected
+                            ? 'bg-amber-400 border-amber-400 text-black'
+                            : 'border-[#494F55] bg-transparent'
+                        }`}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Optional invite note */}
+            {selectedFriends.size > 0 && (
+              <div className="space-y-2 pt-2 border-t border-[#262B2F]">
+                <input
+                  type="text"
+                  value={inviteNote}
+                  onChange={(e) => setInviteNote(e.target.value)}
+                  placeholder="Add an optional note (e.g. Come with me!)..."
+                  className="w-full px-3 py-2 rounded-xl bg-[#161D22] border border-[#262B2F] text-xs text-white placeholder-[#949599] focus:outline-none focus:border-amber-400/50"
+                />
+                <button
+                  type="button"
+                  onClick={handleSendInAppInvites}
+                  disabled={sendingInvites}
+                  className="w-full py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs transition flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {sendingInvites ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                  <span>Send In-App Invite to ({selectedFriends.size}) Friend{selectedFriends.size > 1 ? 's' : ''}</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab 2: Direct Social Channels */}
         {activeTab === 'platforms' && (
           <div className="grid grid-cols-2 gap-2.5">
             {shareChannels.map((c) => (
@@ -236,7 +416,7 @@ export default function SocialShareModal({
           </div>
         )}
 
-        {/* Tab 2: Squad Invite Message */}
+        {/* Tab 3: Squad Invite Message */}
         {activeTab === 'squad' && (
           <div className="space-y-3">
             <div className="rounded-xl bg-[#161D22] border border-[#262B2F] p-3.5">

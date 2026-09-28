@@ -1234,9 +1234,10 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
           </button>
           <button
             onClick={onShare}
-            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-emerald-400 text-xs font-medium hover:border-emerald-500/40 hover:bg-emerald-500/10 transition-colors"
+            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-amber-400/40 text-amber-300 text-xs font-semibold hover:border-amber-400 hover:bg-amber-400/10 transition-colors"
+            title="Invite friends to join you at this event"
           >
-            <Share2 className="w-3.5 h-3.5" /> Share
+            <Users className="w-3.5 h-3.5 text-amber-400" /> Invite Friends
           </button>
           <button
             onClick={onTransfer}

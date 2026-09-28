@@ -109,56 +109,48 @@ export default function ResaleMarketplacePage() {
     <div className="min-h-screen bg-[#111417] text-[#EFEFF1] pt-24 pb-20">
       {/* ─── Hero Header ─── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#1C232B] via-[#171A1D] to-[#111417] border border-[#262B2F] p-8 sm:p-12 shadow-2xl">
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
-
+        <div className="relative rounded-3xl overflow-hidden bg-[#171A1D] border border-[#262B2F] p-8 sm:p-12 shadow-2xl">
           <div className="relative z-10 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold mb-4">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              100% Verified Secondary Marketplace
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-semibold mb-4">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+              Verified Ticket Resale
             </div>
-            <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-              Fair Ticket Resale. <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-300">
-                Zero Scalping, Pure Peace of Mind.
-              </span>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+              Secondary Ticket Exchange
             </h1>
-            <p className="mt-4 text-sm sm:text-base text-[#949599] leading-relaxed">
-              Plans change, but your money shouldn’t go to waste. Buy authentic resale tickets protected by our
-              <span className="text-white font-medium"> +25% anti-scalping price cap</span>, organizer oversight, and
-              <span className="text-white font-medium"> instant digital QR code re-issuance</span>.
+            <p className="mt-3 text-sm sm:text-base text-[#949599] leading-relaxed">
+              Buy authentic tickets from fans who can no longer attend. All listings have verified ownership, anti-scalping price caps, and instant transfer with fresh QR codes.
             </p>
 
             {/* Key Guarantees */}
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-[#262B2F]">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider">Capped Pricing</h4>
-                  <p className="text-xs text-[#949599] mt-0.5">Max +25% markup over face value to prevent price gouging.</p>
+                  <p className="text-xs text-[#949599] mt-0.5">Maximum +25% markup over original face value.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center shrink-0">
                   <RefreshCw className="w-4 h-4" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider">Fresh QR Code</h4>
-                  <p className="text-xs text-[#949599] mt-0.5">Old ticket is revoked instantly. You get a brand-new digital pass.</p>
+                  <p className="text-xs text-[#949599] mt-0.5">Previous pass is revoked. You receive an authentic new ticket.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-white/10 text-[#CBD5E1] flex items-center justify-center shrink-0">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">Organizer Oversight</h4>
-                  <p className="text-xs text-[#949599] mt-0.5">Approved and backed directly through the official event organizers.</p>
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">Verified Transfer</h4>
+                  <p className="text-xs text-[#949599] mt-0.5">Direct ownership transfer recorded in your tickets dashboard.</p>
                 </div>
               </div>
             </div>
@@ -167,13 +159,13 @@ export default function ResaleMarketplacePage() {
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
                 to="/attendee/tickets"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-[#111417] text-sm font-bold hover:bg-[#EFEFF1] transition shadow-lg"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-[#111417] text-sm font-bold hover:bg-[#CBD5E1] transition shadow-md"
               >
                 <Tag className="w-4 h-4" />
-                Resell My Spare Ticket
+                List a Ticket for Resale
               </Link>
               <span className="text-xs text-[#949599]">
-                Already have an event pass? Resell safely from your <strong className="text-[#CBD5E1]">My Tickets</strong> page.
+                Have a ticket you can't use? List it directly from your <strong className="text-white">My Tickets</strong> page.
               </span>
             </div>
           </div>
@@ -355,15 +347,10 @@ export default function ResaleMarketplacePage() {
                         )}
                       </div>
 
-                      <div className="text-[11px] text-[#949599] flex items-center justify-between mb-3 bg-[#111417] p-2 rounded-lg border border-[#262B2F]">
-                        <span>Platform Protected Transfer</span>
-                        <span className="font-semibold text-emerald-400">Included</span>
-                      </div>
-
                       <button
                         onClick={() => handleBuy(listing)}
                         disabled={buyingId === listing.id}
-                        className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-3 rounded-xl bg-white hover:bg-[#CBD5E1] text-[#111417] font-extrabold text-sm transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {buyingId === listing.id ? (
                           <>
@@ -373,7 +360,7 @@ export default function ResaleMarketplacePage() {
                         ) : (
                           <>
                             <ShoppingCart className="w-4 h-4" />
-                            Buy Resale Ticket &rarr;
+                            Buy Ticket
                           </>
                         )}
                       </button>
@@ -390,43 +377,42 @@ export default function ResaleMarketplacePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
         <div className="rounded-3xl bg-[#171A1D] border border-[#262B2F] p-8 sm:p-12">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Security & Integrity</span>
-            <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-white">How Tribes & Cliqs Resale Works</h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">How Ticket Resale Works</h2>
             <p className="mt-2 text-xs sm:text-sm text-[#949599]">
-              Built to eradicate ticket fraud, fake screenshots, and predatory black-market markups.
+              Safe and straightforward secondary ticketing designed for genuine fans.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="p-5 rounded-2xl bg-[#111417] border border-[#262B2F]">
               <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center font-bold text-sm mb-4">1</div>
-              <h3 className="text-sm font-bold text-white">Attendee Lists Ticket</h3>
+              <h3 className="text-sm font-bold text-white">List Your Pass</h3>
               <p className="text-xs text-[#949599] mt-2 leading-relaxed">
-                Attendees can list active tickets directly from their Digital Wallet, capped strictly at +25% of original face value.
+                Attendees can list eligible tickets directly from their dashboard at or below the fair price cap.
               </p>
             </div>
 
             <div className="p-5 rounded-2xl bg-[#111417] border border-[#262B2F]">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-sm mb-4">2</div>
-              <h3 className="text-sm font-bold text-white">Organizer Moderation</h3>
+              <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center font-bold text-sm mb-4">2</div>
+              <h3 className="text-sm font-bold text-white">Organizer Visibility</h3>
               <p className="text-xs text-[#949599] mt-2 leading-relaxed">
-                Event organizers maintain visibility over all secondary sales and can verify or approve listings.
+                Secondary activity is transparent to organizers to safeguard genuine admissions.
               </p>
             </div>
 
             <div className="p-5 rounded-2xl bg-[#111417] border border-[#262B2F]">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm mb-4">3</div>
-              <h3 className="text-sm font-bold text-white">Secure Payment &amp; Fee</h3>
+              <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center font-bold text-sm mb-4">3</div>
+              <h3 className="text-sm font-bold text-white">Direct MoMo Payout</h3>
               <p className="text-xs text-[#949599] mt-2 leading-relaxed">
-                Buyer pays securely via Mobile Money or Card. A 5% platform service fee is deducted and 95% goes to the seller's wallet.
+                Buyers pay securely with Mobile Money or Card. Payout is processed cleanly to the seller's wallet.
               </p>
             </div>
 
             <div className="p-5 rounded-2xl bg-[#111417] border border-[#262B2F]">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-sm mb-4">4</div>
-              <h3 className="text-sm font-bold text-white">Automatic Ownership Transfer</h3>
+              <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center font-bold text-sm mb-4">4</div>
+              <h3 className="text-sm font-bold text-white">Automatic QR Re-issuance</h3>
               <p className="text-xs text-[#949599] mt-2 leading-relaxed">
-                Seller's old QR code is revoked immediately. A brand-new digital ticket and QR code is minted for the buyer.
+                The seller's old code is invalidated and an authentic new digital pass is issued directly to the buyer.
               </p>
             </div>
           </div>

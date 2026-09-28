@@ -32,27 +32,51 @@ const itemFade = {
 
 export default function ProfilePage() {
   const { user, setUser } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState(() => user || null);
+  const [loading, setLoading] = useState(() => !user);
   const [tab, setTab] = useState('personal');
-  const [profile, setProfile] = useState(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
+    let isMounted = true;
+    const fetchProfileData = async () => {
       try {
         const res = await getProfile();
-        const data = res.data?.user ?? res.data ?? user;
-        setProfile(data);
+        const data = res.data?.user ?? res.data?.data?.user ?? res.data?.data ?? res.data;
+        if (isMounted && data && typeof data === 'object') {
+          setProfile((prev) => ({ ...(prev || {}), ...data }));
+          if (setUser && user) {
+            setUser((prev) => ({ ...(prev || {}), ...data }));
+          }
+        }
       } catch (err) {
-        // Fall back to context user
-        setProfile(user);
+        console.warn('[ProfilePage] Failed to fetch remote profile, falling back to local session:', err.message);
+        if (isMounted && user) {
+          setProfile((prev) => ({ ...(prev || {}), ...user }));
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
-    })();
+    };
+
+    fetchProfileData();
+    return () => { isMounted = false; };
+  }, [user?.id, user?.email]);
+
+  // Synchronize when context user updates
+  useEffect(() => {
+    if (user && !profile) {
+      setProfile(user);
+      setLoading(false);
+    }
   }, [user]);
+
+  const effectiveProfile = profile || user || {};
+
+  if (loading && !effectiveProfile?.email && !effectiveProfile?.name) {
+    return <LoadingSpinner size="lg" label="Loading profile..." className="py-24" />;
+  }
 
   const handleAvatarUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -76,11 +100,8 @@ export default function ProfilePage() {
     }
   };
 
-  if (loading || !profile) {
-    return <LoadingSpinner size="lg" label="Loading profile..." className="py-24" />;
-  }
-
-  const initials = (profile.name || profile.email || 'U')
+  const displayProfile = effectiveProfile;
+  const initials = (displayProfile.name || displayProfile.email || 'U')
     .split(' ')
     .map((s) => s[0])
     .join('')
@@ -96,8 +117,8 @@ export default function ProfilePage() {
           {/* Avatar */}
           <div className="relative shrink-0">
             <div className="w-24 h-24 rounded-2xl overflow-hidden bg-white flex items-center justify-center text-[#1C232B] text-3xl font-bold ring-2 ring-white/40">
-              {profile.avatar ? (
-                <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
+              {displayProfile.avatar ? (
+                <img src={displayProfile.avatar} alt={displayProfile.name} className="w-full h-full object-cover" />
               ) : (
                 initials
               )}
@@ -125,16 +146,16 @@ export default function ProfilePage() {
 
           {/* Info */}
           <div className="flex-1 text-center sm:text-left min-w-0">
-            <h1 className="text-2xl font-bold text-[#EFEFF1] truncate">{profile.name || 'User'}</h1>
-            <p className="text-sm text-[#949599] truncate">{profile.email}</p>
+            <h1 className="text-2xl font-bold text-[#EFEFF1] truncate">{displayProfile.name || 'User Profile'}</h1>
+            <p className="text-sm text-[#949599] truncate">{displayProfile.email || 'Attendee'}</p>
             <div className="mt-3 flex items-center justify-center sm:justify-start gap-4 flex-wrap">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-semibold">
                 <Check className="w-3.5 h-3.5" /> Attendee
               </span>
-              {profile.createdAt && (
+              {displayProfile.createdAt && (
                 <span className="text-xs text-[#494F55] flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5" />
-                  Member since {new Date(profile.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  Member since {new Date(displayProfile.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 </span>
               )}
             </div>
@@ -176,12 +197,11 @@ export default function ProfilePage() {
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
         >
-          {tab === 'personal' && <PersonalInfoTab profile={profile} setProfile={setProfile} />}
+          {tab === 'personal' && <PersonalInfoTab profile={displayProfile} setProfile={setProfile} />}
           {tab === 'tribes' && <TribesAndInvitesTab />}
-          {tab === 'security' && <SecurityTab profile={profile} />}
-          {tab === 'payments' && <PaymentMethodsTab profile={profile} />}
-          {tab === 'notifications' && <NotificationSettingsTab profile={profile} setProfile={setProfile} />}
-
+          {tab === 'security' && <SecurityTab profile={displayProfile} />}
+          {tab === 'payments' && <PaymentMethodsTab profile={displayProfile} />}
+          {tab === 'notifications' && <NotificationSettingsTab profile={displayProfile} setProfile={setProfile} />}
         </motion.div>
       </AnimatePresence>
     </motion.div>

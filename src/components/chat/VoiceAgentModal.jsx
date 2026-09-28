@@ -469,12 +469,12 @@ export default function VoiceAgentModal({
 
         ctx.arc(centerX, centerY, Math.max(12, radius), 0, Math.PI * 2);
         ctx.strokeStyle = isSpeaking
-          ? `rgba(239, 239, 241, ${0.5 - i * 0.1})`
+          ? `rgba(212, 175, 55, ${0.6 - i * 0.12})`
           : isThinking
-          ? `rgba(178, 20, 20, ${0.55 - i * 0.1})`
+          ? `rgba(203, 213, 225, ${0.4 - i * 0.08})`
           : isListening
-          ? `rgba(239, 239, 241, ${0.45 - i * 0.1})`
-          : `rgba(75, 85, 99, 0.18)`;
+          ? `rgba(245, 158, 11, ${0.5 - i * 0.1})`
+          : `rgba(73, 79, 85, 0.2)`;
         ctx.lineWidth = 2.5;
         ctx.stroke();
       }
@@ -499,29 +499,29 @@ export default function VoiceAgentModal({
         initial={{ opacity: 0, scale: 0.92, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.92, y: 20 }}
-        className="w-full max-w-lg bg-[#14181C] border border-[#2E363E] rounded-3xl p-6 shadow-2xl shadow-black relative flex flex-col items-center text-center overflow-hidden max-h-[90vh]"
+        className="w-full max-w-lg bg-[#171A1D] border border-[#262B2F] rounded-3xl p-6 sm:p-7 shadow-2xl shadow-black/80 relative flex flex-col items-center text-center overflow-hidden max-h-[90vh]"
       >
-        {/* Background dynamic ambient glow */}
+        {/* Background dynamic ambient glow matching brand */}
         <div
           className={`absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full blur-3xl opacity-20 pointer-events-none transition-colors duration-700 ${
             agentState === 'speaking'
-              ? 'bg-white/25'
+              ? 'bg-amber-500/25'
               : agentState === 'thinking'
-              ? 'bg-[#b21414]/30'
+              ? 'bg-white/20'
               : agentState === 'listening'
-              ? 'bg-white/15'
-              : 'bg-gray-600/10'
+              ? 'bg-amber-400/20'
+              : 'bg-white/5'
           }`}
         />
 
         {/* Top bar controls */}
         <div className="w-full flex items-center justify-between z-10 mb-2">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-xl bg-[#242B32] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-bold flex items-center gap-1.5">
+            <span className="p-1.5 px-2.5 rounded-xl bg-[#1C232B] border border-[#262B2F] text-[#EFEFF1] text-xs font-bold flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Cliqs Agent Voice</span>
+              <span>Cliqs Voice Agent</span>
             </span>
-            <span className="text-[11px] text-[#949599]">Ticket &amp; event assistant</span>
+            <span className="text-[11px] text-[#949599]">Voice ticketing companion</span>
           </div>
 
           <div className="flex items-center gap-1 text-[#949599]">
@@ -562,26 +562,26 @@ export default function VoiceAgentModal({
             onClick={toggleListening}
           />
 
-          {/* Central Touch Orb */}
+          {/* Central Touch Orb styled with project gold & slate branding */}
           <button
             type="button"
             onClick={toggleListening}
-            className={`absolute w-24 h-24 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 cursor-pointer ${
+            className={`absolute w-24 h-24 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 cursor-pointer ${
               agentState === 'speaking'
-                ? 'bg-gradient-to-tr from-[#b21414] to-[#8f1010] scale-105 shadow-[#b21414]/50'
+                ? 'bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 text-black scale-105 shadow-amber-400/30 ring-4 ring-amber-400/20'
                 : agentState === 'thinking'
-                ? 'bg-gradient-to-tr from-[#3A4045] to-[#242B32] scale-100 animate-pulse shadow-black/50'
+                ? 'bg-gradient-to-tr from-[#262B2F] to-[#1C232B] border border-amber-400/40 text-amber-300 scale-100 animate-pulse shadow-black/50'
                 : agentState === 'listening'
-                ? 'bg-gradient-to-tr from-[#242B32] to-[#1C232B] border border-white/30 scale-105 shadow-white/10'
-                : 'bg-[#242B32] scale-95 opacity-80'
+                ? 'bg-[#1C232B] border-2 border-amber-400 text-amber-400 scale-105 shadow-amber-400/20'
+                : 'bg-[#242B32] text-white/80 scale-95 opacity-80'
             }`}
           >
             {agentState === 'thinking' ? (
-              <Loader2 className="w-8 h-8 animate-spin text-white" />
+              <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
             ) : agentState === 'speaking' ? (
-              <Volume2 className="w-8 h-8 animate-bounce text-white" />
+              <Volume2 className="w-8 h-8 animate-bounce text-black" />
             ) : agentState === 'listening' ? (
-              <Mic className="w-8 h-8 animate-pulse text-white" />
+              <Mic className="w-8 h-8 animate-pulse text-amber-400" />
             ) : (
               <Play className="w-8 h-8 text-white ml-1" />
             )}
@@ -592,7 +592,7 @@ export default function VoiceAgentModal({
         <div className="mb-3">
           <p className="text-xs font-bold uppercase tracking-widest text-[#EFEFF1]">
             {agentState === 'listening' && 'Listening to you...'}
-            {agentState === 'thinking' && 'Analyzing events & vibes...'}
+            {agentState === 'thinking' && 'Checking events & tickets...'}
             {agentState === 'speaking' && 'Speaking (Tap orb to interrupt)'}
             {agentState === 'paused' && 'Paused (Tap orb to speak)'}
           </p>
@@ -600,7 +600,7 @@ export default function VoiceAgentModal({
             {agentState === 'listening'
               ? 'Speak naturally — the assistant replies by voice'
               : agentState === 'thinking'
-              ? 'Searching live catalog and computing recommendations...'
+              ? 'Searching live catalog and finding recommendations...'
               : agentState === 'speaking'
               ? 'Listening paused while agent is answering'
               : 'Microphone paused. Tap the central orb to resume listening.'}
@@ -633,8 +633,8 @@ export default function VoiceAgentModal({
         )}
 
         {/* Agent Answer Transcript Box */}
-        <div className="w-full overflow-y-auto max-h-40 px-4 py-3 rounded-2xl bg-[#1C232B] border border-[#2E363E] text-left text-xs text-[#EFEFF1] leading-relaxed mb-3">
-          <p className="font-semibold text-emerald-400 text-[11px] mb-1">Cliqs Agent</p>
+        <div className="w-full overflow-y-auto max-h-40 px-4 py-3 rounded-2xl bg-[#1C232B] border border-[#262B2F] text-left text-xs text-[#EFEFF1] leading-relaxed mb-3">
+          <p className="font-semibold text-amber-400 text-[11px] mb-1">Cliqs Agent</p>
           <p>{lastAgentReply}</p>
         </div>
 

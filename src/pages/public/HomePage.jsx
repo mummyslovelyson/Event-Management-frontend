@@ -153,8 +153,7 @@ export default function HomePage() {
         <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-8">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Curated Selection</span>
-              <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Events</h2>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Events</h2>
             </div>
             <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
               View all events <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
@@ -183,10 +182,7 @@ export default function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-400">
-                  <TrendingUp className="w-3.5 h-3.5" /> Popular Right Now
-                </span>
-                <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Trending Near You</h2>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Trending Near You</h2>
               </div>
               <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
                 Explore all <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
@@ -212,8 +208,7 @@ export default function HomePage() {
       <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-8">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Browse by Vibe</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Explore Categories</h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Explore Categories</h2>
           </div>
           <Link to="/explore" className="group hidden sm:flex items-center gap-1 text-sm font-semibold text-[#CBD5E1] hover:text-white transition">
             All categories <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
@@ -271,8 +266,7 @@ export default function HomePage() {
       {/* ─── HOW IT WORKS ─── */}
       <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Simple &amp; Fast</span>
-          <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">How Tribes &amp; Cliqs Works</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">How Tribes &amp; Cliqs Works</h2>
           <p className="mt-2 text-sm text-[#949599]">Everything you need to attend or host events without hassle.</p>
         </div>
 
@@ -294,8 +288,7 @@ export default function HomePage() {
         {/* Organizer Callout */}
         <div className="mt-12 rounded-2xl bg-gradient-to-r from-[#1C232B] via-[#202730] to-[#1C232B] border border-white/20 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left shadow-lg">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400">For Creators &amp; Promoters</span>
-            <h3 className="text-xl sm:text-2xl font-bold text-[#EFEFF1] mt-0.5">Hosting a concert, party, or conference?</h3>
+            <h3 className="text-xl sm:text-2xl font-bold text-[#EFEFF1]">Hosting a concert, party, or conference?</h3>
             <p className="mt-1 text-sm text-[#CBD5E1]">Set up ticket tiers (VIP, Regular, Tables), track live revenue, and scan guests at the door with our mobile scanner app.</p>
           </div>
           <Link
@@ -312,8 +305,7 @@ export default function HomePage() {
         <section className="py-14 sm:py-20 bg-[#161D22] border-y border-[#262B2F]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Event Creators</span>
-              <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Event Organizers</h2>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#EFEFF1]">Featured Event Organizers</h2>
               <p className="mt-2 text-sm text-[#949599]">Follow verified organizers and never miss their next show.</p>
             </div>
 

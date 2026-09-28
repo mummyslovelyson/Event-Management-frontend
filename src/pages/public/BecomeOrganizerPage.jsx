@@ -214,15 +214,15 @@ export default function BecomeOrganizerPage() {
       <div className="relative max-w-5xl mx-auto space-y-10">
         {/* Header Hero */}
         <div className="text-center space-y-4 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-semibold shadow-sm">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            Verified Event Organizer Program
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-semibold shadow-sm">
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+            Organizer Program
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            Host Exceptional Events on <span className="bg-gradient-to-r from-white via-neutral-200 to-neutral-400 bg-clip-text text-transparent">Tribes &amp; Cliqs</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            Publish &amp; Manage Events
           </h1>
           <p className="text-sm sm:text-base text-[#949599] leading-relaxed">
-            Sell tickets effortlessly, reach thousands of passionate event lovers, get instant mobile money &amp; bank payouts, and earn your official <strong>Verified Organizer Badge</strong>.
+            Sell tickets, scan attendees at the door, track real-time revenue, and receive fast Mobile Money &amp; bank payouts.
           </p>
         </div>
 
@@ -356,41 +356,41 @@ export default function BecomeOrganizerPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="p-5 rounded-2xl bg-[#171A1D] border border-[#262B2F] hover:border-white/30 transition">
             <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center mb-3">
-              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+              <ShieldCheck className="w-5 h-5 text-amber-400" />
             </div>
-            <h4 className="text-sm font-bold text-white">Verified Badge</h4>
+            <h4 className="text-sm font-bold text-white">Verified Checkmark</h4>
             <p className="text-xs text-[#949599] mt-1 leading-relaxed">
-              Build instant trust with attendees with a verified checkmark displayed on all your events and profile.
+              Build instant credibility with attendees with a verified badge displayed across all your event listings.
             </p>
           </div>
 
           <div className="p-5 rounded-2xl bg-[#171A1D] border border-[#262B2F] hover:border-white/30 transition">
             <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center mb-3">
-              <Ticket className="w-5 h-5 text-blue-400" />
+              <Ticket className="w-5 h-5 text-amber-400" />
             </div>
-            <h4 className="text-sm font-bold text-white">Ticket Tiers &amp; Seating</h4>
+            <h4 className="text-sm font-bold text-white">Tiered Ticketing</h4>
             <p className="text-xs text-[#949599] mt-1 leading-relaxed">
-              Create Early Bird, VIP, Tables, and General Admission with promo codes, seat maps, and group discounts.
+              Set up Early Bird, VIP, Tables, and standard admission with promo codes, seat selection, and group discounts.
             </p>
           </div>
 
           <div className="p-5 rounded-2xl bg-[#171A1D] border border-[#262B2F] hover:border-white/30 transition">
             <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center mb-3">
-              <DollarSign className="w-5 h-5 text-emerald-400" />
+              <DollarSign className="w-5 h-5 text-amber-400" />
             </div>
-            <h4 className="text-sm font-bold text-white">Direct Payouts</h4>
+            <h4 className="text-sm font-bold text-white">Fast Local Payouts</h4>
             <p className="text-xs text-[#949599] mt-1 leading-relaxed">
-              Automated mobile money (MTN, Telecel, AT) and direct bank deposits for ticket revenue.
+              Direct automated withdrawals to MTN, Telecel, AT Mobile Money, or local bank accounts.
             </p>
           </div>
 
           <div className="p-5 rounded-2xl bg-[#171A1D] border border-[#262B2F] hover:border-white/30 transition">
             <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center mb-3">
-              <BarChart3 className="w-5 h-5 text-purple-400" />
+              <BarChart3 className="w-5 h-5 text-amber-400" />
             </div>
-            <h4 className="text-sm font-bold text-white">13 Dashboard Modules</h4>
+            <h4 className="text-sm font-bold text-white">Door Check-In &amp; Analytics</h4>
             <p className="text-xs text-[#949599] mt-1 leading-relaxed">
-              QR Check-in scanner, attendee management, orders, real-time analytics, promotions, team roles, and settings.
+              Camera-based QR scanner for the gate, live attendee lists, sales breakdowns, and exportable spreadsheets.
             </p>
           </div>
         </div>
