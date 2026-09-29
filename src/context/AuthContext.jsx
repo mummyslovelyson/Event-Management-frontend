@@ -68,6 +68,7 @@ export function AuthProvider({ children }) {
       if (res.data?.user) {
         setUser((prev) => {
           const updated = { ...prev, ...res.data.user };
+          if (JSON.stringify(prev) === JSON.stringify(updated)) return prev;
           try {
             sessionStorage.setItem('tc_user', JSON.stringify(updated));
           } catch { /* ignore */ }
@@ -98,7 +99,11 @@ export function AuthProvider({ children }) {
             if (storedRefresh) {
               const res = await apiRefreshToken({ refreshToken: storedRefresh });
               if (res.data?.accessToken) {
-                persistAuth(res.data.accessToken, res.data.refreshToken || storedRefresh, res.data.user || user);
+                let cachedUser = null;
+                try {
+                  cachedUser = JSON.parse(sessionStorage.getItem('tc_user') || 'null');
+                } catch { /* ignore */ }
+                persistAuth(res.data.accessToken, res.data.refreshToken || storedRefresh, res.data.user || cachedUser);
                 return;
               }
             } else {
@@ -114,7 +119,7 @@ export function AuthProvider({ children }) {
     };
 
     validateInitialSession();
-  }, [clearAuth, persistAuth, refreshProfile, user]);
+  }, [clearAuth, persistAuth, refreshProfile]);
 
   const login = async (email, password, website = '') => {
     setLoading(true);
