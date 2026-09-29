@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, Search, Check, Send, Link2, Copy, CheckCheck,
   Share2, MessageCircle, Send as TelegramIcon, X, Loader2, Sparkles,
+  Mail, Phone, AtSign, Plus,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Modal from '@/components/common/Modal';
