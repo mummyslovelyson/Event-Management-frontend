@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -88,7 +88,42 @@ export default function ExplorePage() {
 
   // Search input with local debounce state
   const [searchInput, setSearchInput] = useState(searchParams.get('q') || '');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
+  const [viewMode, setViewMode] = useState(() => {
+    const v = searchParams.get('view');
+    return v === 'map' ? 'map' : v === 'list' ? 'list' : 'grid';
+  });
+  const mapSectionRef = useRef(null);
+
+  // Sync viewMode when searchParams changes (e.g. navigation to /explore?view=map)
+  useEffect(() => {
+    const v = searchParams.get('view');
+    if (v === 'map' || v === 'list' || v === 'grid') {
+      setViewMode(v);
+    }
+  }, [searchParams]);
+
+  // HCI Principle: When user explicitly clicks "Live Map" (/explore?view=map), auto-scroll smoothly directly to the map
+  useEffect(() => {
+    if (searchParams.get('view') === 'map') {
+      const timer = setTimeout(() => {
+        mapSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 250);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
+
+  const handleViewModeChange = (mode) => {
+    setViewMode(mode);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (mode === 'grid') {
+        next.delete('view');
+      } else {
+        next.set('view', mode);
+      }
+      return next;
+    }, { replace: true });
+  };
 
   const [filters, setFilters] = useState(() => ({
     ...DEFAULT_FILTERS,
@@ -479,12 +514,12 @@ export default function ExplorePage() {
           </div>
 
           {/* View mode toggle & Sort */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-2.5">
             {/* View Mode */}
-            <div className="hidden sm:flex items-center p-1 rounded-xl bg-[#171A1D] border border-[#262B2F]">
+            <div className="flex items-center p-1 rounded-xl bg-[#171A1D] border border-[#262B2F] shrink-0">
               <button
                 type="button"
-                onClick={() => setViewMode('grid')}
+                onClick={() => handleViewModeChange('grid')}
                 className={`p-1.5 rounded-lg transition ${
                   viewMode === 'grid' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-white'
                 }`}
@@ -494,7 +529,7 @@ export default function ExplorePage() {
               </button>
               <button
                 type="button"
-                onClick={() => setViewMode('list')}
+                onClick={() => handleViewModeChange('list')}
                 className={`p-1.5 rounded-lg transition ${
                   viewMode === 'list' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-white'
                 }`}
@@ -504,9 +539,9 @@ export default function ExplorePage() {
               </button>
               <button
                 type="button"
-                onClick={() => setViewMode('map')}
+                onClick={() => handleViewModeChange('map')}
                 className={`p-1.5 rounded-lg transition ${
-                  viewMode === 'map' ? 'bg-[#b21414] text-white' : 'text-[#949599] hover:text-white'
+                  viewMode === 'map' ? 'bg-[#b21414] text-white shadow-sm' : 'text-[#949599] hover:text-white'
                 }`}
                 title="Map view"
               >
@@ -697,6 +732,10 @@ export default function ExplorePage() {
                   <EventCardSkeleton key={i} viewMode={viewMode} />
                 ))}
               </div>
+            ) : viewMode === 'map' ? (
+              <div ref={mapSectionRef} id="map-view" className="space-y-6 scroll-mt-28">
+                <EventDiscoveryMap events={events} />
+              </div>
             ) : events.length === 0 ? (
               <EmptyState
                 icon={Inbox}
@@ -705,10 +744,6 @@ export default function ExplorePage() {
                 action={activeFilterCount > 0 ? clearAll : undefined}
                 actionLabel="Clear Filters"
               />
-            ) : viewMode === 'map' ? (
-              <div className="space-y-6">
-                <EventDiscoveryMap events={events} />
-              </div>
             ) : (
               <div className="space-y-8">
                 {/* Personalized Context Rail (e.g. Because you attended...) */}
