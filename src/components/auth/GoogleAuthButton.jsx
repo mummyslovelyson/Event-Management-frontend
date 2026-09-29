@@ -187,21 +187,36 @@ export default function GoogleAuthButton({
       const popup = window.open(url, 'google_oauth', 'width=500,height=600');
       const interval = setInterval(() => {
         try {
-          if (!popup || popup.closed) {
+          let isClosed = false;
+          try {
+            isClosed = !popup || popup.closed;
+          } catch {
+            // Ignored: COOP may restrict reading popup.closed
+          }
+          if (isClosed) {
             clearInterval(interval);
             return;
           }
-          const hash = popup.location?.hash;
+          let hash = '';
+          try {
+            hash = popup.location?.hash;
+          } catch {
+            // Cross-origin access restriction while popup is on accounts.google.com
+          }
           if (hash && hash.includes('id_token=')) {
             clearInterval(interval);
-            popup.close();
+            try {
+              popup.close();
+            } catch {
+              // COOP may restrict closing popup directly
+            }
             const params = new URLSearchParams(hash.substring(1));
             const idToken = params.get('id_token');
             const accessToken = params.get('access_token');
             handleGoogleResponse({ idToken, accessToken });
           }
         } catch {
-          // Cross-origin access block while popup is on google.com
+          // Cross-origin boundary safety catch
         }
       }, 500);
     } else {
