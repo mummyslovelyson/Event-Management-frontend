@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   Users, Mail, Check, X, Calendar, MapPin, Search,
-  ExternalLink, Loader2, Sparkles, UserPlus, UserCheck, CheckCircle2,
+  ExternalLink, Loader2, UserPlus, UserCheck, CheckCircle2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getFriendsList, searchFriends } from '@/api/users';

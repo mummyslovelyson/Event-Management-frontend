@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
   Heart, Compass, Trash2, Search, Bell, BellRing, Music, Tag,
-  Users, Sparkles, Plus, ExternalLink, Calendar, MapPin, Check,
+  Users, Plus, ExternalLink, Calendar, MapPin, Check,
   Settings, Clock, AlertCircle, ChevronRight, UserCheck, UserX,
 } from 'lucide-react';
 import {
@@ -325,7 +325,7 @@ export default function FavoritesPage() {
           <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20">
             <div className="max-w-2xl space-y-3">
               <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
-                <Sparkles className="w-4 h-4" /> Smart Artist Tracking
+                <Bell className="w-4 h-4" /> Artist Alerts & Updates
               </div>
               <h3 className="text-xl font-bold text-[#EFEFF1]">Never miss your favorite artists</h3>
               <p className="text-sm text-[#949599] leading-relaxed">

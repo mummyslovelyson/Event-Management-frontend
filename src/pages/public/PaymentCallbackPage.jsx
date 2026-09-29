@@ -3,7 +3,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Loader2, CheckCircle2, XCircle, ArrowLeft, TicketCheck, RefreshCw,
-  Download, Printer, Calendar, Copy, Check, ExternalLink, Sparkles, MapPin, Clock, FileText,
+  Download, Printer, Calendar, Copy, Check, ExternalLink, Ticket, MapPin, Clock, FileText,
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
@@ -201,7 +201,7 @@ export default function PaymentCallbackPage() {
               {eventData && (
                 <div className="mt-6 pt-5 border-t border-[#494F55]/30 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-[#949599]">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                    <Ticket className="w-4 h-4 text-amber-400 shrink-0" />
                     <span className="truncate font-semibold text-white">{eventData.title}</span>
                   </div>
                   <div className="flex items-center gap-2">

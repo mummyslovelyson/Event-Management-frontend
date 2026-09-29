@@ -8,7 +8,7 @@ import {
   Smartphone, Wallet, ShieldCheck, Loader2, User, AlertCircle,
   UserPlus, UserCheck, UsersRound, CalendarClock, Trash2,
   Bell, BellRing, CalendarPlus, MessageCircle, Send as TelegramIcon,
-  MessageSquare, Car, Send, Sparkles,
+  MessageSquare, Car, Send, Star,
 } from 'lucide-react';
 
 import toast from 'react-hot-toast';
@@ -984,7 +984,7 @@ export default function EventDetailPage() {
                         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4 sm:p-5">
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                             <h4 className="text-xs font-bold uppercase tracking-wider text-[#949599] flex items-center gap-2">
-                              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Featured Artists & Performers
+                              <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400/30" /> Featured Artists & Performers
                             </h4>
                             <span className="text-[11px] text-[#6B7278]">Follow an artist to be notified when they have new events</span>
                           </div>

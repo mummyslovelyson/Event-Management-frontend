@@ -172,9 +172,9 @@ export default function AttendeeDashboard() {
 
       {/* Recommended for you */}
       <motion.div variants={itemFade}>
-        <SectionHeader title="Recommended For You" subtitle="Personalized recommendations based on your activity" />
+        <SectionHeader title="Recommended For You" subtitle="Curated events based on your interests and favorite categories" />
         {recommended.length === 0 ? (
-          <EmptyState icon={Compass} title="No recommendations yet" description="Personalized event recommendations will appear here." />
+          <EmptyState icon={Compass} title="No recommendations yet" description="Curated event suggestions will appear here as you discover more." />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {recommended.map((event) => (

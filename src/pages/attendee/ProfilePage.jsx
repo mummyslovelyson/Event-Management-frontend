@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
   User, Shield, CreditCard, Bell, Camera, Save, Lock, Mail, Phone, MapPin,
-  Calendar, FileText, Check, Smartphone, Plus, Trash2, Eye, EyeOff, Sparkles, Tag, Users,
+  Calendar, FileText, Check, Smartphone, Plus, Trash2, Eye, EyeOff, Tag, Users,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -323,7 +323,7 @@ function PersonalInfoTab({ profile, setProfile }) {
       <div className="rounded-xl p-4 bg-[#171A1D] border border-[#262B2F] space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-400" />
+            <Tag className="w-4 h-4 text-amber-400" />
             <span className="text-sm font-semibold text-[#EFEFF1]">Favorite Categories</span>
           </div>
           <span className="text-xs text-[#949599]">
@@ -331,7 +331,7 @@ function PersonalInfoTab({ profile, setProfile }) {
           </span>
         </div>
         <p className="text-xs text-[#949599]">
-          Select the event categories you enjoy. We use this to tailor your personalized recommendations and "Matches Your Favorite Categories" feed.
+          Select the event categories you enjoy. We use this to curate your recommendations and highlight events tailored to your interests.
         </p>
         <div className="flex flex-wrap gap-2 pt-1">
           {AVAILABLE_CATEGORIES.map((cat) => {

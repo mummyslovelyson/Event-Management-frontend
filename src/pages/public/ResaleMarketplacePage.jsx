@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Ticket, ShieldCheck, RefreshCw, Zap, Search, Filter,
   ArrowRight, CheckCircle2, AlertCircle, Calendar, MapPin,
-  Clock, User, Tag, ChevronRight, Loader2, Sparkles, SlidersHorizontal,
+  Clock, User, Tag, ChevronRight, Loader2, SlidersHorizontal,
   DollarSign, ShoppingCart, HelpCircle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';

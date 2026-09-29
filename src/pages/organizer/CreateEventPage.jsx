@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import {
   CalendarDays, Info, MapPin, Ticket as TicketIcon, CheckCircle2,
   ChevronLeft, ChevronRight, Plus, Trash2, Upload, X, Save, Send,
-  AlertTriangle, Globe, Navigation, Clock, Sparkles, Layers, Building2,
+  AlertTriangle, Globe, Navigation, Clock, Layers, Building2,
   Calendar, Check, ShieldCheck, Tag, DollarSign, Image as ImageIcon
 } from 'lucide-react';
 import { createEvent, getEvent, getCategories, publishEvent, uploadImage } from '@/api/events';
@@ -714,7 +714,7 @@ const StepTickets = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-[#1C232B] to-[#1C232B] border border-amber-500/30 shadow-sm">
         <div>
           <div className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Layers className="w-3.5 h-3.5" />
             Standard Admission Matrix
           </div>
           <p className="text-xs text-[#949599] mt-0.5">

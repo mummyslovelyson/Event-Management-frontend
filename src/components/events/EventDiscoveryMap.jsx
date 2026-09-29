@@ -4,22 +4,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {
-  MapPin, Calendar, Tag, ArrowRight, X, ExternalLink,
-  Compass, Navigation, DollarSign, Layers, Eye, Ticket,
-  Maximize2, RotateCcw, AlertCircle, KeyRound, Check
+  MapPin, Calendar, ArrowRight, X,
+  Compass, Layers, RotateCcw,
 } from 'lucide-react';
 import { useCurrency } from '@/context/CurrencyContext';
 
-// City GPS Coordinates & Default Views for Ghana Hubs
+// City GPS Coordinates & Viewbox Bounds for Ghana Hubs
 const CITY_COORDINATES = {
-  Accra: { lat: 5.6037, lng: -0.1870, zoom: 12 },
-  Kumasi: { lat: 6.6885, lng: -1.6244, zoom: 12 },
-  Takoradi: { lat: 4.8874, lng: -1.7554, zoom: 12 },
-  Tema: { lat: 5.6698, lng: -0.0166, zoom: 12 },
-  'Cape Coast': { lat: 5.1315, lng: -1.2795, zoom: 12 },
-  Tamale: { lat: 9.4008, lng: -0.8393, zoom: 12 },
-  Koforidua: { lat: 6.0784, lng: -0.2588, zoom: 12 },
-  Sunyani: { lat: 7.3399, lng: -2.3268, zoom: 12 },
+  Accra: { lat: 5.6037, lng: -0.1870, zoom: 12, x: 74, y: 76 },
+  Kumasi: { lat: 6.6885, lng: -1.6244, zoom: 12, x: 46, y: 55 },
+  Takoradi: { lat: 4.8874, lng: -1.7554, zoom: 12, x: 38, y: 88 },
+  Tema: { lat: 5.6698, lng: -0.0166, zoom: 12, x: 79, y: 74 },
+  'Cape Coast': { lat: 5.1315, lng: -1.2795, zoom: 12, x: 50, y: 84 },
+  Tamale: { lat: 9.4008, lng: -0.8393, zoom: 12, x: 60, y: 22 },
+  Koforidua: { lat: 6.0784, lng: -0.2588, zoom: 12, x: 71, y: 68 },
+  Sunyani: { lat: 7.3399, lng: -2.3268, zoom: 12, x: 32, y: 45 },
 };
 
 const GHANA_CENTER = { lng: -1.0232, lat: 7.9465, zoom: 6.4 };
@@ -50,15 +49,17 @@ export default function EventDiscoveryMap({ events = [] }) {
   const mapRef = useRef(null);
   const markersRef = useRef([]);
 
-  // Token management: check env first, allow runtime fallback input
+  // Check if Mapbox token is provided in environment variables
   const envToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
-  const [userToken, setUserToken] = useState(() => {
-    return localStorage.getItem('tc_mapbox_token') || (envToken && envToken !== 'your_mapbox_access_token' ? envToken : '');
-  });
-  const [tokenInput, setTokenInput] = useState('');
-  const [tokenError, setTokenError] = useState(null);
+  const hasMapboxToken = Boolean(
+    envToken &&
+    envToken.trim() !== '' &&
+    envToken !== 'your_mapbox_access_token' &&
+    envToken.startsWith('pk.')
+  );
 
-  const activeToken = userToken || (envToken && envToken !== 'your_mapbox_access_token' ? envToken : '');
+  const [mapError, setMapError] = useState(false);
+  const isLiveMap = hasMapboxToken && !mapError;
 
   const [selectedCity, setSelectedCity] = useState('All Cities');
   const [activeEvent, setActiveEvent] = useState(null);
@@ -66,14 +67,14 @@ export default function EventDiscoveryMap({ events = [] }) {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [showStyleMenu, setShowStyleMenu] = useState(false);
 
-  // Map each event to a pin coordinate (using real lat/lng or city fallbacks)
+  // Map each event to both GPS (lat/lng) and 2D percentage (x/y) coordinates
   const mappedEvents = useMemo(() => {
     return events.map((ev, idx) => {
       let lat = null;
       let lng = null;
       let city = 'Accra';
 
-      // 1. Direct coordinates if provided on event object
+      // 1. Direct GPS coordinates if provided on event object
       if (ev.latitude && ev.longitude) {
         lat = parseFloat(ev.latitude);
         lng = parseFloat(ev.longitude);
@@ -82,7 +83,7 @@ export default function EventDiscoveryMap({ events = [] }) {
         lng = parseFloat(ev.lng);
       }
 
-      // 2. City fallback if coordinates are missing or invalid
+      // 2. City matching
       const cityKey = Object.keys(CITY_COORDINATES).find(
         (c) =>
           ev.city?.toLowerCase() === c.toLowerCase() ||
@@ -90,30 +91,31 @@ export default function EventDiscoveryMap({ events = [] }) {
           ev.location?.toLowerCase().includes(c.toLowerCase())
       );
 
-      if (cityKey) {
-        city = cityKey;
-        if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
-          const base = CITY_COORDINATES[cityKey];
-          // Deterministic jitter based on event id or index to prevent exact overlaps
-          const seed = Number(ev.id || idx) * 19;
-          const jitterLng = ((seed % 13) - 6) * 0.006;
-          const jitterLat = (((seed * 7) % 13) - 6) * 0.006;
-          lat = base.lat + jitterLat;
-          lng = base.lng + jitterLng;
-        }
-      } else if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
-        // Fallback to Accra area with deterministic spread
-        const seed = Number(ev.id || idx) * 23;
-        lat = CITY_COORDINATES.Accra.lat + (((seed * 3) % 11) - 5) * 0.007;
-        lng = CITY_COORDINATES.Accra.lng + ((seed % 11) - 5) * 0.007;
+      const base = cityKey ? CITY_COORDINATES[cityKey] : CITY_COORDINATES.Accra;
+      if (cityKey) city = cityKey;
+
+      // Deterministic spread to prevent overlapping pins
+      const seed = Number(ev.id || idx) * 19;
+      const jitterLng = ((seed % 13) - 6) * 0.007;
+      const jitterLat = (((seed * 7) % 13) - 6) * 0.007;
+
+      if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+        lat = base.lat + jitterLat;
+        lng = base.lng + jitterLng;
       }
+
+      // 2D percentage coordinates for mockup radar view
+      const offsetX = ((seed % 11) - 5) * 1.5;
+      const offsetY = (((seed * 7) % 11) - 5) * 1.5;
+      const x = Math.max(12, Math.min(88, base.x + offsetX));
+      const y = Math.max(12, Math.min(88, base.y + offsetY));
 
       const minPrice = ev.minPrice ?? ev.min_price ?? ev.price;
       const priceLabel = minPrice != null ? (Number(minPrice) === 0 ? 'Free' : format(minPrice)) : 'Tickets';
 
       return {
         ...ev,
-        coords: { lat, lng, city },
+        coords: { lat, lng, x, y, city },
         priceLabel,
       };
     });
@@ -127,12 +129,12 @@ export default function EventDiscoveryMap({ events = [] }) {
     );
   }, [mappedEvents, selectedCity]);
 
-  // Initialize Mapbox instance
+  // Initialize Mapbox instance only if token is valid and no error
   useEffect(() => {
-    if (!mapContainerRef.current || !activeToken) return;
+    if (!isLiveMap || !mapContainerRef.current) return;
 
     try {
-      mapboxgl.accessToken = activeToken;
+      mapboxgl.accessToken = envToken;
 
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
@@ -140,10 +142,9 @@ export default function EventDiscoveryMap({ events = [] }) {
         center: [GHANA_CENTER.lng, GHANA_CENTER.lat],
         zoom: GHANA_CENTER.zoom,
         attributionControl: false,
-        cooperativeGestures: true, // Clean mobile scroll behavior
+        cooperativeGestures: true,
       });
 
-      // Add navigation controls styled with dark theme
       const nav = new mapboxgl.NavigationControl({
         showCompass: true,
         showZoom: true,
@@ -151,22 +152,20 @@ export default function EventDiscoveryMap({ events = [] }) {
       });
       map.addControl(nav, 'bottom-left');
 
-      // Add minimal attribution in bottom right
       map.addControl(
-        new mapboxgl.AttributionControl({
-          compact: true,
-        }),
+        new mapboxgl.AttributionControl({ compact: true }),
         'bottom-right'
       );
 
       map.on('load', () => {
         setMapLoaded(true);
-        setTokenError(null);
+        setMapError(false);
       });
 
       map.on('error', (e) => {
         if (e?.error?.status === 401 || e?.error?.message?.includes('access token')) {
-          setTokenError('Invalid Mapbox access token. Please check your token key.');
+          console.warn('Mapbox auth error, falling back to radar view');
+          setMapError(true);
         }
       });
 
@@ -178,34 +177,31 @@ export default function EventDiscoveryMap({ events = [] }) {
         setMapLoaded(false);
       };
     } catch (err) {
-      console.error('Failed to initialize Mapbox:', err);
-      setTokenError(err.message || 'Mapbox initialization failed');
+      console.warn('Failed to initialize Mapbox, falling back to radar view:', err);
+      setMapError(true);
     }
-  }, [activeToken]);
+  }, [isLiveMap, envToken]);
 
-  // Handle map style changes
+  // Handle map style changes in Mapbox mode
   useEffect(() => {
-    if (mapRef.current && mapLoaded) {
+    if (mapRef.current && mapLoaded && isLiveMap) {
       mapRef.current.setStyle(MAP_STYLES[currentStyle].url);
     }
-  }, [currentStyle, mapLoaded]);
+  }, [currentStyle, mapLoaded, isLiveMap]);
 
   // Sync Markers with Mapbox
   useEffect(() => {
-    if (!mapRef.current || !mapLoaded) return;
+    if (!isLiveMap || !mapRef.current || !mapLoaded) return;
 
-    // Remove existing markers
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = [];
 
-    // Add new markers for filtered events
     filteredEvents.forEach((ev) => {
       const { lng, lat } = ev.coords;
       if (!lng || !lat || isNaN(lng) || isNaN(lat)) return;
 
       const isSelected = activeEvent?.id === ev.id;
 
-      // Custom marker container matching the brand color palette (#b21414, #1C232B, #242B32)
       const el = document.createElement('div');
       el.className = 'tc-mapbox-marker-wrapper relative cursor-pointer group';
 
@@ -237,7 +233,6 @@ export default function EventDiscoveryMap({ events = [] }) {
         e.stopPropagation();
         setActiveEvent(ev);
 
-        // Center map smoothly on the clicked pin
         mapRef.current?.flyTo({
           center: [lng, lat],
           zoom: Math.max(mapRef.current.getZoom(), 12.5),
@@ -256,51 +251,46 @@ export default function EventDiscoveryMap({ events = [] }) {
 
       markersRef.current.push(marker);
     });
-  }, [filteredEvents, activeEvent, mapLoaded]);
+  }, [filteredEvents, activeEvent, mapLoaded, isLiveMap]);
 
-  // Handle flyTo when selected city changes
+  // Handle city select
   const handleCitySelect = (city) => {
     setSelectedCity(city);
     setActiveEvent(null);
 
-    if (!mapRef.current) return;
+    if (isLiveMap && mapRef.current) {
+      if (city === 'All Cities') {
+        mapRef.current.flyTo({
+          center: [GHANA_CENTER.lng, GHANA_CENTER.lat],
+          zoom: GHANA_CENTER.zoom,
+          speed: 1.1,
+          essential: true,
+        });
+      } else if (CITY_COORDINATES[city]) {
+        const { lng, lat, zoom } = CITY_COORDINATES[city];
+        mapRef.current.flyTo({
+          center: [lng, lat],
+          zoom: zoom || 12,
+          speed: 1.2,
+          essential: true,
+        });
+      }
+    }
+  };
 
-    if (city === 'All Cities') {
+  // Recenter map / reset city
+  const handleResetBounds = () => {
+    setSelectedCity('All Cities');
+    setActiveEvent(null);
+
+    if (isLiveMap && mapRef.current) {
       mapRef.current.flyTo({
         center: [GHANA_CENTER.lng, GHANA_CENTER.lat],
         zoom: GHANA_CENTER.zoom,
-        speed: 1.1,
-        essential: true,
-      });
-    } else if (CITY_COORDINATES[city]) {
-      const { lng, lat, zoom } = CITY_COORDINATES[city];
-      mapRef.current.flyTo({
-        center: [lng, lat],
-        zoom: zoom || 12,
         speed: 1.2,
         essential: true,
       });
     }
-  };
-
-  // Recenter map back to Ghana overview
-  const handleResetBounds = () => {
-    setSelectedCity('All Cities');
-    setActiveEvent(null);
-    mapRef.current?.flyTo({
-      center: [GHANA_CENTER.lng, GHANA_CENTER.lat],
-      zoom: GHANA_CENTER.zoom,
-      speed: 1.2,
-      essential: true,
-    });
-  };
-
-  const handleSaveRuntimeToken = (e) => {
-    e.preventDefault();
-    if (!tokenInput.trim()) return;
-    localStorage.setItem('tc_mapbox_token', tokenInput.trim());
-    setUserToken(tokenInput.trim());
-    setTokenError(null);
   };
 
   return (
@@ -353,50 +343,54 @@ export default function EventDiscoveryMap({ events = [] }) {
             <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
 
-          {/* Style Selector */}
-          <div className="relative">
-            <button
-              onClick={() => setShowStyleMenu((prev) => !prev)}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 text-[11px] sm:text-xs text-[#EFEFF1] hover:bg-white/10 transition shadow-xl"
-              title="Map Style"
-            >
-              <Layers className="w-3.5 h-3.5 text-[#b21414]" />
-              <span className="capitalize">{MAP_STYLES[currentStyle].label}</span>
-            </button>
+          {/* Style Selector (Only shown in Live Map mode) */}
+          {isLiveMap && (
+            <div className="relative">
+              <button
+                onClick={() => setShowStyleMenu((prev) => !prev)}
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 text-[11px] sm:text-xs text-[#EFEFF1] hover:bg-white/10 transition shadow-xl"
+                title="Map Style"
+              >
+                <Layers className="w-3.5 h-3.5 text-[#b21414]" />
+                <span className="capitalize">{MAP_STYLES[currentStyle].label}</span>
+              </button>
 
-            <AnimatePresence>
-              {showStyleMenu && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute right-0 mt-2 w-36 rounded-2xl bg-[#171A1D] border border-[#262B2F] shadow-2xl p-1.5 z-40"
-                >
-                  {Object.values(MAP_STYLES).map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => {
-                        setCurrentStyle(s.id);
-                        setShowStyleMenu(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-left transition ${
-                        currentStyle === s.id
-                          ? 'bg-[#b21414] text-white'
-                          : 'text-[#949599] hover:text-white hover:bg-white/5'
-                      }`}
-                    >
-                      <span>{s.label}</span>
-                      {currentStyle === s.id && <Check className="w-3.5 h-3.5" />}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+              <AnimatePresence>
+                {showStyleMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 w-36 rounded-xl bg-[#171A1D]/95 backdrop-blur-xl border border-white/15 p-1 shadow-2xl z-40"
+                  >
+                    {Object.values(MAP_STYLES).map((st) => (
+                      <button
+                        key={st.id}
+                        onClick={() => {
+                          setCurrentStyle(st.id);
+                          setShowStyleMenu(false);
+                        }}
+                        className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center justify-between ${
+                          currentStyle === st.id
+                            ? 'bg-[#b21414] text-white font-semibold'
+                            : 'text-[#CBD5E1] hover:bg-white/10 hover:text-white'
+                        }`}
+                      >
+                        <span>{st.label}</span>
+                        {currentStyle === st.id && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                        )}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
 
-          {/* Live Events Count Indicator */}
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 text-[11px] sm:text-xs text-[#949599] shadow-xl">
+          {/* Live Pins Indicator */}
+          <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 text-[11px] sm:text-xs text-[#949599] shadow-xl whitespace-nowrap">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="font-medium text-[#EFEFF1]">{filteredEvents.length}</span>
             <span className="hidden xs:inline sm:inline">Live Pins</span>
@@ -404,69 +398,123 @@ export default function EventDiscoveryMap({ events = [] }) {
         </div>
       </div>
 
-      {/* ── Mapbox Canvas Container ── */}
+      {/* ── Map Canvas Area (Live Mapbox or Stylized Radar Mockup) ── */}
       <div className="relative w-full h-[460px] sm:h-[620px] bg-[#111417] overflow-hidden select-none">
-        {/* Mapbox Container */}
-        <div ref={mapContainerRef} className="w-full h-full" />
+        {isLiveMap ? (
+          <>
+            {/* Live Mapbox Container */}
+            <div ref={mapContainerRef} className="w-full h-full" />
 
-        {/* Mobile touch hint indicator */}
-        <div className="sm:hidden absolute top-24 left-1/2 -translate-x-1/2 pointer-events-none z-10">
-          <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-[#CBD5E1] border border-white/10">
-            Use 2 fingers to navigate map
-          </span>
-        </div>
-
-        {/* ── Missing Token / Auth Warning Overlay ── */}
-        {(!activeToken || tokenError) && (
-          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 sm:p-6 bg-[#161D22]/95 backdrop-blur-md text-center">
-            <div className="max-w-md w-full bg-[#1C232B] border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl text-left">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#b21414]/15 border border-[#b21414]/30 flex items-center justify-center text-[#b21414] mb-3 sm:mb-4">
-                <KeyRound className="w-5 h-5 sm:w-6 sm:h-6" />
-              </div>
-              <h3 className="text-sm sm:text-base font-bold text-white mb-1.5">
-                Mapbox Access Token Required
-              </h3>
-              <p className="text-xs text-[#949599] leading-relaxed mb-4">
-                {tokenError ||
-                  'To render live satellite & street tiles with full interactivity, enter your Mapbox public token or add VITE_MAPBOX_ACCESS_TOKEN to your .env file.'}
-              </p>
-
-              <form onSubmit={handleSaveRuntimeToken} className="space-y-3">
-                <div>
-                  <label className="text-[11px] font-semibold text-[#CBD5E1] block mb-1">
-                    Paste Mapbox Access Token (pk.ey...)
-                  </label>
-                  <input
-                    type="text"
-                    value={tokenInput}
-                    onChange={(e) => setTokenInput(e.target.value)}
-                    placeholder="pk.eyJ1IjoieW91ci11c2VybmFtZSI..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#161D22] border border-[#262B2F] text-xs text-white placeholder-[#494F55] focus:outline-none focus:border-[#b21414] transition"
-                  />
-                </div>
-                <div className="flex items-center gap-2 pt-1">
-                  <button
-                    type="submit"
-                    className="flex-1 py-2.5 rounded-xl bg-[#b21414] hover:bg-[#911010] text-white text-xs font-bold transition shadow-md"
-                  >
-                    Activate Live Map
-                  </button>
-                  <a
-                    href="https://account.mapbox.com/access-tokens/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-3 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-semibold border border-white/10 transition flex items-center gap-1.5"
-                  >
-                    <span>Get Key</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-              </form>
+            {/* Mobile touch hint indicator */}
+            <div className="sm:hidden absolute top-24 left-1/2 -translate-x-1/2 pointer-events-none z-10">
+              <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-[#CBD5E1] border border-white/10">
+                Use 2 fingers to navigate map
+              </span>
             </div>
-          </div>
+          </>
+        ) : (
+          <>
+            {/* ── Stylized Interactive Ghana Radar Mockup ── */}
+            {/* Radar glow sweep animation */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-[500px] h-[500px] sm:w-[650px] sm:h-[650px] rounded-full border border-white/5 animate-pulse" />
+              <div className="absolute w-[320px] h-[320px] sm:w-[440px] sm:h-[440px] rounded-full border border-[#b21414]/10" />
+              <div className="absolute w-[180px] h-[180px] sm:w-[240px] sm:h-[240px] rounded-full border border-white/5" />
+            </div>
+
+            {/* Subtle Grid Lines Overlay */}
+            <div
+              className="absolute inset-0 opacity-15 pointer-events-none"
+              style={{
+                backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px),
+                                  linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)`,
+                backgroundSize: '48px 48px',
+              }}
+            />
+
+            {/* Stylized Ghana Country Silhouette SVG Outline */}
+            <svg
+              viewBox="0 0 100 100"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-25"
+            >
+              {/* Ghana territorial border representation */}
+              <path
+                d="M 35 15 L 68 15 L 75 35 L 78 60 L 82 75 L 74 88 L 38 90 L 32 65 L 28 35 Z"
+                fill="none"
+                stroke="rgba(255, 255, 255, 0.4)"
+                strokeWidth="0.8"
+                strokeDasharray="2 2"
+              />
+              {/* Major Coastline */}
+              <path
+                d="M 32 89 Q 55 92 82 76"
+                fill="none"
+                stroke="#b21414"
+                strokeWidth="1.2"
+              />
+            </svg>
+
+            {/* Regional Labels */}
+            <div className="absolute left-[70%] top-[78%] text-[10px] uppercase tracking-widest font-black text-white/30 pointer-events-none">
+              Greater Accra
+            </div>
+            <div className="absolute left-[40%] top-[57%] text-[10px] uppercase tracking-widest font-black text-white/30 pointer-events-none">
+              Ashanti / Kumasi
+            </div>
+            <div className="absolute left-[30%] top-[87%] text-[10px] uppercase tracking-widest font-black text-white/30 pointer-events-none">
+              Western Region
+            </div>
+            <div className="absolute left-[54%] top-[20%] text-[10px] uppercase tracking-widest font-black text-white/30 pointer-events-none">
+              Northern / Tamale
+            </div>
+
+            {/* ── Interactive Event Pins for Mockup ── */}
+            {filteredEvents.map((ev) => {
+              const isSelected = activeEvent?.id === ev.id;
+              const { x, y } = ev.coords;
+
+              return (
+                <div
+                  key={ev.id}
+                  style={{ left: `${x}%`, top: `${y}%` }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
+                >
+                  <button
+                    onClick={() => setActiveEvent(isSelected ? null : ev)}
+                    className="relative group focus:outline-none cursor-pointer"
+                  >
+                    {/* Ping wave animation for active pin */}
+                    {isSelected && (
+                      <span className="absolute -inset-2 rounded-full bg-[#b21414]/40 animate-ping" />
+                    )}
+
+                    {/* Pin Button */}
+                    <motion.div
+                      whileHover={{ scale: 1.15 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full shadow-lg border transition-all ${
+                        isSelected
+                          ? 'bg-[#b21414] border-white text-white scale-110 shadow-red-950/60 ring-2 ring-[#b21414]/50'
+                          : 'bg-[#1C232B] hover:bg-[#242B32] border-white/20 text-[#EFEFF1]'
+                      }`}
+                    >
+                      <MapPin
+                        className={`w-3.5 h-3.5 ${
+                          isSelected ? 'text-white' : 'text-[#b21414]'
+                        }`}
+                      />
+                      <span className="text-[11px] font-bold tracking-tight">
+                        {ev.priceLabel}
+                      </span>
+                    </motion.div>
+                  </button>
+                </div>
+              );
+            })}
+          </>
         )}
 
-        {/* ── Active Event Card Drawer / Popup ── */}
+        {/* ── Active Event Card Drawer / Popup (Shared by both modes) ── */}
         <AnimatePresence>
           {activeEvent && (
             <motion.div
@@ -500,7 +548,7 @@ export default function EventDiscoveryMap({ events = [] }) {
                       </span>
                       <button
                         onClick={() => setActiveEvent(null)}
-                        className="text-[#949599] hover:text-white p-1 rounded-full hover:bg-white/5 transition"
+                        className="text-[#949599] hover:text-white p-1 rounded-full hover:bg-white/5 transition cursor-pointer"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -574,7 +622,7 @@ export default function EventDiscoveryMap({ events = [] }) {
             </p>
             <button
               onClick={() => handleCitySelect('All Cities')}
-              className="pointer-events-auto px-4 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-white font-semibold border border-white/10 transition"
+              className="pointer-events-auto px-4 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-white font-semibold border border-white/10 transition cursor-pointer"
             >
               Show All Cities
             </button>

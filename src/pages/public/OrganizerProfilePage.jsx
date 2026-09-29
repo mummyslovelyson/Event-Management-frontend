@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Building2, MapPin, Globe, Mail, Phone, Calendar, Users, Star,
   ShieldCheck, Share2, ArrowLeft, ExternalLink, UserPlus, UserCheck,
-  Sparkles, Ticket, MessageSquare, CheckCircle2, ChevronRight,
+  Ticket, MessageSquare, CheckCircle2, ChevronRight,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getPublicOrganizerProfile } from '@/api/events';

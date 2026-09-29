@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   Printer, Download, ShieldCheck, CheckCircle2,
-  Calendar, MapPin, Ticket, User, Mail, Phone, QrCode, Sparkles, Loader2,
+  Calendar, MapPin, Ticket, User, Mail, Phone, QrCode, Loader2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Modal from '@/components/common/Modal';

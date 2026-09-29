@@ -7,7 +7,7 @@ import {
   Ticket as TicketIcon, Search, Download, Send, Calendar, MapPin, Armchair,
   X, Printer, CheckCircle2, Clock, XCircle, QrCode, Tag, Store, BadgeDollarSign,
   ChevronDown, Loader2, CalendarPlus, Share2, Bell, BellRing, ExternalLink,
-  Info, ShieldCheck, FileText, Sparkles, Users,
+  Info, ShieldCheck, FileText, Users,
 } from 'lucide-react';
 import { getUserTickets, transferTicket, downloadTicket } from '@/api/tickets';
 import { verifyPayment } from '@/api/orders';

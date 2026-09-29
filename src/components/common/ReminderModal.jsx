@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Bell, BellRing, X, Check, Calendar, Clock, Ticket, AlertTriangle, MapPin, Sparkles, CheckCircle2,
+  Bell, BellRing, X, Check, Calendar, Clock, Ticket, AlertTriangle, MapPin, Flame, CheckCircle2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { toggleEventReminder, getEventReminderStatus, updateReminderPreferences } from '@/api/events';
@@ -252,7 +252,7 @@ export default function ReminderModal({ open, onClose, event, onStatusChange }) 
                 className="flex items-center justify-between p-3 rounded-xl bg-[#1C232B] border border-[#262B2F] hover:border-white/20 cursor-pointer transition select-none"
               >
                 <div className="flex items-center gap-3">
-                  <Sparkles className="w-4 h-4 text-orange-400" />
+                  <Flame className="w-4 h-4 text-orange-400" />
                   <div>
                     <p className="text-xs font-medium text-[#EFEFF1]">Ticket almost sold out</p>
                     <p className="text-[11px] text-[#949599]">Urgent alert when only few tickets remain (&le;15%)</p>

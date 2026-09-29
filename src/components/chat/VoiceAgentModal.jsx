@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mic, MicOff, Volume2, VolumeX, X, MessageSquare,
-  Sparkles, ArrowRight, Loader2, Play, AlertCircle, RefreshCw
+  ArrowRight, Loader2, Play, AlertCircle, RefreshCw
 } from 'lucide-react';
 import ChatEventCard from './ChatEventCard';
 import ChatTicketCard from './ChatTicketCard';
@@ -518,7 +518,7 @@ export default function VoiceAgentModal({
         <div className="w-full flex items-center justify-between z-10 mb-2">
           <div className="flex items-center gap-2">
             <span className="p-1.5 px-2.5 rounded-xl bg-[#1C232B] border border-[#262B2F] text-[#EFEFF1] text-xs font-bold flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <Mic className="w-3.5 h-3.5 text-amber-400" />
               <span>Cliqs Voice Agent</span>
             </span>
             <span className="text-[11px] text-[#949599]">Voice ticketing companion</span>

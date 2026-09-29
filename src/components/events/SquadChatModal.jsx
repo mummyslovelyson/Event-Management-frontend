@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageSquare, Send, Users, MapPin, CalendarClock,
-  Loader2, X, AlertCircle, Sparkles,
+  Loader2, X, AlertCircle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Modal from '@/components/common/Modal';

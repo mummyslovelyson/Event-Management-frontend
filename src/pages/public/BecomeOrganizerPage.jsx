@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldCheck, CheckCircle2, Building2, Globe, MapPin, Phone,
-  Mail, ArrowRight, Sparkles, RefreshCw, AlertCircle, XCircle,
+  Mail, ArrowRight, RefreshCw, AlertCircle, XCircle,
   Clock, Share2, Ticket, BarChart3, Users, DollarSign,
   UploadCloud, ExternalLink, Lock, Check,
 } from 'lucide-react';

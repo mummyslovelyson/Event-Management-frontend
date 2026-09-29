@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Smartphone, AlertTriangle, Megaphone, Image as ImageIcon, Plus, Pencil,
   Trash2, Eye, EyeOff, CheckCircle2, ShieldAlert, RefreshCw, Save,
-  ExternalLink, Layers, ArrowUpRight, HelpCircle, Phone, Mail, Sparkles,
+  ExternalLink, Layers, ArrowUpRight, HelpCircle, Phone, Mail,
   ChevronLeft, ChevronRight
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -762,7 +762,7 @@ export default function MobileAppManagementPage() {
                             />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-tr from-accent/40 to-[#242B32] flex items-center justify-center">
-                              <Sparkles className="w-6 h-6 text-white/40" />
+                              <Layers className="w-6 h-6 text-white/40" />
                             </div>
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-2.5 flex flex-col justify-end">

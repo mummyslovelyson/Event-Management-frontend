@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Tag, Plus, Edit2, Trash2, Percent, DollarSign, Calendar, Zap, Copy,
-  CheckCircle2, XCircle, Clock, RefreshCw, Users, Sparkles, AlertCircle, ArrowRight,
+  CheckCircle2, XCircle, Clock, RefreshCw, Users, AlertCircle, ArrowRight,
   TrendingDown,
 } from 'lucide-react';
 import toast from 'react-hot-toast';

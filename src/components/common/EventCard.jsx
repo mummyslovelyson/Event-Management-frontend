@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, MapPin, Calendar, Tag, Ticket, Share2, Bell, BellRing, Sparkles } from 'lucide-react';
+import { Heart, MapPin, Calendar, Tag, Ticket, Share2, Bell, BellRing, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { toggleFavorite } from '@/api/users';
@@ -230,7 +230,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
               )}
               {event.recommendationBadge && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-gradient-to-r from-amber-500/90 to-orange-500/90 text-black backdrop-blur-md shadow-md shadow-amber-500/20">
-                  <Sparkles className="w-2.5 h-2.5 fill-black" />
+                  <Star className="w-2.5 h-2.5 fill-black" />
                   {event.recommendationBadge}
                 </span>
               )}
@@ -287,7 +287,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
             </h3>
             {event.recommendationReason && (
               <p className="mt-1 text-[11px] font-medium text-amber-300 flex items-center gap-1 line-clamp-1">
-                <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
+                <Star className="w-3 h-3 text-amber-400 fill-amber-400/30 shrink-0" />
                 <span>{event.recommendationReason}</span>
               </p>
             )}

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Share2, MessageCircle, Send as TelegramIcon, Twitter, Facebook,
   Linkedin, MessageSquare, Link2, Copy, Check, Download,
-  Users, MapPin, Calendar, QrCode, X, Search, UserCheck, Loader2, Sparkles, Send,
+  Users, MapPin, Calendar, QrCode, X, Search, UserCheck, Loader2, Send,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Modal from './Modal';

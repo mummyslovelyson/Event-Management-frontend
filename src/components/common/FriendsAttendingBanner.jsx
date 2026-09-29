@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, UserPlus, Sparkles, ChevronRight, X, UserCheck, Share2 } from 'lucide-react';
+import { Users, UserPlus, ChevronRight, X, UserCheck, Share2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { getFriendsAttending } from '@/api/meetups';
@@ -235,7 +235,6 @@ export default function FriendsAttendingBanner({
         <div>
           <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
             <span>None of your friends have tickets yet</span>
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
           </h4>
           <p className="text-xs text-[#949599] mt-0.5">
             Be the first to gather your tribe! Invite your friends to pull up with you.
