@@ -40,6 +40,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import InteractiveSeatMap from '@/components/events/InteractiveSeatMap';
+import EventLocationMap from '@/components/events/EventLocationMap';
 
 const TABS = ['Overview', 'Tickets', 'Seating & VIP Sections', 'Squads & Group Outings', 'Community & Attendees', 'FAQs'];
 
@@ -1009,22 +1010,9 @@ export default function EventDetailPage() {
                       )}
                     </div>
 
-                    {mapSrc && (
-                      <div>
-                        <h3 className="text-lg font-semibold text-[#EFEFF1] mb-3">Location</h3>
-                        <div className="rounded-xl overflow-hidden border border-[#262B2F] h-64">
-                          <iframe
-                            src={mapSrc}
-                            title="Event location map"
-                            className="w-full h-full"
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                          />
-                        </div>
-                        <p className="mt-2 text-sm text-[#949599] flex items-center gap-1.5">
-                          <MapPin className="w-4 h-4 text-[#494F55]" />
-                          {event.venue || event.location}
-                        </p>
+                    {(event.venue || event.location || event.address || event.latitude) && (
+                      <div className="pt-2">
+                        <EventLocationMap event={event} />
                       </div>
                     )}
                   </div>

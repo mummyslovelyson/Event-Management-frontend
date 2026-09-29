@@ -7,12 +7,13 @@ import {
   Ticket as TicketIcon, Search, Download, Send, Calendar, MapPin, Armchair,
   X, Printer, CheckCircle2, Clock, XCircle, QrCode, Tag, Store, BadgeDollarSign,
   ChevronDown, Loader2, CalendarPlus, Share2, Bell, BellRing, ExternalLink,
-  Info, ShieldCheck, FileText, Users,
+  Info, ShieldCheck, FileText, Sparkles, Users, Gift,
 } from 'lucide-react';
 import { getUserTickets, transferTicket, downloadTicket } from '@/api/tickets';
 import { verifyPayment } from '@/api/orders';
 import { getMyResale, createResaleListing, cancelResaleListing } from '@/api/resale';
 import { getUserReminders, toggleEventReminder } from '@/api/events';
+import { getMyEventInvites } from '@/api/meetups';
 import { getGoogleCalendarUrl, downloadIcsFile } from '@/utils/calendar';
 import Modal from '@/components/common/Modal';
 import SocialShareModal from '@/components/common/SocialShareModal';
@@ -25,8 +26,9 @@ import Badge from '@/components/common/Badge';
 
 const TABS = [
   { value: 'upcoming', label: 'Upcoming' },
+  { value: 'received', label: 'Received / Gifted' },
   { value: 'past', label: 'Past' },
-  { value: 'transferred', label: 'Transferred' },
+  { value: 'transferred', label: 'Transferred Out' },
   { value: 'cancelled', label: 'Cancelled' },
   { value: 'all', label: 'All Tickets' },
   { value: 'reminders', label: 'Event Reminders' },
@@ -61,6 +63,7 @@ const normalizeTicket = (t) => {
     ticketTemplate: template,
     ticketFileUrl: t.ticket_file_url || t.ticketFileUrl || null,
     ticketFileName: t.ticket_file_name || t.ticketFileName || null,
+    isTransferredToMe: Boolean(t.is_transferred_to_me || t.isTransferredToMe),
     event: {
       id: t.event_id || t.event?.id,
       title: t.event?.title || t.event_title || t.event_name || t.eventName || 'Event',
@@ -191,6 +194,7 @@ export default function MyTicketsPage() {
   const [selling, setSelling] = useState(false);
   const [showListings, setShowListings] = useState(false);
   const [cancellingId, setCancellingId] = useState(null);
+  const [pendingInvites, setPendingInvites] = useState([]);
 
   const [invoiceTicket, setInvoiceTicket] = useState(null);
 
@@ -238,6 +242,13 @@ export default function MyTicketsPage() {
     loadTickets();
     loadListings();
     loadReminders();
+    getMyEventInvites()
+      .then((res) => {
+        if (res.data?.invites) {
+          setPendingInvites(res.data.invites.filter((i) => i.status === 'pending'));
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // Auto-verify transaction if returning from Paystack checkout (?reference=... or ?trxref=...)
@@ -298,6 +309,7 @@ export default function MyTicketsPage() {
       const matchesTab =
         tab === 'all' ? true
         : tab === 'upcoming' ? !isPast && status !== 'cancelled' && status !== 'void' && status !== 'transferred'
+        : tab === 'received' ? Boolean(t.isTransferredToMe) && status !== 'cancelled' && status !== 'void'
         : tab === 'past' ? isPast && status !== 'cancelled' && status !== 'void' && status !== 'transferred'
         : tab === 'transferred' ? status === 'transferred'
         : tab === 'cancelled' ? status === 'cancelled' || status === 'void'
@@ -419,6 +431,35 @@ export default function MyTicketsPage() {
         </Link>
       </motion.div>
 
+      {/* Pending Event Invitations Alert Banner */}
+      {pendingInvites.length > 0 && (
+        <motion.div
+          variants={itemFade}
+          className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-[#1C232B] to-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-white">
+                You have {pendingInvites.length} pending event invitation{pendingInvites.length !== 1 ? 's' : ''}!
+              </p>
+              <p className="text-xs text-[#949599]">
+                Friends invited you to {pendingInvites.map((i) => i.event?.title || 'an event').slice(0, 2).join(', ')}.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/profile?tab=tribes"
+            className="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold transition shadow-sm shrink-0 flex items-center gap-1.5"
+          >
+            <span>Review & RSVP</span>
+            <span>→</span>
+          </Link>
+        </motion.div>
+      )}
+
       {/* Search + Tabs */}
       <motion.div variants={itemFade} className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
         <div className="relative flex flex-wrap gap-1 rounded-xl bg-[#171A1D] border border-[#262B2F] p-1">
@@ -437,7 +478,14 @@ export default function MyTicketsPage() {
                   transition={{ type: 'spring', stiffness: 500, damping: 34 }}
                 />
               )}
-              <span className="relative z-10">{t.label}</span>
+              <span className="relative z-10 flex items-center gap-1.5">
+                <span>{t.label}</span>
+                {t.value === 'received' && tickets.some((tk) => tk.isTransferredToMe) && (
+                  <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px] font-extrabold">
+                    {tickets.filter((tk) => tk.isTransferredToMe).length}
+                  </span>
+                )}
+              </span>
             </button>
           ))}
         </div>
@@ -1091,9 +1139,17 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
           {/* Left: details */}
           <div className="flex-1 min-w-0 space-y-2.5">
             <div className="flex flex-wrap items-center justify-between gap-1.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300 bg-amber-400/15 px-2.5 py-0.5 rounded-full border border-amber-400/30">
-                {ticket.ticketType || ticket.type || 'Standard Admission'}
-              </span>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300 bg-amber-400/15 px-2.5 py-0.5 rounded-full border border-amber-400/30">
+                  {ticket.ticketType || ticket.type || 'Standard Admission'}
+                </span>
+                {ticket.isTransferredToMe && (
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-rose-300 bg-rose-500/20 px-2 py-0.5 rounded-full border border-rose-500/40 flex items-center gap-1">
+                    <Gift className="w-3 h-3 text-rose-400" />
+                    Received Ticket
+                  </span>
+                )}
+              </div>
               {resaleListing ? (
                 <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded-full border border-amber-400/50 flex items-center gap-1">
                   <Store className="w-3 h-3 text-amber-400" />

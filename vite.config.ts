@@ -43,6 +43,9 @@ export default defineConfig({
             if (id.includes('axios') || id.includes('react-hot-toast') || id.includes('qrcode.react') || id.includes('react-hook-form')) {
               return 'vendor-utils';
             }
+            if (id.includes('mapbox-gl')) {
+              return 'vendor-mapbox';
+            }
           }
         },
       },

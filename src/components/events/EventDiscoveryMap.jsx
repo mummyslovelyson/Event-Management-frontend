@@ -1,121 +1,101 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {
-  MapPin, Calendar, ArrowRight, X,
-  Compass, Layers, RotateCcw,
+  MapPin, Calendar, Tag, ArrowRight, X, ExternalLink,
+  Compass, Navigation, Layers, Maximize2, Locate, RefreshCw,
 } from 'lucide-react';
 import { useCurrency } from '@/context/CurrencyContext';
 
-// City GPS Coordinates & Viewbox Bounds for Ghana Hubs
-const CITY_COORDINATES = {
-  Accra: { lat: 5.6037, lng: -0.1870, zoom: 12, x: 74, y: 76 },
-  Kumasi: { lat: 6.6885, lng: -1.6244, zoom: 12, x: 46, y: 55 },
-  Takoradi: { lat: 4.8874, lng: -1.7554, zoom: 12, x: 38, y: 88 },
-  Tema: { lat: 5.6698, lng: -0.0166, zoom: 12, x: 79, y: 74 },
-  'Cape Coast': { lat: 5.1315, lng: -1.2795, zoom: 12, x: 50, y: 84 },
-  Tamale: { lat: 9.4008, lng: -0.8393, zoom: 12, x: 60, y: 22 },
-  Koforidua: { lat: 6.0784, lng: -0.2588, zoom: 12, x: 71, y: 68 },
-  Sunyani: { lat: 7.3399, lng: -2.3268, zoom: 12, x: 32, y: 45 },
-};
+const MAPBOX_TOKEN =
+  import.meta.env.VITE_MAPBOX_TOKEN ||
+  import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ||
+  '';
 
-const GHANA_CENTER = { lng: -1.0232, lat: 7.9465, zoom: 6.4 };
+// Known centroids for major event cities in Ghana
+const CITY_CENTROIDS = {
+  Accra: { lng: -0.1870, lat: 5.6037, zoom: 11.5 },
+  Kumasi: { lng: -1.6244, lat: 6.6885, zoom: 11.5 },
+  Takoradi: { lng: -1.7554, lat: 4.8874, zoom: 12 },
+  Tema: { lng: -0.0166, lat: 5.6698, zoom: 12 },
+  'Cape Coast': { lng: -1.2795, lat: 5.1315, zoom: 12 },
+  Tamale: { lng: -0.8393, lat: 9.4008, zoom: 11.5 },
+  Koforidua: { lng: -0.2588, lat: 6.0784, zoom: 12 },
+  Sunyani: { lng: -2.3268, lat: 7.3399, zoom: 12 },
+  Ho: { lng: 0.4713, lat: 6.6111, zoom: 12 },
+};
 
 const CITY_PILLS = ['All Cities', 'Accra', 'Kumasi', 'Takoradi', 'Tema', 'Cape Coast', 'Tamale'];
 
-const MAP_STYLES = {
-  dark: {
-    id: 'dark',
-    label: 'Dark Mode',
-    url: 'mapbox://styles/mapbox/dark-v11',
-  },
-  satellite: {
-    id: 'satellite',
-    label: 'Satellite',
-    url: 'mapbox://styles/mapbox/satellite-streets-v12',
-  },
-  streets: {
-    id: 'streets',
-    label: 'Streets',
-    url: 'mapbox://styles/mapbox/navigation-night-v1',
-  },
-};
+const GHANA_CENTER = { lng: -1.0232, lat: 7.9465, zoom: 6.2 };
 
 export default function EventDiscoveryMap({ events = [] }) {
   const { format } = useCurrency();
+  const [selectedCity, setSelectedCity] = useState('All Cities');
+  const [activeEvent, setActiveEvent] = useState(null);
+  const [mapStyle, setMapStyle] = useState('dark'); // 'dark' | 'satellite'
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+  const [locatingUser, setLocatingUser] = useState(false);
+
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
 
-  // Check if Mapbox token is provided in environment variables
-  const envToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
-  const hasMapboxToken = Boolean(
-    envToken &&
-    envToken.trim() !== '' &&
-    envToken !== 'your_mapbox_access_token' &&
-    envToken.startsWith('pk.')
-  );
-
-  const [mapError, setMapError] = useState(false);
-  const isLiveMap = hasMapboxToken && !mapError;
-
-  const [selectedCity, setSelectedCity] = useState('All Cities');
-  const [activeEvent, setActiveEvent] = useState(null);
-  const [currentStyle, setCurrentStyle] = useState('dark');
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [showStyleMenu, setShowStyleMenu] = useState(false);
-
-  // Map each event to both GPS (lat/lng) and 2D percentage (x/y) coordinates
+  // Map each event to concrete GPS coordinates
   const mappedEvents = useMemo(() => {
     return events.map((ev, idx) => {
-      let lat = null;
       let lng = null;
-      let city = 'Accra';
+      let lat = null;
+      let resolvedCity = ev.city || 'Accra';
 
-      // 1. Direct GPS coordinates if provided on event object
-      if (ev.latitude && ev.longitude) {
-        lat = parseFloat(ev.latitude);
+      // 1. Direct coordinates
+      if (ev.longitude != null && ev.latitude != null) {
         lng = parseFloat(ev.longitude);
-      } else if (ev.lat && ev.lng) {
-        lat = parseFloat(ev.lat);
-        lng = parseFloat(ev.lng);
+        lat = parseFloat(ev.latitude);
+      } else if (ev.gps_location) {
+        const parts = ev.gps_location.split(',').map((p) => parseFloat(p.trim()));
+        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+          // If first number is lat (Ghana is ~4.5 - 11 lat, -3 to 1 lng)
+          if (parts[0] > parts[1]) {
+            lat = parts[0];
+            lng = parts[1];
+          } else {
+            lng = parts[0];
+            lat = parts[1];
+          }
+        }
       }
 
-      // 2. City matching
-      const cityKey = Object.keys(CITY_COORDINATES).find(
-        (c) =>
-          ev.city?.toLowerCase() === c.toLowerCase() ||
-          ev.venue?.toLowerCase().includes(c.toLowerCase()) ||
-          ev.location?.toLowerCase().includes(c.toLowerCase())
-      );
+      // 2. City fallback if coordinates are missing or invalid
+      if (lng == null || lat == null || isNaN(lng) || isNaN(lat)) {
+        const matchedCity = Object.keys(CITY_CENTROIDS).find(
+          (c) =>
+            ev.city?.toLowerCase() === c.toLowerCase() ||
+            ev.venue?.toLowerCase().includes(c.toLowerCase()) ||
+            ev.address?.toLowerCase().includes(c.toLowerCase())
+        );
 
-      const base = cityKey ? CITY_COORDINATES[cityKey] : CITY_COORDINATES.Accra;
-      if (cityKey) city = cityKey;
+        const base = matchedCity ? CITY_CENTROIDS[matchedCity] : CITY_CENTROIDS.Accra;
+        resolvedCity = matchedCity || 'Accra';
 
-      // Deterministic spread to prevent overlapping pins
-      const seed = Number(ev.id || idx) * 19;
-      const jitterLng = ((seed % 13) - 6) * 0.007;
-      const jitterLat = (((seed * 7) % 13) - 6) * 0.007;
-
-      if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
-        lat = base.lat + jitterLat;
-        lng = base.lng + jitterLng;
+        // Add subtle deterministic jitter so events in the same city cluster don't stack exactly on top
+        const seed = Number(ev.id || idx) * 31;
+        const offsetLng = (((seed % 17) - 8) / 1000) * 1.5;
+        const offsetLat = ((((seed * 7) % 17) - 8) / 1000) * 1.5;
+        lng = base.lng + offsetLng;
+        lat = base.lat + offsetLat;
       }
-
-      // 2D percentage coordinates for mockup radar view
-      const offsetX = ((seed % 11) - 5) * 1.5;
-      const offsetY = (((seed * 7) % 11) - 5) * 1.5;
-      const x = Math.max(12, Math.min(88, base.x + offsetX));
-      const y = Math.max(12, Math.min(88, base.y + offsetY));
 
       const minPrice = ev.minPrice ?? ev.min_price ?? ev.price;
       const priceLabel = minPrice != null ? (Number(minPrice) === 0 ? 'Free' : format(minPrice)) : 'Tickets';
 
       return {
         ...ev,
-        coords: { lat, lng, x, y, city },
+        resolvedCity,
+        coordinates: [lng, lat],
         priceLabel,
       };
     });
@@ -125,204 +105,201 @@ export default function EventDiscoveryMap({ events = [] }) {
   const filteredEvents = useMemo(() => {
     if (selectedCity === 'All Cities') return mappedEvents;
     return mappedEvents.filter(
-      (ev) => ev.coords.city.toLowerCase() === selectedCity.toLowerCase()
+      (ev) => (ev.city || ev.resolvedCity)?.toLowerCase() === selectedCity.toLowerCase()
     );
   }, [mappedEvents, selectedCity]);
 
-  // Initialize Mapbox instance only if token is valid and no error
+  // Initialize Mapbox map
   useEffect(() => {
-    if (!isLiveMap || !mapContainerRef.current) return;
+    if (!mapContainerRef.current) return;
 
-    try {
-      mapboxgl.accessToken = envToken;
+    mapboxgl.accessToken = MAPBOX_TOKEN;
 
-      const map = new mapboxgl.Map({
-        container: mapContainerRef.current,
-        style: MAP_STYLES[currentStyle].url,
-        center: [GHANA_CENTER.lng, GHANA_CENTER.lat],
-        zoom: GHANA_CENTER.zoom,
-        attributionControl: false,
-        cooperativeGestures: true,
-      });
+    const styleUrl =
+      mapStyle === 'satellite'
+        ? 'mapbox://styles/mapbox/satellite-streets-v12'
+        : 'mapbox://styles/mapbox/dark-v11';
 
-      const nav = new mapboxgl.NavigationControl({
-        showCompass: true,
-        showZoom: true,
-        visualizePitch: true,
-      });
-      map.addControl(nav, 'bottom-left');
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: styleUrl,
+      center: [GHANA_CENTER.lng, GHANA_CENTER.lat],
+      zoom: GHANA_CENTER.zoom,
+      pitch: 35,
+      antialias: true,
+      attributionControl: false,
+    });
 
-      map.addControl(
-        new mapboxgl.AttributionControl({ compact: true }),
-        'bottom-right'
-      );
+    map.addControl(new mapboxgl.NavigationControl({ showCompass: true }), 'bottom-right');
+    map.addControl(new mapboxgl.FullscreenControl(), 'bottom-right');
 
-      map.on('load', () => {
-        setMapLoaded(true);
-        setMapError(false);
-      });
+    map.on('load', () => {
+      setMapLoaded(true);
+    });
 
-      map.on('error', (e) => {
-        if (e?.error?.status === 401 || e?.error?.message?.includes('access token')) {
-          console.warn('Mapbox auth error, falling back to radar view');
-          setMapError(true);
-        }
-      });
+    mapRef.current = map;
 
-      mapRef.current = map;
+    return () => {
+      map.remove();
+    };
+  }, [mapStyle]);
 
-      return () => {
-        map.remove();
-        mapRef.current = null;
-        setMapLoaded(false);
-      };
-    } catch (err) {
-      console.warn('Failed to initialize Mapbox, falling back to radar view:', err);
-      setMapError(true);
-    }
-  }, [isLiveMap, envToken]);
-
-  // Handle map style changes in Mapbox mode
+  // Update Markers whenever filteredEvents, mapLoaded, or activeEvent changes
   useEffect(() => {
-    if (mapRef.current && mapLoaded && isLiveMap) {
-      mapRef.current.setStyle(MAP_STYLES[currentStyle].url);
-    }
-  }, [currentStyle, mapLoaded, isLiveMap]);
+    const map = mapRef.current;
+    if (!map || !mapLoaded) return;
 
-  // Sync Markers with Mapbox
-  useEffect(() => {
-    if (!isLiveMap || !mapRef.current || !mapLoaded) return;
-
-    markersRef.current.forEach((marker) => marker.remove());
+    // Clear existing markers
+    markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
 
+    // Add markers for filtered events
     filteredEvents.forEach((ev) => {
-      const { lng, lat } = ev.coords;
-      if (!lng || !lat || isNaN(lng) || isNaN(lat)) return;
-
       const isSelected = activeEvent?.id === ev.id;
 
       const el = document.createElement('div');
-      el.className = 'tc-mapbox-marker-wrapper relative cursor-pointer group';
+      el.className = 'mapbox-custom-event-marker';
+      el.style.cursor = 'pointer';
 
+      // Custom marker inner styling
       el.innerHTML = `
-        <div class="tc-marker-inner relative transition-transform duration-200 ${
-          isSelected ? 'scale-110 z-30' : 'hover:scale-105 z-10'
-        }">
-          ${
-            isSelected
-              ? `<span class="absolute -inset-2 rounded-full bg-[#b21414]/40 animate-ping"></span>`
-              : ''
-          }
-          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full shadow-xl border text-xs font-bold tracking-tight transition-all ${
-            isSelected
-              ? 'bg-[#b21414] border-white text-white shadow-red-950/60 ring-2 ring-[#b21414]/50'
-              : 'bg-[#1C232B] hover:bg-[#242B32] border-white/20 text-[#EFEFF1]'
-          }">
-            <svg class="w-3.5 h-3.5 ${
-              isSelected ? 'text-white' : 'text-[#b21414]'
-            }" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-            </svg>
-            <span>${ev.priceLabel}</span>
-          </div>
+        <div style="
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 4px 10px;
+          border-radius: 9999px;
+          background: ${isSelected ? '#b21414' : '#1C232B'};
+          color: #ffffff;
+          font-family: inherit;
+          font-size: 11px;
+          font-weight: 700;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+          border: 1.5px solid ${isSelected ? '#ffffff' : 'rgba(255, 255, 255, 0.2)'};
+          transition: all 0.2s ease-in-out;
+          transform: ${isSelected ? 'scale(1.15)' : 'scale(1)'};
+          z-index: ${isSelected ? 20 : 1};
+        ">
+          ${isSelected ? '<span style="position: absolute; inset: -4px; border-radius: 9999px; background: rgba(178,20,20,0.4); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; z-index: -1;"></span>' : ''}
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: ${isSelected ? '#ffffff' : '#b21414'};"></span>
+          <span>${ev.priceLabel}</span>
         </div>
       `;
 
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         setActiveEvent(ev);
-
-        mapRef.current?.flyTo({
-          center: [lng, lat],
-          zoom: Math.max(mapRef.current.getZoom(), 12.5),
-          speed: 1.1,
-          curve: 1.2,
+        map.flyTo({
+          center: ev.coordinates,
+          zoom: Math.max(map.getZoom(), 13),
+          duration: 1000,
           essential: true,
         });
       });
 
-      const marker = new mapboxgl.Marker({
-        element: el,
-        anchor: 'center',
-      })
-        .setLngLat([lng, lat])
-        .addTo(mapRef.current);
+      const marker = new mapboxgl.Marker({ element: el, anchor: 'center' })
+        .setLngLat(ev.coordinates)
+        .addTo(map);
 
       markersRef.current.push(marker);
     });
-  }, [filteredEvents, activeEvent, mapLoaded, isLiveMap]);
+  }, [filteredEvents, activeEvent, mapLoaded]);
 
-  // Handle city select
-  const handleCitySelect = (city) => {
+  // Handle City Selector navigation
+  const handleSelectCity = useCallback((city) => {
     setSelectedCity(city);
     setActiveEvent(null);
 
-    if (isLiveMap && mapRef.current) {
-      if (city === 'All Cities') {
-        mapRef.current.flyTo({
-          center: [GHANA_CENTER.lng, GHANA_CENTER.lat],
-          zoom: GHANA_CENTER.zoom,
-          speed: 1.1,
-          essential: true,
-        });
-      } else if (CITY_COORDINATES[city]) {
-        const { lng, lat, zoom } = CITY_COORDINATES[city];
-        mapRef.current.flyTo({
-          center: [lng, lat],
-          zoom: zoom || 12,
-          speed: 1.2,
-          essential: true,
-        });
+    const map = mapRef.current;
+    if (!map) return;
+
+    if (city === 'All Cities') {
+      if (mappedEvents.length > 0) {
+        const bounds = new mapboxgl.LngLatBounds();
+        mappedEvents.forEach((e) => bounds.extend(e.coordinates));
+        map.fitBounds(bounds, { padding: 60, maxZoom: 13, duration: 1200 });
+      } else {
+        map.flyTo({ center: [GHANA_CENTER.lng, GHANA_CENTER.lat], zoom: GHANA_CENTER.zoom, duration: 1200 });
       }
+    } else if (CITY_CENTROIDS[city]) {
+      const c = CITY_CENTROIDS[city];
+      map.flyTo({ center: [c.lng, c.lat], zoom: c.zoom, pitch: 45, duration: 1400 });
     }
-  };
+  }, [mappedEvents]);
 
-  // Recenter map / reset city
-  const handleResetBounds = () => {
-    setSelectedCity('All Cities');
-    setActiveEvent(null);
-
-    if (isLiveMap && mapRef.current) {
-      mapRef.current.flyTo({
-        center: [GHANA_CENTER.lng, GHANA_CENTER.lat],
-        zoom: GHANA_CENTER.zoom,
-        speed: 1.2,
-        essential: true,
-      });
+  // Geolocate user and find nearby events
+  const handleLocateUser = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
     }
+
+    setLocatingUser(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setUserLocation({ lat: latitude, lng: longitude });
+        setLocatingUser(false);
+
+        const map = mapRef.current;
+        if (map) {
+          map.flyTo({
+            center: [longitude, latitude],
+            zoom: 13,
+            pitch: 45,
+            duration: 1500,
+          });
+
+          const userEl = document.createElement('div');
+          userEl.innerHTML = `
+            <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+              <div style="position: absolute; width: 32px; height: 32px; border-radius: 50%; background: rgba(59, 130, 246, 0.4); animation: ping 1.5s infinite;"></div>
+              <div style="width: 16px; height: 16px; border-radius: 50%; background: #3B82F6; border: 2.5px solid #ffffff; box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);"></div>
+            </div>
+          `;
+          new mapboxgl.Marker({ element: userEl, anchor: 'center' })
+            .setLngLat([longitude, latitude])
+            .addTo(map);
+        }
+      },
+      (err) => {
+        console.warn('Geolocation failed:', err);
+        setLocatingUser(false);
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    );
   };
 
   return (
-    <div className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#161D22] border border-[#262B2F] shadow-2xl">
-      {/* ── Top Bar: City Selector & Controls ── */}
-      <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 pointer-events-none">
+    <div className="relative w-full rounded-3xl overflow-hidden bg-[#161D22] border border-white/10 shadow-2xl">
+      {/* ── Top Bar: City Selector, Map Layers & Status ── */}
+      <div className="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
         {/* City Filter Pills */}
-        <div className="flex items-center gap-1.5 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 shadow-xl overflow-x-auto no-scrollbar pointer-events-auto touch-pan-x max-w-full">
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 shadow-xl overflow-x-auto no-scrollbar pointer-events-auto">
           {CITY_PILLS.map((city) => {
             const count =
               city === 'All Cities'
                 ? mappedEvents.length
                 : mappedEvents.filter(
-                    (e) => e.coords.city.toLowerCase() === city.toLowerCase()
+                    (e) => (e.city || e.resolvedCity)?.toLowerCase() === city.toLowerCase()
                   ).length;
 
             return (
               <button
                 key={city}
-                onClick={() => handleCitySelect(city)}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
+                type="button"
+                onClick={() => handleSelectCity(city)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
                   selectedCity === city
-                    ? 'bg-[#b21414] text-white shadow-md shadow-red-950/40'
-                    : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-white/5'
+                    ? 'bg-[#b21414] text-white shadow-md'
+                    : 'text-[#949599] hover:text-white hover:bg-white/5'
                 }`}
               >
                 <span>{city}</span>
                 <span
-                  className={`text-[9px] sm:text-[10px] px-1.5 py-0.2 rounded-full ${
-                    selectedCity === city
-                      ? 'bg-black/30 text-white'
-                      : 'bg-white/5 text-[#949599]'
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    selectedCity === city ? 'bg-black/30 text-white' : 'bg-white/5 text-[#949599]'
                   }`}
                 >
                   {count}
@@ -332,202 +309,82 @@ export default function EventDiscoveryMap({ events = [] }) {
           })}
         </div>
 
-        {/* Right Action Tools: Event Count & Style Switcher & Recenter */}
-        <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 pointer-events-auto">
-          {/* Recenter Button */}
+        {/* Right Controls: Style Switcher, Locate Me & Count */}
+        <div className="flex items-center gap-2 pointer-events-auto">
+          {/* Style Switcher */}
+          <div className="flex items-center p-1 rounded-2xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 text-xs shadow-xl">
+            <button
+              type="button"
+              onClick={() => setMapStyle('dark')}
+              className={`px-2.5 py-1 rounded-xl font-semibold transition-all ${
+                mapStyle === 'dark'
+                  ? 'bg-[#b21414] text-white shadow-sm'
+                  : 'text-[#949599] hover:text-white'
+              }`}
+            >
+              Dark
+            </button>
+            <button
+              type="button"
+              onClick={() => setMapStyle('satellite')}
+              className={`px-2.5 py-1 rounded-xl font-semibold transition-all ${
+                mapStyle === 'satellite'
+                  ? 'bg-[#b21414] text-white shadow-sm'
+                  : 'text-[#949599] hover:text-white'
+              }`}
+            >
+              Satellite
+            </button>
+          </div>
+
+          {/* Locate Me Button */}
           <button
-            onClick={handleResetBounds}
-            className="p-1.5 sm:p-2 rounded-xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 text-[#949599] hover:text-white hover:bg-white/10 transition shadow-xl"
-            title="Recenter Ghana Overview"
+            type="button"
+            onClick={handleLocateUser}
+            disabled={locatingUser}
+            title="Find events near me"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-[#111417]/90 hover:bg-[#1C232B] backdrop-blur-xl border border-white/10 text-xs font-semibold text-white shadow-xl transition active:scale-95 disabled:opacity-50"
           >
-            <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <Locate className={`w-3.5 h-3.5 text-blue-400 ${locatingUser ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Near Me</span>
           </button>
 
-          {/* Style Selector (Only shown in Live Map mode) */}
-          {isLiveMap && (
-            <div className="relative">
-              <button
-                onClick={() => setShowStyleMenu((prev) => !prev)}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 text-[11px] sm:text-xs text-[#EFEFF1] hover:bg-white/10 transition shadow-xl"
-                title="Map Style"
-              >
-                <Layers className="w-3.5 h-3.5 text-[#b21414]" />
-                <span className="capitalize">{MAP_STYLES[currentStyle].label}</span>
-              </button>
-
-              <AnimatePresence>
-                {showStyleMenu && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-36 rounded-xl bg-[#171A1D]/95 backdrop-blur-xl border border-white/15 p-1 shadow-2xl z-40"
-                  >
-                    {Object.values(MAP_STYLES).map((st) => (
-                      <button
-                        key={st.id}
-                        onClick={() => {
-                          setCurrentStyle(st.id);
-                          setShowStyleMenu(false);
-                        }}
-                        className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center justify-between ${
-                          currentStyle === st.id
-                            ? 'bg-[#b21414] text-white font-semibold'
-                            : 'text-[#CBD5E1] hover:bg-white/10 hover:text-white'
-                        }`}
-                      >
-                        <span>{st.label}</span>
-                        {currentStyle === st.id && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                        )}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          )}
-
-          {/* Live Pins Indicator */}
-          <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 text-[11px] sm:text-xs text-[#949599] shadow-xl whitespace-nowrap">
+          {/* Total Counter Badge */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-[#111417]/90 backdrop-blur-xl border border-white/10 text-xs text-[#949599] shadow-xl">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-medium text-[#EFEFF1]">{filteredEvents.length}</span>
-            <span className="hidden xs:inline sm:inline">Live Pins</span>
+            <span className="text-white font-medium">{filteredEvents.length}</span> Events
           </div>
         </div>
       </div>
 
-      {/* ── Map Canvas Area (Live Mapbox or Stylized Radar Mockup) ── */}
-      <div className="relative w-full h-[460px] sm:h-[620px] bg-[#111417] overflow-hidden select-none">
-        {isLiveMap ? (
-          <>
-            {/* Live Mapbox Container */}
-            <div ref={mapContainerRef} className="w-full h-full" />
+      {/* ── Mapbox Container Canvas ── */}
+      <div className="relative w-full h-[540px] sm:h-[620px] bg-[#111417] overflow-hidden">
+        <div ref={mapContainerRef} className="w-full h-full" />
 
-            {/* Mobile touch hint indicator */}
-            <div className="sm:hidden absolute top-24 left-1/2 -translate-x-1/2 pointer-events-none z-10">
-              <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-[#CBD5E1] border border-white/10">
-                Use 2 fingers to navigate map
-              </span>
+        {/* Map Loading State */}
+        {!mapLoaded && (
+          <div className="absolute inset-0 bg-[#111417] flex items-center justify-center">
+            <div className="flex flex-col items-center gap-3 text-[#949599]">
+              <div className="w-8 h-8 border-2 border-[#b21414] border-t-transparent rounded-full animate-spin" />
+              <span className="text-xs font-medium">Initializing Mapbox discovery map...</span>
             </div>
-          </>
-        ) : (
-          <>
-            {/* ── Stylized Interactive Ghana Radar Mockup ── */}
-            {/* Radar glow sweep animation */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-[500px] h-[500px] sm:w-[650px] sm:h-[650px] rounded-full border border-white/5 animate-pulse" />
-              <div className="absolute w-[320px] h-[320px] sm:w-[440px] sm:h-[440px] rounded-full border border-[#b21414]/10" />
-              <div className="absolute w-[180px] h-[180px] sm:w-[240px] sm:h-[240px] rounded-full border border-white/5" />
-            </div>
-
-            {/* Subtle Grid Lines Overlay */}
-            <div
-              className="absolute inset-0 opacity-15 pointer-events-none"
-              style={{
-                backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px),
-                                  linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)`,
-                backgroundSize: '48px 48px',
-              }}
-            />
-
-            {/* Stylized Ghana Country Silhouette SVG Outline */}
-            <svg
-              viewBox="0 0 100 100"
-              className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-25"
-            >
-              {/* Ghana territorial border representation */}
-              <path
-                d="M 35 15 L 68 15 L 75 35 L 78 60 L 82 75 L 74 88 L 38 90 L 32 65 L 28 35 Z"
-                fill="none"
-                stroke="rgba(255, 255, 255, 0.4)"
-                strokeWidth="0.8"
-                strokeDasharray="2 2"
-              />
-              {/* Major Coastline */}
-              <path
-                d="M 32 89 Q 55 92 82 76"
-                fill="none"
-                stroke="#b21414"
-                strokeWidth="1.2"
-              />
-            </svg>
-
-            {/* Regional Labels */}
-            <div className="absolute left-[70%] top-[78%] text-[10px] uppercase tracking-widest font-black text-white/30 pointer-events-none">
-              Greater Accra
-            </div>
-            <div className="absolute left-[40%] top-[57%] text-[10px] uppercase tracking-widest font-black text-white/30 pointer-events-none">
-              Ashanti / Kumasi
-            </div>
-            <div className="absolute left-[30%] top-[87%] text-[10px] uppercase tracking-widest font-black text-white/30 pointer-events-none">
-              Western Region
-            </div>
-            <div className="absolute left-[54%] top-[20%] text-[10px] uppercase tracking-widest font-black text-white/30 pointer-events-none">
-              Northern / Tamale
-            </div>
-
-            {/* ── Interactive Event Pins for Mockup ── */}
-            {filteredEvents.map((ev) => {
-              const isSelected = activeEvent?.id === ev.id;
-              const { x, y } = ev.coords;
-
-              return (
-                <div
-                  key={ev.id}
-                  style={{ left: `${x}%`, top: `${y}%` }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
-                >
-                  <button
-                    onClick={() => setActiveEvent(isSelected ? null : ev)}
-                    className="relative group focus:outline-none cursor-pointer"
-                  >
-                    {/* Ping wave animation for active pin */}
-                    {isSelected && (
-                      <span className="absolute -inset-2 rounded-full bg-[#b21414]/40 animate-ping" />
-                    )}
-
-                    {/* Pin Button */}
-                    <motion.div
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full shadow-lg border transition-all ${
-                        isSelected
-                          ? 'bg-[#b21414] border-white text-white scale-110 shadow-red-950/60 ring-2 ring-[#b21414]/50'
-                          : 'bg-[#1C232B] hover:bg-[#242B32] border-white/20 text-[#EFEFF1]'
-                      }`}
-                    >
-                      <MapPin
-                        className={`w-3.5 h-3.5 ${
-                          isSelected ? 'text-white' : 'text-[#b21414]'
-                        }`}
-                      />
-                      <span className="text-[11px] font-bold tracking-tight">
-                        {ev.priceLabel}
-                      </span>
-                    </motion.div>
-                  </button>
-                </div>
-              );
-            })}
-          </>
+          </div>
         )}
 
-        {/* ── Active Event Card Drawer / Popup (Shared by both modes) ── */}
+        {/* ── Active Event Card Drawer / Popup ── */}
         <AnimatePresence>
           {activeEvent && (
             <motion.div
-              initial={{ opacity: 0, y: 24, scale: 0.95 }}
+              initial={{ opacity: 0, y: 25, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 24, scale: 0.95 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
-              className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-auto sm:right-6 sm:w-96 z-30"
+              exit={{ opacity: 0, y: 25, scale: 0.95 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="absolute bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-[400px] z-30"
             >
-              <div className="bg-[#171A1D]/95 backdrop-blur-2xl border border-white/15 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-2xl overflow-hidden">
-                <div className="flex items-start gap-3 sm:gap-4">
+              <div className="bg-[#171A1D]/95 backdrop-blur-2xl border border-white/15 rounded-3xl p-4 shadow-2xl overflow-hidden">
+                <div className="flex items-start gap-3.5">
                   {/* Event Thumbnail */}
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-[#1C232B] overflow-hidden shrink-0 border border-white/10">
+                  <div className="w-20 h-20 rounded-2xl bg-[#1C232B] overflow-hidden shrink-0 border border-white/10 relative">
                     <img
                       src={
                         activeEvent.image ||
@@ -538,46 +395,43 @@ export default function EventDiscoveryMap({ events = [] }) {
                       alt={activeEvent.title}
                       className="w-full h-full object-cover"
                     />
+                    <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[9px] font-bold text-white uppercase tracking-wider">
+                      {activeEvent.category || 'Live'}
+                    </div>
                   </div>
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#b21414]">
-                        {activeEvent.category || 'Live Event'}
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#b21414] truncate">
+                        {activeEvent.city || activeEvent.resolvedCity || 'Ghana'}
                       </span>
                       <button
+                        type="button"
                         onClick={() => setActiveEvent(null)}
-                        className="text-[#949599] hover:text-white p-1 rounded-full hover:bg-white/5 transition cursor-pointer"
+                        className="text-[#949599] hover:text-white p-1 rounded-full hover:bg-white/5 transition"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
 
-                    <h4
-                      className="text-xs sm:text-sm font-bold text-white truncate mb-1"
-                      title={activeEvent.title}
-                    >
+                    <h4 className="text-sm font-bold text-white truncate mb-1" title={activeEvent.title}>
                       {activeEvent.title}
                     </h4>
 
-                    <p className="text-[11px] sm:text-xs text-[#949599] flex items-center gap-1.5 truncate">
+                    <p className="text-xs text-[#949599] flex items-center gap-1.5 truncate">
                       <MapPin className="w-3 h-3 text-[#b21414] shrink-0" />
-                      <span className="truncate">
-                        {activeEvent.venue || activeEvent.location || 'Venue TBA'}
-                      </span>
+                      <span className="truncate">{activeEvent.venue || activeEvent.location || 'Venue TBA'}</span>
                     </p>
 
-                    <p className="text-[11px] sm:text-xs text-[#949599] flex items-center gap-1.5 mt-0.5">
+                    <p className="text-xs text-[#949599] flex items-center gap-1.5 mt-0.5">
                       <Calendar className="w-3 h-3 text-[#b21414] shrink-0" />
                       <span>
                         {activeEvent.start_date || activeEvent.startDate
-                          ? new Date(
-                              activeEvent.start_date || activeEvent.startDate
-                            ).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                            })
+                          ? new Date(activeEvent.start_date || activeEvent.startDate).toLocaleDateString(
+                              'en-US',
+                              { month: 'short', day: 'numeric', year: 'numeric' }
+                            )
                           : 'Upcoming'}
                       </span>
                     </p>
@@ -585,23 +439,33 @@ export default function EventDiscoveryMap({ events = [] }) {
                 </div>
 
                 {/* Footer CTAs */}
-                <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-white/10 flex items-center justify-between gap-3">
+                <div className="mt-3.5 pt-3 border-t border-white/10 flex items-center justify-between gap-3">
                   <div>
-                    <span className="text-[9px] sm:text-[10px] text-[#949599] uppercase tracking-wider block">
-                      Tickets From
-                    </span>
-                    <span className="text-xs sm:text-sm font-extrabold text-white">
-                      {activeEvent.priceLabel}
-                    </span>
+                    <span className="text-[10px] text-[#949599] uppercase tracking-wider block">Tickets From</span>
+                    <span className="text-sm font-extrabold text-white">{activeEvent.priceLabel}</span>
                   </div>
 
-                  <Link
-                    to={`/events/${activeEvent.id}`}
-                    className="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl bg-[#b21414] hover:bg-[#911010] text-white text-xs font-bold transition shadow-md shadow-red-950/40"
-                  >
-                    <span>Get Tickets</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        `${activeEvent.venue || ''} ${activeEvent.city || ''} Ghana`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Open in Maps"
+                      className="p-2 rounded-xl bg-[#242B32] hover:bg-[#2d363e] border border-white/10 text-white transition active:scale-95"
+                    >
+                      <Navigation className="w-3.5 h-3.5 text-[#949599] hover:text-white" />
+                    </a>
+
+                    <Link
+                      to={`/events/${activeEvent.id}`}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#b21414] hover:bg-[#911010] text-white text-xs font-bold transition shadow-md active:scale-95"
+                    >
+                      <span>Get Tickets</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -609,20 +473,19 @@ export default function EventDiscoveryMap({ events = [] }) {
         </AnimatePresence>
 
         {/* ── Empty Filter State Notice ── */}
-        {filteredEvents.length === 0 && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center pointer-events-none z-20">
+        {filteredEvents.length === 0 && mapLoaded && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center pointer-events-none">
             <div className="w-12 h-12 rounded-2xl bg-[#1C232B] border border-white/10 flex items-center justify-center text-[#949599] mb-3">
               <Compass className="w-6 h-6" />
             </div>
-            <p className="text-sm font-bold text-white mb-1">
-              No Events Found in {selectedCity}
-            </p>
+            <p className="text-sm font-bold text-white mb-1">No Events Found in {selectedCity}</p>
             <p className="text-xs text-[#949599] max-w-xs mb-4">
               Try selecting "All Cities" or choose another destination to see available events.
             </p>
             <button
-              onClick={() => handleCitySelect('All Cities')}
-              className="pointer-events-auto px-4 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-white font-semibold border border-white/10 transition cursor-pointer"
+              type="button"
+              onClick={() => handleSelectCity('All Cities')}
+              className="pointer-events-auto px-4 py-1.5 rounded-xl bg-[#b21414] hover:bg-[#911010] text-xs text-white font-semibold shadow-md transition cursor-pointer"
             >
               Show All Cities
             </button>
