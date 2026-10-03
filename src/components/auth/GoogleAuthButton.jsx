@@ -76,8 +76,10 @@ export default function GoogleAuthButton({
             navigate(from, { replace: true });
           } else if (user?.role === 'organizer') {
             navigate('/organizer/dashboard');
+          } else if (['admin', 'system_admin', 'superadmin', 'staff'].includes(user?.role)) {
+            navigate('/admin/dashboard');
           } else {
-            navigate('/attendee/dashboard');
+            navigate('/');
           }
         }
       }

@@ -10,7 +10,7 @@ import CurrencyToggle from '@/components/common/CurrencyToggle';
 
 const nav = [
   { to: '/attendee/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/', label: 'Public Website', icon: Globe },
+  { to: '/', label: 'Home Page', icon: Globe },
   { to: '/attendee/explore', label: 'Explore Events', icon: Compass },
   { to: '/attendee/tickets', label: 'My Tickets', icon: TicketIcon },
   { to: '/attendee/bookings', label: 'My Bookings', icon: CalendarCheck },
@@ -86,6 +86,14 @@ export default function AttendeeLayout() {
                 <Search className="w-4 h-4 text-[#6B7278]" />
                 <input type="text" placeholder="Search…" className="w-full max-w-44 bg-transparent text-sm text-[#EFEFF1] placeholder-[#6B7278] focus:outline-none" />
               </label>
+
+              <Link
+                to="/"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#CBD5E1] hover:text-white hover:bg-[#262B2F] border border-[#262B2F] transition"
+              >
+                <Globe className="w-3.5 h-3.5" />
+                Home
+              </Link>
 
               <CurrencyToggle />
 

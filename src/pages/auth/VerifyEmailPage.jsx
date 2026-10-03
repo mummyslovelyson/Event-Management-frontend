@@ -288,15 +288,15 @@ export default function VerifyEmailPage() {
                 type="button"
                 onClick={() => {
                   const target = verifiedUser?.role === 'organizer'
-                    ? '/organizer'
+                    ? '/organizer/dashboard'
                     : verifiedUser?.role === 'admin'
-                      ? '/admin'
-                      : '/explore';
+                      ? '/admin/dashboard'
+                      : '/';
                   navigate(target);
                 }}
                 className="mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-lg shadow-white/5"
               >
-                Continue to Dashboard <ArrowRight className="w-4 h-4" />
+                Continue to Homepage <ArrowRight className="w-4 h-4" />
               </button>
               <div className="mt-3">
                 <Link to="/login" className="text-xs text-[#949599] hover:text-[#EFEFF1] transition">

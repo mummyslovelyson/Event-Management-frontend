@@ -30,7 +30,7 @@ export default function LoginPage() {
       } else if (user.role === 'organizer') {
         navigate('/organizer/dashboard', { replace: true });
       } else {
-        navigate('/attendee/dashboard', { replace: true });
+        navigate('/', { replace: true });
       }
     } catch (err) {
       if (err.response?.data?.isAdminPortalRedirect) {
