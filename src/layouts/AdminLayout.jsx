@@ -174,7 +174,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-[#111417] text-[#EFEFF1]">
       <aside className="hidden lg:flex fixed inset-y-0 left-0 w-64 bg-[#171A1D] border-r border-[#262B2F] flex-col z-40">
-        <SidebarContent user={user} initials={initials} navItems={visibleNav} roleLabel={roleLabel} isSystemAdmin={isSystemAdmin} />
+        <SidebarContent navItems={visibleNav} />
       </aside>
 
       <AnimatePresence>
@@ -182,7 +182,7 @@ export default function AdminLayout() {
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
             <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} transition={{ type: 'tween', duration: 0.2 }} className="fixed inset-y-0 left-0 w-[min(256px,80vw)] bg-[#171A1D] border-r border-[#262B2F] flex-col z-50 lg:hidden">
-              <SidebarContent user={user} initials={initials} navItems={visibleNav} roleLabel={roleLabel} isSystemAdmin={isSystemAdmin} onNavigate={() => setSidebarOpen(false)} />
+              <SidebarContent navItems={visibleNav} onNavigate={() => setSidebarOpen(false)} />
             </motion.aside>
           </>
         )}
@@ -414,7 +414,7 @@ export default function AdminLayout() {
   );
 }
 
-function SidebarContent({ user, initials, navItems, roleLabel, isSystemAdmin, onNavigate }) {
+function SidebarContent({ navItems, onNavigate }) {
   return (
     <>
       <div className="flex items-center justify-between h-14 px-4 border-b border-[#262B2F] shrink-0">
@@ -452,18 +452,6 @@ function SidebarContent({ user, initials, navItems, roleLabel, isSystemAdmin, on
           </NavLink>
         ))}
       </nav>
-
-      <div className="p-3 border-t border-[#262B2F] shrink-0">
-        <div className="flex items-center gap-2.5 px-2 py-1.5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2A2F33] to-[#1D2124] border border-[#3A4045] flex items-center justify-center text-[#C4C9CC] text-xs font-semibold shrink-0">{initials}</div>
-          <div className="min-w-0">
-            <p className="text-[13px] font-medium text-[#EFEFF1] truncate">{user?.name || 'Admin'}</p>
-            <p className={`text-[11px] font-medium truncate ${isSystemAdmin ? 'text-purple-300' : 'text-[#6B7278]'}`}>
-              {roleLabel}
-            </p>
-          </div>
-        </div>
-      </div>
     </>
   );
 }
