@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mic, MicOff, Volume2, VolumeX, X, MessageSquare,
-  ArrowRight, Loader2, Play, AlertCircle, RefreshCw
+  ArrowRight, Loader2, Play, AlertCircle, RefreshCw,
+  Sparkles, Cpu, Zap, Activity
 } from 'lucide-react';
 import ChatEventCard from './ChatEventCard';
 import ChatTicketCard from './ChatTicketCard';
@@ -25,6 +26,7 @@ export default function VoiceAgentModal({
   const [lastAgentReply, setLastAgentReply] = useState(
     "Hello, welcome to Tribes & Cliqs. What event or tickets can I help you find today?"
   );
+  const [voiceDiagnostics, setVoiceDiagnostics] = useState(null);
   const [lastEvents, setLastEvents] = useState([]);
   const [lastTickets, setLastTickets] = useState([]);
   const [lastActions, setLastActions] = useState([]);
@@ -37,6 +39,9 @@ export default function VoiceAgentModal({
   const synthRef = useRef(window.speechSynthesis || null);
   const canvasRef = useRef(null);
   const animationFrameRef = useRef(null);
+  const analyserRef = useRef(null);
+  const mediaStreamRef = useRef(null);
+  const audioContextRef = useRef(null);
 
   const hasWelcomedRef = useRef(false);
   const isListeningWantedRef = useRef(false);
@@ -238,13 +243,15 @@ export default function VoiceAgentModal({
     try {
       const res = await onSendMessage(query);
       if (res) {
-        setLastAgentReply(res.reply || 'Here is what I found for you:');
+        const spoken = res.voiceReply || res.reply || 'Here is what I found for you:';
+        setLastAgentReply(res.reply || spoken);
+        setVoiceDiagnostics(res.voiceDiagnostics || null);
         setLastEvents(res.events || []);
         setLastTickets(res.tickets || []);
         setLastActions(res.actions || []);
         setLastBooking(res.booking || null);
         setLastSpending(res.spending || null);
-        speakResponse(res.reply);
+        speakResponse(spoken);
       } else {
         speakResponse("I found some details for you.");
       }
@@ -406,6 +413,70 @@ export default function VoiceAgentModal({
     }
   };
 
+  // Setup and teardown Web Audio Analyser for live visualizer feedback
+  useEffect(() => {
+    if (!isOpen) {
+      if (mediaStreamRef.current) {
+        try {
+          mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+        } catch {}
+        mediaStreamRef.current = null;
+      }
+      if (audioContextRef.current) {
+        try {
+          audioContextRef.current.close();
+        } catch {}
+        audioContextRef.current = null;
+      }
+      analyserRef.current = null;
+      return;
+    }
+
+    let isMounted = true;
+    const initAnalyser = async () => {
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) return;
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        if (!isMounted) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+        mediaStreamRef.current = stream;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        audioContextRef.current = ctx;
+        const source = ctx.createMediaStreamSource(stream);
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 64;
+        analyser.smoothingTimeConstant = 0.8;
+        source.connect(analyser);
+        analyserRef.current = analyser;
+      } catch (e) {
+        // User may reject mic or browser policy blocks audio; gracefully fallback to procedural pulsation
+      }
+    };
+
+    initAnalyser();
+
+    return () => {
+      isMounted = false;
+      if (mediaStreamRef.current) {
+        try {
+          mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+        } catch {}
+        mediaStreamRef.current = null;
+      }
+      if (audioContextRef.current) {
+        try {
+          audioContextRef.current.close();
+        } catch {}
+        audioContextRef.current = null;
+      }
+      analyserRef.current = null;
+    };
+  }, [isOpen]);
+
   // Welcome user aloud and initialize when modal opens
   useEffect(() => {
     if (isOpen) {
@@ -437,10 +508,11 @@ export default function VoiceAgentModal({
       stopSpeaking();
       stopListening();
       setAgentState('idle');
+      setVoiceDiagnostics(null);
     }
   }, [isOpen, activeContext?.user?.name, playChime, speakResponse, startListening, stopSpeaking, stopListening]);
 
-  // Smooth Harmonic Visualizer Canvas (dynamically reacts to agentState)
+  // Smooth Harmonic Visualizer Canvas (dynamically reacts to audio and agentState)
   useEffect(() => {
     if (!isOpen) return;
     const canvas = canvasRef.current;
@@ -459,7 +531,19 @@ export default function VoiceAgentModal({
       const isListening = agentState === 'listening';
       const isThinking = agentState === 'thinking';
 
-      const baseAmplitude = isSpeaking ? 34 : isListening ? 20 : isThinking ? 14 : 6;
+      // Read real microphone volume level if audio analyser is active
+      let liveAudioBoost = 0;
+      if (analyserRef.current && isListening) {
+        try {
+          const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+          analyserRef.current.getByteFrequencyData(dataArray);
+          const sum = dataArray.reduce((acc, v) => acc + v, 0);
+          const avg = sum / (dataArray.length || 1);
+          liveAudioBoost = (avg / 255) * 55; // 0 to 55 dynamic expansion
+        } catch {}
+      }
+
+      const baseAmplitude = isSpeaking ? 34 : isListening ? (18 + liveAudioBoost) : isThinking ? 14 : 6;
       const numWaves = 4;
 
       for (let i = 0; i < numWaves; i++) {
@@ -473,9 +557,9 @@ export default function VoiceAgentModal({
           : isThinking
           ? `rgba(203, 213, 225, ${0.4 - i * 0.08})`
           : isListening
-          ? `rgba(245, 158, 11, ${0.5 - i * 0.1})`
+          ? `rgba(245, 158, 11, ${0.55 - i * 0.1})`
           : `rgba(73, 79, 85, 0.2)`;
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = isListening && liveAudioBoost > 8 ? 3.5 : 2.5;
         ctx.stroke();
       }
 
@@ -629,6 +713,37 @@ export default function VoiceAgentModal({
         {transcript && (
           <div className="w-full max-w-sm px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/90 italic truncate mb-2">
             "{transcript}"
+          </div>
+        )}
+
+        {/* Voice ML & Neural Diagnostics Pill */}
+        {voiceDiagnostics && (
+          <div className="w-full max-w-sm mb-2 px-3 py-1.5 rounded-xl bg-amber-400/10 border border-amber-400/20 text-left text-[11px] text-amber-300 flex items-center justify-between gap-1.5 flex-wrap">
+            <div className="flex items-center gap-1.5">
+              <Cpu className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span className="font-semibold">{voiceDiagnostics.predictedIntent || 'INTENT_CLASSIFIED'}</span>
+              {typeof voiceDiagnostics.confidence === 'number' && (
+                <span className="text-[10px] text-amber-200/80">({Math.round(voiceDiagnostics.confidence * 100)}%)</span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              {voiceDiagnostics.phoneticChanges && voiceDiagnostics.phoneticChanges.length > 0 && (
+                <span
+                  title={voiceDiagnostics.phoneticChanges.map(c => `"${c.original}" ➔ "${c.replacement}"`).join(', ')}
+                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-400/20 text-[10px] text-amber-200 cursor-help"
+                >
+                  <Sparkles className="w-3 h-3 text-amber-300" />
+                  Phonetic normalized
+                </span>
+              )}
+              {voiceDiagnostics.emotion?.urgency === 'high' && (
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 text-[10px] font-bold">
+                  <Zap className="w-3 h-3 text-red-400" />
+                  Urgent
+                </span>
+              )}
+            </div>
           </div>
         )}
 

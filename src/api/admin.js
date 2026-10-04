@@ -86,6 +86,16 @@ export const deleteAIKnowledgeItem = (id) => api.delete(`/admin/ai/knowledge/${i
 export const updateAISettings = (data) => api.put('/admin/ai/settings', data);
 export const testAIPrompt = (data) => api.post('/admin/ai/test', data);
 
+// Voice Agent Deep Learning & ML Model Management
+export const getVoiceModelData = () => api.get('/admin/ai/voice-model');
+export const trainVoiceModel = (data) => api.post('/admin/ai/voice-model/train', data);
+export const updateVoiceModelSettings = (data) => api.put('/admin/ai/voice-model/settings', data);
+export const createVoicePronunciationRule = (data) => api.post('/admin/ai/voice-model/pronunciation', data);
+export const deleteVoicePronunciationRule = (id) => api.delete(`/admin/ai/voice-model/pronunciation/${id}`);
+export const createVoiceTrainingSample = (data) => api.post('/admin/ai/voice-model/sample', data);
+export const deleteVoiceTrainingSample = (id) => api.delete(`/admin/ai/voice-model/sample/${id}`);
+export const testVoiceModel = (data) => api.post('/admin/ai/voice-model/test', data);
+
 // Bot & Voice Agent Conversations Logs
 export const getBotConversations = (params) => api.get('/admin/chat-logs', { params });
 export const deleteBotConversation = (id) => api.delete(`/admin/chat-logs/${id}`);
