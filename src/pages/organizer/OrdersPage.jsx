@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Download, ShoppingBag, DollarSign, Clock, RotateCcw,
   ChevronDown, ChevronUp, CreditCard, Check, Printer, Receipt as ReceiptIcon,
+  ShieldAlert, CheckCircle2, XCircle, AlertTriangle
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getOrders, refundOrder } from '@/api/orders';
-import { getDashboard } from '@/api/organizer';
+import { getDashboard, getOrganizerRefundRequests, respondToRefundRequest } from '@/api/organizer';
 import { useCurrency } from '@/context/CurrencyContext';
+import { REFUND_POLICY_CIRCUMSTANCES } from '@/constants/refundPolicy';
 import Badge from '@/components/common/Badge';
 import Modal from '@/components/common/Modal';
 import ReceiptModal from '@/components/common/ReceiptModal';
@@ -22,31 +24,42 @@ const statusVariant = (s) => {
   return map[(s || '').toLowerCase()] || 'neutral';
 };
 
-const STATUS_TABS = ['All', 'Completed', 'Pending', 'Failed', 'Refunded'];
+const STATUS_TABS = ['All', 'Completed', 'Pending', 'Refund Requests', 'Refunded'];
 
 export default function OrdersPage() {
   const { format } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
+  const [refundRequests, setRefundRequests] = useState([]);
   const [summary, setSummary] = useState({});
   const [search, setSearch] = useState('');
   const [statusTab, setStatusTab] = useState('All');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [expandedId, setExpandedId] = useState(null);
   const [detailOrder, setDetailOrder] = useState(null);
   const [receiptOrder, setReceiptOrder] = useState(null);
   const [selected, setSelected] = useState(new Set());
+
+  // Direct order refund modal
   const [refundTarget, setRefundTarget] = useState(null);
   const [refundReason, setRefundReason] = useState('');
   const [refunding, setRefunding] = useState(false);
 
+  // Refund request decline modal
+  const [declineTarget, setDeclineTarget] = useState(null);
+  const [declineReason, setDeclineReason] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
+
+  // Authorize direct refund from order detail (Clause 1)
   const handleRefundOrder = async () => {
     if (!refundTarget) return;
     setRefunding(true);
     try {
-      await refundOrder(refundTarget.id, { reason: refundReason.trim() });
-      toast.success('Refund processed successfully');
+      await refundOrder(refundTarget.id, {
+        reason: refundReason.trim() || 'Organizer authorized refund',
+        circumstance: '1_ORGANIZER_AUTHORIZED',
+      });
+      toast.success('Refund authorized & processed per Clause 1');
       setRefundTarget(null);
       setRefundReason('');
       setDetailOrder(null);
@@ -58,18 +71,68 @@ export default function OrdersPage() {
     }
   };
 
+  // Authorize a buyer's pending refund request (Clause 1)
+  const handleAuthorizeRequest = async (reqItem) => {
+    setActionLoading(true);
+    try {
+      await respondToRefundRequest(reqItem.id, { action: 'authorize' });
+      toast.success('Refund authorized and processed per Clause 1');
+      fetchOrders();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to authorize refund');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Decline a buyer's pending refund request
+  const handleDeclineRequest = async () => {
+    if (!declineTarget || !declineReason.trim()) return;
+    setActionLoading(true);
+    try {
+      await respondToRefundRequest(declineTarget.id, {
+        action: 'decline',
+        responseReason: declineReason.trim(),
+      });
+      toast.success('Refund request declined. Buyer has been notified.');
+      setDeclineTarget(null);
+      setDeclineReason('');
+      fetchOrders();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to decline refund request');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const params = { page, limit: 10 };
-      if (statusTab !== 'All') params.status = statusTab.toLowerCase();
-      if (search) params.search = search;
-      const res = await getOrders(params);
-      const payload = res.data;
-      setOrders(Array.isArray(payload) ? payload : payload.orders || payload.data || []);
-      setTotalPages(payload.totalPages || payload.pages || Math.ceil((payload.total || 0) / 10) || 1);
+      if (statusTab === 'Refund Requests') {
+        const res = await getOrganizerRefundRequests({ status: 'all' });
+        const list = res.data?.refundRequests || [];
+        setRefundRequests(
+          search
+            ? list.filter(
+                (r) =>
+                  r.orderReference?.toLowerCase().includes(search.toLowerCase()) ||
+                  r.buyerName?.toLowerCase().includes(search.toLowerCase()) ||
+                  r.eventTitle?.toLowerCase().includes(search.toLowerCase()),
+              )
+            : list,
+        );
+        setTotalPages(1);
+      } else {
+        const params = { page, limit: 10 };
+        if (statusTab !== 'All') params.status = statusTab.toLowerCase();
+        if (search) params.search = search;
+        const res = await getOrders(params);
+        const payload = res.data;
+        setOrders(Array.isArray(payload) ? payload : payload.orders || payload.data || []);
+        setTotalPages(payload.totalPages || payload.pages || Math.ceil((payload.total || 0) / 10) || 1);
+      }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to load orders');
+      toast.error(err.response?.data?.message || 'Failed to load data');
     } finally {
       setLoading(false);
     }
@@ -108,249 +171,435 @@ export default function OrdersPage() {
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = `orders-${Date.now()}.csv`; a.click();
+    a.href = url;
+    a.download = `orders-export-${Date.now()}.csv`;
+    a.click();
     URL.revokeObjectURL(url);
-    toast.success(`Exported ${list.length} orders`);
+    toast.success('CSV exported successfully');
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
-        icon={ShoppingBag}
-        accent="blue"
-        title="Orders"
-        subtitle="Track and manage all ticket orders."
+        title="Orders &amp; Ticket Sales"
+        description="Monitor ticket orders, review attendee refund requests, and authorize policy reversals."
         actions={
-          <>
-            {selected.size > 0 && (
-              <button onClick={() => exportCSV(orders.filter((o) => selected.has(o.id)))} className="inline-flex items-center gap-2 px-3.5 py-3 rounded-lg text-sm font-medium text-white border border-white/20 hover:bg-white/10 transition">
-                <Download className="w-4 h-4" /> Export Selected ({selected.size})
-              </button>
-            )}
-            <button onClick={() => exportCSV()} className="inline-flex items-center gap-2 px-3.5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition">
-              <Download className="w-4 h-4" /> Export All
-            </button>
-          </>
+          <button
+            onClick={() => exportCSV()}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1C232B] border border-[#262B2F] text-xs font-semibold text-white hover:bg-[#252E38] transition"
+          >
+            <Download className="w-3.5 h-3.5" />
+            Export CSV
+          </button>
         }
       />
 
-      {/* Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatCard icon={ShoppingBag} label="Total Orders" value={summary.totalOrders ?? 0} />
-        <StatCard icon={DollarSign} label="Revenue" value={format(summary.totalRevenue ?? 0)} accent />
-        <StatCard icon={Clock} label="Pending Payments" value={summary.pendingOrders ?? 0} />
-        <StatCard icon={RotateCcw} label="Refunds" value={summary.refunds ?? 0} />
+      {/* Top metrics summary */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard title="Total Orders" value={summary.ordersCount || summary.totalOrders || 0} icon={ShoppingBag} />
+        <StatCard title="Gross Sales" value={format(summary.totalRevenue || summary.grossSales || 0)} icon={DollarSign} />
+        <StatCard title="Refunds Processed" value={summary.refundsCount || 0} icon={RotateCcw} />
+        <StatCard title="Pending Requests" value={refundRequests.filter((r) => r.status === 'pending').length} icon={Clock} />
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col lg:flex-row lg:items-center gap-3">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by order ID, customer, email..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition" />
+      {/* Policy Notice Card */}
+      <div className="p-4 rounded-2xl bg-[#14181C] border border-amber-400/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
+            <ShieldAlert className="w-4 h-4" />
+          </div>
+          <div>
+            <p className="font-bold text-white">TRIBESANDCLIQS 1-Day (24h) Response SLA</p>
+            <p className="text-[#949599]">Organizers have 24 hours to review buyer refund requests. If unaddressed, TRIBESANDCLIQS may issue refunds under Clause 5.</p>
+          </div>
+        </div>
+        <button
+          onClick={() => setStatusTab('Refund Requests')}
+          className="px-3.5 py-1.5 rounded-lg bg-[#1C232B] border border-[#262B2F] text-amber-300 font-semibold hover:bg-white/5 transition whitespace-nowrap"
+        >
+          View Requests
+        </button>
+      </div>
+
+      {/* Tabs and search bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          {STATUS_TABS.map((t) => (
+            <button
+              key={t}
+              onClick={() => setStatusTab(t)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap ${
+                statusTab === t
+                  ? 'bg-white text-[#0E1216]'
+                  : 'bg-[#14181C] text-[#949599] hover:text-white border border-[#262B2F]'
+              }`}
+            >
+              {t}
+              {t === 'Refund Requests' && refundRequests.filter((r) => r.status === 'pending').length > 0 && (
+                <span className="ml-1.5 px-1.5 py-0.2 rounded-full bg-amber-400 text-black text-[10px] font-bold">
+                  {refundRequests.filter((r) => r.status === 'pending').length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative w-full sm:w-64">
+          <Search className="w-4 h-4 text-[#949599] absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search orders or buyer..."
+            className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#14181C] border border-[#262B2F] text-xs text-white focus:outline-none focus:border-white/40"
+          />
         </div>
       </div>
 
-      {/* Status Tabs */}
-      <div className="flex items-center gap-1 overflow-x-auto border-b border-[#262B2F]">
-        {STATUS_TABS.map((t) => (
-          <button key={t} onClick={() => setStatusTab(t)} className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${statusTab === t ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
-            {t}
-            {statusTab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-white" />}
-          </button>
-        ))}
-      </div>
-
-      {/* Table */}
+      {/* Content views */}
       {loading ? (
-        <LoadingSpinner label="Loading orders..." className="py-20" />
-      ) : orders.length === 0 ? (
-        <EmptyState icon={ShoppingBag} title="No orders found" description="Orders will appear here once customers start purchasing tickets." className="py-16" />
-      ) : (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden overflow-x-auto">
-          <table className="w-full text-sm min-w-[900px]">
-            <thead>
-              <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                <th className="px-4 py-3 w-10">
-                  <input type="checkbox" checked={selected.size === orders.length && orders.length > 0} onChange={toggleAll} className="w-4 h-4 rounded accent-[#EFEFF1] cursor-pointer" />
-                </th>
-                <th className="px-4 py-3 font-medium">Order ID</th>
-                <th className="px-4 py-3 font-medium">Customer</th>
-                <th className="px-4 py-3 font-medium">Event</th>
-                <th className="px-4 py-3 font-medium">Ticket Type</th>
-                <th className="px-4 py-3 font-medium text-center">Qty</th>
-                <th className="px-4 py-3 font-medium text-right">Amount</th>
-                <th className="px-4 py-3 font-medium">Method</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Date</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#262B2F]/70">
-              {orders.map((o) => {
-                const isOpen = expandedId === o.id;
-                return (
-                  <>
-                    <tr key={o.id} className="hover:bg-[#1D2124] transition-colors cursor-pointer" onClick={() => setDetailOrder(o)}>
-                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                        <input type="checkbox" checked={selected.has(o.id)} onChange={() => toggleSelect(o.id)} className="w-4 h-4 rounded accent-[#EFEFF1] cursor-pointer" />
+        <LoadingSpinner size="lg" className="py-20" label="Loading orders..." />
+      ) : statusTab === 'Refund Requests' ? (
+        /* ─── REFUND REQUESTS REVIEW VIEW ─── */
+        refundRequests.length === 0 ? (
+          <EmptyState
+            icon={Clock}
+            title="No refund requests"
+            description="You have no pending or processed customer refund requests for your events."
+            className="py-16"
+          />
+        ) : (
+          <div className="rounded-2xl border border-[#262B2F] bg-[#14181C] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-[#262B2F] bg-[#101418] text-[#949599] font-semibold text-left">
+                    <th className="px-4 py-3.5">Order Ref</th>
+                    <th className="px-4 py-3.5">Customer</th>
+                    <th className="px-4 py-3.5">Event</th>
+                    <th className="px-4 py-3.5 text-right">Amount</th>
+                    <th className="px-4 py-3.5">Reason</th>
+                    <th className="px-4 py-3.5">1-Day SLA Status</th>
+                    <th className="px-4 py-3.5 text-right">Organizer Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#262B2F]/60">
+                  {refundRequests.map((req) => (
+                    <tr key={req.id} className="hover:bg-[#181D22] transition-colors">
+                      <td className="px-4 py-3.5 font-mono text-white font-medium">
+                        {req.orderReference || `#${req.orderId}`}
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-[#EFEFF1]">#{o.reference || String(o.id ?? '').slice(-6)}</td>
-                      <td className="px-4 py-3">
-                        <p className="text-[#EFEFF1] font-medium">{o.customerName || o.user?.name || '—'}</p>
-                        <p className="text-xs text-[#949599]">{o.customerEmail || o.user?.email || ''}</p>
+                      <td className="px-4 py-3.5">
+                        <p className="font-semibold text-white">{req.buyerName}</p>
+                        <p className="text-[11px] text-[#949599]">{req.buyerEmail}</p>
                       </td>
-                      <td className="px-4 py-3 text-[#949599] max-w-[160px] truncate">{o.eventTitle || o.event?.title || '—'}</td>
-                      <td className="px-4 py-3 text-[#949599]">{o.ticketType || o.ticket?.type || '—'}</td>
-                      <td className="px-4 py-3 text-center text-[#949599]">{o.quantity || o.ticketCount || 0}</td>
-                      <td className="px-4 py-3 text-right font-medium text-[#EFEFF1]">{format(o.amount || o.total)}</td>
-                      <td className="px-4 py-3 text-[#949599] capitalize">{o.paymentMethod || '—'}</td>
-                      <td className="px-4 py-3"><Badge variant={statusVariant(o.status)} size="sm">{o.status}</Badge></td>
-                      <td className="px-4 py-3 text-xs text-[#949599]">{o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'}</td>
+                      <td className="px-4 py-3.5 text-white max-w-[150px] truncate">
+                        {req.eventTitle}
+                      </td>
+                      <td className="px-4 py-3.5 text-right font-bold text-amber-300">
+                        {format(req.amount)}
+                      </td>
+                      <td className="px-4 py-3.5 text-[#949599] max-w-[200px] truncate" title={req.reason}>
+                        {req.reason || 'Not specified'}
+                      </td>
+                      <td className="px-4 py-3.5">
+                        {req.status === 'pending' ? (
+                          req.isOverdue ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[11px] font-bold">
+                              <AlertTriangle className="w-3 h-3" /> SLA Expired (&gt;24h)
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-400/10 text-amber-400 border border-amber-400/20 text-[11px] font-bold">
+                              <Clock className="w-3 h-3" /> {req.hoursRemaining}h left
+                            </span>
+                          )
+                        ) : (
+                          <Badge variant={req.status === 'processed' ? 'warning' : 'neutral'} size="sm">
+                            {req.status === 'processed' ? 'Refunded' : req.status}
+                          </Badge>
+                        )}
+                      </td>
+                      <td className="px-4 py-3.5 text-right">
+                        {req.status === 'pending' ? (
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleAuthorizeRequest(req)}
+                              disabled={actionLoading}
+                              className="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold hover:bg-emerald-500/30 transition"
+                              title="Authorize Refund (Clause 1)"
+                            >
+                              Authorize
+                            </button>
+                            <button
+                              onClick={() => {
+                                setDeclineTarget(req);
+                                setDeclineReason('');
+                              }}
+                              disabled={actionLoading}
+                              className="px-2.5 py-1.5 rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[11px] font-bold hover:bg-rose-500/30 transition"
+                              title="Decline Request"
+                            >
+                              Decline
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-[11px] text-[#949599]">Resolved</span>
+                        )}
+                      </td>
                     </tr>
-                  </>
-                );
-              })}
-            </tbody>
-          </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )
+      ) : orders.length === 0 ? (
+        <EmptyState
+          icon={ShoppingBag}
+          title="No orders found"
+          description="Ticket orders matching your criteria will appear here."
+          className="py-16"
+        />
+      ) : (
+        /* ─── ORDERS TABLE VIEW ─── */
+        <div className="rounded-2xl border border-[#262B2F] bg-[#14181C] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-[#262B2F] bg-[#101418] text-[#949599] font-semibold text-left">
+                  <th className="px-4 py-3.5 w-10">
+                    <input type="checkbox" checked={selected.size === orders.length} onChange={toggleAll} className="w-4 h-4 rounded accent-white cursor-pointer" />
+                  </th>
+                  <th className="px-4 py-3.5">Order Ref</th>
+                  <th className="px-4 py-3.5">Customer</th>
+                  <th className="px-4 py-3.5">Event</th>
+                  <th className="px-4 py-3.5">Ticket</th>
+                  <th className="px-4 py-3.5 text-center">Qty</th>
+                  <th className="px-4 py-3.5 text-right">Amount</th>
+                  <th className="px-4 py-3.5">Payment</th>
+                  <th className="px-4 py-3.5">Status</th>
+                  <th className="px-4 py-3.5">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#262B2F]/60">
+                {orders.map((o) => (
+                  <tr
+                    key={o.id}
+                    onClick={() => setDetailOrder(o)}
+                    className="hover:bg-[#181D22] transition-colors cursor-pointer"
+                  >
+                    <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        checked={selected.has(o.id)}
+                        onChange={() => toggleSelect(o.id)}
+                        className="w-4 h-4 rounded accent-white cursor-pointer"
+                      />
+                    </td>
+                    <td className="px-4 py-3.5 font-mono text-white font-medium">
+                      #{o.reference || String(o.id ?? '').slice(-6)}
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <p className="font-semibold text-white">{o.customerName || o.user?.name || '—'}</p>
+                      <p className="text-[11px] text-[#949599]">{o.customerEmail || o.user?.email || ''}</p>
+                    </td>
+                    <td className="px-4 py-3.5 text-white max-w-[150px] truncate">
+                      {o.eventTitle || o.event?.title || '—'}
+                    </td>
+                    <td className="px-4 py-3.5 text-[#949599]">
+                      {o.ticketType || o.ticket?.type || 'Standard'}
+                    </td>
+                    <td className="px-4 py-3.5 text-center text-[#949599]">
+                      {o.quantity || o.ticketCount || 1}
+                    </td>
+                    <td className="px-4 py-3.5 text-right font-bold text-white">
+                      {format(o.amount || o.total)}
+                    </td>
+                    <td className="px-4 py-3.5 text-[#949599] capitalize">
+                      {o.paymentMethod || 'card'}
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <Badge variant={statusVariant(o.status)} size="sm">
+                        {o.status}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3.5 text-[#949599]">
+                      {o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="p-4 border-t border-[#262B2F] flex items-center justify-between text-xs text-[#949599]">
+            <span>Showing page {page} of {totalPages}</span>
+            <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          </div>
         </div>
       )}
 
-      {!loading && orders.length > 0 && <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />}
-
-      {/* Detail Modal */}
+      {/* ─── MODAL 1: ORDER DETAIL ─── */}
       <Modal
         open={!!detailOrder}
         onClose={() => setDetailOrder(null)}
-        title={`Order #${detailOrder?.reference || String(detailOrder?.id ?? '').slice(-6)}`}
-        size="lg"
+        title={`Order Details #${detailOrder?.reference || detailOrder?.id}`}
         footer={
           detailOrder ? (
             <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setDetailOrder(null)}
-                  className="px-4 py-2 rounded-lg text-xs text-[#949599] hover:text-[#EFEFF1] transition"
-                >
-                  Close
-                </button>
-                {detailOrder.status === 'completed' && (
-                  <button
-                    onClick={() => {
-                      setRefundTarget(detailOrder);
-                      setRefundReason('');
-                    }}
-                    className="px-3 py-2 rounded-lg bg-red-500/15 border border-red-500/30 text-xs font-semibold text-red-400 hover:bg-red-500/25 transition"
-                  >
-                    Issue Refund
-                  </button>
-                )}
-              </div>
               <button
-                onClick={() => {
-                  const o = detailOrder;
-                  setDetailOrder(null);
-                  setReceiptOrder(o);
-                }}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-md"
+                onClick={() => setDetailOrder(null)}
+                className="px-4 py-2 rounded-xl text-xs text-[#949599] hover:text-white transition"
               >
-                <Printer className="w-4 h-4" /> View &amp; Print Official Receipt
+                Close
               </button>
+              {detailOrder.status === 'completed' && (
+                <button
+                  onClick={() => {
+                    setRefundTarget(detailOrder);
+                    setRefundReason('');
+                  }}
+                  className="px-4 py-2 rounded-xl bg-amber-400 text-black text-xs font-bold hover:bg-amber-300 transition"
+                >
+                  Authorize Refund (Clause 1)
+                </button>
+              )}
             </div>
           ) : null
         }
       >
         {detailOrder && (
-          <div className="space-y-5">
-            <div className="flex items-center justify-between">
-              <Badge variant={statusVariant(detailOrder.status)} dot>{detailOrder.status}</Badge>
-              <span className="text-xs text-[#949599]">{detailOrder.createdAt ? new Date(detailOrder.createdAt).toLocaleString('en-GB') : '—'}</span>
+          <div className="space-y-4 text-xs">
+            <div className="p-3.5 rounded-xl bg-[#181D22] border border-[#262B2F] flex items-center justify-between">
+              <div>
+                <span className="text-[#949599] block">Total Amount</span>
+                <span className="text-base font-bold text-white">{format(detailOrder.amount || detailOrder.total)}</span>
+              </div>
+              <Badge variant={statusVariant(detailOrder.status)} size="sm">
+                {detailOrder.status}
+              </Badge>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4 space-y-2">
-                <p className="text-xs uppercase tracking-wider text-[#949599]">Customer</p>
-                <p className="text-sm font-medium text-[#EFEFF1]">{detailOrder.customerName || detailOrder.user?.name || '—'}</p>
-                <p className="text-sm text-[#949599]">{detailOrder.customerEmail || detailOrder.user?.email || ''}</p>
-                <p className="text-sm text-[#949599]">{detailOrder.customerPhone || ''}</p>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded-xl bg-[#181D22] border border-[#262B2F]">
+                <span className="text-[#949599] block">Customer</span>
+                <p className="font-semibold text-white mt-0.5">{detailOrder.customerName || detailOrder.user?.name}</p>
+                <p className="text-[#949599] text-[11px]">{detailOrder.customerEmail || detailOrder.user?.email}</p>
               </div>
-              <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4 space-y-2">
-                <p className="text-xs uppercase tracking-wider text-[#949599]">Payment</p>
-                <p className="text-sm text-[#EFEFF1] flex items-center gap-2"><CreditCard className="w-4 h-4 text-[#949599]" /> {detailOrder.paymentMethod || '—'}</p>
-                <p className="text-sm text-[#949599]">Transaction: {detailOrder.transactionId || '—'}</p>
-              </div>
-            </div>
-            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4">
-              <p className="text-xs uppercase tracking-wider text-[#949599] mb-3">Items</p>
-              <div className="space-y-2">
-                {(detailOrder.items || [{ name: detailOrder.ticketType || detailOrder.eventTitle, quantity: detailOrder.quantity, price: detailOrder.amount }]).map((it, i) => (
-                  <div key={i} className="flex items-center justify-between text-sm">
-                    <span className="text-[#EFEFF1]">{it.quantity || 1}× {it.name || it.ticketType || 'Ticket'}</span>
-                    <span className="text-[#949599]">{format(it.price || (it.quantity || 1) * (it.unitPrice || 0))}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3 pt-3 border-t border-[#262B2F] flex items-center justify-between">
-                <span className="text-sm font-semibold text-[#EFEFF1]">Total</span>
-                <span className="text-lg font-bold text-white">{format(detailOrder.amount || detailOrder.total)}</span>
+              <div className="p-3 rounded-xl bg-[#181D22] border border-[#262B2F]">
+                <span className="text-[#949599] block">Event</span>
+                <p className="font-semibold text-white mt-0.5">{detailOrder.eventTitle || detailOrder.event?.title}</p>
               </div>
             </div>
           </div>
         )}
       </Modal>
 
-      {/* Printable Receipt Modal */}
-      <ReceiptModal
-        open={!!receiptOrder}
-        onClose={() => setReceiptOrder(null)}
-        order={receiptOrder}
-      />
-
-      {/* Organizer Refund Modal */}
+      {/* ─── MODAL 2: ORGANIZER AUTHORIZE REFUND (CLAUSE 1) ─── */}
       <Modal
         open={!!refundTarget}
         onClose={() => setRefundTarget(null)}
-        title="Issue Customer Refund"
+        title="Authorize Customer Refund"
         footer={
           <>
             <button
               onClick={() => setRefundTarget(null)}
-              className="px-4 py-2.5 rounded-xl text-sm font-medium text-[#949599] hover:text-white transition"
+              className="px-4 py-2.5 rounded-xl text-xs font-medium text-[#949599] hover:text-white transition"
             >
               Cancel
             </button>
             <button
               onClick={handleRefundOrder}
               disabled={refunding}
-              className="px-5 py-2.5 rounded-xl bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-amber-400 text-black text-xs font-bold hover:bg-amber-300 transition disabled:opacity-50"
             >
-              {refunding ? 'Refunding...' : 'Confirm Refund'}
+              {refunding ? 'Processing Reversal...' : 'Authorize Reversal (Clause 1)'}
             </button>
           </>
         }
       >
         {refundTarget && (
-          <div className="space-y-3">
-            <p className="text-sm text-[#EFEFF1]">
-              Refund order <span className="font-mono text-white">#{refundTarget.reference || refundTarget.id}</span> for{' '}
+          <div className="space-y-4 text-xs">
+            <p className="text-[#EFEFF1]">
+              Issue full refund of{' '}
               <span className="font-bold text-white">{format(refundTarget.amount || refundTarget.total)}</span> to{' '}
               <span className="font-semibold text-white">{refundTarget.customerName || refundTarget.user?.name}</span>?
             </p>
-            <p className="text-xs text-[#949599]">
-              This will cancel the attendee's ticket pass and release the seats back to your event inventory.
-            </p>
+
+            <div className="p-3 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-300 space-y-1">
+              <span className="font-bold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                TRIBESANDCLIQS Policy Clause 1
+              </span>
+              <p className="text-[#EFEFF1] text-[11px]">
+                "Event Organizer has authorized refunds." Funds will be returned to the buyer's original payment method via Paystack.
+              </p>
+            </div>
+
             <div>
               <label className="text-xs font-semibold text-[#949599] block mb-1">
-                Reason for Refund (Optional)
+                Reason / Organizer Authorization Notes
               </label>
               <textarea
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
-                placeholder="Reason for cancellation or refund..."
-                rows={3}
-                className="w-full px-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40 resize-none"
+                placeholder="Reason or notes regarding this refund authorization..."
+                rows={2}
+                className="w-full px-3 py-2 rounded-xl bg-[#14181C] border border-[#262B2F] text-xs text-white focus:outline-none focus:border-white/40 resize-none"
               />
             </div>
           </div>
         )}
       </Modal>
+
+      {/* ─── MODAL 3: DECLINE REFUND REQUEST ─── */}
+      <Modal
+        open={!!declineTarget}
+        onClose={() => setDeclineTarget(null)}
+        title="Decline Refund Request"
+        footer={
+          <>
+            <button
+              onClick={() => setDeclineTarget(null)}
+              className="px-4 py-2.5 rounded-xl text-xs font-medium text-[#949599] hover:text-white transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeclineRequest}
+              disabled={actionLoading || !declineReason.trim()}
+              className="px-5 py-2.5 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition disabled:opacity-50"
+            >
+              {actionLoading ? 'Declining...' : 'Decline Request'}
+            </button>
+          </>
+        }
+      >
+        {declineTarget && (
+          <div className="space-y-4 text-xs">
+            <p className="text-[#EFEFF1]">
+              Decline refund request for order <span className="font-mono text-white">#{declineTarget.orderReference}</span> ({format(declineTarget.amount)})?
+            </p>
+            <div>
+              <label className="text-xs font-semibold text-[#949599] block mb-1">
+                Explanation for Decline (Required)
+              </label>
+              <textarea
+                value={declineReason}
+                onChange={(e) => setDeclineReason(e.target.value)}
+                placeholder="Explain why this request is declined per your event terms..."
+                rows={3}
+                className="w-full px-3 py-2 rounded-xl bg-[#14181C] border border-[#262B2F] text-xs text-white focus:outline-none focus:border-white/40 resize-none"
+              />
+              <p className="text-[11px] text-[#949599] mt-1">
+                This explanation will be shared with the attendee and logged for platform compliance.
+              </p>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Official Receipt Modal */}
+      <ReceiptModal open={!!receiptOrder} onClose={() => setReceiptOrder(null)} order={receiptOrder} />
     </div>
   );
 }

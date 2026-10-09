@@ -8,9 +8,10 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
-  getPayments, getPayment, refundPayment,
+  getPayments, getPayment, refundPayment, processUnresponsiveRefunds,
   getWithdrawals, approveWithdrawal, rejectWithdrawal,
 } from '@/api/admin';
+import { REFUND_POLICY_CIRCUMSTANCES, getPolicyClause } from '@/constants/refundPolicy';
 import StatCard from '@/components/common/StatCard';
 import Badge from '@/components/common/Badge';
 import EmptyState from '@/components/common/EmptyState';
@@ -83,6 +84,9 @@ export default function PaymentManagementPage() {
 
   const [refundTarget, setRefundTarget] = useState(null);
   const [refundReason, setRefundReason] = useState('');
+  const [selectedCircumstance, setSelectedCircumstance] = useState('1_ORGANIZER_AUTHORIZED');
+  const [adminNotes, setAdminNotes] = useState('');
+  const [autoProcessing, setAutoProcessing] = useState(false);
 
   const [approveTarget, setApproveTarget] = useState(null);
   const [payoutRef, setPayoutRef] = useState('');
@@ -184,21 +188,42 @@ export default function PaymentManagementPage() {
     }
   };
 
-  // Execute Refund
+  // Execute Refund per TRIBESANDCLIQS Policy
   const handleProcessRefund = async () => {
     if (!refundTarget) return;
     setActionLoading(true);
     try {
-      await refundPayment(refundTarget.id, { reason: refundReason });
-      toast.success('Order successfully refunded');
+      await refundPayment(refundTarget.id, {
+        reason: refundReason.trim() || undefined,
+        circumstance: selectedCircumstance,
+        policyCircumstance: selectedCircumstance,
+        adminNotes: adminNotes.trim() || undefined,
+      });
+      toast.success('Order successfully refunded per policy');
       setRefundTarget(null);
       setRefundReason('');
+      setAdminNotes('');
+      setSelectedCircumstance('1_ORGANIZER_AUTHORIZED');
       if (tab === 'transactions') fetchTransactions();
       else fetchRefunds();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to process refund');
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  // One-click batch sweep for unresponsive organizer SLA (> 1 day / 24 hours)
+  const handleProcessUnresponsive = async () => {
+    setAutoProcessing(true);
+    try {
+      const res = await processUnresponsiveRefunds();
+      toast.success(res.data?.message || 'Overdue requests processed successfully');
+      fetchRefunds();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to process overdue requests');
+    } finally {
+      setAutoProcessing(false);
     }
   };
 
@@ -559,14 +584,55 @@ export default function PaymentManagementPage() {
         ) : (
           /* ─── REFUNDS TAB ─── */
           refunds.length === 0 ? (
-            <EmptyState
-              icon={RotateCcw}
-              title="No refunded transactions"
-              description="Refunded customer orders will show up here in the ledger."
-              className="py-16"
-            />
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl bg-[#14181C] border border-[#262B2F] gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">Clause 5 SLA Automation</p>
+                    <p className="text-[11px] text-[#949599]">Auto-process pending requests where organizer response exceeded 1 day (24 hours).</p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleProcessUnresponsive}
+                  disabled={autoProcessing}
+                  className="px-4 py-2 rounded-xl bg-amber-400 text-[#0E1216] text-xs font-bold hover:bg-amber-300 transition disabled:opacity-50 shrink-0"
+                >
+                  {autoProcessing ? 'Processing SLA...' : 'Execute 1-Day SLA Sweep'}
+                </button>
+              </div>
+
+              <EmptyState
+                icon={RotateCcw}
+                title="No refunded transactions"
+                description="Refunded customer orders will show up here in the ledger."
+                className="py-16"
+              />
+            </div>
           ) : (
             <>
+              {/* SLA Sweep Banner */}
+              <div className="p-4 border-b border-[#262B2F] bg-[#14171A] flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">TRIBESANDCLIQS Refund Policy SLA</p>
+                    <p className="text-[11px] text-[#949599]">Overdue requests without organizer response (&gt; 1 day) are eligible for platform resolution under Clause 5.</p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleProcessUnresponsive}
+                  disabled={autoProcessing}
+                  className="px-4 py-2 rounded-xl bg-amber-400 text-[#0E1216] text-xs font-bold hover:bg-amber-300 transition disabled:opacity-50 shrink-0"
+                >
+                  {autoProcessing ? 'Processing SLA...' : 'Execute 1-Day SLA Sweep'}
+                </button>
+              </div>
+
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -574,6 +640,7 @@ export default function PaymentManagementPage() {
                       <th className="px-4 py-3.5">Order Ref</th>
                       <th className="px-4 py-3.5">Customer</th>
                       <th className="px-4 py-3.5">Event</th>
+                      <th className="px-4 py-3.5">Policy Ground</th>
                       <th className="px-4 py-3.5 text-right">Refunded Amount</th>
                       <th className="hidden md:table-cell px-4 py-3.5">Payment Method</th>
                       <th className="px-4 py-3.5">Status</th>
@@ -582,43 +649,60 @@ export default function PaymentManagementPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#262B2F]/60">
-                    {refunds.map((rf) => (
-                      <tr key={rf.id} className="hover:bg-[#1C2126] transition-colors">
-                        <td className="px-4 py-3.5 font-mono text-xs text-white">
-                          {rf.reference}
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <p className="font-medium text-[#EFEFF1]">{rf.userName}</p>
-                          <p className="text-xs text-[#949599]">{rf.userEmail}</p>
-                        </td>
-                        <td className="px-4 py-3.5 text-[#EFEFF1] max-w-[180px] truncate">
-                          {rf.eventTitle}
-                        </td>
-                        <td className="px-4 py-3.5 text-right font-bold text-amber-300 whitespace-nowrap">
-                          {format(rf.amount)}
-                        </td>
-                        <td className="hidden md:table-cell px-4 py-3.5 text-xs text-[#949599] capitalize">
-                          {rf.paymentMethod === 'mobile_money' ? 'Mobile Money' : 'Card'}
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <Badge variant="warning" size="sm" dot>
-                            Refunded
-                          </Badge>
-                        </td>
-                        <td className="hidden md:table-cell px-4 py-3.5 text-xs text-[#949599]">
-                          {fmtDate(rf.createdAt)}
-                        </td>
-                        <td className="px-4 py-3.5 text-right">
-                          <button
-                            onClick={() => handleInspectOrder(rf.id)}
-                            className="p-1.5 rounded-lg bg-white/5 text-[#949599] hover:text-white hover:bg-white/10 transition"
-                            title="Inspect Order"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    {refunds.map((rf) => {
+                      const clause = rf.policyClause || getPolicyClause(rf.policyCircumstance || rf.clauseNumber);
+                      return (
+                        <tr key={rf.id} className="hover:bg-[#1C2126] transition-colors">
+                          <td className="px-4 py-3.5 font-mono text-xs text-white">
+                            {rf.reference}
+                          </td>
+                          <td className="px-4 py-3.5">
+                            <p className="font-medium text-[#EFEFF1]">{rf.userName}</p>
+                            <p className="text-xs text-[#949599]">{rf.userEmail}</p>
+                          </td>
+                          <td className="px-4 py-3.5 text-[#EFEFF1] max-w-[160px] truncate">
+                            {rf.eventTitle}
+                          </td>
+                          <td className="px-4 py-3.5">
+                            {clause ? (
+                              <div className="flex flex-col">
+                                <span className="inline-flex items-center gap-1 font-bold text-xs text-amber-300">
+                                  Clause #{clause.clauseNumber}
+                                </span>
+                                <span className="text-[11px] text-[#949599] truncate max-w-[150px]" title={clause.description}>
+                                  {clause.shortTitle}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-[#949599]">General Refund</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3.5 text-right font-bold text-amber-300 whitespace-nowrap">
+                            {format(rf.amount)}
+                          </td>
+                          <td className="hidden md:table-cell px-4 py-3.5 text-xs text-[#949599] capitalize">
+                            {rf.paymentMethod === 'mobile_money' ? 'Mobile Money' : 'Card'}
+                          </td>
+                          <td className="px-4 py-3.5">
+                            <Badge variant="warning" size="sm" dot>
+                              Refunded
+                            </Badge>
+                          </td>
+                          <td className="hidden md:table-cell px-4 py-3.5 text-xs text-[#949599]">
+                            {fmtDate(rf.createdAt)}
+                          </td>
+                          <td className="px-4 py-3.5 text-right">
+                            <button
+                              onClick={() => handleInspectOrder(rf.id)}
+                              className="p-1.5 rounded-lg bg-white/5 text-[#949599] hover:text-white hover:bg-white/10 transition"
+                              title="Inspect Order"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -827,7 +911,7 @@ export default function PaymentManagementPage() {
       <Modal
         open={!!refundTarget}
         onClose={() => setRefundTarget(null)}
-        title="Process Customer Refund"
+        title="Process Customer Refund (Policy Enforcement)"
         footer={
           <>
             <button
@@ -839,15 +923,15 @@ export default function PaymentManagementPage() {
             <button
               onClick={handleProcessRefund}
               disabled={actionLoading}
-              className="px-5 py-2.5 rounded-xl bg-white text-[#12161A] text-sm font-bold hover:bg-[#CBD5E1] transition disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-amber-400 text-[#0E1216] text-sm font-bold hover:bg-amber-300 transition disabled:opacity-50"
             >
-              {actionLoading ? 'Refunding...' : 'Confirm Refund'}
+              {actionLoading ? 'Refunding...' : 'Confirm Policy Refund'}
             </button>
           </>
         }
       >
         {refundTarget && (
-          <div className="space-y-3">
+          <div className="space-y-4">
             <p className="text-sm text-[#EFEFF1]">
               Issue full refund of{' '}
               <span className="font-bold text-white text-base">
@@ -859,16 +943,68 @@ export default function PaymentManagementPage() {
               <p className="text-[#949599]">Customer: <span className="text-white font-semibold">{refundTarget.userName}</span> ({refundTarget.userEmail})</p>
               <p className="text-[#949599]">Event: <span className="text-white font-semibold">{refundTarget.eventTitle}</span></p>
             </div>
+
+            {/* Policy Circumstance Selector */}
+            <div>
+              <label className="text-xs font-semibold text-[#949599] block mb-1.5">
+                Statutory Policy Ground (1 of 10 TRIBESANDCLIQS Conditions)
+              </label>
+              <select
+                value={selectedCircumstance}
+                onChange={(e) => setSelectedCircumstance(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl bg-[#14181C] border border-[#262B2F] text-xs text-white focus:outline-none focus:border-amber-400/50"
+              >
+                {REFUND_POLICY_CIRCUMSTANCES.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    Clause {c.clauseNumber}: {c.shortTitle}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Selected Clause Preview Card */}
+            {(() => {
+              const clause = getPolicyClause(selectedCircumstance);
+              return clause ? (
+                <div className="p-3.5 rounded-xl bg-amber-400/10 border border-amber-400/20 text-xs space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-amber-400">
+                      Clause #{clause.clauseNumber}: {clause.title}
+                    </span>
+                    <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-black/40 text-amber-300">
+                      {clause.category}
+                    </span>
+                  </div>
+                  <p className="text-[#EFEFF1] italic">
+                    "{clause.description}"
+                  </p>
+                </div>
+              ) : null;
+            })()}
+
             <div>
               <label className="text-xs font-semibold text-[#949599] block mb-1">
-                Reason for Refund
+                Reason / Customer Explanation
               </label>
               <textarea
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
-                placeholder="Reason for issuing refund..."
-                rows={3}
+                placeholder="Reason for issuing refund (included in customer notice)..."
+                rows={2}
                 className="w-full px-3.5 py-2 rounded-xl bg-[#14181C] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40 resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-[#949599] block mb-1">
+                Internal Admin &amp; Compliance Notes (Optional)
+              </label>
+              <input
+                type="text"
+                value={adminNotes}
+                onChange={(e) => setAdminNotes(e.target.value)}
+                placeholder="Internal audit reference, ticket ID, or investigation notes..."
+                className="w-full px-3.5 py-2 rounded-xl bg-[#14181C] border border-[#262B2F] text-xs text-white focus:outline-none focus:border-white/40"
               />
             </div>
           </div>

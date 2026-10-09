@@ -31,6 +31,8 @@ export const getAttendanceReport = (params) => api.get('/organizer/reports/atten
 export const getTopEvents = (params) => api.get('/organizer/reports/top-events', { params });
 export const getRefundReport = (params) => api.get('/organizer/reports/refunds', { params });
 export const exportReport = (params) => api.get('/organizer/reports/export', { params, responseType: 'blob' });
+export const getOrganizerRefundRequests = (params) => api.get('/organizer/refunds', { params });
+export const respondToRefundRequest = (id, data) => api.post(`/organizer/refunds/${id}/respond`, data);
 
 export const getPendingInvites = () => api.get('/organizer/team/invites');
 export const resendInvite = (id) => api.post(`/organizer/team/invites/${id}/resend`);

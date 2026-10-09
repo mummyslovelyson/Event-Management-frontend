@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
   CalendarCheck, Search, ChevronDown, Ticket as TicketIcon, Calendar, MapPin,
-  XCircle, RotateCcw, FileDown, Receipt,
+  XCircle, RotateCcw, FileDown, Receipt, Clock, AlertTriangle, ShieldCheck, ExternalLink,
 } from 'lucide-react';
 import {
   getOrders, cancelOrder, refundOrder, getOrderInvoice,
@@ -34,6 +34,37 @@ const PAYMENT_BADGE = {
   cancelled: { variant: 'error', label: 'Cancelled' },
 };
 
+const BUYER_REFUND_CIRCUMSTANCES = [
+  {
+    id: '5_BUYER_CIRCUMSTANCES_UNRESPONSIVE_ORGANIZER',
+    clauseNumber: 5,
+    title: 'Buyer Circumstances (Personal Emergency / Unable to Attend)',
+    badge: '1-Day Review SLA',
+    description: 'Under Clause 5, the Event Organizer has 1 day to respond. If unresponsive, TRIBESANDCLIQS is authorized to issue the refund.',
+  },
+  {
+    id: '4_TRANSACTION_ERROR_DUPLICATE',
+    clauseNumber: 4,
+    title: 'Transaction Error / Duplicate Charge',
+    badge: 'Clause 4',
+    description: 'Under Clause 4, accidental duplicate payments or transaction errors are eligible for refund.',
+  },
+  {
+    id: '2_EVENT_CANCELLED',
+    clauseNumber: 2,
+    title: 'Event Cancelled or Substantially Rescheduled',
+    badge: 'Clause 2',
+    description: 'Under Clause 2, refunds are permitted if the Event Organizer has cancelled or changed the event.',
+  },
+  {
+    id: '10_EVENT_SUSPECTED_FRAUDULENT',
+    clauseNumber: 10,
+    title: 'Event Misrepresentation / Consumer Protection Concern',
+    badge: 'Clause 10',
+    description: 'Under Clause 10, TRIBESANDCLIQS investigates events reported as fraudulent or non-compliant.',
+  },
+];
+
 const containerStagger = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { staggerChildren: 0.06 } },
@@ -56,6 +87,7 @@ export default function MyBookingsPage() {
   const [cancelling, setCancelling] = useState(false);
   const [refundTarget, setRefundTarget] = useState(null);
   const [refundReason, setRefundReason] = useState('');
+  const [refundCircumstance, setRefundCircumstance] = useState('5_BUYER_CIRCUMSTANCES_UNRESPONSIVE_ORGANIZER');
   const [refunding, setRefunding] = useState(false);
   const [exporting, setExporting] = useState(null);
 
@@ -117,9 +149,19 @@ export default function MyBookingsPage() {
     if (!refundTarget) return;
     setRefunding(true);
     try {
-      await refundOrder(refundTarget.id, { reason: refundReason });
-      toast.success('Refund request submitted');
-      setOrders((prev) => prev.map((o) => (o.id === refundTarget.id ? { ...o, status: 'refunded', paymentStatus: 'refunded' } : o)));
+      const res = await refundOrder(refundTarget.id, {
+        reason: refundReason.trim() || undefined,
+        circumstance: refundCircumstance,
+        policyCircumstance: refundCircumstance,
+      });
+      toast.success(res.data?.message || 'Refund request submitted (1-day organizer review).');
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === refundTarget.id
+            ? { ...o, refund_request_status: 'pending', refund_status_detail: 'pending' }
+            : o,
+        ),
+      );
       setRefundTarget(null);
       setRefundReason('');
     } catch (err) {
@@ -202,11 +244,19 @@ export default function MyBookingsPage() {
       ) : (
         <motion.div variants={containerStagger} className="space-y-4">
           {filtered.map((order) => {
-            const event = order.event || {};
-            const eventDate = event.startDate || order.eventDate;
+            const event = order.event || {
+              title: order.event_title || order.eventName,
+              startDate: order.start_date || order.eventDate,
+              startTime: order.start_time,
+              venue: order.venue_name,
+              image: order.banner_image,
+            };
+            const eventDate = event.startDate || order.eventDate || order.start_date;
             const status = (order.status || '').toLowerCase();
-            const payStatus = (order.paymentStatus || 'pending').toLowerCase();
+            const payStatus = (order.paymentStatus || order.payment_status || 'pending').toLowerCase();
             const isCancelled = status === 'cancelled';
+            const isRefunded = payStatus === 'refunded' || status === 'refunded' || order.refund_request_status === 'approved' || order.refund_status_detail === 'completed';
+            const isPendingRefund = (order.refund_request_status === 'pending' || order.refund_status_detail === 'pending') && !isRefunded;
             const isUpcoming = eventDate && new Date(eventDate) >= new Date() && !isCancelled;
             const pb = PAYMENT_BADGE[payStatus] || { variant: 'pending', label: payStatus };
             const items = order.items || order.tickets || order.lineItems || [];
@@ -218,7 +268,7 @@ export default function MyBookingsPage() {
               <motion.div
                 key={order.id}
                 variants={itemFade}
-                className={`rounded-xl bg-[#171A1D] border ${isCancelled ? 'border-red-500/20' : 'border-[#262B2F]'} overflow-hidden transition-colors`}
+                className={`rounded-xl bg-[#171A1D] border ${isCancelled ? 'border-red-500/20' : isPendingRefund ? 'border-amber-500/30' : 'border-[#262B2F]'} overflow-hidden transition-colors`}
               >
                 <div className="flex flex-col sm:flex-row gap-4 p-4 sm:p-5">
                   {/* Event image */}
@@ -244,6 +294,18 @@ export default function MyBookingsPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <Badge variant={pb.variant} size="sm">{pb.label}</Badge>
                         {isCancelled && <Badge variant="error" size="sm">Cancelled</Badge>}
+                        {isPendingRefund && (
+                          <Badge variant="warning" size="sm">
+                            <Clock className="w-3 h-3 inline mr-1" />
+                            Refund Pending (24h SLA)
+                          </Badge>
+                        )}
+                        {isRefunded && (
+                          <Badge variant="info" size="sm">
+                            <ShieldCheck className="w-3 h-3 inline mr-1" />
+                            Refunded
+                          </Badge>
+                        )}
                       </div>
                     </div>
 
@@ -276,6 +338,26 @@ export default function MyBookingsPage() {
                       </p>
                     </div>
 
+                    {/* Pending Refund Banner */}
+                    {isPendingRefund && (
+                      <div className="mt-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/25 text-xs text-amber-300 flex items-start gap-2.5">
+                        <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <p className="font-semibold text-amber-200">
+                            Refund Request Pending Organizer Review (Policy Clause 5)
+                          </p>
+                          <p className="text-amber-300/85 mt-0.5 leading-relaxed">
+                            Under TRIBESANDCLIQS Policy, the Organizer has 1 day (24 hours) to respond. If unresponsive, TRIBESANDCLIQS will intervene to execute the refund.
+                          </p>
+                          {order.organizer_deadline && (
+                            <p className="mt-1 font-mono text-[11px] text-amber-400">
+                              Organizer response deadline: {new Date(order.organizer_deadline).toLocaleString()}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Actions */}
                     <div className="mt-4 flex flex-wrap gap-2">
                       <Link
@@ -304,18 +386,22 @@ export default function MyBookingsPage() {
                       >
                         <FileDown className="w-3.5 h-3.5" /> {exporting === order.id ? 'Exporting...' : 'PDF'}
                       </button>
-                      {isUpcoming && (
+                      {isUpcoming && !isPendingRefund && !isRefunded && (
                         <button
                           onClick={() => setCancelTarget(order)}
-                          className="inline-flex items-center gap-1.5 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium hover:bg-red-500/20 transition"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium hover:bg-red-500/20 transition"
                         >
                           <XCircle className="w-3.5 h-3.5" /> Cancel Booking
                         </button>
                       )}
-                      {!isUpcoming && !isCancelled && (
+                      {!isCancelled && !isRefunded && !isPendingRefund && (payStatus === 'paid' || payStatus === 'completed') && (
                         <button
-                          onClick={() => setRefundTarget(order)}
-                          className="inline-flex items-center gap-1.5 px-3 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-medium hover:bg-amber-500/20 transition"
+                          onClick={() => {
+                            setRefundTarget(order);
+                            setRefundCircumstance('5_BUYER_CIRCUMSTANCES_UNRESPONSIVE_ORGANIZER');
+                            setRefundReason('');
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-medium hover:bg-amber-500/20 transition"
                         >
                           <RotateCcw className="w-3.5 h-3.5" /> Request Refund
                         </button>
@@ -417,36 +503,125 @@ export default function MyBookingsPage() {
       <Modal
         open={!!refundTarget}
         onClose={() => { setRefundTarget(null); setRefundReason(''); }}
-        title="Request Refund"
+        title="Request Refund • TRIBESANDCLIQS Policy"
         footer={
           <>
-            <button onClick={() => { setRefundTarget(null); setRefundReason(''); }} className="px-4 py-3 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
+            <button onClick={() => { setRefundTarget(null); setRefundReason(''); }} className="px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">
               Cancel
             </button>
-            <button onClick={handleRefund} disabled={refunding} className="inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500 text-[#1C232B] text-sm font-semibold hover:bg-amber-400 disabled:opacity-50 transition">
+            <button
+              onClick={handleRefund}
+              disabled={refunding || !refundReason.trim()}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500 text-[#1C232B] text-sm font-semibold hover:bg-amber-400 disabled:opacity-50 transition shadow-sm"
+            >
               <RotateCcw className="w-4 h-4" />
-              {refunding ? 'Submitting...' : 'Submit Request'}
+              {refunding ? 'Submitting Request...' : 'Submit Refund Request'}
             </button>
           </>
         }
       >
         {refundTarget && (
           <div className="space-y-4">
-            <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
-              <p className="text-sm text-amber-400 font-medium">Refund Request</p>
-              <p className="text-xs text-[#949599] mt-1">
-                {refundTarget.event?.title || refundTarget.eventName} • We'll review your request and process the refund if eligible.
+            {/* Context Header */}
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-3.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-amber-400">Policy Request</span>
+                <span className="text-[11px] font-mono text-[#949599]">
+                  Order #{refundTarget.orderId || refundTarget.id}
+                </span>
+              </div>
+              <p className="text-sm text-white font-medium mt-1">
+                {refundTarget.event?.title || refundTarget.eventName || refundTarget.event_title}
+              </p>
+              <p className="text-xs text-[#949599] mt-0.5">
+                Total Paid: {format(refundTarget.totalAmount || refundTarget.total || 0)}
               </p>
             </div>
+
+            {/* Statutory Ground Selector */}
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-2">Reason for refund</label>
+              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-2">
+                Applicable Policy Circumstance (Statutory Ground)
+              </label>
+              <div className="space-y-2">
+                {BUYER_REFUND_CIRCUMSTANCES.map((circ) => {
+                  const selected = refundCircumstance === circ.id;
+                  return (
+                    <label
+                      key={circ.id}
+                      onClick={() => setRefundCircumstance(circ.id)}
+                      className={`block p-3 rounded-lg border text-left cursor-pointer transition ${
+                        selected
+                          ? 'bg-amber-500/15 border-amber-500/60 ring-1 ring-amber-500/40'
+                          : 'bg-[#1C232B] border-[#494F55]/30 hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="refund_circ"
+                            checked={selected}
+                            onChange={() => setRefundCircumstance(circ.id)}
+                            className="text-amber-500 focus:ring-0"
+                          />
+                          <span className={`text-xs font-semibold ${selected ? 'text-amber-300' : 'text-[#EFEFF1]'}`}>
+                            Clause {circ.clauseNumber}: {circ.title}
+                          </span>
+                        </div>
+                        <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-white/5 text-[#949599] border border-white/10 shrink-0">
+                          {circ.badge}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#949599] mt-1 pl-5 leading-relaxed">
+                        {circ.description}
+                      </p>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* SLA Callout */}
+            <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/25 flex items-start gap-2.5">
+              <Clock className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-blue-200 leading-relaxed">
+                <span className="font-semibold text-blue-300">Clause 5 Statutory SLA Guarantee:</span>
+                {" "}Upon submission, this request is immediately transmitted to the Event Organizer. If the Organizer does not respond within <strong>1 calendar day (24 hours)</strong>, TRIBESANDCLIQS is legally authorized to review and execute your refund directly.
+              </div>
+            </div>
+
+            {/* Reason */}
+            <div>
+              <label className="block text-xs font-medium uppercase tracking-wider text-[#949599] mb-1.5">
+                Detailed Explanation <span className="text-amber-400">*</span>
+              </label>
               <textarea
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
                 rows={3}
-                placeholder="Explain why you're requesting a refund..."
-                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition resize-none"
+                placeholder="Explain the circumstances surrounding this refund request..."
+                className="w-full px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-amber-500/60 transition resize-none"
               />
+              <p className="text-[11px] text-[#949599] mt-1">
+                Please provide clear details to facilitate review by the Organizer and TRIBESANDCLIQS.
+              </p>
+            </div>
+
+            {/* Policy Reference Footer Link */}
+            <div className="pt-2 border-t border-[#262B2F] flex items-center justify-between text-xs text-[#949599]">
+              <span className="flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                Protected by TRIBESANDCLIQS Limited
+              </span>
+              <Link
+                to="/refund-policy"
+                target="_blank"
+                rel="noreferrer"
+                className="text-amber-400 hover:text-amber-300 inline-flex items-center gap-1"
+              >
+                Read full policy <ExternalLink className="w-3 h-3" />
+              </Link>
             </div>
           </div>
         )}
