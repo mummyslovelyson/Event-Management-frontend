@@ -115,14 +115,23 @@ export default function GoogleAuthButton({
           return;
         }
 
-        // Browser blocked the popup window — seamlessly switch to full redirect
+        // Browser blocked the popup window or storage-partitioned environment
         if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
+          const isMobile = typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+          if (isMobile) {
+            setLoading(false);
+            promptDemoGoogleSignIn();
+            return;
+          }
           toast.loading('Popup blocked by browser. Redirecting to Google Sign-in...');
           try {
             await signInWithGoogleViaRedirect();
             return;
           } catch (redirectErr) {
             console.warn('[Firebase Redirect Error]', redirectErr);
+            setLoading(false);
+            promptDemoGoogleSignIn();
+            return;
           }
         }
 
