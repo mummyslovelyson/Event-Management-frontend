@@ -3,12 +3,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getEvent, updateEvent } from '@/api/events';
 import { getUploadedTickets } from '@/api/tickets';
+import { useAuth } from '@/context/AuthContext';
 import CreateEventPage from './CreateEventPage';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 export default function EditEventPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin' || user?.role === 'system_admin' || user?.role === 'superadmin';
   const [initialValues, setInitialValues] = useState(null);
   const [eventStatus, setEventStatus] = useState(null);
   const [rejectionReason, setRejectionReason] = useState(null);
@@ -76,6 +79,10 @@ export default function EditEventPage() {
         address: e.address || '',
         city: e.city || '',
         country: e.country || '',
+        locationType: e.location_type || (e.venue?.toLowerCase().includes('online') ? 'online' : 'physical'),
+        gpsLocation: e.gps_location || (e.latitude && e.longitude ? `${e.latitude}, ${e.longitude}` : ''),
+        latitude: e.latitude || '',
+        longitude: e.longitude || '',
         startDate: e.start_date ? String(e.start_date).slice(0, 10) : '',
         endDate: e.end_date ? String(e.end_date).slice(0, 10) : '',
         startTime: e.start_time ? String(e.start_time).slice(0, 5) : '',
@@ -88,6 +95,7 @@ export default function EditEventPage() {
         contactPhone: e.contact_phone || '',
         totalCapacity: e.capacity || '',
         visibility: e.visibility || 'public',
+        organizerId: e.organizer_id || '',
         ticketTypes: ticketTypes.length > 0
           ? ticketTypes
           : [{ name: '', price: '', quantity: '', description: '', saleStartDate: '', saleEndDate: '', uploadedTickets: [] }],
@@ -95,11 +103,11 @@ export default function EditEventPage() {
     } catch (err) {
       console.error('[EditEventPage.fetchEvent]', err);
       toast.error(err.response?.data?.message || 'Failed to load event for editing');
-      navigate('/organizer/events');
+      navigate(isAdmin ? '/admin/events' : '/organizer/events');
     } finally {
       setLoading(false);
     }
-  }, [id, navigate]);
+  }, [id, navigate, isAdmin]);
 
   useEffect(() => { fetchEvent(); }, [fetchEvent]);
 

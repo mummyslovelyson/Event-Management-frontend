@@ -240,6 +240,8 @@ function AppRoutes() {
           <Route path="/admin/organizers" element={<OrganizerApprovalsPage />} />
           <Route path="/admin/organizer-approvals" element={<OrganizerApprovalsPage />} />
           <Route path="/admin/events" element={<EventManagementPage />} />
+          <Route path="/admin/events/create" element={<CreateEventPage />} />
+          <Route path="/admin/events/:id/edit" element={<EditEventPage />} />
           <Route path="/admin/categories" element={<CategoriesPage />} />
           <Route path="/admin/payments" element={<PaymentManagementPage />} />
           <Route path="/admin/reports" element={<PlatformReportsPage />} />

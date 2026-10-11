@@ -7,9 +7,12 @@ import {
   CalendarDays, Info, MapPin, Ticket as TicketIcon, CheckCircle2,
   ChevronLeft, ChevronRight, Plus, Trash2, Upload, X, Save, Send,
   AlertTriangle, Globe, Navigation, Clock, Layers, Building2,
-  Calendar, Check, ShieldCheck, Tag, DollarSign, Image as ImageIcon
+  Calendar, Check, ShieldCheck, Tag, DollarSign, Image as ImageIcon,
+  UserCheck, Search
 } from 'lucide-react';
 import { createEvent, getEvent, getCategories, publishEvent, uploadImage } from '@/api/events';
+import { getUsers as getAdminUsers } from '@/api/admin';
+import { useAuth } from '@/context/AuthContext';
 import { POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import TicketFilesUploader from '@/components/organizer/TicketFilesUploader';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -59,11 +62,13 @@ function Field({ name, label, type = 'text', placeholder, validation, options, t
    - Event image (Banner)
    - Gallery (Up to 5 images)
    ========================================================================= */
-const StepBasicInfo = ({ categories = [] }) => {
+const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = false, isAdmin = false }) => {
   const { watch, setValue, register, formState: { errors } } = useFormContext();
   const bannerUrl = watch('bannerImage');
   const gallery = watch('additionalImages') || [];
   const currentCategory = watch('category');
+  const currentOrgId = watch('organizerId');
+  const [orgSearch, setOrgSearch] = useState('');
   const fileRef = useRef(null);
   const galleryRef = useRef(null);
   const [uploading, setUploading] = useState(null); // 'banner' | 'gallery'
@@ -77,6 +82,22 @@ const StepBasicInfo = ({ categories = [] }) => {
     }
     return list;
   }, [categories, currentCategory]);
+
+  const filteredOrganizers = useMemo(() => {
+    if (!orgSearch.trim()) return organizers;
+    const q = orgSearch.toLowerCase();
+    return organizers.filter(
+      (o) =>
+        (o.name && o.name.toLowerCase().includes(q)) ||
+        (o.email && o.email.toLowerCase().includes(q)) ||
+        (o.organizationName && o.organizationName.toLowerCase().includes(q))
+    );
+  }, [organizers, orgSearch]);
+
+  const selectedOrganizer = useMemo(() => {
+    if (!currentOrgId) return null;
+    return organizers.find((o) => String(o.id) === String(currentOrgId)) || null;
+  }, [organizers, currentOrgId]);
 
   const handleBanner = async (e) => {
     const file = e.target.files?.[0];
@@ -134,6 +155,104 @@ const StepBasicInfo = ({ categories = [] }) => {
 
   return (
     <div className="space-y-6">
+      {/* Admin Organizer Selector */}
+      {isAdmin && (
+        <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-[#1C232B] via-[#171A1D] to-[#12161A] border border-amber-500/30 space-y-3.5 shadow-sm">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-amber-400/10 text-amber-400 flex items-center justify-center border border-amber-400/20">
+                <UserCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  Event Organizer &amp; Host Assignment
+                  <span className="text-[10px] font-semibold bg-amber-400/15 text-amber-400 px-2 py-0.5 rounded border border-amber-400/30 uppercase tracking-wider">
+                    Admin Privilege
+                  </span>
+                </h3>
+                <p className="text-xs text-[#949599] mt-0.5">
+                  Select which organizer account hosts this event and receives attendee ticket sales.
+                </p>
+              </div>
+            </div>
+            {loadingOrganizers && (
+              <span className="text-xs text-amber-400 animate-pulse">Loading organizers...</span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label className={labelCls}>Select Organizer *</label>
+              <select
+                {...register('organizerId', {
+                  required: isAdmin ? 'Please select an organizer for this event' : false,
+                })}
+                className={inputCls}
+              >
+                <option value="">Choose an organizer...</option>
+                {filteredOrganizers.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.isSelf ? '⭐ ' : ''}{org.organizationName ? `${org.organizationName} (${org.name})` : org.name} • {org.email}
+                  </option>
+                ))}
+              </select>
+              {errors.organizerId && <p className={errCls}>{errors.organizerId.message}</p>}
+            </div>
+
+            <div>
+              <label className={labelCls}>Filter Organizers by Name / Email</label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+                <input
+                  type="text"
+                  value={orgSearch}
+                  onChange={(e) => setOrgSearch(e.target.value)}
+                  placeholder="Type to filter organizer list..."
+                  className={`${inputCls} pl-9`}
+                />
+              </div>
+            </div>
+          </div>
+
+          {selectedOrganizer && (
+            <motion.div
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-3 rounded-lg bg-[#111417] border border-[#262B2F] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 font-bold flex items-center justify-center shrink-0">
+                  {selectedOrganizer.name?.[0]?.toUpperCase() || 'O'}
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-white text-sm truncate">
+                      {selectedOrganizer.organizationName || selectedOrganizer.name}
+                    </span>
+                    {selectedOrganizer.isApproved && (
+                      <span className="text-[10px] bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 rounded font-medium border border-emerald-500/20">
+                        Verified Host
+                      </span>
+                    )}
+                    {selectedOrganizer.isSelf && (
+                      <span className="text-[10px] bg-amber-400/15 text-amber-400 px-1.5 py-0.5 rounded font-medium border border-amber-400/20">
+                        Admin Account
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-[#949599] truncate">
+                    {selectedOrganizer.email} {selectedOrganizer.phone ? `• ${selectedOrganizer.phone}` : ''}
+                  </p>
+                </div>
+              </div>
+              <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20 shrink-0 self-start sm:self-center">
+                ✓ Assigned Event Host
+              </span>
+            </motion.div>
+          )}
+        </div>
+      )}
+
       {/* Event Name */}
       <Field
         name="title"
@@ -639,7 +758,7 @@ const StepDateTime = () => {
 const StepTickets = () => {
   const { control, register, watch, setValue, formState: { errors } } = useFormContext();
   const { fields, append, remove } = useFieldArray({ control, name: 'ticketTypes' });
-  const { format } = useCurrency();
+  const { format, currency } = useCurrency();
 
   const ticketTypes = watch('ticketTypes') || [];
 
@@ -801,9 +920,9 @@ const StepTickets = () => {
                   </div>
 
                   <div>
-                    <label className={labelCls}>Price (GHS) *</label>
+                    <label className={labelCls}>Price ({currency?.code || 'GHS'}) *</label>
                     <div className="relative">
-                      <span className="absolute left-3 top-2.5 text-xs text-[#949599] font-semibold">GHS</span>
+                      <span className="absolute left-3 top-2.5 text-xs text-[#949599] font-semibold">{currency?.symbol || 'GHS'}</span>
                       <input
                         type="number"
                         step="any"
@@ -815,6 +934,20 @@ const StepTickets = () => {
                         placeholder="0.00"
                         className={`${inputCls} pl-12`}
                       />
+                    </div>
+                    {/* Quick Pricing Chips */}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      <span className="text-[10px] text-[#6B7278]">Quick set:</span>
+                      {[0, 50, 100, 200, 500].map((presetPrice) => (
+                        <button
+                          key={presetPrice}
+                          type="button"
+                          onClick={() => setValue(`ticketTypes.${i}.price`, presetPrice, { shouldDirty: true, shouldValidate: true })}
+                          className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#262B2F] hover:bg-white/10 text-[#949599] hover:text-white border border-[#3A4045] transition cursor-pointer"
+                        >
+                          {presetPrice === 0 ? 'Free (0)' : `${presetPrice}`}
+                        </button>
+                      ))}
                     </div>
                     {ticketErr?.price && <p className={errCls}>{ticketErr.price.message}</p>}
                   </div>
@@ -884,13 +1017,36 @@ const StepTickets = () => {
           })}
         </AnimatePresence>
 
-        <button
-          type="button"
-          onClick={addTicket}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-[#494F55]/40 text-sm font-medium text-[#949599] hover:border-white/40 hover:text-white transition cursor-pointer"
-        >
-          <Plus className="w-4 h-4" /> Add Another Ticket Type
-        </button>
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <button
+            type="button"
+            onClick={addTicket}
+            className="flex-1 min-w-[200px] flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-[#494F55]/40 text-sm font-medium text-[#949599] hover:border-white/40 hover:text-white transition cursor-pointer"
+          >
+            <Plus className="w-4 h-4" /> Add Custom Ticket Tier
+          </button>
+          <button
+            type="button"
+            onClick={() => append({ name: 'VIP Pass', price: 250, quantity: 200, description: 'VIP entrance, priority bar and lounge', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
+            className="px-3.5 py-3 rounded-xl bg-[#1C232B] hover:bg-[#262B2F] text-xs font-semibold text-amber-400 border border-amber-500/30 transition cursor-pointer"
+          >
+            + VIP Tier
+          </button>
+          <button
+            type="button"
+            onClick={() => append({ name: 'Early Bird', price: 80, quantity: 150, description: 'Limited discounted early admission', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
+            className="px-3.5 py-3 rounded-xl bg-[#1C232B] hover:bg-[#262B2F] text-xs font-semibold text-emerald-400 border border-emerald-500/30 transition cursor-pointer"
+          >
+            + Early Bird
+          </button>
+          <button
+            type="button"
+            onClick={() => append({ name: 'Free RSVP', price: 0, quantity: 500, description: 'Complimentary standard admission pass', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
+            className="px-3.5 py-3 rounded-xl bg-[#1C232B] hover:bg-[#262B2F] text-xs font-semibold text-white/80 border border-[#3A4045] transition cursor-pointer"
+          >
+            + Free Pass
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -902,10 +1058,24 @@ const StepTickets = () => {
    - Save Draft
    - or Submit for Approval
    ========================================================================= */
-const StepPublish = ({ onSaveDraft, onSubmitApproval, submitting, eventId, eventStatus }) => {
+const StepPublish = ({
+  onSaveDraft,
+  onSubmitApproval,
+  onPublishImmediately,
+  submitting,
+  eventId,
+  eventStatus,
+  isAdmin = false,
+  organizers = [],
+}) => {
   const { watch } = useFormContext();
   const { format } = useCurrency();
   const data = watch();
+
+  const selectedOrganizer = useMemo(() => {
+    if (!data.organizerId) return null;
+    return organizers.find((o) => String(o.id) === String(data.organizerId)) || null;
+  }, [organizers, data.organizerId]);
 
   const totalTickets = useMemo(() => {
     return (data.ticketTypes || []).reduce((sum, t) => sum + (Number(t.quantity) || 0), 0);
@@ -949,6 +1119,28 @@ const StepPublish = ({ onSaveDraft, onSubmitApproval, submitting, eventId, event
           </div>
         </div>
       </div>
+
+      {/* Admin Host Banner (if admin) */}
+      {isAdmin && selectedOrganizer && (
+        <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-[#1C232B] to-[#171A1D] border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-amber-400/20 text-amber-400 flex items-center justify-center font-bold">
+              <UserCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-[11px] text-[#949599] uppercase tracking-wider font-semibold block">
+                Assigned Event Organizer / Host:
+              </span>
+              <span className="text-sm font-bold text-white">
+                {selectedOrganizer.organizationName ? `${selectedOrganizer.organizationName} (${selectedOrganizer.name})` : selectedOrganizer.name}
+              </span>
+            </div>
+          </div>
+          <span className="text-[11px] text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20 self-start sm:self-center font-mono">
+            {selectedOrganizer.email}
+          </span>
+        </div>
+      )}
 
       {/* 2-Column Summary Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1086,9 +1278,13 @@ const StepPublish = ({ onSaveDraft, onSubmitApproval, submitting, eventId, event
         <div className="flex items-start gap-3">
           <ShieldCheck className="w-6 h-6 text-amber-400 shrink-0 mt-0.5" />
           <div>
-            <h4 className="text-sm font-bold text-white">Ready to publish your event?</h4>
+            <h4 className="text-sm font-bold text-white">
+              {isAdmin ? '👑 Platform Admin Publishing Authority' : 'Ready to publish your event?'}
+            </h4>
             <p className="text-xs text-[#949599] mt-0.5 leading-relaxed">
-              You can save as a private draft to continue tweaking later, or submit for admin review. Once verified, tickets will instantly be accessible to attendees.
+              {isAdmin
+                ? 'As a platform administrator, you can immediately publish this event live for attendees to purchase tickets, or save it as a draft for later review.'
+                : 'You can save as a private draft to continue tweaking later, or submit for admin review. Once verified, tickets will instantly be accessible to attendees.'}
             </p>
           </div>
         </div>
@@ -1104,15 +1300,39 @@ const StepPublish = ({ onSaveDraft, onSubmitApproval, submitting, eventId, event
             <span>{submitting ? 'Saving...' : 'Save Draft'}</span>
           </button>
 
-          <button
-            type="button"
-            onClick={onSubmitApproval}
-            disabled={submitting}
-            className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-[#111417] hover:bg-[#CBD5E1] text-sm font-extrabold transition shadow-lg shadow-white/10 cursor-pointer disabled:opacity-50"
-          >
-            <Send className="w-4 h-4" />
-            <span>{submitting ? 'Submitting...' : (eventId ? 'Submit Changes for Approval' : 'Submit for Approval')}</span>
-          </button>
+          {isAdmin ? (
+            <>
+              <button
+                type="button"
+                onClick={onSubmitApproval}
+                disabled={submitting}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-[#494F55]/50 bg-[#171A1D] hover:bg-[#242B32] text-xs font-semibold text-[#EFEFF1] transition cursor-pointer disabled:opacity-50"
+              >
+                <Send className="w-3.5 h-3.5 text-[#949599]" />
+                <span>Save as Pending</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={onPublishImmediately}
+                disabled={submitting}
+                className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-[#111417] hover:bg-[#CBD5E1] text-sm font-extrabold transition shadow-lg shadow-white/10 cursor-pointer disabled:opacity-50"
+              >
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>{submitting ? 'Publishing...' : 'Publish Event Live (Instant)'}</span>
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={onSubmitApproval}
+              disabled={submitting}
+              className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-[#111417] hover:bg-[#CBD5E1] text-sm font-extrabold transition shadow-lg shadow-white/10 cursor-pointer disabled:opacity-50"
+            >
+              <Send className="w-4 h-4" />
+              <span>{submitting ? 'Submitting...' : (eventId ? 'Submit Changes for Approval' : 'Submit for Approval')}</span>
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -1124,6 +1344,10 @@ const StepPublish = ({ onSaveDraft, onSubmitApproval, submitting, eventId, event
    ========================================================================= */
 export default function CreateEventPage({ initialValues, eventId, onSubmit: customSubmit, eventStatus, rejectionReason } = {}) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin' || user?.role === 'system_admin' || user?.role === 'superadmin';
+  const [organizers, setOrganizers] = useState([]);
+  const [loadingOrganizers, setLoadingOrganizers] = useState(false);
   const [step, setStep] = useState(1);
   const [categories, setCategories] = useState([]);
   const [submitting, setSubmitting] = useState(false);
@@ -1134,6 +1358,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
       title: '',
       description: '',
       category: '',
+      organizerId: '',
       tags: '',
       locationType: 'physical',
       venue: '',
@@ -1157,6 +1382,40 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
 
   const { handleSubmit, trigger, reset, formState: { errors } } = methods;
 
+  // Load organizers for admin to assign
+  useEffect(() => {
+    if (isAdmin) {
+      setLoadingOrganizers(true);
+      getAdminUsers({ role: 'organizer', limit: 100 })
+        .then((res) => {
+          const raw = Array.isArray(res.data) ? res.data : res.data?.users || res.data?.data || [];
+          const orgList = raw.map((u) => ({
+            id: u.id,
+            name: u.name,
+            email: u.email,
+            phone: u.phone,
+            organizationName: u.organizationName || u.organization?.name || '',
+            isApproved: u.is_approved || u.status === 'active',
+          }));
+          const adminSelf = {
+            id: user?.id,
+            name: `${user?.name || 'Platform Admin'} (Admin Account)`,
+            email: user?.email,
+            organizationName: 'Platform Administration',
+            isApproved: true,
+            isSelf: true,
+          };
+          setOrganizers([adminSelf, ...orgList]);
+        })
+        .catch((err) => {
+          console.error('[CreateEventPage] Error loading organizers:', err);
+        })
+        .finally(() => {
+          setLoadingOrganizers(false);
+        });
+    }
+  }, [isAdmin, user]);
+
   // Load existing event data when editing
   useEffect(() => {
     if (initialValues) {
@@ -1172,6 +1431,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
               title: e.title || '',
               description: e.description || '',
               category: e.category || '',
+              organizerId: e.organizer_id || e.organizer?.id || '',
               tags: Array.isArray(e.tags) ? e.tags.join(', ') : e.tags || '',
               locationType: e.location_type || (e.venue?.toLowerCase().includes('online') ? 'online' : 'physical'),
               venue: e.venue || '',
@@ -1208,7 +1468,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
         .catch((err) => {
           console.error('[CreateEventPage] Error loading event:', err);
           toast.error(err.response?.data?.message || 'Failed to load event data');
-          navigate('/organizer/events');
+          navigate(isAdmin ? '/admin/events' : '/organizer/events');
         })
         .finally(() => {
           setLoadingInit(false);
@@ -1216,7 +1476,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
     } else {
       setLoadingInit(false);
     }
-  }, [eventId, initialValues, reset, navigate]);
+  }, [eventId, initialValues, reset, navigate, isAdmin]);
 
   // Load categories
   useEffect(() => {
@@ -1237,7 +1497,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
 
   // Step validation fields mapping
   const stepFields = {
-    1: ['title', 'description', 'category'],
+    1: isAdmin ? ['title', 'description', 'category', 'organizerId'] : ['title', 'description', 'category'],
     2: methods.watch('locationType') === 'online' ? ['venue', 'address'] : ['venue', 'address', 'city'],
     3: ['startDate', 'endDate', 'startTime', 'endTime'],
   };
@@ -1292,7 +1552,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
     const errorKeys = Object.keys(formErrors);
     if (!errorKeys.length) return;
 
-    const step1Keys = ['title', 'description', 'category'];
+    const step1Keys = ['title', 'description', 'category', 'organizerId'];
     const step2Keys = ['venue', 'address', 'city'];
     const step3Keys = ['startDate', 'endDate', 'startTime', 'endTime'];
     const step4Keys = ['ticketTypes'];
@@ -1349,7 +1609,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
         toast.success(eventId ? 'Event changes saved!' : 'Event saved as draft.');
       }
 
-      navigate('/organizer/events');
+      navigate(isAdmin ? '/admin/events' : '/organizer/events');
     } catch (err) {
       console.error('[CreateEventPage.submit] Error:', err);
       toast.error(err.response?.data?.message || 'Failed to save event');
@@ -1405,12 +1665,12 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
           icon={CalendarDays}
           accent="gold"
           title={eventId ? 'Edit Event' : 'Create New Event'}
-          subtitle="Complete the 5-step event creation wizard to publish your event."
+          subtitle={isAdmin ? 'Configure event details, select the organizer, set ticket tiers and publish.' : 'Complete the 5-step event creation wizard to publish your event.'}
           actions={
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => navigate('/organizer/events')}
+                onClick={() => navigate(isAdmin ? '/admin/events' : '/organizer/events')}
                 className="px-3.5 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition cursor-pointer"
               >
                 Cancel
@@ -1500,7 +1760,14 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                 </span>
               </div>
 
-              {step === 1 && <StepBasicInfo categories={categories} />}
+              {step === 1 && (
+                <StepBasicInfo
+                  categories={categories}
+                  organizers={organizers}
+                  loadingOrganizers={loadingOrganizers}
+                  isAdmin={isAdmin}
+                />
+              )}
               {step === 2 && <StepLocation />}
               {step === 3 && <StepDateTime />}
               {step === 4 && <StepTickets />}
@@ -1508,9 +1775,12 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                 <StepPublish
                   onSaveDraft={handleSubmit((d) => submit(d, 'draft'), onInvalid)}
                   onSubmitApproval={handleSubmit((d) => submit(d, 'pending'), onInvalid)}
+                  onPublishImmediately={handleSubmit((d) => submit(d, 'published'), onInvalid)}
                   submitting={submitting}
                   eventId={eventId}
                   eventStatus={eventStatus}
+                  isAdmin={isAdmin}
+                  organizers={organizers}
                 />
               )}
             </motion.div>
@@ -1547,14 +1817,35 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
               >
                 <Save className="w-4 h-4" /> Save Draft
               </button>
-              <button
-                type="button"
-                onClick={handleSubmit((d) => submit(d, 'pending'), onInvalid)}
-                disabled={submitting}
-                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg text-sm font-bold bg-white text-[#111417] hover:bg-[#CBD5E1] transition shadow-lg cursor-pointer disabled:opacity-50"
-              >
-                <Send className="w-4 h-4" /> Submit for Approval
-              </button>
+              {isAdmin ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleSubmit((d) => submit(d, 'pending'), onInvalid)}
+                    disabled={submitting}
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-white border border-[#494F55]/40 hover:bg-[#242B32] transition cursor-pointer disabled:opacity-50"
+                  >
+                    <Send className="w-4 h-4" /> Save as Pending
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSubmit((d) => submit(d, 'published'), onInvalid)}
+                    disabled={submitting}
+                    className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg text-sm font-bold bg-white text-[#111417] hover:bg-[#CBD5E1] transition shadow-lg cursor-pointer disabled:opacity-50"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Publish Event Live
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSubmit((d) => submit(d, 'pending'), onInvalid)}
+                  disabled={submitting}
+                  className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg text-sm font-bold bg-white text-[#111417] hover:bg-[#CBD5E1] transition shadow-lg cursor-pointer disabled:opacity-50"
+                >
+                  <Send className="w-4 h-4" /> Submit for Approval
+                </button>
+              )}
             </div>
           )}
         </div>

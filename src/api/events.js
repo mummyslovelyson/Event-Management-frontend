@@ -20,6 +20,7 @@ const EVENT_FIELD_MAP = {
   ticketTemplate: 'ticket_template',
   locationType: 'location_type',
   gpsLocation: 'gps_location',
+  organizerId: 'organizer_id',
 };
 
 const mapEventPayload = (data) => {

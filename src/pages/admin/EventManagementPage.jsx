@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   CalendarDays, Search, Eye, CheckCircle2, XCircle, Ban, Trash2, Star, RotateCcw,
-  Image as ImageIcon, Layers, DollarSign, MessageSquare, AlertCircle,
+  Image as ImageIcon, Layers, DollarSign, MessageSquare, AlertCircle, Plus, Pencil,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
@@ -231,6 +231,15 @@ export default function EventManagementPage() {
         title="Event Management &amp; Moderation"
         subtitle="Review event submissions, feature top shows, moderate listings, and monitor sales capacity."
         count={total}
+        actions={
+          <Link
+            to="/admin/events/create"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-[#111417] hover:bg-[#CBD5E1] text-xs font-bold transition shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Create Event</span>
+          </Link>
+        }
       />
 
       {/* Tabs */}
@@ -372,6 +381,9 @@ export default function EventManagementPage() {
                       <div className="flex items-center justify-end gap-1.5">
                         <Link to={`/events/${ev.id}`} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View">
                           <Eye className="w-4 h-4" />
+                        </Link>
+                        <Link to={`/admin/events/${ev.id}/edit`} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit Event & Ticket Pricing">
+                          <Pencil className="w-4 h-4" />
                         </Link>
                         <button
                           onClick={() => handleToggleFeatured(ev)}
