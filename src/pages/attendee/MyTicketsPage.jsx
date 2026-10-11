@@ -7,9 +7,9 @@ import {
   Ticket as TicketIcon, Search, Download, Send, Calendar, MapPin, Armchair,
   X, Printer, CheckCircle2, Clock, XCircle, QrCode, Tag, Store, BadgeDollarSign,
   ChevronDown, Loader2, CalendarPlus, Share2, Bell, BellRing, ExternalLink,
-  Info, ShieldCheck, FileText, Sparkles, Users, Gift,
+  Info, ShieldCheck, FileText, Sparkles, Users, Gift, Trash2,
 } from 'lucide-react';
-import { getUserTickets, transferTicket, downloadTicket } from '@/api/tickets';
+import { getUserTickets, transferTicket, downloadTicket, deleteTicket, clearOldTickets } from '@/api/tickets';
 import { verifyPayment } from '@/api/orders';
 import { getMyResale, createResaleListing, cancelResaleListing } from '@/api/resale';
 import { getUserReminders, toggleEventReminder } from '@/api/events';
@@ -404,6 +404,32 @@ export default function MyTicketsPage() {
     }
   };
 
+  const handleDeleteTicket = async (ticket) => {
+    if (!window.confirm(`Are you sure you want to remove ticket #${ticket.ticketNumber || ticket.id} for "${ticket.event?.title || ticket.event_title || 'Event'}" from your account history?`)) {
+      return;
+    }
+    try {
+      await deleteTicket(ticket.id);
+      toast.success('Ticket removed from history');
+      loadTickets();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete ticket');
+    }
+  };
+
+  const handleClearOldTickets = async () => {
+    if (!window.confirm('Are you sure you want to delete all past and concluded tickets from your history? Your purchase invoices and orders remain permanently safe.')) {
+      return;
+    }
+    try {
+      const res = await clearOldTickets();
+      toast.success(res.data?.message || 'Past tickets cleared');
+      loadTickets();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to clear past tickets');
+    }
+  };
+
   if (loading || verifyingPayment) {
     return (
       <LoadingSpinner
@@ -489,15 +515,27 @@ export default function MyTicketsPage() {
             </button>
           ))}
         </div>
-        <div className="relative sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search tickets..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
-          />
+        <div className="flex items-center gap-2">
+          {(tab === 'past' || tab === 'cancelled') && filtered.length > 0 && (
+            <button
+              onClick={handleClearOldTickets}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition shrink-0"
+              title="Clear all past tickets"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Clear Past Tickets</span>
+            </button>
+          )}
+          <div className="relative sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search tickets..."
+              className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+            />
+          </div>
         </div>
       </motion.div>
 
@@ -625,6 +663,7 @@ export default function MyTicketsPage() {
                 onSell={() => { setSellTarget(ticket); setSellPrice(''); }}
                 resaleListing={listings.find((l) => Number(l.ticketId) === Number(ticket.id) && l.status === 'active')}
                 onCancelResale={handleCancelListing}
+                onDelete={() => handleDeleteTicket(ticket)}
               />
             </motion.div>
           ))}
@@ -1076,7 +1115,7 @@ export default function MyTicketsPage() {
   );
 }
 
-function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, onViewEvent, onInvoice, resaleListing, onCancelResale }) {
+function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, onViewEvent, onInvoice, resaleListing, onCancelResale, onDelete }) {
   const event = ticket.event || {};
   const eventDate = event.startDate || ticket.eventDate || ticket.startDate;
   const status = (ticket.status || 'valid').toLowerCase();
@@ -1318,6 +1357,15 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
               title="Resell ticket on the secondary marketplace"
             >
               <Tag className="w-3.5 h-3.5" /> Resell
+            </button>
+          )}
+          {onDelete && (isCancelled || status === 'used' || status === 'expired' || status === 'checked_in') && (
+            <button
+              onClick={onDelete}
+              className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium hover:bg-red-500/20 hover:border-red-500/50 transition-colors"
+              title="Delete old ticket pass from history"
+            >
+              <Trash2 className="w-3.5 h-3.5" /> Delete
             </button>
           )}
         </div>
