@@ -188,6 +188,7 @@ export default function EventsPage() {
             <EventCard
               key={e.id}
               event={e}
+              format={format}
               onEdit={() => navigate(`/organizer/events/${e.id}/edit`)}
               onManageTickets={() => navigate(`/organizer/tickets?event=${e.id}`)}
               onView={() => navigate(`/events/${e.id}`)}
@@ -334,7 +335,15 @@ export default function EventsPage() {
   );
 }
 
-function EventCard({ event, onEdit, onManageTickets, onView, onTogglePublish, onDelete, onViewFeedback }) {
+function EventCard({ event, onEdit, onManageTickets, onView, onTogglePublish, onDelete, onViewFeedback, format: formatProp }) {
+  let currencyFormat;
+  try {
+    const ctx = useCurrency();
+    currencyFormat = ctx?.format;
+  } catch {
+    currencyFormat = null;
+  }
+  const format = formatProp || currencyFormat || ((n) => `₵${Number(n || 0).toLocaleString()}`);
   const [menu, setMenu] = useState(false);
   const sold = event.ticketsSold || 0;
   const cap = event.totalCapacity || event.capacity || 0;

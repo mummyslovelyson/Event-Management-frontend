@@ -4,11 +4,11 @@ import {
   CreditCard, Download, TrendingUp, Wallet, RotateCcw,
   CheckCircle2, XCircle, ArrowRight, Building2, Search,
   Filter, Eye, AlertCircle, Phone, Mail, Calendar, User,
-  FileText, Check, DollarSign,
+  FileText, Check, DollarSign, Clock, ShieldCheck,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
-  getPayments, getPayment, refundPayment, processUnresponsiveRefunds,
+  getPayments, getPayment, refundPayment, getAdminRefundRequests, respondToRefundRequestAdmin, processUnresponsiveRefunds,
   getWithdrawals, approveWithdrawal, rejectWithdrawal,
 } from '@/api/admin';
 import { REFUND_POLICY_CIRCUMSTANCES, getPolicyClause } from '@/constants/refundPolicy';
@@ -23,6 +23,7 @@ import { useCurrency } from '@/context/CurrencyContext';
 
 const TABS = [
   { key: 'transactions', label: 'Transactions' },
+  { key: 'requests', label: 'Refund Requests' },
   { key: 'withdrawals', label: 'Withdrawal Requests' },
   { key: 'refunds', label: 'Refunds Ledger' },
 ];
@@ -58,6 +59,7 @@ export default function PaymentManagementPage() {
   const [transactions, setTransactions] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
   const [refunds, setRefunds] = useState([]);
+  const [refundRequests, setRefundRequests] = useState([]);
   const [summary, setSummary] = useState({
     totalTransactions: 0,
     grossVolume: 0,
@@ -87,6 +89,10 @@ export default function PaymentManagementPage() {
   const [selectedCircumstance, setSelectedCircumstance] = useState('1_ORGANIZER_AUTHORIZED');
   const [adminNotes, setAdminNotes] = useState('');
   const [autoProcessing, setAutoProcessing] = useState(false);
+
+  const [approveRequestTarget, setApproveRequestTarget] = useState(null);
+  const [declineRequestTarget, setDeclineRequestTarget] = useState(null);
+  const [declineRequestReason, setDeclineRequestReason] = useState('');
 
   const [approveTarget, setApproveTarget] = useState(null);
   const [payoutRef, setPayoutRef] = useState('');
@@ -159,12 +165,75 @@ export default function PaymentManagementPage() {
     }
   }, [page, search]);
 
+  // Fetch Refund Requests
+  const fetchRefundRequests = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await getAdminRefundRequests({
+        status: statusFilter,
+        search: search.trim() || undefined,
+      });
+      const list = res.data?.refundRequests || [];
+      setRefundRequests(list);
+      setTotalPages(1);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to load refund requests');
+    } finally {
+      setLoading(false);
+    }
+  }, [statusFilter, search]);
+
   // Master fetch on tab/filter change
   useEffect(() => {
     if (tab === 'transactions') fetchTransactions();
+    else if (tab === 'requests') fetchRefundRequests();
     else if (tab === 'withdrawals') fetchWithdrawals();
     else if (tab === 'refunds') fetchRefunds();
-  }, [tab, page, statusFilter, methodFilter, search, fetchTransactions, fetchWithdrawals, fetchRefunds]);
+  }, [tab, page, statusFilter, methodFilter, search, fetchTransactions, fetchRefundRequests, fetchWithdrawals, fetchRefunds]);
+
+  // Approve a pending buyer refund request
+  const handleApproveRequest = async (target) => {
+    if (!target) return;
+    setActionLoading(true);
+    try {
+      await respondToRefundRequestAdmin(target.id, {
+        action: 'approve',
+        circumstance: target.policyCircumstance || '1_ORGANIZER_AUTHORIZED',
+      });
+      toast.success('Refund approved and processed successfully');
+      setApproveRequestTarget(null);
+      fetchRefundRequests();
+      getPayments({ limit: 1 }).then((r) => {
+        if (r.data?.summary) setSummary(r.data.summary);
+      }).catch(() => {});
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to approve refund request');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Decline a pending buyer refund request
+  const handleDeclineRequest = async () => {
+    if (!declineRequestTarget || !declineRequestReason.trim()) {
+      return toast.error('Please enter an explanation for declining the request');
+    }
+    setActionLoading(true);
+    try {
+      await respondToRefundRequestAdmin(declineRequestTarget.id, {
+        action: 'decline',
+        responseReason: declineRequestReason.trim(),
+      });
+      toast.success('Refund request declined. Buyer has been notified.');
+      setDeclineRequestTarget(null);
+      setDeclineRequestReason('');
+      fetchRefundRequests();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to decline refund request');
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   // Reset page when filters change
   const handleTabChange = (key) => {
@@ -348,7 +417,9 @@ export default function PaymentManagementPage() {
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               placeholder={
-                tab === 'withdrawals'
+                tab === 'requests'
+                  ? 'Search buyer, order ref, event, or organizer...'
+                  : tab === 'withdrawals'
                   ? 'Search organizer, account number, or payout reference...'
                   : 'Search order ref, buyer name, email, or event...'
               }
@@ -364,7 +435,13 @@ export default function PaymentManagementPage() {
               className="px-3 py-2 rounded-xl bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-white/40"
             >
               <option value="all">All Statuses</option>
-              {tab === 'withdrawals' ? (
+              {tab === 'requests' ? (
+                <>
+                  <option value="pending">Pending Review</option>
+                  <option value="processed">Approved / Processed</option>
+                  <option value="rejected">Declined</option>
+                </>
+              ) : tab === 'withdrawals' ? (
                 <>
                   <option value="pending">Pending Review</option>
                   <option value="approved">Approved / Disbursed</option>
@@ -448,6 +525,11 @@ export default function PaymentManagementPage() {
                           <Badge variant={txStatusVariant(tx.status)} size="sm" dot>
                             {tx.status}
                           </Badge>
+                          {tx.refundRequestStatus === 'pending' && (
+                            <span className="block mt-1 text-[10px] font-bold text-amber-300 uppercase tracking-wider bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded w-max">
+                              Refund Requested
+                            </span>
+                          )}
                         </td>
                         <td className="hidden md:table-cell px-4 py-3.5 text-xs text-[#949599]">
                           {fmtDate(tx.createdAt)}
@@ -461,14 +543,34 @@ export default function PaymentManagementPage() {
                             >
                               <Eye className="w-4 h-4" />
                             </button>
-                            {tx.status === 'completed' && (
+                            {tx.refundRequestStatus === 'pending' ? (
+                              <button
+                                onClick={() => {
+                                  setApproveRequestTarget({
+                                    id: tx.refundId || tx.id,
+                                    orderId: tx.id,
+                                    orderReference: tx.reference,
+                                    amount: tx.amount,
+                                    buyerName: tx.userName,
+                                    buyerEmail: tx.userEmail,
+                                    eventTitle: tx.eventTitle,
+                                    organizerName: 'Organizer',
+                                    reason: tx.refundReason || 'Buyer requested refund',
+                                    policyCircumstance: tx.policyCircumstance || '1_ORGANIZER_AUTHORIZED',
+                                  });
+                                }}
+                                className="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20 transition flex items-center gap-1"
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5" /> Approve Refund
+                              </button>
+                            ) : tx.status === 'completed' ? (
                               <button
                                 onClick={() => { setRefundTarget(tx); setRefundReason(''); }}
                                 className="px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition"
                               >
                                 Refund
                               </button>
-                            )}
+                            ) : null}
                           </div>
                         </td>
                       </tr>
@@ -479,6 +581,170 @@ export default function PaymentManagementPage() {
               <div className="px-5 py-4 border-t border-[#262B2F] flex items-center justify-between">
                 <span className="text-xs text-[#949599]">Page {page} of {totalPages}</span>
                 <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+              </div>
+            </>
+          )
+        ) : tab === 'requests' ? (
+          /* ─── REFUND REQUESTS TAB ─── */
+          refundRequests.length === 0 ? (
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl bg-[#14181C] border border-[#262B2F] gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">Clause 5 SLA Automation</p>
+                    <p className="text-[11px] text-[#949599]">Auto-process pending requests where organizer response exceeded 1 day (24 hours).</p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleProcessUnresponsive}
+                  disabled={autoProcessing}
+                  className="px-4 py-2 rounded-xl bg-amber-400 text-[#0E1216] text-xs font-bold hover:bg-amber-300 transition disabled:opacity-50 shrink-0"
+                >
+                  {autoProcessing ? 'Processing SLA...' : 'Execute 1-Day SLA Sweep'}
+                </button>
+              </div>
+
+              <EmptyState
+                icon={RotateCcw}
+                title="No refund requests found"
+                description="When buyers submit refund requests, they will appear here for organizer and admin approval."
+                className="py-16"
+              />
+            </div>
+          ) : (
+            <>
+              {/* SLA Banner */}
+              <div className="p-4 border-b border-[#262B2F] bg-[#14171A] flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">Buyer Refund Review &amp; Approval</p>
+                    <p className="text-[11px] text-[#949599]">Review buyer requests. Both organizers and admins have full authority to approve and proceed with reversals.</p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleProcessUnresponsive}
+                  disabled={autoProcessing}
+                  className="px-4 py-2 rounded-xl bg-amber-400 text-[#0E1216] text-xs font-bold hover:bg-amber-300 transition disabled:opacity-50 shrink-0"
+                >
+                  {autoProcessing ? 'Processing SLA...' : 'Execute 1-Day SLA Sweep'}
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-xs font-semibold text-[#8C939D] border-b border-[#262B2F] bg-[#14171A]">
+                      <th className="px-4 py-3.5">Order Ref</th>
+                      <th className="px-4 py-3.5">Customer</th>
+                      <th className="px-4 py-3.5">Event &amp; Organizer</th>
+                      <th className="px-4 py-3.5 text-right">Amount</th>
+                      <th className="px-4 py-3.5">Reason &amp; Policy</th>
+                      <th className="px-4 py-3.5">24h SLA Status</th>
+                      <th className="px-4 py-3.5">Status</th>
+                      <th className="px-4 py-3.5 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#262B2F]/60">
+                    {refundRequests.map((r) => (
+                      <tr key={r.id} className="hover:bg-[#1C2126] transition-colors">
+                        <td className="px-4 py-3.5 font-mono text-xs text-white font-medium">
+                          {r.orderReference}
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <p className="font-medium text-[#EFEFF1]">{r.buyerName || 'Buyer'}</p>
+                          <p className="text-xs text-[#949599]">{r.buyerEmail}</p>
+                          {r.buyerPhone && <p className="text-[11px] text-[#6B7278]">{r.buyerPhone}</p>}
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <p className="text-[#EFEFF1] font-medium max-w-[180px] truncate">{r.eventTitle}</p>
+                          <p className="text-xs text-[#949599] max-w-[180px] truncate">Org: {r.organizerName || 'Organizer'}</p>
+                        </td>
+                        <td className="px-4 py-3.5 text-right font-black text-white whitespace-nowrap">
+                          {format(r.amount)}
+                        </td>
+                        <td className="px-4 py-3.5 max-w-[220px]">
+                          <p className="text-xs text-[#EFEFF1] italic line-clamp-2">
+                            "{r.reason || 'No explanation provided'}"
+                          </p>
+                          {r.policyTitle && (
+                            <span className="inline-block mt-1 text-[10px] font-semibold text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded">
+                              {r.policyTitle}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          {r.status === 'pending' ? (
+                            r.isOverdue ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/10 border border-rose-500/20 text-rose-400">
+                                <Clock className="w-3 h-3" /> SLA Overdue
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-amber-400/10 border border-amber-400/20 text-amber-300">
+                                <Clock className="w-3 h-3" /> {r.hoursRemaining != null ? `${r.hoursRemaining}h left` : 'Pending'}
+                              </span>
+                            )
+                          ) : (
+                            <span className="text-xs text-[#949599]">—</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <Badge
+                            variant={
+                              r.status === 'processed'
+                                ? 'success'
+                                : r.status === 'rejected'
+                                ? 'error'
+                                : 'pending'
+                            }
+                            size="sm"
+                            dot
+                          >
+                            {r.status === 'processed'
+                              ? 'Approved'
+                              : r.status === 'rejected'
+                              ? 'Declined'
+                              : 'Pending'}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => handleInspectOrder(r.orderId)}
+                              className="p-1.5 rounded-lg bg-white/5 text-[#949599] hover:text-white hover:bg-white/10 transition"
+                              title="View Order Details"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            {r.status === 'pending' && (
+                              <>
+                                <button
+                                  onClick={() => setApproveRequestTarget(r)}
+                                  className="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20 transition flex items-center gap-1"
+                                  title="Approve and proceed with refund"
+                                >
+                                  <CheckCircle2 className="w-3.5 h-3.5" /> Approve
+                                </button>
+                                <button
+                                  onClick={() => { setDeclineRequestTarget(r); setDeclineRequestReason(''); }}
+                                  className="px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 transition flex items-center gap-1"
+                                  title="Decline request"
+                                >
+                                  <XCircle className="w-3.5 h-3.5" /> Decline
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </>
           )
@@ -1005,6 +1271,100 @@ export default function PaymentManagementPage() {
                 onChange={(e) => setAdminNotes(e.target.value)}
                 placeholder="Internal audit reference, ticket ID, or investigation notes..."
                 className="w-full px-3.5 py-2 rounded-xl bg-[#14181C] border border-[#262B2F] text-xs text-white focus:outline-none focus:border-white/40"
+              />
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* ─── MODAL 5: APPROVE BUYER REFUND REQUEST ─── */}
+      <Modal
+        open={!!approveRequestTarget}
+        onClose={() => setApproveRequestTarget(null)}
+        title="Approve &amp; Proceed Refund"
+        footer={
+          <>
+            <button
+              onClick={() => setApproveRequestTarget(null)}
+              className="px-4 py-2.5 rounded-xl text-sm font-medium text-[#949599] hover:text-white transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => handleApproveRequest(approveRequestTarget)}
+              disabled={actionLoading}
+              className="px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-400 transition disabled:opacity-50"
+            >
+              {actionLoading ? 'Processing Reversal...' : 'Confirm &amp; Proceed Refund'}
+            </button>
+          </>
+        }
+      >
+        {approveRequestTarget && (
+          <div className="space-y-4">
+            <p className="text-sm text-[#EFEFF1]">
+              Approve refund request and execute payment reversal of{' '}
+              <span className="font-bold text-white text-base">
+                {format(approveRequestTarget.amount)}
+              </span>{' '}
+              for order <span className="font-mono text-white">{approveRequestTarget.orderReference}</span>?
+            </p>
+            <div className="p-3.5 rounded-xl bg-[#14181C] border border-[#262B2F] text-xs space-y-1.5">
+              <p className="text-[#949599]">Buyer: <span className="text-white font-semibold">{approveRequestTarget.buyerName}</span> ({approveRequestTarget.buyerEmail})</p>
+              <p className="text-[#949599]">Event: <span className="text-white font-semibold">{approveRequestTarget.eventTitle}</span></p>
+              <p className="text-[#949599]">Organizer: <span className="text-white font-semibold">{approveRequestTarget.organizerName}</span></p>
+              <p className="text-[#949599]">Reason cited: <span className="text-amber-300 italic">"{approveRequestTarget.reason || 'Buyer requested refund'}"</span></p>
+            </div>
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300">
+              <p className="font-semibold">Automated Actions on Confirmation:</p>
+              <ul className="mt-1 list-disc list-inside space-y-0.5 text-[#CBD5E1]">
+                <li>Reversal executed via Paystack payment gateway.</li>
+                <li>Customer tickets cancelled immediately.</li>
+                <li>Both buyer and organizer notified with policy confirmation.</li>
+              </ul>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* ─── MODAL 6: DECLINE BUYER REFUND REQUEST ─── */}
+      <Modal
+        open={!!declineRequestTarget}
+        onClose={() => setDeclineRequestTarget(null)}
+        title="Decline Refund Request"
+        footer={
+          <>
+            <button
+              onClick={() => setDeclineRequestTarget(null)}
+              className="px-4 py-2.5 rounded-xl text-sm font-medium text-[#949599] hover:text-white transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeclineRequest}
+              disabled={actionLoading || !declineRequestReason.trim()}
+              className="px-5 py-2.5 rounded-xl bg-rose-600 text-white text-sm font-bold hover:bg-rose-500 transition disabled:opacity-50"
+            >
+              {actionLoading ? 'Declining...' : 'Confirm Decline'}
+            </button>
+          </>
+        }
+      >
+        {declineRequestTarget && (
+          <div className="space-y-4">
+            <p className="text-sm text-[#EFEFF1]">
+              Decline refund request for order <span className="font-mono text-white">{declineRequestTarget.orderReference}</span> ({format(declineRequestTarget.amount)}).
+            </p>
+            <div>
+              <label className="text-xs font-semibold text-[#949599] block mb-1">
+                Explanation / Reason for Decline (Sent to Buyer)
+              </label>
+              <textarea
+                value={declineRequestReason}
+                onChange={(e) => setDeclineRequestReason(e.target.value)}
+                placeholder="State why this refund cannot be authorized..."
+                rows={3}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#14181C] border border-[#262B2F] text-sm text-white focus:outline-none focus:border-white/40 resize-none"
               />
             </div>
           </div>

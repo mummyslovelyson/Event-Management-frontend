@@ -621,11 +621,13 @@ export default function EventDetailPage() {
 
     setPlacingOrder(true);
     try {
+      const callbackUrl = `${window.location.origin}/payment/callback`;
       const orderRes = await createOrder({
         eventId: id,
         items: [{ ticketTypeId: purchaseModal.id, quantity: selectedQty }],
         couponCode: couponDiscount > 0 ? coupon : undefined,
         paymentMethod,
+        callbackUrl,
         customerName: customerInfo.name.trim(),
         customerEmail: customerInfo.email.trim(),
         customerPhone: customerInfo.phone.trim(),
@@ -640,7 +642,7 @@ export default function EventDetailPage() {
         window.location.href = authUrl;
         return;
       }
-      const payRes = await initiatePayment(order.id, { paymentMethod });
+      const payRes = await initiatePayment(order.id, { paymentMethod, callbackUrl });
       const initUrl = payRes.data?.authorizationUrl || payRes.data?.data?.authorizationUrl;
       if (initUrl) {
         window.location.href = initUrl;

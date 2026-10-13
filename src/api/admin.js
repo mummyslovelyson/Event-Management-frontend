@@ -44,6 +44,8 @@ export const deleteCategory = (id) => api.delete(`/admin/categories/${id}`);
 export const getPayments = (params) => api.get('/admin/payments', { params });
 export const getPayment = (id) => api.get(`/admin/payments/${id}`);
 export const refundPayment = (id, data) => api.post(`/admin/payments/${id}/refund`, data);
+export const getAdminRefundRequests = (params) => api.get('/admin/refunds', { params });
+export const respondToRefundRequestAdmin = (id, data) => api.post(`/admin/refunds/${id}/respond`, data);
 export const processUnresponsiveRefunds = () => api.post('/admin/refunds/process-unresponsive');
 export const getWithdrawals = (params) => api.get('/admin/withdrawals', { params });
 export const approveWithdrawal = (id, data) => api.put(`/admin/withdrawals/${id}/approve`, data);
