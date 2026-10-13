@@ -327,8 +327,8 @@ export default function OrganizerDashboard() {
             <div className="p-5 space-y-3.5">
               {upcomingEvents.map((e) => {
                 const sold = e.ticketsSold || 0;
-                const cap = e.totalCapacity || e.capacity || 100;
-                const pct = Math.min(100, Math.round((sold / cap) * 100));
+                const cap = Number(e.totalCapacity || e.capacity || 0);
+                const pct = cap > 0 ? Math.min(100, Math.round((sold / cap) * 100)) : 0;
                 return (
                   <div
                     key={e.id}
@@ -343,7 +343,7 @@ export default function OrganizerDashboard() {
                           <Calendar className="w-3 h-3 text-[#494F55]" />
                           {e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
                           <span>·</span>
-                          <span className="truncate">{e.venue || e.city || 'Accra'}</span>
+                          <span className="truncate">{e.venue || e.city || 'TBD'}</span>
                         </p>
                       </div>
                       <Badge variant={e.status === 'published' ? 'success' : 'pending'} size="sm">
@@ -355,7 +355,7 @@ export default function OrganizerDashboard() {
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-[11px] text-[#949599]">
                         <span>Capacity ({pct}%)</span>
-                        <span className="font-semibold text-[#EFEFF1]">{sold} / {cap} tickets</span>
+                        <span className="font-semibold text-[#EFEFF1]">{sold} / {cap > 0 ? cap : '—'} tickets</span>
                       </div>
                       <div className="h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
                         <div className="h-full bg-white rounded-full transition-all" style={{ width: `${pct}%` }} />

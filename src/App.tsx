@@ -84,6 +84,7 @@ const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
 const UserManagementPage = lazy(() => import('@/pages/admin/UserManagementPage'));
 const OrganizerApprovalsPage = lazy(() => import('@/pages/admin/OrganizerApprovalsPage'));
 const EventManagementPage = lazy(() => import('@/pages/admin/EventManagementPage'));
+const AdminEventDetailPage = lazy(() => import('@/pages/admin/AdminEventDetailPage'));
 const CategoriesPage = lazy(() => import('@/pages/admin/CategoriesPage'));
 const PaymentManagementPage = lazy(() => import('@/pages/admin/PaymentManagementPage'));
 const PlatformReportsPage = lazy(() => import('@/pages/admin/PlatformReportsPage'));
@@ -238,9 +239,11 @@ function AppRoutes() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<UserManagementPage />} />
           <Route path="/admin/organizers" element={<OrganizerApprovalsPage />} />
+          <Route path="/admin/organizers/:id" element={<OrganizerApprovalsPage />} />
           <Route path="/admin/organizer-approvals" element={<OrganizerApprovalsPage />} />
           <Route path="/admin/events" element={<EventManagementPage />} />
           <Route path="/admin/events/create" element={<CreateEventPage />} />
+          <Route path="/admin/events/:id" element={<AdminEventDetailPage />} />
           <Route path="/admin/events/:id/edit" element={<EditEventPage />} />
           <Route path="/admin/categories" element={<CategoriesPage />} />
           <Route path="/admin/payments" element={<PaymentManagementPage />} />

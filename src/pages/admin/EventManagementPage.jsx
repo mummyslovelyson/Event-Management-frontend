@@ -297,22 +297,22 @@ export default function EventManagementPage() {
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center gap-3 mt-3 pt-3 border-t border-[#494F55]/20"
           >
-            <span className="text-sm text-white">{selected.size} selected</span>
+            <span className="text-xs text-[#CBD5E1] font-mono">{selected.size} selected</span>
             <button
               onClick={bulkApprove}
               disabled={bulkLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-[#111417] text-xs font-bold hover:bg-[#CBD5E1] transition disabled:opacity-50 cursor-pointer shadow-sm"
             >
               <CheckCircle2 className="w-3.5 h-3.5" /> Approve All
             </button>
             <button
               onClick={bulkReject}
               disabled={bulkLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#242B32] text-red-300 hover:text-red-200 border border-red-500/20 text-xs font-semibold hover:bg-red-500/10 transition disabled:opacity-50 cursor-pointer"
             >
               <XCircle className="w-3.5 h-3.5" /> Reject All
             </button>
-            <button onClick={() => setSelected(new Set())} className="text-xs text-[#949599] hover:text-[#EFEFF1] ml-auto">Clear</button>
+            <button onClick={() => setSelected(new Set())} className="text-xs text-[#949599] hover:text-[#EFEFF1] ml-auto cursor-pointer">Clear</button>
           </motion.div>
         )}
       </div>
@@ -348,17 +348,17 @@ export default function EventManagementPage() {
                       <input type="checkbox" checked={selected.has(ev.id)} onChange={() => toggleSelect(ev.id)} className="w-4 h-4 rounded border-[#3A4045] bg-[#111417] accent-[#EFEFF1]" />
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
+                      <Link to={`/admin/events/${ev.id}`} className="flex items-center gap-3 group">
                         {ev.thumbnail || ev.image ? (
-                          <img src={ev.thumbnail || ev.image} alt="" className="w-10 h-10 rounded-lg object-cover" />
+                          <img src={ev.thumbnail || ev.image} alt="" className="w-10 h-10 rounded-lg object-cover group-hover:opacity-80 transition" />
                         ) : (
-                          <div className="w-10 h-10 rounded-lg bg-white/10 text-white flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-lg bg-white/10 text-white flex items-center justify-center group-hover:bg-white/20 transition">
                             <ImageIcon className="w-5 h-5" />
                           </div>
                         )}
-                        <span className="font-medium text-[#EFEFF1] max-w-[180px] truncate">{ev.title}</span>
+                        <span className="font-medium text-[#EFEFF1] max-w-[180px] truncate group-hover:text-white transition underline-offset-2 group-hover:underline">{ev.title}</span>
                         {ev.is_featured && <Badge variant="gold" size="sm" className="ml-2 shrink-0">Featured</Badge>}
-                      </div>
+                      </Link>
                     </td>
                     <td className="hidden md:table-cell px-4 py-3 text-[#949599] max-w-[140px] truncate">{ev.organizerName || ev.organizer || '—'}</td>
                     <td className="hidden md:table-cell px-4 py-3"><Badge variant="neutral" size="sm">{ev.category || '—'}</Badge></td>
@@ -378,17 +378,17 @@ export default function EventManagementPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <Link to={`/events/${ev.id}`} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="View">
+                      <div className="flex items-center justify-end gap-1">
+                        <Link to={`/admin/events/${ev.id}`} className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition" title="View Event in Admin">
                           <Eye className="w-4 h-4" />
                         </Link>
-                        <Link to={`/admin/events/${ev.id}/edit`} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition" title="Edit Event & Ticket Pricing">
+                        <Link to={`/admin/events/${ev.id}/edit`} className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition" title="Edit Event & Ticket Pricing">
                           <Pencil className="w-4 h-4" />
                         </Link>
                         <button
                           onClick={() => handleToggleFeatured(ev)}
                           disabled={actionLoading === `feature-${ev.id}`}
-                          className={`p-2.5 rounded-md transition disabled:opacity-50 ${ev.is_featured ? 'text-white hover:bg-white/10' : 'text-[#949599] hover:text-white hover:bg-[#494F55]/30'}`}
+                          className={`p-2 rounded-lg transition disabled:opacity-50 ${ev.is_featured ? 'text-white hover:bg-white/10' : 'text-[#949599] hover:text-white hover:bg-[#242B32]'}`}
                           title={ev.is_featured ? 'Remove from featured' : 'Feature on homepage'}
                         >
                           <Star className="w-4 h-4" fill={ev.is_featured ? 'currentColor' : 'none'} />
@@ -397,7 +397,7 @@ export default function EventManagementPage() {
                           <button
                             onClick={() => handleApprove(ev.id)}
                             disabled={actionLoading === `approve-${ev.id}`}
-                            className="p-2.5 rounded-md text-emerald-400 hover:bg-emerald-500/15 transition disabled:opacity-50"
+                            className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-white/10 transition disabled:opacity-50"
                             title="Approve & Publish"
                           >
                             <CheckCircle2 className="w-4 h-4" />
@@ -406,7 +406,7 @@ export default function EventManagementPage() {
                         {(ev.status === 'pending' || ev.status === 'changes_requested') && (
                           <button
                             onClick={() => { setChangesTarget(ev); setChangesReason(ev.rejection_reason || ''); }}
-                            className="p-2.5 rounded-md text-amber-400 hover:bg-amber-500/15 transition"
+                            className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition"
                             title="Request Changes"
                           >
                             <MessageSquare className="w-4 h-4" />
@@ -415,7 +415,7 @@ export default function EventManagementPage() {
                         {ev.status !== 'rejected' && (
                           <button
                             onClick={() => { setRejectTarget(ev); setRejectReason(''); }}
-                            className="p-2.5 rounded-md text-red-400 hover:bg-red-500/15 transition"
+                            className="p-2 rounded-lg text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition"
                             title="Reject"
                           >
                             <XCircle className="w-4 h-4" />
@@ -425,7 +425,7 @@ export default function EventManagementPage() {
                           <button
                             onClick={() => handleSuspend(ev)}
                             disabled={actionLoading === `suspend-${ev.id}`}
-                            className="p-2.5 rounded-md text-amber-400 hover:bg-amber-500/15 transition disabled:opacity-50"
+                            className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition disabled:opacity-50"
                             title="Suspend"
                           >
                             <Ban className="w-4 h-4" />
@@ -435,7 +435,7 @@ export default function EventManagementPage() {
                           <button
                             onClick={() => handleRestore(ev)}
                             disabled={actionLoading === `restore-${ev.id}`}
-                            className="p-2.5 rounded-md text-emerald-400 hover:bg-emerald-500/15 transition disabled:opacity-50"
+                            className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-white/10 transition disabled:opacity-50"
                             title="Restore"
                           >
                             <RotateCcw className="w-4 h-4" />
@@ -443,7 +443,7 @@ export default function EventManagementPage() {
                         )}
                         <button
                           onClick={() => setDeleteTarget(ev)}
-                          className="p-2.5 rounded-md text-red-400 hover:bg-red-500/15 transition"
+                          className="p-2 rounded-lg text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />

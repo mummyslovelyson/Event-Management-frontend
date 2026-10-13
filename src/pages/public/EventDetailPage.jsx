@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MapPin, Calendar, Clock, Share2, Heart, ChevronLeft, Ticket,
@@ -83,6 +83,8 @@ function EventCardSkeleton() {
 export default function EventDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isAdminView = location.pathname.startsWith('/admin');
   const { isAuthenticated, user: currentUser } = useAuth();
   const { format } = useCurrency();
 
@@ -701,8 +703,12 @@ export default function EventDetailPage() {
 
         <div className="absolute bottom-0 left-0 right-0">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-            <Link to="/explore" className="group inline-flex items-center gap-1 text-sm text-[#949599] hover:text-white mb-3 transition-colors">
-              <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Explore
+            <Link
+              to={isAdminView ? "/admin/events" : "/explore"}
+              className="group inline-flex items-center gap-1 text-sm text-[#949599] hover:text-white mb-3 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+              {isAdminView ? 'Back to Admin Events' : 'Back to Explore'}
             </Link>
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div className="max-w-2xl">
@@ -741,14 +747,14 @@ export default function EventDetailPage() {
                   title={isReminded ? 'Event reminders active (Click to configure preferences)' : 'Set event reminder'}
                   className={`relative w-11 h-11 rounded-lg backdrop-blur border flex items-center justify-center transition disabled:opacity-50 ${
                     isReminded
-                      ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-500/20'
+                      ? 'bg-white/15 border-white/40 text-white shadow-lg shadow-white/5'
                       : 'bg-[#171A1D]/90 border-[#494F55]/40 text-[#EFEFF1] hover:text-white hover:border-[#494F55]'
                   }`}
                 >
                   {isReminded ? (
                     <>
-                      <BellRing className="w-4 h-4 text-amber-400" />
-                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+                      <BellRing className="w-4 h-4 text-white" />
+                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
                     </>
                   ) : (
                     <Bell className="w-4 h-4" />
@@ -985,7 +991,7 @@ export default function EventDetailPage() {
                         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4 sm:p-5">
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                             <h4 className="text-xs font-bold uppercase tracking-wider text-[#949599] flex items-center gap-2">
-                              <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400/30" /> Featured Artists & Performers
+                              <Star className="w-3.5 h-3.5 text-white fill-white/20" /> Featured Artists & Performers
                             </h4>
                             <span className="text-[11px] text-[#6B7278]">Follow an artist to be notified when they have new events</span>
                           </div>
@@ -1054,7 +1060,7 @@ export default function EventDetailPage() {
                                       {Number(ticket.price) > 0 ? (
                                         format(ticket.price)
                                       ) : (ticket.uploaded_tickets?.length > 0 || ticket.uploadedTickets?.length > 0) ? (
-                                        <span className="text-lg text-amber-400 font-semibold">Amount on pass</span>
+                                        <span className="text-sm text-[#CBD5E1] font-semibold bg-[#242B32] px-2.5 py-1 rounded-md border border-[#32383F]">Amount on pass</span>
                                       ) : (
                                         'Free'
                                       )}
@@ -1274,11 +1280,11 @@ export default function EventDetailPage() {
                         {meetups.map((m) => {
                           const full = m.maxMembers > 0 && m.memberCount >= m.maxMembers;
                           const squadTypeLabels = {
-                            carpool: { label: 'Carpool / Ride Share', bg: 'bg-blue-500/15 text-blue-300 border-blue-500/30' },
-                            preparty: { label: 'Pre-Event Party', bg: 'bg-purple-500/15 text-purple-300 border-purple-500/30' },
-                            vip: { label: 'VIP Lounge Crew', bg: 'bg-amber-500/15 text-amber-300 border-amber-500/30' },
-                            food: { label: 'Drinks & Bites', bg: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
-                            general: { label: 'Squad Hangout', bg: 'bg-white/10 text-white border-white/20' },
+                            carpool: { label: 'Carpool / Ride Share', bg: 'bg-[#242B32] text-[#CBD5E1] border-[#32383F]' },
+                            preparty: { label: 'Pre-Event Party', bg: 'bg-[#242B32] text-[#CBD5E1] border-[#32383F]' },
+                            vip: { label: 'VIP Lounge Crew', bg: 'bg-white/10 text-white border-white/20' },
+                            food: { label: 'Drinks & Bites', bg: 'bg-[#242B32] text-[#CBD5E1] border-[#32383F]' },
+                            general: { label: 'Squad Hangout', bg: 'bg-[#242B32] text-[#CBD5E1] border-[#32383F]' },
                           };
                           const typeInfo = squadTypeLabels[m.type] || squadTypeLabels.general;
 
@@ -1872,7 +1878,7 @@ export default function EventDetailPage() {
                       transition={{ duration: 0.2 }}
                       className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                         isSelected
-                          ? 'border-amber-400/60 bg-amber-400/10 shadow-sm'
+                          ? 'border-white/40 bg-white/10 shadow-sm'
                           : 'border-[#494F55]/40 hover:border-[#494F55] bg-[#171A1D]/60'
                       }`}
                     >
@@ -1882,9 +1888,9 @@ export default function EventDetailPage() {
                         value={m.id}
                         checked={isSelected}
                         onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="w-4 h-4 mt-0.5 text-amber-400 focus:ring-amber-400/30 focus:ring-offset-0"
+                        className="w-4 h-4 mt-0.5 text-white accent-white focus:ring-white/30 focus:ring-offset-0"
                       />
-                      <m.icon className={`w-5 h-5 mt-0.5 shrink-0 ${isSelected ? 'text-amber-400' : 'text-[#949599]'}`} />
+                      <m.icon className={`w-5 h-5 mt-0.5 shrink-0 ${isSelected ? 'text-white' : 'text-[#949599]'}`} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
                           <span className={`text-sm font-semibold ${isSelected ? 'text-white' : 'text-[#EFEFF1]'}`}>{m.label}</span>
@@ -1923,9 +1929,9 @@ export default function EventDetailPage() {
             </div>
 
             {!isAuthenticated && (
-              <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between gap-3 text-xs">
+              <div className="p-3.5 rounded-xl bg-[#161D22] border border-[#262B2F] flex items-center justify-between gap-3 text-xs">
                 <div>
-                  <p className="font-semibold text-amber-300">Sign in to complete booking</p>
+                  <p className="font-semibold text-white">Sign in to complete booking</p>
                   <p className="text-[#949599] mt-0.5">Tickets are instantly delivered to your account and phone.</p>
                 </div>
                 <Link

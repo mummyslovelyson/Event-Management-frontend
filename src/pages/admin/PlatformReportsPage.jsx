@@ -97,7 +97,19 @@ export default function PlatformReportsPage() {
               <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#171A1D] border border-[#262B2F] text-xs text-[#EFEFF1] focus:outline-none focus:border-white/50" />
             </div>
             <button
-              onClick={() => exportCSV([{ section: 'Revenue', ...revenue }, { section: 'Users', ...users }, { section: 'Events', ...events }], 'platform-report.csv')}
+              onClick={() => {
+                if (!data) return toast.error('No report data available');
+                const rows = [
+                  { Metric: 'Total Gross Revenue', Value: format(revenue.total || 0), Period: range },
+                  { Metric: 'Revenue Growth vs Previous Period', Value: `${revenue.growth || 0}%`, Period: range },
+                  { Metric: 'Platform Commission (5%)', Value: format(revenue.commission || 0), Period: range },
+                  { Metric: 'New User Signups', Value: (users.newUsers || 0).toString(), Period: range },
+                  { Metric: 'Active Users', Value: (users.active || 0).toString(), Period: range },
+                  { Metric: 'User Retention Rate', Value: `${users.retention || 0}%`, Period: range },
+                  { Metric: 'Tickets Sold Volume', Value: (ticketTrend.reduce((acc, c) => acc + (c.tickets || 0), 0)).toString(), Period: range },
+                ];
+                exportCSV(rows, `platform-report-${range}.csv`);
+              }}
               className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-[#262B2F] text-xs font-medium text-[#EFEFF1] hover:bg-[#2A2F33] transition"
             >
               <Download className="w-3.5 h-3.5" /> CSV

@@ -147,9 +147,9 @@ export default function ReportsPage() {
   const netRevenue = summary.netRevenue ?? (totalRevenue - (summary.commission ?? 0));
   const commission = summary.commission ?? 0;
   const totalTicketsSold = summary.totalTicketsSold ?? 0;
-  const totalCapacity = summary.totalCapacity ?? Math.max(totalTicketsSold + 500, 1000);
+  const totalCapacity = summary.totalCapacity ?? 0;
   const ticketsSoldPct = totalCapacity > 0 ? Math.min(100, Math.round((totalTicketsSold / totalCapacity) * 100)) : 0;
-  const conversionRate = summary.conversionRate ?? 84.6;
+  const conversionRate = summary.conversionRate ?? 0;
   const ratePct = summary.checkInRate ?? attendance.rate ?? (attendance.total ? Math.round(((attendance.checkedIn || 0) / attendance.total) * 100) : 0);
 
   return (

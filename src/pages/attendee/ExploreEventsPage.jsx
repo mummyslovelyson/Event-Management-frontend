@@ -185,7 +185,7 @@ export default function ExploreEventsPage() {
                   </div>
                   <Link
                     to="/attendee/profile"
-                    className="text-xs font-medium text-amber-400 hover:underline underline-offset-4 shrink-0"
+                    className="text-xs font-semibold text-[#CBD5E1] hover:text-white underline underline-offset-4 shrink-0 transition"
                   >
                     Manage preferences
                   </Link>
@@ -254,7 +254,7 @@ export default function ExploreEventsPage() {
       <motion.div variants={itemFade} className="space-y-2.5">
         <div className="flex items-center justify-between">
           <p className="text-xs font-bold uppercase tracking-wider text-[#949599] flex items-center gap-1.5">
-            <Star className="w-3.5 h-3.5 text-amber-400" /> Discover Performers, Teams & Keynote Speakers
+            <Star className="w-3.5 h-3.5 text-white fill-white/20" /> Discover Performers, Teams & Keynote Speakers
           </p>
           <span className="text-[11px] text-[#494F55]">1-tap filter</span>
         </div>

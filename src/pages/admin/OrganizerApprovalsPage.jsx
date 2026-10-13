@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Building2, Users, Search, Eye, Ban, CheckCircle2, Trash2, UserCheck,
   Pencil, XCircle, ShieldCheck, KeyRound, Copy, LayoutGrid,
   Table as TableIcon, Download, LogOut, StickyNote, Clock, Monitor,
   Send, Loader2, X, FileText, Globe, MapPin, AlertTriangle, Check,
+  ExternalLink, Calendar, Ticket, DollarSign, CreditCard, ChevronRight,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
@@ -12,7 +14,7 @@ import {
   approveOrganizer, rejectOrganizer, resetUserPassword,
   getUserActivity, getUserSessions, getUserStats,
   forceLogoutUser, addAdminNote, getAdminNotes, deleteAdminNote,
-  exportUsersCSV, bulkDeleteUsers,
+  exportUsersCSV, bulkDeleteUsers, getAdminEvents,
 } from '@/api/admin';
 import Badge from '@/components/common/Badge';
 import StatCard from '@/components/common/StatCard';
@@ -61,11 +63,12 @@ const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F5
 const actionBtn = 'p-2 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition disabled:opacity-50';
 
 const panelTabs = [
-  { key: 'overview', label: 'Overview', icon: Eye },
-  { key: 'dossier', label: 'KYC Dossier', icon: FileText },
-  { key: 'activity', label: 'Activity', icon: Clock },
-  { key: 'sessions', label: 'Sessions', icon: Monitor },
-  { key: 'notes', label: 'Notes', icon: StickyNote },
+  { key: 'overview', label: 'Profile & Brand', icon: Building2 },
+  { key: 'events', label: 'Events Portfolio', icon: Calendar },
+  { key: 'financials', label: 'Payout Details', icon: CreditCard },
+  { key: 'sessions', label: 'Active Sessions', icon: Monitor },
+  { key: 'notes', label: 'Staff Notes', icon: StickyNote },
+  { key: 'activity', label: 'Activity Log', icon: Clock },
 ];
 
 export default function OrganizerApprovalsPage() {
@@ -107,17 +110,27 @@ export default function OrganizerApprovalsPage() {
   const [resetTarget, setResetTarget] = useState(null);
   const [resetResult, setResetResult] = useState(null);
 
+  const { id: routeOrgId } = useParams();
+  const navigate = useNavigate();
+
   // Slide-out detail drawer
   const [panelUser, setPanelUser] = useState(null);
   const [panelTab, setPanelTab] = useState('overview');
   const [panelDetail, setPanelDetail] = useState(null);
   const [panelStats, setPanelStats] = useState(null);
+  const [panelEvents, setPanelEvents] = useState([]);
   const [panelActivity, setPanelActivity] = useState([]);
   const [panelSessions, setPanelSessions] = useState([]);
   const [panelNotes, setPanelNotes] = useState([]);
   const [panelLoading, setPanelLoading] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [noteLoading, setNoteLoading] = useState(false);
+
+  useEffect(() => {
+    if (routeOrgId) {
+      openPanel({ id: routeOrgId });
+    }
+  }, [routeOrgId]);
 
   // Sync edit form on target change
   useEffect(() => {
@@ -400,17 +413,20 @@ export default function OrganizerApprovalsPage() {
     setPanelTab('overview');
     setPanelDetail(null);
     setPanelStats(null);
+    setPanelEvents([]);
     setPanelActivity([]);
     setPanelSessions([]);
     setPanelNotes([]);
     setPanelLoading(true);
     try {
-      const [detailRes, statsRes] = await Promise.all([
+      const [detailRes, statsRes, eventsRes] = await Promise.all([
         getUser(u.id),
         getUserStats(u.id),
+        getAdminEvents({ organizer_id: u.id, limit: 30 }).catch(() => ({ data: { events: [] } })),
       ]);
       setPanelDetail(detailRes.data.user || detailRes.data);
       setPanelStats(statsRes.data.stats || {});
+      setPanelEvents(eventsRes?.data?.events || []);
     } catch {
       toast.error('Failed to load organizer details');
     } finally {
@@ -421,12 +437,14 @@ export default function OrganizerApprovalsPage() {
   const refreshPanel = async () => {
     if (!panelUser) return;
     try {
-      const [detailRes, statsRes] = await Promise.all([
+      const [detailRes, statsRes, eventsRes] = await Promise.all([
         getUser(panelUser.id),
         getUserStats(panelUser.id),
+        getAdminEvents({ organizer_id: panelUser.id, limit: 30 }).catch(() => ({ data: { events: [] } })),
       ]);
       setPanelDetail(detailRes.data.user || detailRes.data);
       setPanelStats(statsRes.data.stats || {});
+      setPanelEvents(eventsRes?.data?.events || []);
     } catch {
       /* silent */
     }
@@ -435,6 +453,12 @@ export default function OrganizerApprovalsPage() {
   const loadPanelTab = async (key) => {
     setPanelTab(key);
     if (!panelUser) return;
+    if (key === 'events' && panelEvents.length === 0) {
+      try {
+        const res = await getAdminEvents({ organizer_id: panelUser.id, limit: 30 });
+        setPanelEvents(res.data.events || []);
+      } catch { /* */ }
+    }
     if (key === 'activity' && panelActivity.length === 0) {
       try {
         const res = await getUserActivity(panelUser.id);
@@ -883,21 +907,42 @@ export default function OrganizerApprovalsPage() {
         hideClose
         title={
           d ? (
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center text-base font-bold">
-                {initials(d.organizationName || d.name)}
-              </div>
-              <div>
-                <p className="text-base font-semibold text-[#EFEFF1] flex items-center gap-2">
-                  {d.organizationName || d.organization_name || d.name}
-                </p>
-                <p className="text-sm text-[#949599]">
-                  Contact: {d.name} • {d.email}
-                </p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="gold" size="sm">organizer</Badge>
-                  <Badge variant={getOrganizerStatus(d).variant} size="sm" dot>{getOrganizerStatus(d).label}</Badge>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-[#161D22] border border-[#262B2F] text-white flex items-center justify-center text-base font-bold shadow-inner ring-1 ring-white/10">
+                  {initials(d.organizationName || d.name)}
                 </div>
+                <div>
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <h3 className="text-base font-bold text-white tracking-tight">
+                      {d.organizationName || d.organization_name || d.name}
+                    </h3>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#161D22] border border-[#262B2F] text-[#EFEFF1]">
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        getOrganizerStatus(d).label === 'Approved' ? 'bg-emerald-400' :
+                        getOrganizerStatus(d).label === 'Suspended' ? 'bg-red-400' :
+                        getOrganizerStatus(d).label === 'Rejected' ? 'bg-red-400' : 'bg-amber-400'
+                      }`} />
+                      {getOrganizerStatus(d).label}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#949599] mt-0.5">
+                    Contact: {d.name} • {d.email} {d.phone ? `• ${d.phone}` : ''}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                <a
+                  href={`/organizers/${d.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] text-xs font-medium text-[#EFEFF1] border border-[#262B2F] hover:border-white/20 transition"
+                  title="Open live public storefront in new tab"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 text-[#CBD5E1]" />
+                  Public Storefront
+                </a>
               </div>
             </div>
           ) : undefined
@@ -905,101 +950,97 @@ export default function OrganizerApprovalsPage() {
       >
         {panelLoading && !d ? (
           <div className="flex items-center justify-center py-16">
-            <LoadingSpinner label="Loading organizer details..." />
+            <LoadingSpinner label="Loading organizer profile..." />
           </div>
         ) : d ? (
           <div className="space-y-5">
-            {/* Top action row */}
-            <div className="flex items-center gap-2 flex-wrap">
+            {/* Administrative Quick Actions */}
+            <div className="flex items-center gap-2 flex-wrap border-b border-[#262B2F] pb-3">
               <button
                 onClick={() => { setPanelUser(null); setEditTarget(d); }}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs font-medium text-[#EFEFF1] hover:border-white/40 transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] border border-[#262B2F] hover:border-white/20 text-xs font-medium text-[#CBD5E1] hover:text-white transition group"
               >
-                <Pencil className="w-3.5 h-3.5" /> Edit Profile
+                <Pencil className="w-3.5 h-3.5 text-[#949599] group-hover:text-white transition-colors" /> Edit Profile
               </button>
               <button
                 onClick={() => { setPanelUser(null); setResetTarget(d); setResetResult(null); }}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs font-medium text-[#EFEFF1] hover:border-white/40 transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] border border-[#262B2F] hover:border-white/20 text-xs font-medium text-[#CBD5E1] hover:text-white transition group"
               >
-                <KeyRound className="w-3.5 h-3.5" /> Reset Password
+                <KeyRound className="w-3.5 h-3.5 text-[#949599] group-hover:text-white transition-colors" /> Reset Password
               </button>
               <button
                 onClick={() => handleForceLogout(d.id)}
                 disabled={actionLoading === `logout-${d.id}`}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-xs font-medium text-[#EFEFF1] hover:border-white/40 transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] border border-[#262B2F] hover:border-white/20 text-xs font-medium text-[#CBD5E1] hover:text-white transition disabled:opacity-50 group"
               >
-                <LogOut className="w-3.5 h-3.5" /> Revoke Sessions
+                <LogOut className="w-3.5 h-3.5 text-[#949599] group-hover:text-white transition-colors" /> Revoke Sessions
               </button>
               {isSuspendedUser(d) ? (
                 <button
                   onClick={() => { setPanelUser(null); setSuspendTarget(d); setSuspendReason(''); }}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] border border-[#262B2F] hover:border-white/20 text-xs font-medium text-[#CBD5E1] hover:text-white transition group"
                 >
-                  <UserCheck className="w-3.5 h-3.5" /> Unsuspend
+                  <UserCheck className="w-3.5 h-3.5 text-[#949599] group-hover:text-white transition-colors" /> Unsuspend
                 </button>
               ) : (
                 <button
                   onClick={() => { setPanelUser(null); setSuspendTarget(d); setSuspendReason(''); }}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30 text-xs font-semibold hover:bg-amber-500/25 transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] border border-[#262B2F] hover:border-amber-500/30 text-xs font-medium text-[#CBD5E1] hover:text-amber-300 transition group"
                 >
-                  <Ban className="w-3.5 h-3.5" /> Suspend
+                  <Ban className="w-3.5 h-3.5 text-[#949599] group-hover:text-amber-300 transition-colors" /> Suspend
                 </button>
               )}
               <button
                 onClick={() => { setPanelUser(null); setDeleteTarget(d); }}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-red-500/10 border border-[#262B2F] hover:border-red-500/30 text-xs font-medium text-[#949599] hover:text-red-300 transition ml-auto group"
               >
-                <Trash2 className="w-3.5 h-3.5" /> Delete
+                <Trash2 className="w-3.5 h-3.5 text-[#949599] group-hover:text-red-400 transition-colors" /> Delete Account
               </button>
             </div>
 
-            {/* Direct Verification Banner if pending (NO inner decision radio buttons) */}
+            {/* Application Review Banner (if pending) */}
             {(!d.is_approved && d.status !== 'active' && d.status !== 'suspended' && d.status !== 'rejected') && (
-              <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm font-semibold text-amber-300 flex items-center gap-1.5">
-                    <Clock className="w-4 h-4 text-amber-400 shrink-0" />
-                    Pending Application Review
-                  </p>
-                  <p className="text-xs text-[#949599] mt-0.5">
-                    Inspect KYC details, business credentials, and event scope below before granting ticket publishing access.
-                  </p>
+              <div className="rounded-xl bg-[#161D22] border border-[#262B2F] p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-black/20">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center text-[#CBD5E1] shrink-0 mt-0.5">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-sm font-semibold text-white tracking-tight">Organizer Application Awaiting Review</h4>
+                      <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded bg-[#242B32] text-[#949599] border border-white/5">Action Required</span>
+                    </div>
+                    <p className="text-xs text-[#949599] mt-0.5 max-w-xl leading-relaxed">
+                      Review organization credentials and business profile below before granting publishing access.
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                   <button
                     onClick={() => { setRejectTarget(d); setRejectReason(''); }}
-                    className="px-3.5 py-1.5 rounded-lg bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition flex items-center gap-1.5"
+                    className="px-3.5 py-2 rounded-lg bg-[#242B32] hover:bg-red-500/10 border border-[#262B2F] hover:border-red-500/30 text-xs font-medium text-[#CBD5E1] hover:text-red-300 transition flex items-center gap-1.5"
                   >
-                    <XCircle className="w-3.5 h-3.5" /> Reject
+                    <XCircle className="w-3.5 h-3.5" /> Reject Application
                   </button>
                   <button
                     onClick={() => handleApprove(d)}
                     disabled={actionLoading === `approve-${d.id}`}
-                    className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md transition flex items-center gap-1.5 disabled:opacity-50"
+                    className="px-4 py-2 rounded-lg bg-white hover:bg-[#CBD5E1] text-[#1C232B] font-bold text-xs shadow-md transition flex items-center gap-1.5 disabled:opacity-50"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#1C232B]" />
                     {actionLoading === `approve-${d.id}` ? 'Approving...' : 'Approve Organizer'}
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Suspension banner if suspended */}
-            {d.isSuspended && (
-              <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-red-400">Account Suspended</p>
-                <p className="text-sm text-[#EFEFF1] mt-0.5">{d.suspendReason || 'No reason provided'}</p>
-                {d.suspendedAt && <p className="text-xs text-[#949599] mt-1">{fmtDateTime(d.suspendedAt)}</p>}
-              </div>
-            )}
-
             {/* Navigation Tabs inside Panel */}
-            <div className="flex gap-1 border-b border-[#262B2F] -mx-5 px-5">
+            <div className="flex gap-1 border-b border-[#262B2F] -mx-5 px-5 overflow-x-auto">
               {panelTabs.map((pt) => (
                 <button
                   key={pt.key}
                   onClick={() => loadPanelTab(pt.key)}
-                  className={`flex items-center gap-1.5 px-3 py-3 text-xs font-medium border-b-2 transition ${
+                  className={`flex items-center gap-1.5 px-3 py-3 text-xs font-medium border-b-2 transition whitespace-nowrap ${
                     panelTab === pt.key
                       ? 'border-white text-[#EFEFF1]'
                       : 'border-transparent text-[#949599] hover:text-[#EFEFF1]'
@@ -1012,40 +1053,38 @@ export default function OrganizerApprovalsPage() {
             </div>
 
             {/* Tab Views */}
-            <div className="min-h-[220px]">
-              {/* Tab: Overview */}
+            <div className="min-h-[260px]">
+              {/* Tab: Overview & Profile */}
               {panelTab === 'overview' && (
                 <div className="space-y-4">
                   {pStats && (
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {[
-                        { l: 'Events', v: pStats.events || d.eventsCount || 0 },
-                        { l: 'Tickets', v: pStats.tickets || d.ticketsCount || 0 },
-                        { l: 'Revenue', v: `₵${(pStats.revenue || 0).toLocaleString()}` },
-                        { l: 'Orders', v: pStats.orders || 0 },
-                        { l: 'Reviews', v: pStats.reviews || 0 },
-                        { l: 'Active Sessions', v: pStats.activeSessions || 0 },
+                        { l: 'Events Hosted', v: pStats.events || d.eventsCount || 0 },
+                        { l: 'Tickets Sold', v: pStats.tickets || d.ticketsCount || 0 },
+                        { l: 'Total Revenue', v: `₵${(pStats.revenue || 0).toLocaleString()}` },
+                        { l: 'Completed Orders', v: pStats.orders || 0 },
                       ].map((s) => (
-                        <div key={s.l} className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-3 text-center">
-                          <p className="text-lg font-semibold text-[#EFEFF1] tabular-nums">{s.v}</p>
-                          <p className="text-[10px] text-[#949599] uppercase tracking-wider mt-0.5">{s.l}</p>
+                        <div key={s.l} className="rounded-xl bg-[#1C232B]/60 border border-[#262B2F] p-3 text-center">
+                          <p className="text-xl font-bold text-[#EFEFF1] tabular-nums">{s.v}</p>
+                          <p className="text-[10px] text-[#949599] uppercase tracking-wider mt-1">{s.l}</p>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
-                      { l: 'Organization / Brand', v: d.organizationName || d.organization_name || d.name || '—' },
-                      { l: 'Category / Industry', v: d.category || d.org_category || d.organization?.category || 'General Events' },
-                      { l: 'Operating City / Region', v: d.city || d.location || d.organization?.city || '—' },
-                      { l: 'Contact Phone Number', v: d.phone || '—' },
-                      { l: 'Official Website / Link', v: d.website || d.organization?.website || '—', isLink: true },
-                      { l: 'Date Registered', v: fmtDate(d.created_at || d.createdAt) },
+                      { l: 'Brand / Organization', v: d.organizationName || d.organization_name || d.name || '—' },
+                      { l: 'Event Category', v: d.category || d.org_category || d.organization?.category || 'General Events' },
+                      { l: 'Operating Location', v: d.city || d.location || d.organization?.city || '—' },
+                      { l: 'Contact Phone', v: d.phone || '—' },
+                      { l: 'Official Website', v: d.website || d.organization?.website || '—', isLink: true },
+                      { l: 'Joined Platform', v: fmtDate(d.created_at || d.createdAt) },
                       { l: 'Email Verification', v: (d.email_verified || d.emailVerified) ? 'Verified' : 'Unverified' },
                       { l: 'Last Active', v: d.last_login_at ? fmtDateTime(d.last_login_at) : '—' },
                     ].map((f) => (
-                      <div key={f.l} className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-3">
+                      <div key={f.l} className="rounded-lg bg-[#1C232B]/40 border border-[#262B2F] p-3">
                         <p className="text-xs text-[#949599]">{f.l}</p>
                         {f.isLink && f.v !== '—' ? (
                           <a
@@ -1064,8 +1103,8 @@ export default function OrganizerApprovalsPage() {
                   </div>
 
                   {(d.bio || d.org_description || d.organization?.description || d.description) && (
-                    <div className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-4">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Organization Bio &amp; Event Scope</p>
+                    <div className="rounded-xl bg-[#1C232B]/40 border border-[#262B2F] p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Organizer Bio &amp; Scope</p>
                       <p className="text-sm text-[#EFEFF1] leading-relaxed whitespace-pre-wrap">
                         {d.bio || d.org_description || d.organization?.description || d.description}
                       </p>
@@ -1074,73 +1113,103 @@ export default function OrganizerApprovalsPage() {
                 </div>
               )}
 
-              {/* Tab: KYC Dossier */}
-              {panelTab === 'dossier' && (
-                <div className="space-y-4">
-                  <div className="rounded-lg bg-[#1C232B]/50 border border-[#494F55]/20 p-4 space-y-3">
-                    <div className="flex items-center justify-between border-b border-[#262B2F] pb-3">
-                      <div>
-                        <h4 className="text-sm font-semibold text-[#EFEFF1]">Verification Credentials</h4>
-                        <p className="text-xs text-[#949599]">Identity and contact proof submitted during onboarding</p>
-                      </div>
-                      <Badge variant={getOrganizerStatus(d).variant} size="sm" dot>{getOrganizerStatus(d).label}</Badge>
+              {/* Tab: Events Portfolio */}
+              {panelTab === 'events' && (
+                <div className="space-y-3">
+                  {panelEvents.length === 0 ? (
+                    <div className="py-12 text-center rounded-xl bg-[#1C232B]/30 border border-[#262B2F] p-6">
+                      <Calendar className="w-8 h-8 text-[#949599] mx-auto mb-2 opacity-50" />
+                      <p className="text-sm font-medium text-[#EFEFF1]">No events found for this organizer</p>
+                      <p className="text-xs text-[#949599] mt-1 mb-4">You can create an event directly on behalf of this organizer.</p>
+                      <Link
+                        to="/admin/events/create"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-xs font-semibold hover:bg-slate-200 transition"
+                      >
+                        Create Event for Organizer
+                      </Link>
                     </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {panelEvents.map((ev) => (
+                        <div
+                          key={ev.id}
+                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-[#1C232B]/50 border border-[#262B2F] hover:border-white/30 transition group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            {ev.banner_image || ev.banner || ev.thumbnail ? (
+                              <img
+                                src={ev.banner_image || ev.banner || ev.thumbnail}
+                                alt=""
+                                className="w-12 h-12 rounded-lg object-cover shrink-0"
+                              />
+                            ) : (
+                              <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                                <Calendar className="w-5 h-5 text-white" />
+                              </div>
+                            )}
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="font-semibold text-sm text-[#EFEFF1] truncate">{ev.title}</p>
+                                <Badge variant={ev.status === 'published' ? 'success' : ev.status === 'pending' ? 'warning' : 'neutral'} size="xs">
+                                  {ev.status}
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-[#949599] mt-0.5 truncate">
+                                {fmtDate(ev.start_date || ev.startDate)} • {ev.venue || ev.location || 'Venue TBA'}
+                              </p>
+                            </div>
+                          </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
-                        <p className="text-[#949599]">Organization Legal / Brand Name</p>
-                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.organizationName || d.organization_name || d.name}</p>
-                      </div>
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
-                        <p className="text-[#949599]">Registered Contact Person</p>
-                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.name}</p>
-                      </div>
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
-                        <p className="text-[#949599]">Work Email Address</p>
-                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.email}</p>
-                      </div>
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
-                        <p className="text-[#949599]">Operating Phone</p>
-                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.phone || '—'}</p>
-                      </div>
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
-                        <p className="text-[#949599]">Operating City</p>
-                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.city || d.location || '—'}</p>
-                      </div>
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
-                        <p className="text-[#949599]">Industry Category</p>
-                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.category || d.org_category || 'General Events'}</p>
-                      </div>
+                          <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                            <Link
+                              to={`/admin/events/${ev.id}`}
+                              className="px-3 py-1.5 rounded-lg bg-[#262B2F] hover:bg-[#343B42] text-xs font-medium text-[#EFEFF1] transition"
+                            >
+                              View in Admin
+                            </Link>
+                            <Link
+                              to={`/admin/events/${ev.id}/edit`}
+                              className="p-1.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition"
+                              title="Edit"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-
-                    {(d.bio || d.org_description || d.organization?.description || d.description) && (
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F] mt-2">
-                        <p className="text-xs text-[#949599] font-medium mb-1">Declared Scope of Events</p>
-                        <p className="text-xs text-[#EFEFF1] leading-relaxed whitespace-pre-wrap">
-                          {d.bio || d.org_description || d.organization?.description || d.description}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               )}
 
-              {/* Tab: Activity */}
-              {panelTab === 'activity' && (
-                <div className="space-y-2">
-                  {panelActivity.length === 0 ? (
-                    <EmptyState icon={Clock} title="No activity recorded" description="Organizer actions will appear here." className="py-8" />
-                  ) : (
-                    panelActivity.map((a, i) => (
-                      <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-[#1C232B]/40 border border-[#494F55]/20 text-xs">
-                        <div>
-                          <p className="font-medium text-[#EFEFF1]">{a.action || a.activity_type || 'Activity'}</p>
-                          <p className="text-[#949599] mt-0.5">{a.description || a.details || '—'}</p>
-                        </div>
-                        <span className="text-[#949599] shrink-0">{fmtDateTime(a.created_at)}</span>
+              {/* Tab: Payout Details */}
+              {panelTab === 'financials' && (
+                <div className="space-y-4">
+                  <div className="rounded-xl bg-[#1C232B]/50 border border-[#262B2F] p-4 space-y-3">
+                    <h4 className="text-sm font-semibold text-[#EFEFF1] flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-emerald-400" /> Banking &amp; Settlement Account
+                    </h4>
+                    <p className="text-xs text-[#949599]">Payment details used for ticket revenue disbursement</p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
+                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
+                        <p className="text-[#949599]">Payout Method</p>
+                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5 capitalize">{d.payout_method || 'Bank Transfer'}</p>
                       </div>
-                    ))
-                  )}
+                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
+                        <p className="text-[#949599]">Bank / Mobile Money Provider</p>
+                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.bank_name || d.momo_provider || 'Not provided'}</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
+                        <p className="text-[#949599]">Account Name</p>
+                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.account_name || d.name || 'Not provided'}</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
+                        <p className="text-[#949599]">Account Number / Phone</p>
+                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.account_number || d.mobile_money || d.phone || 'Not provided'}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -1204,6 +1273,25 @@ export default function OrganizerApprovalsPage() {
                       ))
                     )}
                   </div>
+                </div>
+              )}
+
+              {/* Tab: Activity */}
+              {panelTab === 'activity' && (
+                <div className="space-y-2">
+                  {panelActivity.length === 0 ? (
+                    <EmptyState icon={Clock} title="No activity recorded" description="Organizer actions will appear here." className="py-8" />
+                  ) : (
+                    panelActivity.map((a, i) => (
+                      <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-[#1C232B]/40 border border-[#494F55]/20 text-xs">
+                        <div>
+                          <p className="font-medium text-[#EFEFF1]">{a.action || a.activity_type || 'Activity'}</p>
+                          <p className="text-[#949599] mt-0.5">{a.description || a.details || '—'}</p>
+                        </div>
+                        <span className="text-[#949599] shrink-0">{fmtDateTime(a.created_at)}</span>
+                      </div>
+                    ))
+                  )}
                 </div>
               )}
             </div>
@@ -1357,8 +1445,10 @@ export default function OrganizerApprovalsPage() {
               <button
                 onClick={handleToggleSuspend}
                 disabled={actionLoading === `suspend-${suspendTarget.id}`}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold text-white transition ${
-                  suspendTarget.status === 'suspended' ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-amber-600 hover:bg-amber-500'
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+                  suspendTarget.status === 'suspended'
+                    ? 'bg-white hover:bg-[#CBD5E1] text-[#1C232B] shadow-md font-bold'
+                    : 'bg-[#242B32] hover:bg-amber-500/20 text-[#CBD5E1] hover:text-amber-300 border border-[#262B2F] hover:border-amber-500/40'
                 }`}
               >
                 {actionLoading === `suspend-${suspendTarget.id}` ? 'Processing...' : suspendTarget.status === 'suspended' ? 'Confirm Unsuspend' : 'Confirm Suspension'}
@@ -1405,7 +1495,7 @@ export default function OrganizerApprovalsPage() {
               <button
                 onClick={handleReject}
                 disabled={actionLoading === `reject-${rejectTarget.id}`}
-                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-semibold transition disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-[#242B32] hover:bg-red-500/20 text-[#CBD5E1] hover:text-red-300 border border-[#262B2F] hover:border-red-500/40 text-sm font-semibold transition disabled:opacity-50"
               >
                 {actionLoading === `reject-${rejectTarget.id}` ? 'Rejecting...' : 'Confirm Rejection'}
               </button>
@@ -1447,7 +1537,7 @@ export default function OrganizerApprovalsPage() {
               <button
                 onClick={handleResetPassword}
                 disabled={actionLoading === `reset-${resetTarget.id}`}
-                className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-slate-200 transition disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50"
               >
                 {actionLoading === `reset-${resetTarget.id}` ? 'Resetting...' : 'Execute Reset'}
               </button>
@@ -1471,9 +1561,9 @@ export default function OrganizerApprovalsPage() {
               />
             </div>
             {resetResult?.temporaryPassword && (
-              <div className="p-3.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-                <p className="text-xs text-emerald-400 font-semibold mb-1">Generated Temporary Password:</p>
-                <code className="text-sm font-mono text-emerald-200 select-all block bg-black/40 px-2 py-1 rounded">
+              <div className="p-3.5 rounded-lg bg-[#161D22] border border-[#262B2F]">
+                <p className="text-xs text-[#CBD5E1] font-semibold mb-1">Generated Temporary Password:</p>
+                <code className="text-sm font-mono text-white select-all block bg-black/40 px-2 py-1 rounded">
                   {resetResult.temporaryPassword}
                 </code>
               </div>
@@ -1497,7 +1587,7 @@ export default function OrganizerApprovalsPage() {
               <button
                 onClick={handleDelete}
                 disabled={actionLoading === `delete-${deleteTarget.id}`}
-                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-semibold transition disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-[#242B32] hover:bg-red-500/20 text-[#CBD5E1] hover:text-red-300 border border-[#262B2F] hover:border-red-500/40 text-sm font-semibold transition disabled:opacity-50"
               >
                 {actionLoading === `delete-${deleteTarget.id}` ? 'Deleting...' : 'Delete Permanently'}
               </button>
@@ -1507,8 +1597,8 @@ export default function OrganizerApprovalsPage() {
       >
         {deleteTarget && (
           <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
-              <AlertTriangle className="w-5 h-5 shrink-0" />
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-[#161D22] border border-red-500/20 text-red-300 text-sm">
+              <AlertTriangle className="w-5 h-5 shrink-0 text-red-400" />
               <span>This action is destructive and irreversible.</span>
             </div>
             <p className="text-sm text-[#949599]">

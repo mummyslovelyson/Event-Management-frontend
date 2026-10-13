@@ -147,7 +147,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
                     disabled={reminderLoading}
                     aria-label={`Set reminder for ${event.title}`}
                     className={`p-2 rounded-full backdrop-blur-sm transition ${
-                      reminded ? 'bg-amber-500/30 text-amber-400' : 'bg-[#1C232B] text-[#949599] hover:text-white'
+                      reminded ? 'bg-white/20 text-white' : 'bg-[#1C232B] text-[#949599] hover:text-white'
                     }`}
                     title="Reminder"
                   >
@@ -229,8 +229,8 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
                 </span>
               )}
               {event.recommendationBadge && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-gradient-to-r from-amber-500/90 to-orange-500/90 text-black backdrop-blur-md shadow-md shadow-amber-500/20">
-                  <Star className="w-2.5 h-2.5 fill-black" />
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-white text-[#1C232B] backdrop-blur-md shadow-md shadow-black/20">
+                  <Star className="w-2.5 h-2.5 fill-[#1C232B]" />
                   {event.recommendationBadge}
                 </span>
               )}
@@ -244,8 +244,8 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
                 whileTap={{ scale: 0.8 }}
                 className={`w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition disabled:opacity-50 ${
                   reminded
-                    ? 'bg-amber-500/40 text-amber-400 border border-amber-500/60 shadow-lg shadow-amber-500/20'
-                    : 'bg-[#1C232B]/90 text-[#EFEFF1] hover:text-amber-400 hover:scale-110'
+                    ? 'bg-white/20 text-white border border-white/40 shadow-lg shadow-black/20'
+                    : 'bg-[#1C232B]/90 text-[#EFEFF1] hover:text-white hover:scale-110'
                 }`}
                 aria-label="Set event reminder"
                 title={reminded ? 'Reminder active (click to remove)' : 'Set event reminder'}

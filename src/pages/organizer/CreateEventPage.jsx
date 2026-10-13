@@ -69,6 +69,7 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
   const currentCategory = watch('category');
   const currentOrgId = watch('organizerId');
   const [orgSearch, setOrgSearch] = useState('');
+  const [isSearchingOrg, setIsSearchingOrg] = useState(false);
   const fileRef = useRef(null);
   const galleryRef = useRef(null);
   const [uploading, setUploading] = useState(null); // 'banner' | 'gallery'
@@ -98,6 +99,10 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
     if (!currentOrgId) return null;
     return organizers.find((o) => String(o.id) === String(currentOrgId)) || null;
   }, [organizers, currentOrgId]);
+
+  const getInitials = (str = '') => {
+    return str.split(' ').map((w) => w[0]).filter(Boolean).join('').slice(0, 2).toUpperCase() || 'OR';
+  };
 
   const handleBanner = async (e) => {
     const file = e.target.files?.[0];
@@ -157,17 +162,18 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
     <div className="space-y-6">
       {/* Admin Organizer Selector */}
       {isAdmin && (
-        <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-[#1C232B] via-[#171A1D] to-[#12161A] border border-amber-500/30 space-y-3.5 shadow-sm">
+        <div className="p-4 sm:p-5 rounded-xl bg-[#161D22] border border-[#262B2F] space-y-4 shadow-sm">
+          {/* Header */}
           <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-amber-400/10 text-amber-400 flex items-center justify-center border border-amber-400/20">
-                <UserCheck className="w-5 h-5" />
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-[#242B32] border border-[#32383F] text-[#CBD5E1] flex items-center justify-center shrink-0">
+                <Building2 className="w-4 h-4 text-white" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
                   Event Organizer &amp; Host Assignment
-                  <span className="text-[10px] font-semibold bg-amber-400/15 text-amber-400 px-2 py-0.5 rounded border border-amber-400/30 uppercase tracking-wider">
-                    Admin Privilege
+                  <span className="text-[10px] font-mono uppercase tracking-wider bg-[#242B32] text-[#949599] border border-white/5 px-2 py-0.5 rounded">
+                    Admin Control
                   </span>
                 </h3>
                 <p className="text-xs text-[#949599] mt-0.5">
@@ -176,79 +182,144 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
               </div>
             </div>
             {loadingOrganizers && (
-              <span className="text-xs text-amber-400 animate-pulse">Loading organizers...</span>
+              <span className="text-xs text-[#CBD5E1] animate-pulse">Loading organizers...</span>
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-            <div>
-              <label className={labelCls}>Select Organizer *</label>
-              <select
-                {...register('organizerId', {
-                  required: isAdmin ? 'Please select an organizer for this event' : false,
-                })}
-                className={inputCls}
-              >
-                <option value="">Choose an organizer...</option>
-                {filteredOrganizers.map((org) => (
-                  <option key={org.id} value={org.id}>
-                    {org.isSelf ? '⭐ ' : ''}{org.organizationName ? `${org.organizationName} (${org.name})` : org.name} • {org.email}
-                  </option>
-                ))}
-              </select>
-              {errors.organizerId && <p className={errCls}>{errors.organizerId.message}</p>}
-            </div>
+          {/* Hidden input registered for form validation */}
+          <input
+            type="hidden"
+            {...register('organizerId', {
+              required: isAdmin ? 'Please select an organizer for this event' : false,
+            })}
+          />
+          {errors.organizerId && <p className={errCls}>{errors.organizerId.message}</p>}
 
-            <div>
-              <label className={labelCls}>Filter Organizers by Name / Email</label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-                <input
-                  type="text"
-                  value={orgSearch}
-                  onChange={(e) => setOrgSearch(e.target.value)}
-                  placeholder="Type to filter organizer list..."
-                  className={`${inputCls} pl-9`}
-                />
-              </div>
-            </div>
-          </div>
-
-          {selectedOrganizer && (
-            <motion.div
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="p-3 rounded-lg bg-[#111417] border border-[#262B2F] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs"
-            >
+          {/* Selected Organizer Summary Card */}
+          {selectedOrganizer && !isSearchingOrg ? (
+            <div className="p-3.5 rounded-xl bg-[#1C232B] border border-[#262B2F] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 font-bold flex items-center justify-center shrink-0">
-                  {selectedOrganizer.name?.[0]?.toUpperCase() || 'O'}
+                <div className="w-10 h-10 rounded-xl bg-[#161D22] border border-[#262B2F] text-white flex items-center justify-center font-bold text-sm ring-1 ring-white/10 shadow-inner shrink-0">
+                  {getInitials(selectedOrganizer.organizationName || selectedOrganizer.name)}
                 </div>
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold text-white text-sm truncate">
                       {selectedOrganizer.organizationName || selectedOrganizer.name}
                     </span>
-                    {selectedOrganizer.isApproved && (
-                      <span className="text-[10px] bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 rounded font-medium border border-emerald-500/20">
-                        Verified Host
-                      </span>
-                    )}
-                    {selectedOrganizer.isSelf && (
-                      <span className="text-[10px] bg-amber-400/15 text-amber-400 px-1.5 py-0.5 rounded font-medium border border-amber-400/20">
-                        Admin Account
-                      </span>
-                    )}
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#161D22] border border-[#262B2F] text-[#CBD5E1]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      {selectedOrganizer.isSelf ? 'Admin Account' : 'Verified Host'}
+                    </span>
                   </div>
-                  <p className="text-[11px] text-[#949599] truncate">
+                  <p className="text-xs text-[#949599] mt-0.5 truncate">
                     {selectedOrganizer.email} {selectedOrganizer.phone ? `• ${selectedOrganizer.phone}` : ''}
                   </p>
                 </div>
               </div>
-              <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20 shrink-0 self-start sm:self-center">
-                ✓ Assigned Event Host
-              </span>
-            </motion.div>
+
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => { setIsSearchingOrg(true); setOrgSearch(''); }}
+                  className="px-3 py-1.5 rounded-lg bg-[#242B32] hover:bg-[#2C343D] text-xs font-semibold text-[#EFEFF1] border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
+                >
+                  Change Organizer
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Searchable Organizer Picker */
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between gap-2">
+                <label className={labelCls}>
+                  {selectedOrganizer ? 'Search & Choose Replacement Organizer' : 'Select Organizer *'}
+                </label>
+                {selectedOrganizer && (
+                  <button
+                    type="button"
+                    onClick={() => setIsSearchingOrg(false)}
+                    className="text-xs text-[#949599] hover:text-[#EFEFF1] transition cursor-pointer"
+                  >
+                    Keep Current Selection
+                  </button>
+                )}
+              </div>
+
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#949599]" />
+                <input
+                  type="text"
+                  value={orgSearch}
+                  onChange={(e) => setOrgSearch(e.target.value)}
+                  placeholder="Search by business name, organizer name, or email..."
+                  className={`${inputCls} pl-9 pr-8`}
+                  autoFocus={isSearchingOrg}
+                />
+                {orgSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setOrgSearch('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#949599] hover:text-[#EFEFF1]"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Filtered Results Dropdown */}
+              <div className="max-h-56 overflow-y-auto rounded-xl bg-[#171A1D] border border-[#262B2F] divide-y divide-[#262B2F]/60">
+                {filteredOrganizers.length === 0 ? (
+                  <div className="p-4 text-center text-xs text-[#949599]">
+                    No organizers found matching &ldquo;{orgSearch}&rdquo;
+                  </div>
+                ) : (
+                  filteredOrganizers.map((org) => {
+                    const isSelected = String(currentOrgId) === String(org.id);
+                    return (
+                      <div
+                        key={org.id}
+                        onClick={() => {
+                          setValue('organizerId', org.id, { shouldValidate: true, shouldDirty: true });
+                          setIsSearchingOrg(false);
+                          setOrgSearch('');
+                        }}
+                        className={`p-3 flex items-center justify-between gap-3 cursor-pointer transition ${
+                          isSelected
+                            ? 'bg-white/10 text-white'
+                            : 'hover:bg-[#1E2328] text-[#CBD5E1]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-8 h-8 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center font-bold text-xs text-white shrink-0">
+                            {getInitials(org.organizationName || org.name)}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold text-[#EFEFF1] truncate">
+                              {org.organizationName ? `${org.organizationName} (${org.name})` : org.name}
+                            </p>
+                            <p className="text-[11px] text-[#949599] truncate">
+                              {org.email} {org.phone ? `• ${org.phone}` : ''}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          {org.isSelf && (
+                            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-[#242B32] text-[#949599] border border-white/5">
+                              Admin
+                            </span>
+                          )}
+                          {isSelected && (
+                            <Check className="w-4 h-4 text-white" />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
           )}
         </div>
       )}
@@ -315,8 +386,8 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
           onClick={() => { if (!uploading) fileRef.current?.click(); }}
           className={`relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
             bannerUrl
-              ? 'border-emerald-500/40 bg-[#171A1D]'
-              : 'border-[#494F55]/50 hover:border-white/40 bg-[#171A1D]'
+              ? 'border-white/30 bg-[#161D22]'
+              : 'border-[#494F55]/50 hover:border-white/40 bg-[#161D22]'
           }`}
         >
           {uploading === 'banner' ? (
@@ -470,7 +541,7 @@ const StepLocation = () => {
             <div>
               <div className="text-sm font-semibold text-[#EFEFF1] flex items-center gap-1.5">
                 Physical Venue
-                {locationType === 'physical' && <Check className="w-4 h-4 text-emerald-400" />}
+                {locationType === 'physical' && <Check className="w-4 h-4 text-white" />}
               </div>
               <p className="text-xs text-[#949599] mt-0.5">In-person gathering at a hall, beach, arena, or outdoor grounds.</p>
             </div>
@@ -491,7 +562,7 @@ const StepLocation = () => {
             <div>
               <div className="text-sm font-semibold text-[#EFEFF1] flex items-center gap-1.5">
                 Online / Virtual
-                {locationType === 'online' && <Check className="w-4 h-4 text-emerald-400" />}
+                {locationType === 'online' && <Check className="w-4 h-4 text-white" />}
               </div>
               <p className="text-xs text-[#949599] mt-0.5">Livestreamed via Zoom, YouTube Live, Google Meet, etc.</p>
             </div>
@@ -538,10 +609,10 @@ const StepLocation = () => {
                 type="button"
                 onClick={detectGps}
                 disabled={detectingGps}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-400 hover:text-amber-300 transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#CBD5E1] hover:text-white px-2.5 py-1 rounded-md bg-[#242B32] hover:bg-[#2C343D] border border-[#262B2F] transition cursor-pointer disabled:opacity-50"
               >
-                <Navigation className={`w-3.5 h-3.5 ${detectingGps ? 'animate-spin' : ''}`} />
-                <span>{detectingGps ? 'Detecting GPS...' : '📍 Use Current GPS'}</span>
+                <Navigation className={`w-3.5 h-3.5 text-[#CBD5E1] ${detectingGps ? 'animate-spin' : ''}`} />
+                <span>{detectingGps ? 'Detecting Location...' : 'Auto-Detect Coordinates'}</span>
               </button>
             </div>
             <div className="relative">
@@ -642,32 +713,32 @@ const StepDateTime = () => {
   return (
     <div className="space-y-6">
       {/* Quick Schedule Presets */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#242B32]/70 border border-[#3A4045]">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#161D22] border border-[#262B2F]">
         <div className="flex items-center gap-2 text-xs text-[#949599]">
-          <Clock className="w-4 h-4 text-amber-400" />
+          <Clock className="w-4 h-4 text-[#CBD5E1]" />
           <span>Quick schedule helpers:</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setPreset('sameday')}
-            className="px-2.5 py-1.5 rounded-md bg-[#171A1D] hover:bg-white/10 text-[#EFEFF1] text-xs font-medium border border-[#494F55]/40 transition"
+            className="px-3 py-1.5 rounded-lg bg-[#242B32] hover:bg-[#2C343D] text-[#CBD5E1] hover:text-white text-xs font-semibold border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
           >
-            ⚡ Same Day
+            Same Day
           </button>
           <button
             type="button"
             onClick={() => setPreset('nextday')}
-            className="px-2.5 py-1.5 rounded-md bg-[#171A1D] hover:bg-white/10 text-[#EFEFF1] text-xs font-medium border border-[#494F55]/40 transition"
+            className="px-3 py-1.5 rounded-lg bg-[#242B32] hover:bg-[#2C343D] text-[#CBD5E1] hover:text-white text-xs font-semibold border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
           >
-            🌙 Overnight
+            Overnight
           </button>
           <button
             type="button"
             onClick={() => setPreset('weekend')}
-            className="px-2.5 py-1.5 rounded-md bg-[#171A1D] hover:bg-white/10 text-[#EFEFF1] text-xs font-medium border border-[#494F55]/40 transition"
+            className="px-3 py-1.5 rounded-lg bg-[#242B32] hover:bg-[#2C343D] text-[#CBD5E1] hover:text-white text-xs font-semibold border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
           >
-            🎪 3-Day Festival
+            3-Day Weekend
           </button>
         </div>
       </div>
@@ -737,7 +808,7 @@ const StepDateTime = () => {
             <p className="text-xs font-medium text-[#EFEFF1]">Event Time Zone</p>
             <p className="text-[11px] text-[#6B7278]">GMT / Greenwich Mean Time (Accra, London)</p>
           </div>
-          <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+          <span className="text-[11px] font-semibold text-[#CBD5E1] bg-[#161D22] px-2.5 py-0.5 rounded-full border border-[#262B2F]">
             UTC +0
           </span>
         </div>
@@ -830,22 +901,22 @@ const StepTickets = () => {
   return (
     <div className="space-y-5">
       {/* 1-Click Ghanaian Standard Tiers Preset */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-[#1C232B] to-[#1C232B] border border-amber-500/30 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-[#161D22] border border-[#262B2F] shadow-sm">
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5" />
+          <div className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+            <Layers className="w-3.5 h-3.5 text-[#CBD5E1]" />
             Standard Admission Matrix
           </div>
           <p className="text-xs text-[#949599] mt-0.5">
-            Quickly fill the platform standard admission tiers: Regular GHS 100 &bull; VIP GHS 250 &bull; VVIP GHS 500
+            Quickly fill platform standard admission tiers: Regular GHS 100 &bull; VIP GHS 250 &bull; VVIP GHS 500
           </p>
         </div>
         <button
           type="button"
           onClick={loadGhanaianStandardPreset}
-          className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold transition shadow cursor-pointer shrink-0"
+          className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition shadow-sm cursor-pointer shrink-0"
         >
-          ⚡ Load Standard Matrix (Regular • VIP • VVIP)
+          Load Standard Matrix (Regular • VIP • VVIP)
         </button>
       </div>
 
@@ -859,9 +930,9 @@ const StepTickets = () => {
           <span className="text-[11px] font-medium text-[#949599] block uppercase">Total Capacity</span>
           <span className="text-lg font-bold text-white">{stats.totalQty.toLocaleString()} tickets</span>
         </div>
-        <div className="col-span-2 sm:col-span-1 p-3.5 rounded-xl bg-[#171A1D] border border-amber-500/20">
-          <span className="text-[11px] font-medium text-amber-400 block uppercase">Projected Gross Revenue</span>
-          <span className="text-lg font-bold text-amber-400">{format(stats.totalGross)}</span>
+        <div className="col-span-2 sm:col-span-1 p-3.5 rounded-xl bg-[#171A1D] border border-white/10">
+          <span className="text-[11px] font-medium text-[#949599] block uppercase">Projected Gross Revenue</span>
+          <span className="text-lg font-bold text-white">{format(stats.totalGross)}</span>
         </div>
       </div>
 
@@ -890,7 +961,7 @@ const StepTickets = () => {
                       {watch(`ticketTypes.${i}.name`) || `Ticket Tier ${i + 1}`}
                     </span>
                     {hasUploaded && (
-                      <span className="text-[10px] font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">
+                      <span className="text-[10px] font-semibold text-[#CBD5E1] bg-[#161D22] px-2.5 py-0.5 rounded-full border border-[#262B2F]">
                         {currentUploaded.length} pre-generated passes
                       </span>
                     )}
@@ -943,7 +1014,7 @@ const StepTickets = () => {
                           key={presetPrice}
                           type="button"
                           onClick={() => setValue(`ticketTypes.${i}.price`, presetPrice, { shouldDirty: true, shouldValidate: true })}
-                          className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#262B2F] hover:bg-white/10 text-[#949599] hover:text-white border border-[#3A4045] transition cursor-pointer"
+                          className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#242B32] hover:bg-[#2C343D] text-[#CBD5E1] hover:text-white border border-[#262B2F] transition cursor-pointer"
                         >
                           {presetPrice === 0 ? 'Free (0)' : `${presetPrice}`}
                         </button>
@@ -963,7 +1034,7 @@ const StepTickets = () => {
                       })}
                       readOnly={hasUploaded}
                       placeholder="Capacity limit"
-                      className={`${inputCls} ${hasUploaded ? 'bg-[#12161A] text-amber-300 font-bold border-amber-400/30' : ''}`}
+                      className={`${inputCls} ${hasUploaded ? 'bg-[#12161A] text-white font-bold border-white/20' : ''}`}
                     />
                     {ticketErr?.quantity && <p className={errCls}>{ticketErr.quantity.message}</p>}
                   </div>
@@ -1028,21 +1099,21 @@ const StepTickets = () => {
           <button
             type="button"
             onClick={() => append({ name: 'VIP Pass', price: 250, quantity: 200, description: 'VIP entrance, priority bar and lounge', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
-            className="px-3.5 py-3 rounded-xl bg-[#1C232B] hover:bg-[#262B2F] text-xs font-semibold text-amber-400 border border-amber-500/30 transition cursor-pointer"
+            className="px-3.5 py-2.5 rounded-xl bg-[#242B32] hover:bg-[#2C343D] text-xs font-semibold text-[#EFEFF1] border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
           >
             + VIP Tier
           </button>
           <button
             type="button"
             onClick={() => append({ name: 'Early Bird', price: 80, quantity: 150, description: 'Limited discounted early admission', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
-            className="px-3.5 py-3 rounded-xl bg-[#1C232B] hover:bg-[#262B2F] text-xs font-semibold text-emerald-400 border border-emerald-500/30 transition cursor-pointer"
+            className="px-3.5 py-2.5 rounded-xl bg-[#242B32] hover:bg-[#2C343D] text-xs font-semibold text-[#EFEFF1] border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
           >
             + Early Bird
           </button>
           <button
             type="button"
             onClick={() => append({ name: 'Free RSVP', price: 0, quantity: 500, description: 'Complimentary standard admission pass', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
-            className="px-3.5 py-3 rounded-xl bg-[#1C232B] hover:bg-[#262B2F] text-xs font-semibold text-white/80 border border-[#3A4045] transition cursor-pointer"
+            className="px-3.5 py-2.5 rounded-xl bg-[#242B32] hover:bg-[#2C343D] text-xs font-semibold text-[#EFEFF1] border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
           >
             + Free Pass
           </button>
@@ -1088,25 +1159,25 @@ const StepPublish = ({
   return (
     <div className="space-y-6">
       {/* Overview Hero Card */}
-      <div className="relative rounded-2xl overflow-hidden border border-[#3A4045] bg-[#171A1D]">
+      <div className="relative rounded-2xl overflow-hidden border border-[#262B2F] bg-[#171A1D]">
         {data.bannerImage ? (
           <div className="relative h-44 sm:h-56 w-full">
             <img src={data.bannerImage} alt="Event cover" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#111417] via-[#111417]/60 to-transparent" />
           </div>
         ) : (
-          <div className="h-28 bg-gradient-to-r from-amber-500/20 via-[#242B32] to-[#171A1D]" />
+          <div className="h-28 bg-[#161D22] border-b border-[#262B2F]" />
         )}
 
         <div className="p-5 sm:p-6 -mt-12 relative z-10 space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-amber-400 text-black">
+            <span className="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-white text-[#1C232B]">
               {data.category || 'General Event'}
             </span>
-            <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-white/10 text-white border border-white/20">
-              {data.locationType === 'online' ? '🌐 Online Event' : '📍 In-Person'}
+            <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#161D22] text-[#EFEFF1] border border-[#262B2F]">
+              {data.locationType === 'online' ? 'Online Event' : 'Physical Venue'}
             </span>
-            <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#161D22] text-[#CBD5E1] border border-[#262B2F]">
               {totalTickets.toLocaleString()} Total Capacity
             </span>
           </div>
@@ -1122,10 +1193,10 @@ const StepPublish = ({
 
       {/* Admin Host Banner (if admin) */}
       {isAdmin && selectedOrganizer && (
-        <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-[#1C232B] to-[#171A1D] border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="p-4 rounded-xl bg-[#161D22] border border-[#262B2F] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-amber-400/20 text-amber-400 flex items-center justify-center font-bold">
-              <UserCheck className="w-4 h-4" />
+            <div className="w-9 h-9 rounded-lg bg-[#242B32] border border-[#32383F] text-white flex items-center justify-center font-bold shrink-0">
+              <Building2 className="w-4 h-4 text-white" />
             </div>
             <div>
               <span className="text-[11px] text-[#949599] uppercase tracking-wider font-semibold block">
@@ -1136,7 +1207,7 @@ const StepPublish = ({
               </span>
             </div>
           </div>
-          <span className="text-[11px] text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20 self-start sm:self-center font-mono">
+          <span className="text-xs text-[#CBD5E1] bg-[#242B32] px-2.5 py-1 rounded-md border border-[#262B2F] self-start sm:self-center font-mono">
             {selectedOrganizer.email}
           </span>
         </div>
@@ -1145,9 +1216,9 @@ const StepPublish = ({
       {/* 2-Column Summary Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Location Box */}
-        <div className="p-4 sm:p-5 rounded-xl bg-[#242B32]/70 border border-[#3A4045] space-y-3">
+        <div className="p-4 sm:p-5 rounded-xl bg-[#171A1D] border border-[#262B2F] space-y-3">
           <div className="flex items-center gap-2 text-white font-semibold text-sm">
-            <MapPin className="w-4 h-4 text-amber-400" />
+            <MapPin className="w-4 h-4 text-[#CBD5E1]" />
             <span>Location Details</span>
           </div>
           <div className="text-xs space-y-2 text-[#949599]">
@@ -1173,9 +1244,9 @@ const StepPublish = ({
         </div>
 
         {/* Date & Time Box */}
-        <div className="p-4 sm:p-5 rounded-xl bg-[#242B32]/70 border border-[#3A4045] space-y-3">
+        <div className="p-4 sm:p-5 rounded-xl bg-[#171A1D] border border-[#262B2F] space-y-3">
           <div className="flex items-center gap-2 text-white font-semibold text-sm">
-            <CalendarDays className="w-4 h-4 text-emerald-400" />
+            <CalendarDays className="w-4 h-4 text-[#CBD5E1]" />
             <span>Date &amp; Schedule</span>
           </div>
           <div className="text-xs space-y-2 text-[#949599]">
@@ -1213,10 +1284,10 @@ const StepPublish = ({
       <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
         <div className="p-4 border-b border-[#262B2F] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TicketIcon className="w-4 h-4 text-amber-400" />
+            <TicketIcon className="w-4 h-4 text-[#CBD5E1]" />
             <h3 className="text-sm font-semibold text-white">Configured Ticket Tiers ({(data.ticketTypes || []).length})</h3>
           </div>
-          <span className="text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full border border-amber-400/20">
+          <span className="text-xs font-bold text-white bg-[#161D22] px-3 py-1 rounded-full border border-[#262B2F]">
             Est. Gross: {format(totalGross)}
           </span>
         </div>
@@ -1228,7 +1299,7 @@ const StepPublish = ({
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-[#EFEFF1] text-sm">{t.name || `Tier ${idx + 1}`}</span>
                   {(t.uploadedTickets || []).length > 0 && (
-                    <span className="text-[10px] text-amber-400 bg-amber-400/15 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] text-[#CBD5E1] bg-[#161D22] px-2 py-0.5 rounded border border-[#262B2F]">
                       {t.uploadedTickets.length} passes uploaded
                     </span>
                   )}
@@ -1248,7 +1319,7 @@ const StepPublish = ({
                 </div>
                 <div>
                   <span className="text-[10px] text-[#6B7278] block uppercase">Price</span>
-                  <span className="font-bold text-amber-400 text-sm">
+                  <span className="font-bold text-white text-sm">
                     {Number(t.price) > 0 ? format(t.price) : 'Free Admission'}
                   </span>
                 </div>
@@ -1262,24 +1333,24 @@ const StepPublish = ({
       {(data.additionalImages || []).length > 0 && (
         <div className="p-4 rounded-xl bg-[#171A1D] border border-[#262B2F] space-y-3">
           <div className="flex items-center gap-2 text-xs font-semibold text-[#949599] uppercase tracking-wider">
-            <ImageIcon className="w-3.5 h-3.5 text-amber-400" />
+            <ImageIcon className="w-3.5 h-3.5 text-[#CBD5E1]" />
             <span>Gallery Images ({(data.additionalImages || []).length})</span>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
             {data.additionalImages.map((img, i) => (
-              <img key={i} src={img} alt="" className="aspect-square object-cover rounded-lg border border-[#3A4045]" />
+              <img key={i} src={img} alt="" className="aspect-square object-cover rounded-lg border border-[#262B2F]" />
             ))}
           </div>
         </div>
       )}
 
       {/* Publish Actions Callout */}
-      <div className="p-5 rounded-2xl bg-gradient-to-br from-[#1C232B] to-[#12161A] border border-amber-500/30 space-y-4">
+      <div className="p-5 rounded-2xl bg-[#161D22] border border-[#262B2F] space-y-4 shadow-sm">
         <div className="flex items-start gap-3">
-          <ShieldCheck className="w-6 h-6 text-amber-400 shrink-0 mt-0.5" />
+          <ShieldCheck className="w-6 h-6 text-[#CBD5E1] shrink-0 mt-0.5" />
           <div>
             <h4 className="text-sm font-bold text-white">
-              {isAdmin ? '👑 Platform Admin Publishing Authority' : 'Ready to publish your event?'}
+              {isAdmin ? 'Platform Administrator Publishing Authority' : 'Ready to publish your event?'}
             </h4>
             <p className="text-xs text-[#949599] mt-0.5 leading-relaxed">
               {isAdmin
@@ -1294,7 +1365,7 @@ const StepPublish = ({
             type="button"
             onClick={onSaveDraft}
             disabled={submitting}
-            className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-[#494F55]/50 bg-[#171A1D] hover:bg-[#242B32] text-sm font-semibold text-[#EFEFF1] transition cursor-pointer disabled:opacity-50"
+            className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-[#262B2F] bg-[#171A1D] hover:bg-[#242B32] text-sm font-semibold text-[#EFEFF1] transition cursor-pointer disabled:opacity-50"
           >
             <Save className="w-4 h-4 text-[#949599]" />
             <span>{submitting ? 'Saving...' : 'Save Draft'}</span>
@@ -1306,7 +1377,7 @@ const StepPublish = ({
                 type="button"
                 onClick={onSubmitApproval}
                 disabled={submitting}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-[#494F55]/50 bg-[#171A1D] hover:bg-[#242B32] text-xs font-semibold text-[#EFEFF1] transition cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-[#262B2F] bg-[#171A1D] hover:bg-[#242B32] text-xs font-semibold text-[#EFEFF1] transition cursor-pointer disabled:opacity-50"
               >
                 <Send className="w-3.5 h-3.5 text-[#949599]" />
                 <span>Save as Pending</span>
@@ -1318,7 +1389,7 @@ const StepPublish = ({
                 disabled={submitting}
                 className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-[#111417] hover:bg-[#CBD5E1] text-sm font-extrabold transition shadow-lg shadow-white/10 cursor-pointer disabled:opacity-50"
               >
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-[#111417]" />
                 <span>{submitting ? 'Publishing...' : 'Publish Event Live (Instant)'}</span>
               </button>
             </>
@@ -1626,23 +1697,27 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
     <FormProvider {...methods}>
       <form onSubmit={(e) => { e.preventDefault(); }} className="space-y-6">
         {eventStatus === 'changes_requested' && (
-          <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-300 flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-amber-400" />
+          <div className="rounded-xl border border-[#262B2F] bg-[#161D22] p-4 text-sm flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-4 h-4 text-white" />
+            </div>
             <div>
-              <p className="font-semibold text-amber-200">Admin Requested Changes</p>
-              <p className="text-xs text-amber-200/90 mt-1 leading-relaxed">
-                {rejectionReason || 'Please review the requested changes below, make the modifications, and submit for approval.'}
+              <p className="font-semibold text-white">Admin Requested Changes</p>
+              <p className="text-xs text-[#949599] mt-1 leading-relaxed">
+                {rejectionReason || 'Please review the requested changes below, make the modifications, and resubmit for approval.'}
               </p>
             </div>
           </div>
         )}
 
         {eventStatus === 'rejected' && (
-          <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-400 flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-red-400" />
+          <div className="rounded-xl border border-red-500/30 bg-[#161D22] p-4 text-sm flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-4 h-4 text-red-400" />
+            </div>
             <div>
-              <p className="font-semibold text-red-300">Event Submission Rejected</p>
-              <p className="text-xs text-red-200/90 mt-1 leading-relaxed">
+              <p className="font-semibold text-white">Event Submission Rejected</p>
+              <p className="text-xs text-[#949599] mt-1 leading-relaxed">
                 {rejectionReason ? `Reason: ${rejectionReason}` : 'Review the feedback, make any requested adjustments, and resubmit for approval.'}
               </p>
             </div>
@@ -1650,11 +1725,13 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
         )}
 
         {eventStatus === 'pending' && (
-          <div className="rounded-xl border border-blue-500/40 bg-blue-500/10 p-4 text-sm text-blue-300 flex items-start gap-3">
-            <Clock className="w-5 h-5 shrink-0 mt-0.5 text-blue-400" />
+          <div className="rounded-xl border border-[#262B2F] bg-[#161D22] p-4 text-sm flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4 text-[#CBD5E1]" />
+            </div>
             <div>
-              <p className="font-semibold text-blue-200">Event Currently Under Review</p>
-              <p className="text-xs text-blue-200/90 mt-1 leading-relaxed">
+              <p className="font-semibold text-white">Event Currently Under Review</p>
+              <p className="text-xs text-[#949599] mt-1 leading-relaxed">
                 This event has been submitted to the platform admin team for moderation. You can still make updates and resubmit anytime.
               </p>
             </div>
@@ -1682,7 +1759,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                 className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-lg text-sm font-semibold bg-white/10 text-white hover:bg-white/20 border border-white/20 transition disabled:opacity-50 cursor-pointer"
                 title="Save progress as draft at any stage"
               >
-                <Save className="w-4 h-4 text-amber-400" />
+                <Save className="w-4 h-4 text-[#CBD5E1]" />
                 <span>{submitting ? 'Saving...' : 'Save Draft'}</span>
               </button>
             </div>
@@ -1705,11 +1782,11 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                       step === s.id
                         ? 'bg-white text-[#1C232B] ring-4 ring-white/20 font-bold scale-110 shadow-lg'
                         : step > s.id
-                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 group-hover:bg-white group-hover:text-black'
-                        : 'bg-[#494F55]/30 text-[#949599] group-hover:bg-[#494F55]/60 group-hover:text-white'
+                        ? 'bg-[#242B32] text-white border border-white/20 group-hover:bg-white group-hover:text-black'
+                        : 'bg-[#262B2F]/60 text-[#949599] group-hover:bg-[#32383F] group-hover:text-white'
                     }`}
                   >
-                    {step > s.id ? <CheckCircle2 className="w-5 h-5 text-emerald-400 group-hover:text-black" /> : <s.icon className="w-4 h-4 sm:w-5 sm:h-5" />}
+                    {step > s.id ? <Check className="w-4 h-4 text-white group-hover:text-black" /> : <s.icon className="w-4 h-4 sm:w-5 sm:h-5" />}
                   </div>
                   <div className="text-center hidden sm:block">
                     <span
@@ -1726,7 +1803,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                   </div>
                 </button>
                 {s.id < STEPS.length && (
-                  <div className={`flex-1 h-0.5 mx-2 transition-colors ${step > s.id ? 'bg-emerald-500/60' : 'bg-[#494F55]/30'}`} />
+                  <div className={`flex-1 h-0.5 mx-2 transition-colors ${step > s.id ? 'bg-white/40' : 'bg-[#262B2F]'}`} />
                 )}
               </div>
             ))}
@@ -1755,7 +1832,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                   </h2>
                   <p className="text-xs text-[#949599] mt-0.5">{STEPS[step - 1].subtitle}</p>
                 </div>
-                <span className="text-xs font-medium text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">
+                <span className="text-xs font-mono font-medium text-[#CBD5E1] bg-[#161D22] px-3 py-1 rounded-full border border-[#262B2F]">
                   Step {step} / 5
                 </span>
               </div>
@@ -1833,7 +1910,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                     disabled={submitting}
                     className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg text-sm font-bold bg-white text-[#111417] hover:bg-[#CBD5E1] transition shadow-lg cursor-pointer disabled:opacity-50"
                   >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Publish Event Live
+                    <CheckCircle2 className="w-4 h-4 text-[#111417]" /> Publish Event Live
                   </button>
                 </>
               ) : (

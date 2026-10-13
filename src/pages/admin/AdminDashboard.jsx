@@ -421,7 +421,9 @@ export default function AdminDashboard() {
                     return (
                       <tr key={e.id} className="hover:bg-[#1C232B]/50 transition-colors">
                         <td className="px-5 py-3">
-                          <p className="font-medium text-[#EFEFF1] break-words">{e.title}</p>
+                          <Link to={`/admin/events/${e.id}`} className="font-medium text-[#EFEFF1] break-words hover:text-white hover:underline transition">
+                            {e.title}
+                          </Link>
                           <p className="text-xs text-[#949599] mt-0.5 break-words">{e.organizer_name || '—'}</p>
                         </td>
                         <td className="px-5 py-3 hidden md:table-cell">
@@ -491,7 +493,9 @@ export default function AdminDashboard() {
                 {pendingEvents.map((ev) => (
                   <tr key={ev.id} className="hover:bg-[#1C232B]/50 transition-colors">
                     <td className="px-5 py-3">
-                      <p className="font-medium text-[#EFEFF1] break-words">{ev.title}</p>
+                      <Link to={`/admin/events/${ev.id}`} className="font-medium text-[#EFEFF1] break-words hover:text-white hover:underline transition">
+                        {ev.title}
+                      </Link>
                     </td>
                     <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599] break-words">{ev.organizer_name || '—'}</td>
                     <td className="hidden md:table-cell px-5 py-3 text-xs text-[#949599]">{ev.start_date ? fmtDay(ev.start_date) : '—'}</td>
