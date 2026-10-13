@@ -68,7 +68,7 @@ const scanResultState = (type) => {
       color: 'text-amber-400',
       bg: 'bg-amber-500/10',
       border: 'border-amber-500/40',
-      label: '❌ Ticket Already Used',
+      label: ' Ticket Already Used',
     };
   }
   if (type === 'transferred') {
@@ -77,7 +77,7 @@ const scanResultState = (type) => {
       color: 'text-rose-400',
       bg: 'bg-rose-500/10',
       border: 'border-rose-500/40',
-      label: '❌ Ticket Transferred — Old QR Code Invalidated',
+      label: ' Ticket Transferred — Old QR Code Invalidated',
     };
   }
   if (type === 'cancelled') {
@@ -86,7 +86,7 @@ const scanResultState = (type) => {
       color: 'text-red-400',
       bg: 'bg-red-500/10',
       border: 'border-red-500/40',
-      label: '❌ Ticket Cancelled — Entry Denied',
+      label: ' Ticket Cancelled — Entry Denied',
     };
   }
   if (type === 'unpaid') {
@@ -236,8 +236,11 @@ export default function CheckInPage() {
         cleanCode = obj.ticketNumber || obj.qrCode || obj.ticketId || cleanCode;
       } catch {}
     }
-    if (cleanCode.includes('/verify/')) {
-      cleanCode = cleanCode.split('/verify/')[1] || cleanCode;
+    const match = cleanCode.match(/\b(TC-[A-Z0-9]+|TRB-[A-Z0-9-]+)\b/i);
+    if (match) {
+      cleanCode = match[1].toUpperCase();
+    } else if (cleanCode.includes('/verify/')) {
+      cleanCode = (cleanCode.split('/verify/')[1] || cleanCode).split('?')[0];
     } else if (cleanCode.includes('?code=')) {
       cleanCode = cleanCode.split('?code=')[1].split('&')[0] || cleanCode;
     }
@@ -260,22 +263,22 @@ export default function CheckInPage() {
       if (vStatus === 'used' || ticket.status === 'used' || ticket.checkedIn) {
         setScanResult({ type: 'used', ticket });
         if (soundEnabled) playSound('error');
-        toast.error('❌ Ticket Already Used');
+        toast.error(' Ticket Already Used');
       } else if (vStatus === 'transferred' || ticket.status === 'transferred') {
         // 2. Check if transferred (old QR code invalidated)
         setScanResult({ type: 'transferred', ticket });
         if (soundEnabled) playSound('error');
-        toast.error('❌ Ticket Transferred — Old QR Code Invalidated');
+        toast.error(' Ticket Transferred — Old QR Code Invalidated');
       } else if (vStatus === 'cancelled' || ticket.status === 'cancelled') {
         // 3. Check if cancelled
         setScanResult({ type: 'cancelled', ticket });
         if (soundEnabled) playSound('error');
-        toast.error('❌ Ticket Cancelled — Entry Denied');
+        toast.error(' Ticket Cancelled — Entry Denied');
       } else if (vStatus === 'unpaid') {
         // 4. Check if payment unconfirmed
         setScanResult({ type: 'unpaid', ticket });
         if (soundEnabled) playSound('error');
-        toast.error('❌ Payment Unconfirmed — Admission Denied');
+        toast.error(' Payment Unconfirmed — Admission Denied');
       } else {
         // 5. Valid Ticket — Entry Approved
         const checkInRes = await checkIn(ticket.id || ticket.ticketId, { eventId: selectedEvent, method: 'qr' });
@@ -296,7 +299,8 @@ export default function CheckInPage() {
         fetchAttendees();
       }
     } catch (err) {
-      const msg = err.response?.data?.message || 'Invalid or unrecognized ticket';
+      const is401 = err.response?.status === 401;
+      const msg = is401 ? 'Organizer login session expired. Please log in again.' : (err.response?.data?.message || 'Invalid or unrecognized ticket');
       const errStatus = err.response?.data?.status;
       setScanResult({
         type: errStatus === 'used' ? 'used' : errStatus === 'transferred' ? 'transferred' : errStatus === 'cancelled' ? 'cancelled' : 'invalid',

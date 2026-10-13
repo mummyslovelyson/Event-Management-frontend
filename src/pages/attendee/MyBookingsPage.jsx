@@ -260,9 +260,12 @@ export default function MyBookingsPage() {
             const isUpcoming = eventDate && new Date(eventDate) >= new Date() && !isCancelled;
             const pb = PAYMENT_BADGE[payStatus] || { variant: 'pending', label: payStatus };
             const items = order.items || order.tickets || order.lineItems || [];
-            const ticketCount = Array.isArray(items)
+            const ticketCount = Array.isArray(items) && items.length > 0
               ? items.reduce((sum, it) => sum + (it.quantity || 0), 0)
-              : order.ticketCount || order.quantity || 0;
+              : (order.ticketCount || order.quantity || order.ticket_count || (payStatus === 'completed' || payStatus === 'paid' ? 1 : 0));
+
+            const totalPaidAmount = Number(order.totalAmount ?? order.total ?? order.total_amount ?? 0);
+            const bookingDate = order.createdAt || order.created_at;
 
             return (
               <motion.div
@@ -330,11 +333,11 @@ export default function MyBookingsPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-[#494F55]">Total Paid:</span>
                         <span className="text-lg font-bold text-white">
-                          {format(order.totalAmount || order.total || 0)}
+                          {format(totalPaidAmount)}
                         </span>
                       </div>
                       <p className="text-xs text-[#494F55]">
-                        Booked on {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                        Booked on {bookingDate ? new Date(bookingDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                       </p>
                     </div>
 
@@ -447,7 +450,7 @@ export default function MyBookingsPage() {
                         <div className="mt-3 pt-3 border-t border-[#262B2F] flex items-center justify-between">
                           <span className="text-sm font-semibold text-[#EFEFF1]">Total</span>
                           <span className="text-base font-bold text-white">
-                            {format(order.totalAmount || order.total || 0)}
+                            {format(totalPaidAmount)}
                           </span>
                         </div>
                       </div>

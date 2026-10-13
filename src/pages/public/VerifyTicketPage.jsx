@@ -80,9 +80,12 @@ export default function VerifyTicketPage() {
         cleanCode = obj.ticketNumber || obj.qrCode || obj.ticketId || cleanCode;
       } catch {}
     }
-    // Parse URL parameter if necessary
-    if (cleanCode.includes('/verify/')) {
-      cleanCode = cleanCode.split('/verify/')[1] || cleanCode;
+    // Parse URL parameter or ticket code pattern if necessary
+    const match = cleanCode.match(/\b(TC-[A-Z0-9]+|TRB-[A-Z0-9-]+)\b/i);
+    if (match) {
+      cleanCode = match[1].toUpperCase();
+    } else if (cleanCode.includes('/verify/')) {
+      cleanCode = (cleanCode.split('/verify/')[1] || cleanCode).split('?')[0];
     } else if (cleanCode.includes('?code=')) {
       cleanCode = cleanCode.split('?code=')[1].split('&')[0] || cleanCode;
     }
@@ -148,7 +151,9 @@ export default function VerifyTicketPage() {
         },
       }) : null);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to check in ticket');
+      const is401 = err.response?.status === 401;
+      const msg = is401 ? 'Organizer login session expired. Please sign in again.' : (err.response?.data?.message || 'Failed to check in ticket');
+      toast.error(msg);
       if (soundEnabled) playSound('error');
     } finally {
       setCheckingIn(false);
