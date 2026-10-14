@@ -5,7 +5,7 @@ import {
   ScanLine, Search, Camera, QrCode, CheckCircle2, XCircle, AlertTriangle,
   UserCheck, Clock, Users, Ticket as TicketIcon,
   Volume2, VolumeX, Download, RefreshCw, Zap, VideoOff, ShieldCheck,
-  Check, Play, Pause,
+  Check, Play, Pause, SwitchCamera,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Html5Qrcode } from 'html5-qrcode';
@@ -17,6 +17,22 @@ import Badge from '@/components/common/Badge';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
+
+// Helper to identify virtual/mock camera drivers (e.g. Iriun, OBS)
+const isVirtualCamera = (label = '') => {
+  if (!label) return false;
+  const l = label.toLowerCase();
+  return (
+    l.includes('iriun') ||
+    l.includes('obs') ||
+    l.includes('virtual') ||
+    l.includes('droidcam') ||
+    l.includes('manycam') ||
+    l.includes('camo') ||
+    l.includes('vysor') ||
+    l.includes('splitcam')
+  );
+};
 
 // Synthesized audio feedback via Web Audio API
 const playSound = (type = 'success') => {
@@ -87,7 +103,9 @@ export default function CheckInPage() {
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [tab, setTab] = useState('scanner'); // 'scanner' | 'manual'
 
-  // Hardware and audio controls
+  // Hardware, camera devices, and audio controls
+  const [cameras, setCameras] = useState([]);
+  const [selectedCameraId, setSelectedCameraId] = useState('');
   const [cameraActive, setCameraActive] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [autoResume, setAutoResume] = useState(true);
@@ -362,23 +380,99 @@ export default function CheckInPage() {
     }
   }, [selectedEvent, soundEnabled, autoResume, fetchLiveStats, fetchAttendees]);
 
-  // Start Camera QR Scanner
-  const startCamera = async () => {
+  // Enumerate all available camera devices & prioritize physical webcams
+  const loadCameras = useCallback(async () => {
+    try {
+      const devices = await Html5Qrcode.getCameras();
+      if (devices && devices.length > 0) {
+        setCameras(devices);
+        // Find first physical camera (avoiding virtual webcam drivers like Iriun / OBS)
+        const nonVirtual = devices.find((d) => !isVirtualCamera(d.label));
+        const defaultCam = nonVirtual || devices[0];
+
+        setSelectedCameraId((prev) => {
+          if (prev && devices.some((d) => d.id === prev)) {
+            const currentIsVirtual = devices.find((d) => d.id === prev && isVirtualCamera(d.label));
+            if (currentIsVirtual && nonVirtual) {
+              return nonVirtual.id;
+            }
+            return prev;
+          }
+          return defaultCam ? defaultCam.id : '';
+        });
+        return devices;
+      }
+    } catch (err) {
+      console.warn('[CheckInCamera] Could not enumerate cameras:', err);
+    }
+    return [];
+  }, []);
+
+  useEffect(() => {
+    loadCameras();
+  }, [loadCameras]);
+
+  const stopCamera = async () => {
+    if (scannerRef.current) {
+      try {
+        if (scannerRef.current.isScanning) {
+          await scannerRef.current.stop();
+        }
+        scannerRef.current.clear();
+      } catch (err) {
+        console.warn('[CheckInCamera.stop]', err);
+      }
+      scannerRef.current = null;
+    }
+    setCameraActive(false);
+  };
+
+  // Start Camera QR Scanner with chosen or best physical camera
+  const startCamera = async (overrideCameraId) => {
     try {
       setCameraActive(true);
+      const targetId = overrideCameraId || selectedCameraId;
+
       setTimeout(async () => {
         const qrContainer = document.getElementById('qr-reader-video');
         if (!qrContainer) return;
 
         if (scannerRef.current) {
-          try { await scannerRef.current.stop(); } catch {}
+          try {
+            if (scannerRef.current.isScanning) {
+              await scannerRef.current.stop();
+            }
+            scannerRef.current.clear();
+          } catch {}
+          scannerRef.current = null;
+        }
+
+        let activeId = targetId;
+        let available = cameras;
+        if (!available || available.length === 0) {
+          available = await loadCameras();
+        }
+
+        // If activeId is not set, or points to a virtual driver while a physical camera exists, prefer physical
+        if (!activeId || (available.some((d) => d.id === activeId && isVirtualCamera(d.label)) && available.some((d) => !isVirtualCamera(d.label)))) {
+          const physical = available.find((d) => !isVirtualCamera(d.label));
+          if (physical) {
+            activeId = physical.id;
+            setSelectedCameraId(physical.id);
+          } else if (available[0]) {
+            activeId = available[0].id;
+            setSelectedCameraId(available[0].id);
+          }
         }
 
         const html5QrCode = new Html5Qrcode('qr-reader-video');
         scannerRef.current = html5QrCode;
 
+        // Pass direct camera device ID or fallback to front/user camera
+        const cameraConfig = activeId ? activeId : { facingMode: 'user' };
+
         await html5QrCode.start(
-          { facingMode: 'environment' },
+          cameraConfig,
           {
             fps: 15,
             qrbox: { width: 250, height: 250 },
@@ -389,31 +483,42 @@ export default function CheckInPage() {
           },
           () => {}
         );
+
+        // Re-read cameras in case granting permission populated labels
+        try {
+          const fresh = await Html5Qrcode.getCameras();
+          if (fresh && fresh.length > 0) {
+            setCameras(fresh);
+          }
+        } catch {}
       }, 150);
     } catch (err) {
       console.error('[CheckInCamera]', err);
-      toast.error('Could not access camera. Please verify permissions or use manual entry.');
+      toast.error('Could not access camera. Please select a camera or use manual entry.');
       setCameraActive(false);
     }
   };
 
-  const stopCamera = async () => {
-    if (scannerRef.current) {
-      try {
-        await scannerRef.current.stop();
-        scannerRef.current.clear();
-      } catch (err) {
-        console.error('[CheckInCamera.stop]', err);
-      }
-      scannerRef.current = null;
+  // Switch camera live without UI breaks
+  const handleCameraChange = async (newId) => {
+    setSelectedCameraId(newId);
+    if (cameraActive) {
+      await stopCamera();
+      setTimeout(() => {
+        startCamera(newId);
+      }, 200);
     }
-    setCameraActive(false);
   };
 
   useEffect(() => {
     return () => {
       if (scannerRef.current) {
-        try { scannerRef.current.stop(); } catch {}
+        try {
+          if (scannerRef.current.isScanning) {
+            scannerRef.current.stop();
+          }
+          scannerRef.current.clear();
+        } catch {}
       }
     };
   }, []);
@@ -474,6 +579,10 @@ export default function CheckInPage() {
     document.body.removeChild(link);
     toast.success('Gate check-in list exported to CSV');
   };
+
+  const activeCameraInfo = cameras.find((c) => c.id === selectedCameraId);
+  const isCurrentCameraVirtual = activeCameraInfo ? isVirtualCamera(activeCameraInfo.label) : false;
+  const physicalCameras = cameras.filter((c) => !isVirtualCamera(c.label));
 
   if (loadingEvents) return <LoadingSpinner label="Loading check-in system..." className="py-20" />;
 
@@ -629,18 +738,101 @@ export default function CheckInPage() {
         <div className="lg:col-span-2">
           {tab === 'scanner' ? (
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-6 space-y-5">
+              {/* Camera Device Selector & Hardware Controls */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-[#14181C] border border-[#262B2F]">
+                <div className="flex items-center gap-2 flex-1 min-w-[240px]">
+                  <Camera className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span className="text-xs font-bold text-[#949599] uppercase tracking-wider shrink-0">
+                    Camera Source:
+                  </span>
+                  <select
+                    value={selectedCameraId}
+                    onChange={(e) => handleCameraChange(e.target.value)}
+                    className="flex-1 bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs rounded-lg px-3 py-2 font-medium focus:outline-none focus:border-white/50 transition cursor-pointer"
+                  >
+                    {cameras.length === 0 && <option value="">Default Web Camera</option>}
+                    {cameras.map((c, idx) => {
+                      const isVirtual = isVirtualCamera(c.label);
+                      return (
+                        <option key={c.id || idx} value={c.id}>
+                          {c.label || `Camera ${idx + 1}`} {isVirtual ? '⚠️ (Virtual Driver)' : '✅ (Physical Camera)'}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 self-end sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => loadCameras()}
+                    className="p-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#949599] hover:text-white transition"
+                    title="Refresh detected cameras"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                  </button>
+                  {cameras.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentIndex = cameras.findIndex((c) => c.id === selectedCameraId);
+                        const nextIndex = (currentIndex + 1) % cameras.length;
+                        handleCameraChange(cameras[nextIndex].id);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs font-semibold text-[#EFEFF1] hover:text-white transition"
+                      title="Switch to next camera"
+                    >
+                      <SwitchCamera className="w-3.5 h-3.5" /> Flip Camera
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Virtual Camera Notice (Directly fixes 'Please start Iriun Webcam' standby) */}
+              {isCurrentCameraVirtual && (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
+                  <div className="flex items-start sm:items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 sm:mt-0" />
+                    <span>
+                      <strong>Virtual Camera ({activeCameraInfo?.label || 'Iriun'}) is active.</strong> If the feed displays &quot;Please start Iriun Webcam&quot; or is blank, switch to your computer&apos;s physical webcam.
+                    </span>
+                  </div>
+                  {physicalCameras.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => handleCameraChange(physicalCameras[0].id)}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 text-xs font-bold hover:bg-amber-500/30 shrink-0 transition"
+                    >
+                      Switch to {physicalCameras[0].label || 'Built-in Webcam'}
+                    </button>
+                  )}
+                </div>
+              )}
+
               {/* Camera Scanner Viewfinder */}
               <div className="relative rounded-xl bg-[#14181C] border-2 border-dashed border-[#494F55]/40 overflow-hidden min-h-[300px] flex flex-col items-center justify-center">
                 {cameraActive ? (
                   <div className="w-full flex flex-col items-center p-4">
                     <div id="qr-reader-video" className="w-full max-w-sm rounded-xl overflow-hidden shadow-2xl" />
-                    <div className="mt-4 flex items-center gap-3">
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                       <button
                         onClick={stopCamera}
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 text-xs font-semibold hover:bg-red-500/30 transition"
                       >
                         <VideoOff className="w-3.5 h-3.5" /> Stop Camera
                       </button>
+                      {cameras.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const currentIndex = cameras.findIndex((c) => c.id === selectedCameraId);
+                            const nextIndex = (currentIndex + 1) % cameras.length;
+                            handleCameraChange(cameras[nextIndex].id);
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs font-semibold text-[#EFEFF1] hover:text-white transition"
+                        >
+                          <SwitchCamera className="w-3.5 h-3.5" /> Switch Camera
+                        </button>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -653,7 +845,7 @@ export default function CheckInPage() {
                       Point web camera or webcam at attendee QR code on phone or printed pass for automatic gate check-in.
                     </p>
                     <button
-                      onClick={startCamera}
+                      onClick={() => startCamera()}
                       className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-lg active:scale-95"
                     >
                       <Camera className="w-4 h-4" /> Start Camera Scanner
