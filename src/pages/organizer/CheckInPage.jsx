@@ -3,14 +3,16 @@ import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ScanLine, Search, Camera, QrCode, CheckCircle2, XCircle, AlertTriangle,
-  UserCheck, Clock, Users, ArrowRight, Ticket as TicketIcon,
-  Volume2, VolumeX, Download, RefreshCw, Zap, VideoOff,
+  UserCheck, Clock, Users, Ticket as TicketIcon,
+  Volume2, VolumeX, Download, RefreshCw, Zap, VideoOff, ShieldCheck,
+  Check, Play, Pause,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Html5Qrcode } from 'html5-qrcode';
 import { getOrganizerEvents } from '@/api/events';
 import { getAttendees } from '@/api/organizer';
-import { checkIn, verifyTicket } from '@/api/tickets';
+import { checkIn, checkInTicketByCode, getCheckInStats } from '@/api/tickets';
+import { useAuth } from '@/context/AuthContext';
 import Badge from '@/components/common/Badge';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -52,61 +54,6 @@ const playSound = (type = 'success') => {
   }
 };
 
-const scanResultState = (type) => {
-  if (type === 'success' || type === 'valid') {
-    return {
-      icon: CheckCircle2,
-      color: 'text-emerald-400',
-      bg: 'bg-emerald-500/10',
-      border: 'border-emerald-500/40',
-      label: '✅ Valid Ticket — Entry Approved',
-    };
-  }
-  if (type === 'used' || type === 'already_used') {
-    return {
-      icon: AlertTriangle,
-      color: 'text-amber-400',
-      bg: 'bg-amber-500/10',
-      border: 'border-amber-500/40',
-      label: ' Ticket Already Used',
-    };
-  }
-  if (type === 'transferred') {
-    return {
-      icon: XCircle,
-      color: 'text-rose-400',
-      bg: 'bg-rose-500/10',
-      border: 'border-rose-500/40',
-      label: ' Ticket Transferred — Old QR Code Invalidated',
-    };
-  }
-  if (type === 'cancelled') {
-    return {
-      icon: XCircle,
-      color: 'text-red-400',
-      bg: 'bg-red-500/10',
-      border: 'border-red-500/40',
-      label: ' Ticket Cancelled — Entry Denied',
-    };
-  }
-  if (type === 'unpaid') {
-    return {
-      icon: AlertTriangle,
-      color: 'text-amber-400',
-      bg: 'bg-amber-500/10',
-      border: 'border-amber-500/40',
-      label: '❌ Payment Unconfirmed — Admission Denied',
-    };
-  }
-  return {
-    icon: XCircle,
-    color: 'text-red-400',
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/40',
-    label: '❌ Invalid / Unrecognized Ticket',
-  };
-};
-
 const normalizeCheckInAttendee = (a) => {
   const isCheckedIn = Boolean(a.checked_in || a.checkedIn || a.status === 'used' || a.checkInStatus === 'checked_in' || a.checked_in_at);
   const name = a.attendee_name || a.attendeeName || a.name || 'Attendee';
@@ -133,30 +80,38 @@ const normalizeCheckInAttendee = (a) => {
 export default function CheckInPage() {
   const [searchParams] = useSearchParams();
   const paramEventId = searchParams.get('eventId') || searchParams.get('event');
-  const [events, setEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(paramEventId || '');
-  const [loadingEvents, setLoadingEvents] = useState(true);
-  const [tab, setTab] = useState('scanner');
+  const { user, isAdmin } = useAuth();
 
-  // Scanner states
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(paramEventId || (isAdmin ? 'all' : ''));
+  const [loadingEvents, setLoadingEvents] = useState(true);
+  const [tab, setTab] = useState('scanner'); // 'scanner' | 'manual'
+
+  // Hardware and audio controls
   const [cameraActive, setCameraActive] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [autoResume, setAutoResume] = useState(true);
+
+  // Form & Scanning states
   const [qrInput, setQrInput] = useState('');
-  const [scanResult, setScanResult] = useState(null);
   const [scanning, setScanning] = useState(false);
+  const [scanResult, setScanResult] = useState(null); // { type: 'approved' | 'duplicate' | 'cancelled' | 'unauthorized' | 'invalid', ticket, message, checkedInAt }
   const [lastScannedCode, setLastScannedCode] = useState('');
 
-  // Attendee & Log states
+  // Live Database Stats & Recent Scans (Synced across Web & Mobile)
+  const [dbStats, setDbStats] = useState({ totalTickets: 0, admitted: 0, remaining: 0 });
+  const [recentScans, setRecentScans] = useState([]);
+
+  // Attendee Roster state
   const [manualQuery, setManualQuery] = useState('');
-  const [manualResults, setManualResults] = useState([]);
-  const [searching, setSearching] = useState(false);
   const [checkingIn, setCheckingIn] = useState(null);
   const [attendees, setAttendees] = useState([]);
-  const [log, setLog] = useState([]);
 
   const isProcessingRef = useRef(false);
   const scannerRef = useRef(null);
+  const autoResumeTimerRef = useRef(null);
 
+  // Fetch organizer/admin events
   const fetchEvents = useCallback(async () => {
     setLoadingEvents(true);
     try {
@@ -164,18 +119,48 @@ export default function CheckInPage() {
       const payload = res.data;
       const list = Array.isArray(payload) ? payload : payload.events || payload.data || [];
       setEvents(list);
-      if (list.length && !selectedEvent) {
-        setSelectedEvent(paramEventId || list[0].id);
+
+      if (!selectedEvent) {
+        if (paramEventId) {
+          setSelectedEvent(paramEventId);
+        } else if (isAdmin) {
+          setSelectedEvent('all');
+        } else if (list.length > 0) {
+          setSelectedEvent(list[0].id);
+        }
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to load events');
     } finally {
       setLoadingEvents(false);
     }
-  }, [selectedEvent, paramEventId]);
+  }, [selectedEvent, paramEventId, isAdmin]);
 
+  // Fetch true database stats & recent admissions log (shared with mobile app)
+  const fetchLiveStats = useCallback(async () => {
+    try {
+      const params = {};
+      if (selectedEvent && selectedEvent !== 'all') {
+        params.eventId = selectedEvent;
+      }
+      const res = await getCheckInStats(params);
+      if (res.data?.success && res.data?.stats) {
+        setDbStats(res.data.stats);
+        if (Array.isArray(res.data.recentScans)) {
+          setRecentScans(res.data.recentScans);
+        }
+      }
+    } catch (err) {
+      console.warn('[CheckInPage] fetchLiveStats error:', err?.message);
+    }
+  }, [selectedEvent]);
+
+  // Fetch attendees list for roster tab
   const fetchAttendees = useCallback(async () => {
-    if (!selectedEvent) return;
+    if (!selectedEvent || selectedEvent === 'all') {
+      setAttendees([]);
+      return;
+    }
     try {
       const res = await getAttendees(selectedEvent);
       const payload = res.data;
@@ -186,13 +171,27 @@ export default function CheckInPage() {
     }
   }, [selectedEvent]);
 
-  useEffect(() => { fetchEvents(); }, [fetchEvents]);
-  useEffect(() => { fetchAttendees(); }, [fetchAttendees]);
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
+  useEffect(() => {
+    fetchLiveStats();
+    fetchAttendees();
+  }, [fetchLiveStats, fetchAttendees]);
+
+  // Clean timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoResumeTimerRef.current) clearTimeout(autoResumeTimerRef.current);
+    };
+  }, []);
+
+  // Compute stats prioritizing live DB numbers
   const stats = useMemo(() => {
-    const total = attendees.length;
-    const checkedIn = attendees.filter((a) => a.checkedIn).length;
-    const notArrived = Math.max(total - checkedIn, 0);
+    const total = dbStats.totalTickets > 0 ? dbStats.totalTickets : attendees.length;
+    const checkedIn = dbStats.admitted > 0 ? dbStats.admitted : attendees.filter((a) => a.checkedIn).length;
+    const notArrived = dbStats.remaining > 0 ? dbStats.remaining : Math.max(total - checkedIn, 0);
     const rate = total > 0 ? ((checkedIn / total) * 100).toFixed(1) : '0.0';
     return {
       total,
@@ -200,50 +199,66 @@ export default function CheckInPage() {
       notArrived,
       rate,
     };
-  }, [attendees]);
+  }, [dbStats, attendees]);
 
-  const tierBreakdown = useMemo(() => {
-    const map = {};
-    attendees.forEach((a) => {
-      const type = a.ticketType || a.ticket_type_name || 'Standard Admission';
-      if (!map[type]) {
-        map[type] = { total: 0, checkedIn: 0 };
-      }
-      map[type].total += 1;
-      if (a.checkedIn) {
-        map[type].checkedIn += 1;
-      }
-    });
-    return Object.entries(map).map(([name, data]) => ({
-      name,
-      total: data.total,
-      checkedIn: data.checkedIn,
-      remaining: Math.max(data.total - data.checkedIn, 0),
-      rate: data.total > 0 ? Math.round((data.checkedIn / data.total) * 100) : 0,
-    }));
-  }, [attendees]);
+  // Clean ticket raw code from QR or manual input
+  const extractCode = (raw) => {
+    if (!raw) return '';
+    let cleaned = String(raw).trim();
 
-  // Handle barcode / QR verification & check-in
-  const handleScan = useCallback(async (code) => {
-    if (!code || isProcessingRef.current) return;
-    let cleanCode = String(code).trim();
-    if (!cleanCode) return;
-
-    // Parse JSON string or URL
-    if (cleanCode.startsWith('{') && cleanCode.endsWith('}')) {
+    // 1. JSON QR string
+    if (cleaned.startsWith('{') && cleaned.endsWith('}')) {
       try {
-        const obj = JSON.parse(cleanCode);
-        cleanCode = obj.ticketNumber || obj.qrCode || obj.ticketId || cleanCode;
+        const obj = JSON.parse(cleaned);
+        const resolved = (
+          obj.ticket_number ||
+          obj.ticketNumber ||
+          obj.ticket_code ||
+          obj.qr_code ||
+          obj.qrCode ||
+          obj.ticketId ||
+          obj.id ||
+          cleaned
+        );
+        if (resolved) return String(resolved).trim();
       } catch {}
     }
-    const match = cleanCode.match(/\b(TC-[A-Z0-9]+|TRB-[A-Z0-9-]+)\b/i);
-    if (match) {
-      cleanCode = match[1].toUpperCase();
-    } else if (cleanCode.includes('/verify/')) {
-      cleanCode = (cleanCode.split('/verify/')[1] || cleanCode).split('?')[0];
-    } else if (cleanCode.includes('?code=')) {
-      cleanCode = cleanCode.split('?code=')[1].split('&')[0] || cleanCode;
+
+    // 2. Standard ticket patterns: TC-XXXXXX or TRB-XXXXXX
+    const match = cleaned.match(/\b(TC-[A-Z0-9]+|TRB-[A-Z0-9-]+)\b/i);
+    if (match) return match[1].toUpperCase();
+
+    // 3. URLs
+    if (cleaned.includes('/') || cleaned.includes('?')) {
+      try {
+        const urlStr = cleaned.startsWith('http') ? cleaned : `https://dummy.com/${cleaned.replace(/^\/+/, '')}`;
+        const u = new URL(urlStr);
+        const queryParam = u.searchParams.get('code') || u.searchParams.get('ticket') || u.searchParams.get('ticketNumber') || u.searchParams.get('reference');
+        if (queryParam) return queryParam.trim();
+        const parts = u.pathname.split('/').filter(Boolean);
+        const lastPart = parts.pop();
+        if (lastPart) return lastPart.split('?')[0].trim();
+      } catch {
+        const parts = cleaned.split('/').filter(Boolean);
+        const lastPart = parts.pop() || cleaned;
+        return lastPart.split('?')[0].trim();
+      }
     }
+
+    return cleaned;
+  };
+
+  const handleResetScan = () => {
+    if (autoResumeTimerRef.current) clearTimeout(autoResumeTimerRef.current);
+    setScanResult(null);
+    setQrInput('');
+    isProcessingRef.current = false;
+  };
+
+  // Perform ticket check-in and handle approved, duplicate, or invalid states
+  const handleScan = useCallback(async (rawCode) => {
+    const cleanCode = extractCode(rawCode);
+    if (!cleanCode || isProcessingRef.current) return;
 
     isProcessingRef.current = true;
     setScanning(true);
@@ -251,71 +266,101 @@ export default function CheckInPage() {
     setLastScannedCode(cleanCode);
 
     try {
-      const res = await verifyTicket(encodeURIComponent(cleanCode));
+      // 1. Direct Gate Check-In API (Atomic check & admission)
+      const res = await checkInTicketByCode(cleanCode);
       const ticket = res.data?.ticket || res.data;
-      const vStatus = res.data?.status || ticket?.status;
 
-      if (!ticket || !ticket.id) {
-        throw new Error('Ticket not found');
+      // Event Scoping Guard
+      if (selectedEvent && selectedEvent !== 'all' && ticket?.event_id && String(ticket.event_id) !== String(selectedEvent)) {
+        setScanResult({
+          type: 'unauthorized',
+          ticket,
+          message: `Ticket is for a different event: "${ticket.event_title || 'Other Event'}"`,
+        });
+        if (soundEnabled) playSound('error');
+        toast.error(`Ticket belongs to "${ticket.event_title || 'Other Event'}"`);
+        return;
       }
 
-      // 1. Check if already scanned / used
-      if (vStatus === 'used' || ticket.status === 'used' || ticket.checkedIn) {
-        setScanResult({ type: 'used', ticket });
-        if (soundEnabled) playSound('error');
-        toast.error(' Ticket Already Used');
-      } else if (vStatus === 'transferred' || ticket.status === 'transferred') {
-        // 2. Check if transferred (old QR code invalidated)
-        setScanResult({ type: 'transferred', ticket });
-        if (soundEnabled) playSound('error');
-        toast.error(' Ticket Transferred — Old QR Code Invalidated');
-      } else if (vStatus === 'cancelled' || ticket.status === 'cancelled') {
-        // 3. Check if cancelled
-        setScanResult({ type: 'cancelled', ticket });
-        if (soundEnabled) playSound('error');
-        toast.error(' Ticket Cancelled — Entry Denied');
-      } else if (vStatus === 'unpaid') {
-        // 4. Check if payment unconfirmed
-        setScanResult({ type: 'unpaid', ticket });
-        if (soundEnabled) playSound('error');
-        toast.error(' Payment Unconfirmed — Admission Denied');
-      } else {
-        // 5. Valid Ticket — Entry Approved
-        const checkInRes = await checkIn(ticket.id || ticket.ticketId, { eventId: selectedEvent, method: 'qr' });
-        const confirmedTicket = checkInRes.data?.ticket || ticket;
-        setScanResult({ type: 'success', ticket: confirmedTicket });
-        if (soundEnabled) playSound('success');
-        toast.success(`✅ Valid Ticket — Entry Approved (${ticket.attendeeName || 'Attendee'})`);
-        setLog((l) => [
-          {
-            name: ticket.attendeeName || ticket.name || 'Attendee',
-            type: ticket.ticketType || ticket.ticket_type_name || 'General Admission',
-            time: new Date(),
-            status: 'success',
-            code: cleanCode,
-          },
-          ...l,
-        ].slice(0, 50));
-        fetchAttendees();
+      // 🟢 SUCCESS: TICKET APPROVED & ADMITTED!
+      setScanResult({
+        type: 'approved',
+        ticket,
+        message: 'ENTRY APPROVED & ADMITTED',
+        checkedInAt: new Date().toISOString(),
+      });
+
+      if (soundEnabled) playSound('success');
+      toast.success(`✅ Valid Ticket — Entry Approved (${ticket.attendee_name || ticket.attendeeName || 'Guest'})`);
+
+      // Refresh DB stats and attendee roster
+      fetchLiveStats();
+      fetchAttendees();
+
+      // Auto-Resume Timer (3.5 seconds)
+      if (autoResume) {
+        if (autoResumeTimerRef.current) clearTimeout(autoResumeTimerRef.current);
+        autoResumeTimerRef.current = setTimeout(() => {
+          handleResetScan();
+        }, 3500);
       }
     } catch (err) {
-      const is401 = err.response?.status === 401;
-      const msg = is401 ? 'Organizer login session expired. Please log in again.' : (err.response?.data?.message || 'Invalid or unrecognized ticket');
-      const errStatus = err.response?.data?.status;
-      setScanResult({
-        type: errStatus === 'used' ? 'used' : errStatus === 'transferred' ? 'transferred' : errStatus === 'cancelled' ? 'cancelled' : 'invalid',
-        ticket: null,
-      });
-      if (soundEnabled) playSound('error');
-      toast.error(msg);
+      const errData = err.response?.data || {};
+      const statusType = errData.status || '';
+      const errMsg = errData.message || err.message || '';
+
+      // ⚠️ DUPLICATE TICKET CHECK
+      if (statusType === 'used' || errMsg.toLowerCase().includes('already used') || errMsg.toLowerCase().includes('already checked in')) {
+        setScanResult({
+          type: 'duplicate',
+          ticket: {
+            ticketNumber: errData.ticketNumber || cleanCode,
+            attendeeName: errData.attendeeName || 'Registered Attendee',
+            checkedInAt: errData.checkedInAt || null,
+          },
+          message: 'DUPLICATE TICKET — ALREADY USED',
+          checkedInAt: errData.checkedInAt,
+        });
+
+        if (soundEnabled) playSound('error');
+        toast.error('⚠️ Duplicate Ticket — Pass already checked in earlier');
+      } else if (statusType === 'cancelled' || errMsg.toLowerCase().includes('cancelled')) {
+        // ❌ CANCELLED TICKET
+        setScanResult({
+          type: 'cancelled',
+          ticket: { ticketNumber: errData.ticketNumber || cleanCode, attendeeName: errData.attendeeName },
+          message: 'CANCELLED TICKET — ENTRY DENIED',
+        });
+
+        if (soundEnabled) playSound('error');
+        toast.error('❌ Cancelled Ticket — Entry Denied');
+      } else if (err.response?.status === 401) {
+        setScanResult({
+          type: 'unauthorized',
+          message: 'Session expired. Please log in again.',
+        });
+        if (soundEnabled) playSound('error');
+        toast.error('Login session expired. Please refresh.');
+      } else {
+        // ❌ INVALID OR NOT FOUND
+        setScanResult({
+          type: 'invalid',
+          ticket: { ticketNumber: cleanCode },
+          message: errMsg || 'Invalid ticket pass or unrecognized QR code.',
+        });
+
+        if (soundEnabled) playSound('error');
+        toast.error(errMsg || 'Invalid ticket pass');
+      }
+      fetchLiveStats();
     } finally {
       setScanning(false);
       setQrInput('');
       setTimeout(() => {
         isProcessingRef.current = false;
-      }, 1500); // 1.5s cooldown before re-scanning the same ticket
+      }, 1500);
     }
-  }, [selectedEvent, soundEnabled, fetchAttendees]);
+  }, [selectedEvent, soundEnabled, autoResume, fetchLiveStats, fetchAttendees]);
 
   // Start Camera QR Scanner
   const startCamera = async () => {
@@ -375,7 +420,7 @@ export default function CheckInPage() {
 
   // Filtered attendees for manual search
   const filteredAttendees = useMemo(() => {
-    if (!manualQuery.trim()) return attendees.slice(0, 30);
+    if (!manualQuery.trim()) return attendees.slice(0, 40);
     const q = manualQuery.toLowerCase().trim();
     return attendees.filter((a) => {
       const name = (a.name || a.attendeeName || '').toLowerCase();
@@ -392,17 +437,8 @@ export default function CheckInPage() {
       const ticketId = attendee.ticketId || attendee.id;
       await checkIn(ticketId, { eventId: selectedEvent, method: 'manual' });
       if (soundEnabled) playSound('success');
-      toast.success(`${attendee.name || attendee.attendeeName} checked in`);
-      setLog((l) => [
-        {
-          name: attendee.name || attendee.attendeeName,
-          type: attendee.ticketType || attendee.ticket_type_name || 'Standard',
-          time: new Date(),
-          status: 'success',
-          code: attendee.ticketCode || `#${ticketId}`,
-        },
-        ...l,
-      ].slice(0, 50));
+      toast.success(`${attendee.name || attendee.attendeeName} checked in successfully`);
+      fetchLiveStats();
       fetchAttendees();
     } catch (err) {
       if (soundEnabled) playSound('error');
@@ -415,7 +451,7 @@ export default function CheckInPage() {
   // Export Check-in CSV
   const exportCheckInCsv = () => {
     if (!attendees.length) {
-      toast.error('No attendee records to export');
+      toast.error('No attendee records to export for this event');
       return;
     }
     const headers = ['Attendee Name', 'Email', 'Phone', 'Ticket Tier', 'Status', 'Checked In Time'];
@@ -439,17 +475,18 @@ export default function CheckInPage() {
     toast.success('Gate check-in list exported to CSV');
   };
 
-  if (loadingEvents) return <LoadingSpinner label="Loading events..." className="py-20" />;
+  if (loadingEvents) return <LoadingSpinner label="Loading check-in system..." className="py-20" />;
 
   return (
     <div className="space-y-5">
       <PageHeader
         icon={ScanLine}
         accent="emerald"
-        title="Gate Check-in & Scanner"
-        subtitle="Fast QR verification and attendee lookup for on-site admission."
+        title={isAdmin ? "Admin Gate Check-in & Scanner" : "Gate Check-in & Scanner"}
+        subtitle={isAdmin ? "Platform-wide ticket verification and live gate admission." : "Fast QR verification and attendee lookup for on-site admission."}
       />
 
+      {/* Control Bar: Event Selector & Audio / Auto-resume Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#171A1D] border border-[#262B2F] p-4 rounded-xl">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
           <label className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Active Event</label>
@@ -461,118 +498,138 @@ export default function CheckInPage() {
             }}
             className="flex-1 max-w-md px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer"
           >
-            <option value="">Select event to scan for...</option>
-            {events.map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
+            {isAdmin && <option value="all">⭐ All Events (Platform Global Check-In)</option>}
+            {events.map((e) => (
+              <option key={e.id} value={e.id}>{e.title}</option>
+            ))}
           </select>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Auto Resume Toggle */}
+          <button
+            onClick={() => setAutoResume(!autoResume)}
+            className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-semibold transition ${
+              autoResume ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599]'
+            }`}
+            title="Auto-resume next scan after 3.5 seconds"
+          >
+            {autoResume ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
+            Auto-Resume {autoResume ? 'ON' : 'OFF'}
+          </button>
+
+          {/* Sound Toggle */}
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className={`p-2.5 rounded-lg border transition ${soundEnabled ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599]'}`}
-            title={soundEnabled ? 'Audio Feedback Active' : 'Muted'}
+            className={`p-2.5 rounded-lg border transition ${
+              soundEnabled ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599]'
+            }`}
+            title={soundEnabled ? 'Audio Chime Enabled' : 'Muted'}
           >
             {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </button>
+
+          {/* Refresh Button */}
           <button
-            onClick={fetchAttendees}
+            onClick={() => {
+              fetchLiveStats();
+              fetchAttendees();
+            }}
             className="p-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] hover:text-white transition"
-            title="Refresh Attendance Stats"
+            title="Refresh Live Attendance"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
-          <button
-            onClick={exportCheckInCsv}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs font-semibold text-[#EFEFF1] hover:border-white/40 transition"
-          >
-            <Download className="w-3.5 h-3.5" /> Export CSV
-          </button>
+
+          {/* Export Button */}
+          {selectedEvent !== 'all' && (
+            <button
+              onClick={exportCheckInCsv}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs font-semibold text-[#EFEFF1] hover:border-white/40 transition"
+            >
+              <Download className="w-3.5 h-3.5" /> Export CSV
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Live Check-in Statistics (Section 19) */}
+      {/* Live Check-in Statistics Scoreboard (Synced with DB) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
           <div className="flex items-center gap-2 text-xs text-[#949599] font-bold uppercase tracking-wider">
-            <Users className="w-4 h-4 text-sky-400" /> TOTAL TICKETS
+            <Users className="w-4 h-4 text-sky-400" /> TOTAL PASSES
           </div>
           <p className="mt-2 text-3xl font-extrabold text-[#EFEFF1] tabular-nums">{stats.total.toLocaleString()}</p>
-          <span className="text-[11px] text-[#6B7278]">Total event registrations</span>
+          <span className="text-[11px] text-[#6B7278]">Total registered tickets</span>
         </div>
+
         <div className="rounded-xl bg-[#171A1D] border border-emerald-500/30 p-4">
           <div className="flex items-center gap-2 text-xs text-emerald-400 font-bold uppercase tracking-wider">
-            <UserCheck className="w-4 h-4" /> CHECKED IN
+            <UserCheck className="w-4 h-4" /> ADMITTED INSIDE
           </div>
           <p className="mt-2 text-3xl font-extrabold text-emerald-400 tabular-nums">{stats.checkedIn.toLocaleString()}</p>
-          <span className="text-[11px] text-emerald-500/70">Scanned & admitted inside</span>
+          <span className="text-[11px] text-emerald-500/70">Scanned & approved at gate</span>
         </div>
+
         <div className="rounded-xl bg-[#171A1D] border border-amber-500/30 p-4">
           <div className="flex items-center gap-2 text-xs text-amber-400 font-bold uppercase tracking-wider">
-            <Clock className="w-4 h-4" /> NOT CHECKED IN
+            <Clock className="w-4 h-4" /> REMAINING
           </div>
           <p className="mt-2 text-3xl font-extrabold text-amber-300 tabular-nums">{stats.notArrived.toLocaleString()}</p>
-          <span className="text-[11px] text-amber-500/70">Awaiting arrival</span>
+          <span className="text-[11px] text-amber-500/70">Awaiting gate arrival</span>
         </div>
+
         <div className="rounded-xl bg-gradient-to-br from-emerald-500/20 via-[#171A1D] to-[#1C232B] border border-emerald-500/40 p-4">
           <div className="flex items-center gap-2 text-xs text-emerald-300 font-bold uppercase tracking-wider">
-            <Zap className="w-4 h-4 text-emerald-400" /> ATTENDANCE RATE
+            <Zap className="w-4 h-4 text-emerald-400" /> ADMISSION RATE
           </div>
           <p className="mt-2 text-3xl font-black text-white tabular-nums">{stats.rate}%</p>
-          <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">{stats.rate}% ATTENDANCE</span>
+          <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">{stats.rate}% OF GUESTS ADMITTED</span>
         </div>
       </div>
 
-      {/* Progress */}
+      {/* Progress Bar */}
       <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
         <div className="flex items-center justify-between text-xs text-[#949599] mb-2">
-          <span>Gate Check-in Progress</span>
+          <span>Live Gate Check-in Progress</span>
           <span className="tabular-nums font-semibold text-[#EFEFF1]">{stats.checkedIn} of {stats.total} Attendees</span>
         </div>
         <div className="h-2.5 rounded-full bg-[#494F55]/30 overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-white to-emerald-400 rounded-full transition-all duration-500" style={{ width: `${stats.rate}%` }} />
+          <div
+            className="h-full bg-gradient-to-r from-white to-emerald-400 rounded-full transition-all duration-500"
+            style={{ width: `${Math.min(Number(stats.rate), 100)}%` }}
+          />
         </div>
       </div>
 
-      {/* Admission by Ticket Tier */}
-      {tierBreakdown.length > 0 && (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-          <p className="text-xs font-semibold text-[#949599] uppercase tracking-wider mb-3">Admission by Ticket Tier</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {tierBreakdown.map((tier) => (
-              <div key={tier.name} className="p-3.5 rounded-xl bg-[#1C232B] border border-[#262B2F] flex flex-col justify-between">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-bold text-[#EFEFF1] truncate">{tier.name}</span>
-                  <span className="text-xs font-semibold text-emerald-400 tabular-nums">{tier.rate}%</span>
-                </div>
-                <div className="mt-2.5 flex items-baseline justify-between text-xs">
-                  <span className="text-white font-semibold tabular-nums">{tier.checkedIn} checked</span>
-                  <span className="text-[#949599] tabular-nums">of {tier.total}</span>
-                </div>
-                <div className="mt-2 h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
-                  <div className="h-full bg-emerald-400 rounded-full transition-all duration-300" style={{ width: `${tier.rate}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Tabs */}
+      {/* Tabs: Camera Scanner vs Attendee Roster */}
       <div className="flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#262B2F] w-fit">
-        <button onClick={() => setTab('scanner')} className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition ${tab === 'scanner' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
-          <ScanLine className="w-4 h-4" /> Camera Scanner
+        <button
+          onClick={() => setTab('scanner')}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition ${
+            tab === 'scanner' ? 'bg-white text-[#1C232B] font-bold' : 'text-[#949599] hover:text-[#EFEFF1]'
+          }`}
+        >
+          <ScanLine className="w-4 h-4" /> Camera Scanner & Manual Input
         </button>
-        <button onClick={() => setTab('manual')} className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition ${tab === 'manual' ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1]'}`}>
-          <Search className="w-4 h-4" /> Attendee Roster ({attendees.length})
-        </button>
+        {selectedEvent !== 'all' && (
+          <button
+            onClick={() => setTab('manual')}
+            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition ${
+              tab === 'manual' ? 'bg-white text-[#1C232B] font-bold' : 'text-[#949599] hover:text-[#EFEFF1]'
+            }`}
+          >
+            <Search className="w-4 h-4" /> Attendee Roster ({attendees.length})
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Main panel */}
+        {/* Main Scanner Section */}
         <div className="lg:col-span-2">
           {tab === 'scanner' ? (
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-6 space-y-5">
-              {/* Camera Scanner View */}
+              {/* Camera Scanner Viewfinder */}
               <div className="relative rounded-xl bg-[#14181C] border-2 border-dashed border-[#494F55]/40 overflow-hidden min-h-[300px] flex flex-col items-center justify-center">
                 {cameraActive ? (
                   <div className="w-full flex flex-col items-center p-4">
@@ -593,11 +650,11 @@ export default function CheckInPage() {
                     </div>
                     <h3 className="text-base font-semibold text-[#EFEFF1]">Live Camera Scanner Ready</h3>
                     <p className="text-xs text-[#949599] max-w-sm mx-auto mt-1 mb-5">
-                      Point camera at attendee digital ticket QR code on phone or printed pass for automatic check-in.
+                      Point web camera or webcam at attendee QR code on phone or printed pass for automatic gate check-in.
                     </p>
                     <button
                       onClick={startCamera}
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-lg"
+                      className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-lg active:scale-95"
                     >
                       <Camera className="w-4 h-4" /> Start Camera Scanner
                     </button>
@@ -605,9 +662,11 @@ export default function CheckInPage() {
                 )}
               </div>
 
-              {/* Paste code */}
+              {/* Manual Code / Barcode Input */}
               <div>
-                <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Manual Code / Barcode Input</label>
+                <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">
+                  Manual Ticket Code / Barcode Input
+                </label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <QrCode className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
@@ -615,50 +674,203 @@ export default function CheckInPage() {
                       value={qrInput}
                       onChange={(e) => setQrInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleScan(qrInput)}
-                      placeholder="Paste QR code string or enter ticket code..."
+                      placeholder="Paste QR code string or enter pass number (e.g. TC-ABC123)..."
                       className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
                     />
                   </div>
                   <button
                     onClick={() => handleScan(qrInput)}
                     disabled={!qrInput.trim() || scanning}
-                    className="px-5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition shadow-md"
+                    className="px-5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition shadow-md active:scale-95"
                   >
-                    {scanning ? 'Verifying...' : 'Verify Ticket'}
+                    {scanning ? 'Verifying...' : 'Check In'}
                   </button>
                 </div>
               </div>
 
-              {/* Scan result banner */}
+              {/* DETAILED SCAN RESULT BANNERS (Approved / Duplicate / Invalid) */}
               <AnimatePresence>
-                {scanResult && (() => {
-                  const st = scanResultState(scanResult.type);
-                  const t = scanResult.ticket;
-                  return (
-                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className={`rounded-xl border p-5 ${st.bg} ${st.border}`}>
-                      <div className="flex items-start gap-3.5">
-                        <st.icon className={`w-7 h-7 ${st.color} shrink-0 mt-0.5`} />
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-base font-bold ${st.color}`}>{st.label}</p>
-                          {t ? (
-                            <div className="mt-2 space-y-1 text-sm bg-black/20 p-3 rounded-lg border border-white/5">
-                              <p className="text-white font-semibold">{t.attendeeName || t.name || t.user?.name || 'Attendee'}</p>
-                              <p className="text-[#949599] text-xs">
-                                Tier: <span className="text-[#EFEFF1]">{t.ticketType || t.ticket_type_name || 'Standard'}</span> · Seat: <span className="text-[#EFEFF1]">{t.seatNumber || 'General Admission'}</span>
-                              </p>
-                              {t.email && <p className="text-[#949599] text-xs">Email: {t.email}</p>}
+                {scanResult && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    {/* 🟢 1. APPROVED TICKET */}
+                    {scanResult.type === 'approved' && (
+                      <div className="rounded-xl border border-emerald-500/50 bg-emerald-500/10 p-5 space-y-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
+                              <CheckCircle2 className="w-6 h-6 text-emerald-400" />
                             </div>
-                          ) : (
-                            <p className="text-sm text-[#949599] mt-1">This ticket code is not registered for this event.</p>
+                            <div>
+                              <h4 className="text-base font-extrabold text-emerald-400">ENTRY APPROVED &amp; ADMITTED</h4>
+                              <p className="text-xs text-emerald-300">Ticket pass successfully validated for entry</p>
+                            </div>
+                          </div>
+                          <Badge variant="success" size="sm">APPROVED</Badge>
+                        </div>
+
+                        {/* Attendee Details Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl bg-black/40 border border-emerald-500/20 text-xs">
+                          <div>
+                            <span className="text-[#949599] font-medium uppercase text-[10px] tracking-wider">Attendee Name</span>
+                            <p className="text-sm font-bold text-white mt-0.5">
+                              {scanResult.ticket?.attendee_name || scanResult.ticket?.attendeeName || 'Guest'}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-[#949599] font-medium uppercase text-[10px] tracking-wider">Pass Code</span>
+                            <p className="text-sm font-mono font-bold text-emerald-300 mt-0.5">
+                              #{scanResult.ticket?.ticket_number || scanResult.ticket?.ticketNumber || lastScannedCode}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-[#949599] font-medium uppercase text-[10px] tracking-wider">Ticket Tier</span>
+                            <p className="text-xs font-semibold text-[#EFEFF1] mt-0.5">
+                              {scanResult.ticket?.ticket_type || scanResult.ticket?.ticketType || 'Standard Admission'}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-[#949599] font-medium uppercase text-[10px] tracking-wider">Admitted At</span>
+                            <p className="text-xs font-semibold text-[#EFEFF1] mt-0.5">
+                              {new Date(scanResult.checkedInAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                            </p>
+                          </div>
+                          {scanResult.ticket?.event_title && (
+                            <div className="sm:col-span-2 pt-1 border-t border-white/5">
+                              <span className="text-[#949599] font-medium uppercase text-[10px] tracking-wider">Event</span>
+                              <p className="text-xs font-medium text-[#CBD5E1] mt-0.5 truncate">
+                                {scanResult.ticket.event_title}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center justify-between gap-3 pt-1">
+                          <button
+                            onClick={handleResetScan}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 text-[#161D22] text-xs font-bold hover:bg-emerald-400 transition shadow"
+                          >
+                            <Check className="w-3.5 h-3.5" /> Scan Next Ticket
+                          </button>
+                          {autoResume && (
+                            <span className="text-[11px] text-emerald-400/80">Auto-resuming in 3.5s...</span>
                           )}
                         </div>
                       </div>
-                    </motion.div>
-                  );
-                })()}
+                    )}
+
+                    {/* ⚠️ 2. DUPLICATE TICKET WARNING */}
+                    {scanResult.type === 'duplicate' && (
+                      <div className="rounded-xl border border-amber-500/50 bg-amber-500/10 p-5 space-y-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
+                              <AlertTriangle className="w-6 h-6 text-amber-400" />
+                            </div>
+                            <div>
+                              <h4 className="text-base font-extrabold text-amber-400">DUPLICATE TICKET — ALREADY USED</h4>
+                              <p className="text-xs text-amber-300">Entry denied: This pass was already admitted earlier</p>
+                            </div>
+                          </div>
+                          <span className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 text-xs font-extrabold border border-amber-500/40">
+                            FLAGGED
+                          </span>
+                        </div>
+
+                        {/* Duplicate Alert Notice Box */}
+                        <div className="p-3 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center gap-2.5 text-xs text-amber-200">
+                          <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+                          <span>This ticket has already been admitted at the gate entrance. Do not allow duplicate entry without manager verification.</span>
+                        </div>
+
+                        {/* Attendee Details */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl bg-black/40 border border-amber-500/20 text-xs">
+                          <div>
+                            <span className="text-[#949599] font-medium uppercase text-[10px] tracking-wider">Registered Attendee</span>
+                            <p className="text-sm font-bold text-white mt-0.5">
+                              {scanResult.ticket?.attendeeName || 'Guest'}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-[#949599] font-medium uppercase text-[10px] tracking-wider">Pass Code</span>
+                            <p className="text-sm font-mono font-bold text-amber-300 mt-0.5">
+                              #{scanResult.ticket?.ticketNumber || lastScannedCode}
+                            </p>
+                          </div>
+                          {scanResult.checkedInAt && (
+                            <div className="sm:col-span-2">
+                              <span className="text-[#949599] font-medium uppercase text-[10px] tracking-wider">Originally Checked In At</span>
+                              <p className="text-xs font-bold text-amber-400 mt-0.5">
+                                {new Date(scanResult.checkedInAt).toLocaleString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  second: '2-digit',
+                                })}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center justify-between gap-3 pt-1">
+                          <button
+                            onClick={handleResetScan}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-[#161D22] text-xs font-bold hover:bg-amber-400 transition shadow"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" /> Dismiss &amp; Scan Next Ticket
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ❌ 3. CANCELLED / UNAUTHORIZED / INVALID ERROR */}
+                    {(scanResult.type === 'cancelled' || scanResult.type === 'unauthorized' || scanResult.type === 'invalid') && (
+                      <div className="rounded-xl border border-red-500/50 bg-red-500/10 p-5 space-y-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center shrink-0">
+                              <XCircle className="w-6 h-6 text-red-400" />
+                            </div>
+                            <div>
+                              <h4 className="text-base font-extrabold text-red-400">
+                                {scanResult.type === 'cancelled'
+                                  ? 'PASS CANCELLED'
+                                  : scanResult.type === 'unauthorized'
+                                    ? 'UNAUTHORIZED EVENT'
+                                    : 'INVALID PASS CODE'}
+                              </h4>
+                              <p className="text-xs text-red-300">Entry denied at gate</p>
+                            </div>
+                          </div>
+                          <span className="px-2.5 py-1 rounded bg-red-500/20 text-red-300 text-xs font-extrabold border border-red-500/40">
+                            DENIED
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-[#CBD5E1] bg-black/40 p-3 rounded-lg border border-red-500/20">
+                          {scanResult.message}
+                        </p>
+
+                        <div className="flex items-center justify-between gap-3 pt-1">
+                          <button
+                            onClick={handleResetScan}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 text-white text-xs font-bold hover:bg-red-600 transition shadow"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" /> Dismiss &amp; Scan Next
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
               </AnimatePresence>
             </div>
           ) : (
+            /* MANUAL ATTENDEE ROSTER TAB */
             <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-6 space-y-5">
               <div className="relative">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
@@ -675,11 +887,14 @@ export default function CheckInPage() {
                   {filteredAttendees.map((a) => {
                     const checked = a.checkedIn || a.checkInStatus === 'checked_in' || a.checked_in;
                     return (
-                      <div key={a.id} className="flex items-center justify-between p-4 rounded-xl bg-[#1C232B] border border-[#262B2F] hover:border-white/20 transition">
+                      <div
+                        key={a.id}
+                        className="flex items-center justify-between p-4 rounded-xl bg-[#1C232B] border border-[#262B2F] hover:border-white/20 transition"
+                      >
                         <div className="min-w-0 pr-4">
                           <p className="text-sm font-semibold text-[#EFEFF1] truncate">{a.name || a.attendeeName}</p>
                           <p className="text-xs text-[#949599] truncate mt-0.5">
-                            {a.email || a.attendeeEmail} · {a.ticketType || a.ticket_type_name || 'Ticket'}
+                            {a.email || a.attendeeEmail} · {a.ticketType || a.ticket_type_name || 'Ticket'} · #{a.ticketCode || a.id}
                           </p>
                         </div>
                         {checked ? (
@@ -688,9 +903,10 @@ export default function CheckInPage() {
                           <button
                             onClick={() => handleManualCheckIn(a)}
                             disabled={checkingIn === a.id}
-                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-xs font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition shadow"
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] disabled:opacity-50 transition shadow active:scale-95"
                           >
-                            <UserCheck className="w-3.5 h-3.5" /> {checkingIn === a.id ? 'Checking In...' : 'Check In'}
+                            <UserCheck className="w-3.5 h-3.5" />
+                            {checkingIn === a.id ? 'Checking In...' : 'Check In'}
                           </button>
                         )}
                       </div>
@@ -698,39 +914,52 @@ export default function CheckInPage() {
                   })}
                 </div>
               ) : (
-                <EmptyState icon={Search} title="No attendees found" description="Try searching with a different name, email, or ticket code." className="py-12" />
+                <EmptyState
+                  icon={Search}
+                  title="No attendees found"
+                  description="Try searching with a different attendee name, email, or pass number."
+                  className="py-12"
+                />
               )}
             </div>
           )}
         </div>
 
-        {/* Live Gate Admission Feed */}
+        {/* Live Gate Admission Feed (Shared across Web & Mobile) */}
         <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 h-fit space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[#EFEFF1] flex items-center gap-2">
               <TicketIcon className="w-4 h-4 text-white" /> Recent Gate Admissions
             </h3>
-            {log.length > 0 && (
+            {recentScans.length > 0 && (
               <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                {log.length} Logged
+                {recentScans.length} Live
               </span>
             )}
           </div>
 
-          {log.length === 0 ? (
+          {recentScans.length === 0 ? (
             <div className="py-10 text-center text-xs text-[#949599] border border-dashed border-[#262B2F] rounded-lg">
-              No admissions logged in this session yet.
+              No admissions recorded for this event yet.
             </div>
           ) : (
-            <div className="space-y-2 max-h-[460px] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[520px] overflow-y-auto pr-1">
               <AnimatePresence>
-                {log.map((l, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-3 p-3 rounded-xl bg-[#1C232B] border border-[#262B2F]">
+                {recentScans.map((item, idx) => (
+                  <motion.div
+                    key={item.id || idx}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-center gap-3 p-3 rounded-xl bg-[#1C232B] border border-[#262B2F]"
+                  >
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-[#EFEFF1] truncate">{l.name}</p>
-                      <p className="text-[11px] text-[#949599]">
-                        {l.type} · {l.time.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                      <p className="text-xs font-semibold text-[#EFEFF1] truncate">
+                        {item.attendee || item.name || 'Guest'}
+                      </p>
+                      <p className="text-[11px] text-[#949599] truncate">
+                        #{item.code || item.ticket_number} · {item.tier || 'General Admission'} {item.time ? `· ${item.time}` : ''}
                       </p>
                     </div>
                   </motion.div>

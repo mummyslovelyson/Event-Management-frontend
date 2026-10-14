@@ -237,6 +237,7 @@ function AppRoutes() {
         >
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/check-in" element={<CheckInPage />} />
           <Route path="/admin/users" element={<UserManagementPage />} />
           <Route path="/admin/organizers" element={<OrganizerApprovalsPage />} />
           <Route path="/admin/organizers/:id" element={<OrganizerApprovalsPage />} />

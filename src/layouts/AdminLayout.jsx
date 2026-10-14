@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, CalendarDays, Layers, CreditCard, BarChart3,
   FileText, Bell, LifeBuoy, Settings, ScrollText, Menu, X, LogOut,
   Search, ChevronDown, UserCheck, AlertTriangle, Globe, BookOpen, CheckCircle, ExternalLink,
-  Trash2, Check, Smartphone,
+  Trash2, Check, Smartphone, QrCode,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getAdminNotifications, markAdminNotificationsRead, deleteAdminNotification } from '@/api/admin';
@@ -14,6 +14,7 @@ import CurrencyToggle from '@/components/common/CurrencyToggle';
 const nav = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/', label: 'Public Website', icon: Globe },
+  { to: '/admin/check-in', label: 'Ticket Check-In', icon: QrCode },
   { to: '/admin/users', label: 'Users', icon: Users },
   { to: '/admin/organizers', label: 'Organizers', icon: UserCheck },
   { to: '/admin/events', label: 'Events', icon: CalendarDays },

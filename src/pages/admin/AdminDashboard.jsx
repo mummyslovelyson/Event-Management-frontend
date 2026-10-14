@@ -9,7 +9,7 @@ import {
   Users, UserCheck, CalendarDays, Ticket as TicketIcon, Wallet, ShoppingCart,
   CheckCircle2, XCircle, ArrowRight, TrendingUp, TrendingDown,
   FileBarChart, CircleDollarSign, RefreshCw, Activity as ActivityIcon,
-  Bell,
+  Bell, QrCode,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
@@ -208,6 +208,15 @@ export default function AdminDashboard() {
             <p className="mt-1 text-sm text-[#949599]">
               Platform financial pulse, pending requests, and user activity.
             </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/admin/check-in"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#EFEFF1] text-[#161D22] text-sm font-semibold hover:bg-white transition-all shadow-lg shadow-black/25 active:scale-95"
+            >
+              <QrCode className="w-4 h-4 text-[#161D22]" />
+              Gate Check-In
+            </Link>
           </div>
         </div>
       </motion.div>

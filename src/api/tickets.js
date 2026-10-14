@@ -17,3 +17,6 @@ export const uploadTicketFiles = (formData) => api.post('/upload/tickets', formD
 export const getUploadedTickets = (ticketTypeId) => api.get(`/tickets/types/${ticketTypeId}/inventory`);
 export const deleteTicket = (id, force = false) => api.delete(`/tickets/${id}`, { params: force ? { force: true } : {} });
 export const clearOldTickets = () => api.post('/tickets/clear-old');
+export const checkInTicketByCode = (code) => api.post(`/tickets/verify/${encodeURIComponent(code)}/check-in`);
+export const getCheckInStats = (params) => api.get('/tickets/check-in/stats', { params });
+
