@@ -591,8 +591,8 @@ export default function CheckInPage() {
       <PageHeader
         icon={ScanLine}
         accent="emerald"
-        title={isAdmin ? "Admin Gate Check-in & Scanner" : "Gate Check-in & Scanner"}
-        subtitle={isAdmin ? "Platform-wide ticket verification and live gate admission." : "Fast QR verification and attendee lookup for on-site admission."}
+        title={isAdmin ? "Admin Gate Check-in & Scanner (Platform Boss)" : "Gate Check-in & Scanner"}
+        subtitle={isAdmin ? "Platform-wide ticket verification, universal gate scanner, and live admissions across all events." : "Fast QR verification and attendee lookup for on-site admission."}
       />
 
       {/* Control Bar: Event Selector & Audio / Auto-resume Controls */}

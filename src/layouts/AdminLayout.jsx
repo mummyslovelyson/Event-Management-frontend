@@ -14,7 +14,7 @@ import CurrencyToggle from '@/components/common/CurrencyToggle';
 const nav = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/', label: 'Public Website', icon: Globe },
-  { to: '/admin/check-in', label: 'Ticket Check-In', icon: QrCode },
+  { to: '/admin/check-in', label: 'Gate Check-In (All Events)', icon: QrCode },
   { to: '/admin/users', label: 'Users', icon: Users },
   { to: '/admin/organizers', label: 'Organizers', icon: UserCheck },
   { to: '/admin/events', label: 'Events', icon: CalendarDays },

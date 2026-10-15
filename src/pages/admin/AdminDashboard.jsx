@@ -212,10 +212,11 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-3">
             <Link
               to="/admin/check-in"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#EFEFF1] text-[#161D22] text-sm font-semibold hover:bg-white transition-all shadow-lg shadow-black/25 active:scale-95"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#EFEFF1] text-[#161D22] text-sm font-bold hover:bg-white transition-all shadow-lg shadow-black/25 active:scale-95 border border-white"
             >
               <QrCode className="w-4 h-4 text-[#161D22]" />
-              Gate Check-In
+              <span>Gate Check-In (All Events)</span>
+              <span className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-[#161D22] text-[#EFEFF1] tracking-wider uppercase">Boss</span>
             </Link>
           </div>
         </div>
