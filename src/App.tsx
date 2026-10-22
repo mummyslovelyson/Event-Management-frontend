@@ -165,6 +165,7 @@ function AppRoutes() {
 
         {/* ── Payment (standalone, no layout wrapper — Paystack redirects here) ── */}
         <Route path="/payment/callback" element={<PaymentCallbackPage />} />
+        <Route path="/paystack_success" element={<PaymentCallbackPage />} />
 
         {/* ── Auth (standalone, no layout wrapper) ── */}
         <Route path="/login" element={<LoginPage />} />
