@@ -500,9 +500,6 @@ export default function ExplorePage() {
         {/* Hero & Title Bar */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#242B32] pb-6">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">
-              <Compass className="w-4 h-4" /> Live Events in Ghana
-            </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
               Explore Events
             </h1>

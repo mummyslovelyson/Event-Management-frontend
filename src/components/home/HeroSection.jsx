@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, MapPin, Tag, ArrowRight, Sparkles, Compass } from 'lucide-react';
+import { Search, MapPin, Tag, ArrowRight } from 'lucide-react';
 import { POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 
 const HERO_IMAGE = 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80';
@@ -41,23 +41,10 @@ export default function HeroSection() {
           decoding="async"
           className="w-full h-full object-cover object-center opacity-30 scale-105 filter blur-[0.5px]"
         />
-        {/* Multi-stop radial and linear lighting overlay */}
-        <div className="absolute inset-0 bg-radial-gradient from-purple-900/15 via-[#1C232B]/85 to-[#1C232B]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1C232B] via-[#1C232B]/75 to-[#1C232B]/90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1C232B] via-[#1C232B]/85 to-[#1C232B]/70" />
       </div>
 
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Subtle Trust Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] border border-white/10 text-xs font-semibold text-[#CBD5E1] mb-5 backdrop-blur-md shadow-sm"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>Verified Tickets &bull; Instant Mobile Money Checkout</span>
-        </motion.div>
-
         {/* Main Title */}
         <motion.h1
           initial={{ opacity: 0, y: 18 }}

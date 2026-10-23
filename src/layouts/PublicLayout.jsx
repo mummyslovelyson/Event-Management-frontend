@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu, X, LogIn, UserPlus, Twitter, Instagram, Facebook, Linkedin,
   LayoutDashboard, User, LogOut, Ticket as TicketIcon, ChevronDown,
-  ShieldCheck, CreditCard, Smartphone,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import ScrollProgressBar from '@/components/common/ScrollProgressBar';
@@ -335,30 +334,7 @@ export default function PublicLayout() {
             ))}
           </div>
 
-          {/* Payment & Security Trust Bar */}
-          <div className="pt-6 pb-4 border-t border-[#262B2F] flex flex-wrap items-center justify-between gap-4 text-xs text-[#949599]">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span className="font-semibold text-white">Guaranteed Secure Checkout:</span>
-              <span className="hidden sm:inline">All transactions are encrypted with 256-bit bank-grade SSL</span>
-            </div>
-            <div className="flex flex-wrap items-center gap-2 font-medium">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#1C232B] border border-white/10 text-[11px] text-[#CBD5E1]">
-                <Smartphone className="w-3 h-3 text-amber-400" /> MTN MoMo
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#1C232B] border border-white/10 text-[11px] text-[#CBD5E1]">
-                <Smartphone className="w-3 h-3 text-rose-400" /> Telecel Cash
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#1C232B] border border-white/10 text-[11px] text-[#CBD5E1]">
-                <CreditCard className="w-3 h-3 text-blue-400" /> Visa &amp; Mastercard
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#1C232B] border border-white/10 text-[11px] text-emerald-400 font-bold">
-                Paystack Verified
-              </span>
-            </div>
-          </div>
-
-          <div className="pt-4 border-t border-[#262B2F] flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="pt-6 border-t border-[#262B2F] flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-xs text-[#949599]">© {new Date().getFullYear()} Tribes &amp; Cliqs. All rights reserved.</p>
             <p className="text-xs text-[#CBD5E1]">Live events, real connections.</p>
           </div>

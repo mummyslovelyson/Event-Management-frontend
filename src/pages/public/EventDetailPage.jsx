@@ -1023,33 +1023,6 @@ export default function EventDetailPage() {
                         <EventLocationMap event={event} />
                       </div>
                     )}
-
-                    {/* Search-to-Purchase Conversion Bridge */}
-                    <div className="mt-8 p-6 rounded-2xl bg-gradient-to-r from-[#171A1D] via-[#1C232B] to-[#171A1D] border border-white/10 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Ready to Attend?</span>
-                        <h4 className="text-lg font-bold text-white mt-0.5">Secure Your Admission Today</h4>
-                        <p className="text-xs text-[#949599] mt-1">
-                          {tickets.length > 0 && Math.min(...tickets.map((t) => Number(t.price) || 0)) === 0
-                            ? 'Free registration available with instant QR pass delivery.'
-                            : tickets.length > 0
-                            ? `Tickets starting from ${format(Math.min(...tickets.map((t) => Number(t.price) || 0)))}. Pay instantly with Mobile Money or Card.`
-                            : 'Reserve your spot before tickets sell out.'}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setActiveTab('Tickets');
-                          document.getElementById('event-tabs-section')?.scrollIntoView({ behavior: 'smooth' });
-                        }}
-                        className="px-6 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-extrabold hover:bg-[#CBD5E1] transition-all shadow-lg active:scale-95 shrink-0 flex items-center justify-center gap-2 cursor-pointer"
-                      >
-                        <Ticket className="w-4 h-4" />
-                        <span>Select Tickets</span>
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
                   </div>
                 )}
 
@@ -1641,13 +1614,9 @@ export default function EventDetailPage() {
                         : 'Tickets on Sale'}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs text-emerald-400 flex items-center gap-1.5 font-semibold">
-                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                    <span>Instant QR Pass Delivery to Phone &amp; Email</span>
-                  </p>
                 </div>
 
-                {/* Event Schedule & Venue info with high contrast */}
+                {/* Event Schedule & Venue info */}
                 <div className="space-y-3.5">
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center shrink-0 mt-0.5 text-[#CBD5E1]">
@@ -1684,7 +1653,7 @@ export default function EventDetailPage() {
                   )}
                 </div>
 
-                {/* Primary High-Intent Ticket Action */}
+                {/* Primary Ticket Action */}
                 <button
                   type="button"
                   onClick={() => {
@@ -1695,31 +1664,9 @@ export default function EventDetailPage() {
                   className="mt-6 w-full py-3.5 px-4 rounded-xl bg-white text-[#1C232B] text-sm font-extrabold hover:bg-[#CBD5E1] transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/40 active:scale-95 cursor-pointer"
                 >
                   <Ticket className="w-4 h-4" />
-                  <span>Get Tickets Now</span>
+                  <span>Get Tickets</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
-              </div>
-
-              {/* Trust & Guarantee Box */}
-              <div className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-4 space-y-2.5 text-xs text-[#CBD5E1]">
-                <div className="flex items-center gap-2 text-white font-semibold pb-2 border-b border-[#262B2F]">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Tribes &amp; Cliqs Buyer Protection</span>
-                </div>
-                <div className="space-y-2 text-[#949599]">
-                  <p className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                    <span>100% verified tickets scanned at gate</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                    <span>Paystack 3D-Secure MoMo &amp; Cards</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                    <span>Instant SMS &amp; email order confirmation</span>
-                  </p>
-                </div>
               </div>
             </div>
           </aside>
