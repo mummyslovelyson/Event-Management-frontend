@@ -10,7 +10,6 @@ import toast from 'react-hot-toast';
 import EventCard from '@/components/common/EventCard';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import HeroSection from '@/components/home/HeroSection';
-import SearchBarSection from '@/components/home/SearchBarSection';
 import { getFeaturedEvents, getTrendingEvents, getCategories, getFeaturedOrganizers } from '@/api/events';
 import { getCategoryImage, POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
@@ -148,9 +147,6 @@ export default function HomePage() {
     <div className="bg-[#1C232B] text-[#EFEFF1]">
       {/* ─── HERO SECTION ─── */}
       <HeroSection />
-
-      {/* ─── SEARCH & EXPLORE BAR ─── */}
-      <SearchBarSection />
 
       {/* ─── FEATURED EVENTS ─── */}
       {(loadingFeatured || featured.length > 0) && (

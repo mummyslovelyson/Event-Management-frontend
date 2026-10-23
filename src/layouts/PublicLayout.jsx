@@ -189,9 +189,9 @@ export default function PublicLayout() {
                 </Link>
                 <Link
                   to="/register"
-                  className="flex items-center gap-1.5 px-5 py-2 rounded-lg bg-white text-[#1C232B] text-[13px] font-bold tracking-wide hover:bg-[#CBD5E1] hover:-translate-y-0.5 transition-all shadow-sm"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1C232B] text-[#CBD5E1] border border-white/[0.08] text-[13px] font-semibold hover:bg-[#262B2F] hover:text-white hover:border-white/20 transition-all shadow-none"
                 >
-                  <UserPlus className="w-4 h-4" />
+                  <UserPlus className="w-4 h-4 text-[#949599]" />
                   Get Started
                 </Link>
                 </>
