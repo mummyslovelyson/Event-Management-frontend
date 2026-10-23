@@ -1023,6 +1023,33 @@ export default function EventDetailPage() {
                         <EventLocationMap event={event} />
                       </div>
                     )}
+
+                    {/* Search-to-Purchase Conversion Bridge */}
+                    <div className="mt-8 p-6 rounded-2xl bg-gradient-to-r from-[#171A1D] via-[#1C232B] to-[#171A1D] border border-white/10 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Ready to Attend?</span>
+                        <h4 className="text-lg font-bold text-white mt-0.5">Secure Your Admission Today</h4>
+                        <p className="text-xs text-[#949599] mt-1">
+                          {tickets.length > 0 && Math.min(...tickets.map((t) => Number(t.price) || 0)) === 0
+                            ? 'Free registration available with instant QR pass delivery.'
+                            : tickets.length > 0
+                            ? `Tickets starting from ${format(Math.min(...tickets.map((t) => Number(t.price) || 0)))}. Pay instantly with Mobile Money or Card.`
+                            : 'Reserve your spot before tickets sell out.'}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveTab('Tickets');
+                          document.getElementById('event-tabs-section')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="px-6 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-extrabold hover:bg-[#CBD5E1] transition-all shadow-lg active:scale-95 shrink-0 flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Ticket className="w-4 h-4" />
+                        <span>Select Tickets</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 )}
 
@@ -1597,44 +1624,102 @@ export default function EventDetailPage() {
             </AnimatePresence>
           </div>
 
-          {/* Sidebar - quick info */}
+          {/* Sidebar - Desktop Ticket Booking & Information Panel */}
           <aside className="lg:col-span-1">
             <div className="sticky top-20 space-y-4">
-              <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-                <h3 className="text-sm font-semibold text-[#EFEFF1] mb-4">Event Details</h3>
-                <div className="space-y-3">
+              {/* Primary Booking Card */}
+              <div className="rounded-2xl bg-[#171A1D] border border-white/10 p-5 sm:p-6 shadow-xl backdrop-blur-md">
+                {/* Pricing & Admission Header */}
+                <div className="pb-4 mb-4 border-b border-[#262B2F]">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#949599]">Admission &amp; Tickets</p>
+                  <div className="mt-1.5 flex items-baseline gap-2">
+                    <span className="text-2xl sm:text-3xl font-extrabold text-white">
+                      {tickets.length > 0 && Math.min(...tickets.map((t) => Number(t.price) || 0)) === 0
+                        ? 'Free Admission'
+                        : tickets.length > 0
+                        ? `From ${format(Math.min(...tickets.map((t) => Number(t.price) || 0)))}`
+                        : 'Tickets on Sale'}
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-xs text-emerald-400 flex items-center gap-1.5 font-semibold">
+                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                    <span>Instant QR Pass Delivery to Phone &amp; Email</span>
+                  </p>
+                </div>
+
+                {/* Event Schedule & Venue info with high contrast */}
+                <div className="space-y-3.5">
                   <div className="flex items-start gap-3">
-                    <Calendar className="w-4 h-4 text-[#494F55] mt-0.5 shrink-0" />
+                    <div className="w-8 h-8 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center shrink-0 mt-0.5 text-[#CBD5E1]">
+                      <Calendar className="w-4 h-4" />
+                    </div>
                     <div>
-                      <p className="text-xs text-[#494F55]">Date & Time</p>
-                      <p className="text-sm text-[#EFEFF1]">{fmtDate}</p>
-                      {fmtTime && <p className="text-sm text-[#949599]">{fmtTime}</p>}
+                      <p className="text-xs font-semibold text-[#949599] uppercase tracking-wider">Date &amp; Time</p>
+                      <p className="text-sm font-semibold text-[#EFEFF1] mt-0.5">{fmtDate}</p>
+                      {fmtTime && <p className="text-xs text-[#CBD5E1] mt-0.5">{fmtTime}</p>}
                     </div>
                   </div>
+
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-4 h-4 text-[#494F55] mt-0.5 shrink-0" />
+                    <div className="w-8 h-8 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center shrink-0 mt-0.5 text-[#CBD5E1]">
+                      <MapPin className="w-4 h-4" />
+                    </div>
                     <div>
-                      <p className="text-xs text-[#494F55]">Venue</p>
-                      <p className="text-sm text-[#EFEFF1]">{event.venue || 'TBA'}</p>
-                      <p className="text-sm text-[#949599]">{event.location || event.city}</p>
+                      <p className="text-xs font-semibold text-[#949599] uppercase tracking-wider">Venue Location</p>
+                      <p className="text-sm font-semibold text-[#EFEFF1] mt-0.5">{event.venue || 'Venue TBA'}</p>
+                      <p className="text-xs text-[#CBD5E1] mt-0.5">{event.location || event.city}</p>
                     </div>
                   </div>
+
                   {event.category && (
                     <div className="flex items-start gap-3">
-                      <Tag className="w-4 h-4 text-[#494F55] mt-0.5 shrink-0" />
+                      <div className="w-8 h-8 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center shrink-0 mt-0.5 text-[#CBD5E1]">
+                        <Tag className="w-4 h-4" />
+                      </div>
                       <div>
-                        <p className="text-xs text-[#494F55]">Category</p>
-                        <p className="text-sm text-[#EFEFF1]">{event.category}</p>
+                        <p className="text-xs font-semibold text-[#949599] uppercase tracking-wider">Category</p>
+                        <p className="text-sm font-semibold text-[#EFEFF1] mt-0.5">{event.category}</p>
                       </div>
                     </div>
                   )}
                 </div>
+
+                {/* Primary High-Intent Ticket Action */}
                 <button
-                  onClick={() => setActiveTab('Tickets')}
-                  className="mt-5 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition flex items-center justify-center gap-2"
+                  type="button"
+                  onClick={() => {
+                    setActiveTab('Tickets');
+                    const el = document.getElementById('event-tabs-section');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="mt-6 w-full py-3.5 px-4 rounded-xl bg-white text-[#1C232B] text-sm font-extrabold hover:bg-[#CBD5E1] transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/40 active:scale-95 cursor-pointer"
                 >
-                  <Ticket className="w-4 h-4" /> Get Tickets
+                  <Ticket className="w-4 h-4" />
+                  <span>Get Tickets Now</span>
+                  <ChevronRight className="w-4 h-4" />
                 </button>
+              </div>
+
+              {/* Trust & Guarantee Box */}
+              <div className="rounded-2xl bg-[#161D22] border border-[#262B2F] p-4 space-y-2.5 text-xs text-[#CBD5E1]">
+                <div className="flex items-center gap-2 text-white font-semibold pb-2 border-b border-[#262B2F]">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Tribes &amp; Cliqs Buyer Protection</span>
+                </div>
+                <div className="space-y-2 text-[#949599]">
+                  <p className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                    <span>100% verified tickets scanned at gate</span>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                    <span>Paystack 3D-Secure MoMo &amp; Cards</span>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                    <span>Instant SMS &amp; email order confirmation</span>
+                  </p>
+                </div>
               </div>
             </div>
           </aside>

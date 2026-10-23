@@ -584,17 +584,19 @@ export default function ExplorePage() {
 
         {/* Search Bar with Instant Clear */}
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B7278]" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#949599]" />
           <input
             type="text"
+            aria-label="Search events by title, artist, venue or city"
             placeholder="Search by event title, artist, venue, city, or keywords..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-[#171A1D] border border-[#262B2F] text-sm text-white placeholder-[#6B7278] focus:outline-none focus:border-white/50 transition shadow-inner"
+            className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-[#171A1D] border border-[#262B2F] text-sm text-white placeholder-[#949599] focus:outline-none focus:border-white/50 transition shadow-inner"
           />
           {searchInput && (
             <button
               type="button"
+              aria-label="Clear search query"
               onClick={() => setSearchInput('')}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-lg text-[#949599] hover:text-white hover:bg-white/10 transition"
             >
