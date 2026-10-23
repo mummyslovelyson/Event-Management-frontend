@@ -68,25 +68,31 @@
   }
 }
 
-/* Print: only the selected ticket is sent to the printer, rendered as a
-   clean white card so the QR code scans properly. Everything else on the
-   page (dark UI, modals, overlays) is hidden. */
+/* Print Styles: Support both dedicated ticket printing and full report/dashboard printing */
 .print-ticket-area {
   display: none;
 }
+
 @media print {
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  body * {
+
+  @page {
+    margin: 12mm 10mm;
+    size: auto;
+  }
+
+  /* When printing a standalone ticket pass */
+  body:has(.print-ticket-area:not(:empty)) * {
     visibility: hidden;
   }
-  .print-ticket-area,
-  .print-ticket-area * {
+  body:has(.print-ticket-area:not(:empty)) .print-ticket-area,
+  body:has(.print-ticket-area:not(:empty)) .print-ticket-area * {
     visibility: visible;
   }
-  .print-ticket-area {
+  body:has(.print-ticket-area:not(:empty)) .print-ticket-area {
     display: block;
     position: absolute;
     left: 0;
@@ -95,8 +101,50 @@
     padding: 24px;
     margin: 0;
   }
-  body {
-    background: #ffffff;
+
+  /* General Report & Analytics Printing */
+  body:not(:has(.print-ticket-area:not(:empty))) {
+    background: #0b0e17 !important;
+    color: #ffffff !important;
+    font-size: 11pt;
+  }
+
+  /* Hide app navigation chrome, topbar, sidebars, toolbars, and action buttons */
+  aside,
+  header,
+  nav,
+  .no-print,
+  button:not(.allow-print),
+  input[type="date"],
+  .no-print-area {
+    display: none !important;
+  }
+
+  /* Expand main content to 100% printable width */
+  .lg\:pl-64 {
+    padding-left: 0 !important;
+  }
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Recharts print stability: ensure ResponsiveContainer renders cleanly on paper */
+  .recharts-responsive-container {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: 250px !important;
+  }
+
+  /* Avoid awkward page splits inside analytics cards and tables */
+  [class*="rounded-2xl"],
+  [class*="rounded-xl"],
+  .break-inside-avoid,
+  table,
+  tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 }
 

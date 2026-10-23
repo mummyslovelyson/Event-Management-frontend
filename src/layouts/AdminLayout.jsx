@@ -13,7 +13,7 @@ import CurrencyToggle from '@/components/common/CurrencyToggle';
 
 const mainNav = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
+  { to: '/admin/reports', label: 'Analytics', icon: BarChart3 },
   { to: '/admin/users', label: 'Users', icon: Users },
   { to: '/admin/organizers', label: 'Organizers', icon: UserCheck },
   { to: '/admin/events', label: 'Events', icon: CalendarDays },
