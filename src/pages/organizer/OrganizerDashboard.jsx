@@ -2,15 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  AreaChart, Area, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, ResponsiveContainer,
 } from 'recharts';
 import {
-  CalendarDays, Ticket as TicketIcon, Activity, ArrowRight,
-  PlusCircle, BarChart3, UsersRound, Wallet, Calendar,
-  ScanLine, Users, CheckCircle2, TrendingUp, TrendingDown, DollarSign,
-  Clock, CreditCard, Tag, RefreshCw, QrCode, ChevronDown,
-  ExternalLink, ShieldCheck, Eye, Layers, ArrowUpRight,
+  CalendarDays, Ticket as TicketIcon, ArrowRight,
+  PlusCircle, Wallet, Calendar,
+  TrendingUp, TrendingDown, RefreshCw, QrCode,
+  CheckCircle2, Clock, AlertCircle, ArrowUpRight,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
@@ -44,7 +43,9 @@ const TIMEFRAMES = [
   { key: '1y', label: '1 Year' },
 ];
 
-/* ── Custom Sleek Tooltip matching Admin reference ── */
+const TIER_COLORS = ['#f97316', '#8b5cf6', '#06b6d4', '#ec4899', '#10b981'];
+
+/* ── Custom Sleek Tooltip matching Admin Theme ── */
 function ChartTip({ active, payload, label, formatter }) {
   if (!active || !payload?.length) return null;
   return (
@@ -55,7 +56,7 @@ function ChartTip({ active, payload, label, formatter }) {
           <span className="w-2 h-2 rounded-full shrink-0" style={{ background: p.stroke || p.color || p.fill }} />
           <span className="text-white/70">{p.name}</span>
           <span className="ml-auto pl-4 font-bold text-white tabular-nums">
-            {formatter ? formatter(p.value) : p.value?.toLocaleString?.() ?? p.value}
+            {formatter && p.dataKey === 'revenue' ? formatter(p.value) : p.value?.toLocaleString?.() ?? p.value}
           </span>
         </div>
       ))}
@@ -63,48 +64,43 @@ function ChartTip({ active, payload, label, formatter }) {
   );
 }
 
-/* ── Smooth SVG Wave Sparklines matching Admin reference ── */
-function Sparkline({ variant = 'coral', id = 'sp1' }) {
-  const configs = {
-    coral: {
-      color: '#f97316',
-      d: 'M 0,28 C 18,34 30,12 48,22 C 68,30 82,8 100,12',
-      area: 'M 0,28 C 18,34 30,12 48,22 C 68,30 82,8 100,12 L 100,42 L 0,42 Z',
-    },
-    rose: {
-      color: '#ec4899',
-      d: 'M 0,20 C 15,10 32,32 52,18 C 70,8 85,24 100,14',
-      area: 'M 0,20 C 15,10 32,32 52,18 C 70,8 85,24 100,14 L 100,42 L 0,42 Z',
-    },
-    cyan: {
-      color: '#06b6d4',
-      d: 'M 0,30 C 22,26 38,36 56,16 C 72,0 84,20 100,8',
-      area: 'M 0,30 C 22,26 38,36 56,16 C 72,0 84,20 100,8 L 100,42 L 0,42 Z',
-    },
-    purple: {
-      color: '#a855f7',
-      d: 'M 0,25 C 20,35 35,15 55,20 C 75,25 85,10 100,5',
-      area: 'M 0,25 C 20,35 35,15 55,20 C 75,25 85,10 100,5 L 100,42 L 0,42 Z',
-    },
-  };
-  const cfg = configs[variant] || configs.coral;
+/* ── Dynamic Real-Data SVG Sparkline (strictly driven by historical points) ── */
+function DynamicSparkline({ data = [], color = '#f97316', id = 'sp1' }) {
+  const cleanData = (Array.isArray(data) ? data : []).filter((v) => typeof v === 'number' && !isNaN(v));
+
+  if (cleanData.length < 2) {
+    return (
+      <div className="w-24 sm:w-28 h-10 flex items-center justify-center">
+        <div className="w-full h-0.5 bg-white/10 rounded-full" />
+      </div>
+    );
+  }
+
+  const max = Math.max(...cleanData, 1);
+  const min = Math.min(...cleanData, 0);
+  const range = max - min || 1;
+  const width = 100;
+  const height = 38;
+
+  const points = cleanData.map((val, idx) => {
+    const x = (idx / (cleanData.length - 1)) * width;
+    const y = height - ((val - min) / range) * (height - 8) - 4;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+
+  const d = `M ${points.join(' L ')}`;
+  const area = `M ${points[0]} L ${points.join(' L ')} L ${width},${height} L 0,${height} Z`;
 
   return (
-    <svg className="w-24 sm:w-28 h-10 sm:h-12 shrink-0 overflow-visible" viewBox="0 0 100 42">
+    <svg className="w-24 sm:w-28 h-10 shrink-0 overflow-visible" viewBox={`0 0 ${width} ${height}`}>
       <defs>
         <linearGradient id={`grad-${id}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={cfg.color} stopOpacity={0.35} />
-          <stop offset="100%" stopColor={cfg.color} stopOpacity={0} />
+          <stop offset="0%" stopColor={color} stopOpacity={0.35} />
+          <stop offset="100%" stopColor={color} stopOpacity={0} />
         </linearGradient>
       </defs>
-      <path d={cfg.area} fill={`url(#grad-${id})`} />
-      <path
-        d={cfg.d}
-        fill="none"
-        stroke={cfg.color}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
+      <path d={area} fill={`url(#grad-${id})`} />
+      <path d={d} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -118,27 +114,24 @@ function CardShell({ className = '', children }) {
   );
 }
 
-/* ── Reference-Styled KPI Card ── */
-function KpiCard({ title, value, delta, isPositive, period = 'Last month', variant = 'coral', id, subtext }) {
+/* ── KPI Metric Card matching Admin Visual System ── */
+function KpiCard({ title, value, delta, isPositive, dataPoints = [], color = '#f97316', id, subtext }) {
+  const hasDelta = typeof delta === 'number' && !isNaN(delta);
+
   return (
     <CardShell className="p-4 sm:p-5 flex flex-col justify-between hover:border-violet-500/30 transition-all group">
-      {/* Top row: Title + Period selector pill */}
       <div className="flex items-center justify-between gap-2">
         <span className="text-xs font-medium text-white/60">{title}</span>
-        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#1a1f35] border border-white/[0.06] text-[10px] text-white/60 group-hover:text-white transition cursor-pointer">
-          <span>{period}</span>
-          <ChevronDown className="w-3 h-3 text-white/40" />
-        </div>
+        <span className="text-[10px] text-white/40 font-mono">This Month</span>
       </div>
 
-      {/* Main row: Big Number + Delta Pill + Sparkline */}
       <div className="mt-3 sm:mt-4 flex items-end justify-between gap-3">
         <div className="min-w-0">
           <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight tabular-nums truncate">
             {value}
           </p>
           <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
-            {delta !== undefined && delta !== null ? (
+            {hasDelta ? (
               <span
                 className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[11px] font-bold tabular-nums ${
                   isPositive
@@ -156,7 +149,7 @@ function KpiCard({ title, value, delta, isPositive, period = 'Last month', varia
           </div>
         </div>
 
-        <Sparkline variant={variant} id={id} />
+        <DynamicSparkline data={dataPoints} color={color} id={id} />
       </div>
     </CardShell>
   );
@@ -165,7 +158,6 @@ function KpiCard({ title, value, delta, isPositive, period = 'Last month', varia
 export default function OrganizerDashboard() {
   const { user } = useAuth();
   const { format } = useCurrency();
-  const shortFmt = (v) => format(v, { compact: true });
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -180,19 +172,20 @@ export default function OrganizerDashboard() {
     try {
       const [dashRes, revRes, wallRes] = await Promise.all([
         getDashboard(),
-        getRevenue({ range: timeframe }).catch(() => ({ data: [] })),
+        getRevenue({ range: timeframe }).catch(() => ({ data: { data: [] } })),
         getWalletBalance().catch(() => ({ data: { available: 0, pending: 0 } })),
       ]);
       setData(dashRes.data);
+
       const rev = revRes.data;
       const rawRev = Array.isArray(rev) ? rev : rev?.data || [];
-      // Ensure daily points contain both revenue and order counts for the dual curve
       const formattedSeries = rawRev.map((r) => ({
         date: r.date,
         revenue: Number(r.revenue || 0),
-        orders: r.orders !== undefined ? Number(r.orders) : Math.max(1, Math.round(Number(r.revenue || 0) / 80)),
+        orders: Number(r.orders || 0),
       }));
       setRevenueData(formattedSeries);
+
       if (wallRes.data) setWallet(wallRes.data);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to load dashboard data');
@@ -211,7 +204,7 @@ export default function OrganizerDashboard() {
       const formattedSeries = rawRev.map((r) => ({
         date: r.date,
         revenue: Number(r.revenue || 0),
-        orders: r.orders !== undefined ? Number(r.orders) : Math.max(1, Math.round(Number(r.revenue || 0) / 80)),
+        orders: Number(r.orders || 0),
       }));
       setRevenueData(formattedSeries);
     } catch (err) {
@@ -223,60 +216,98 @@ export default function OrganizerDashboard() {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  if (loading) return <LoadingSpinner label="Loading organizer overview..." className="py-24" />;
+  if (loading) return <LoadingSpinner label="Loading dashboard..." className="py-24" />;
 
   const metrics = data?.metrics || {};
   const recentOrders = data?.recentOrders || [];
   const upcomingEvents = data?.upcomingEvents || [];
   const topEvents = data?.topEvents || [];
+  const rawTicketTiers = data?.ticketTiers || [];
+  const checkInStats = data?.checkInStats || { total: 0, checkedIn: 0 };
+
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
   const firstName = (user?.name || '').split(' ')[0] || 'Organizer';
-  const orgName = data?.organization?.name || user?.name || 'Your Event Hub';
+  const orgName = data?.organization?.name || user?.name || 'Organizer Workspace';
 
-  // Sales by channel breakdown inspired by Card 4 in Admin Dashboard
-  const channelData = [
-    { name: 'Online Store', value: Math.max(1, Math.round((metrics.ticketsSold ?? 0) * 0.64)), percentage: 64, color: '#f97316' },
-    { name: 'Mobile App', value: Math.max(1, Math.round((metrics.ticketsSold ?? 0) * 0.24)), percentage: 24, color: '#8b5cf6' },
-    { name: 'Gate POS', value: Math.max(1, Math.round((metrics.ticketsSold ?? 0) * 0.12)), percentage: 12, color: '#06b6d4' },
-  ];
-  const channelTotal = (metrics.ticketsSold ?? 0) > 0 ? (metrics.ticketsSold ?? 0) : channelData.reduce((acc, c) => acc + c.value, 0);
+  // Extract authentic daily trend points for sparklines
+  const revenuePoints = revenueData.map((d) => d.revenue);
+  const orderPoints = revenueData.map((d) => d.orders);
 
-  // Real-time comparative items
-  const realTimeStats = [
+  // Real Ticket Tier breakdown for Top Card 4
+  const totalTierTickets = rawTicketTiers.reduce((acc, t) => acc + Number(t.count || 0), 0);
+  const tierDonutData = rawTicketTiers.length > 0
+    ? rawTicketTiers.map((tier, idx) => {
+        const count = Number(tier.count || 0);
+        const pct = totalTierTickets > 0 ? Math.round((count / totalTierTickets) * 100) : 0;
+        return {
+          name: tier.name || `Tier ${idx + 1}`,
+          value: count,
+          percentage: pct,
+          color: TIER_COLORS[idx % TIER_COLORS.length],
+        };
+      })
+    : [
+        { name: 'Completed Orders', value: Math.max(0, (metrics.totalOrders ?? 0) - (metrics.pendingOrders ?? 0)), color: '#10b981' },
+        { name: 'Pending Orders', value: metrics.pendingOrders ?? 0, color: '#f59e0b' },
+        { name: 'Refunds', value: metrics.refunds ?? 0, color: '#ef4444' },
+      ].filter((item) => item.value > 0);
+
+  const tierTotal = totalTierTickets > 0
+    ? totalTierTickets
+    : tierDonutData.reduce((acc, c) => acc + c.value, 0);
+
+  // Real Operational metrics computed from genuine database state
+  const totalCheckIns = checkInStats.total || metrics.ticketsSold || 0;
+  const checkedInCount = checkInStats.checkedIn || 0;
+  const checkInPct = totalCheckIns > 0 ? Math.round((checkedInCount / totalCheckIns) * 100) : 0;
+
+  const totalOrders = metrics.totalOrders || 0;
+  const pendingOrders = metrics.pendingOrders || 0;
+  const completedOrders = Math.max(0, totalOrders - pendingOrders);
+  const orderCompletionPct = totalOrders > 0 ? Math.round((completedOrders / totalOrders) * 100) : 100;
+
+  const totalEventsCount = metrics.totalEvents || 0;
+  const activeEventsCount = metrics.activeEvents || 0;
+  const activeEventsPct = totalEventsCount > 0 ? Math.round((activeEventsCount / totalEventsCount) * 100) : 0;
+
+  const totalWalletFunds = (wallet.available || 0) + (wallet.pending || 0);
+  const availableWalletPct = totalWalletFunds > 0 ? Math.round(((wallet.available || 0) / totalWalletFunds) * 100) : (wallet.available > 0 ? 100 : 0);
+
+  const operationsStats = [
     {
-      label: 'Tickets Sold',
-      value: (metrics.ticketsSold ?? 0).toLocaleString(),
-      max: 'target 1,000',
-      progress: Math.min(100, Math.max(15, ((metrics.ticketsSold ?? 0) / 1000) * 100)),
-      color: 'from-violet-500 to-fuchsia-500',
-    },
-    {
-      label: 'Active Live Events',
-      value: (metrics.activeEvents ?? 0).toLocaleString(),
-      max: 'hosted events',
-      progress: Math.min(100, Math.max(20, ((metrics.activeEvents ?? 0) / Math.max(1, metrics.totalEvents ?? 1)) * 100)),
+      label: 'Attendee Check-In',
+      value: `${checkedInCount.toLocaleString()} / ${totalCheckIns.toLocaleString()}`,
+      detail: `${checkInPct}% verified`,
+      progress: checkInPct,
       color: 'from-cyan-500 to-blue-500',
     },
     {
-      label: 'Available Balance',
-      value: format(wallet.available ?? metrics.availableBalance ?? 0),
-      max: 'instant payout',
-      progress: wallet.available > 0 ? 85 : 25,
-      color: 'from-emerald-500 to-teal-500',
+      label: 'Order Completion',
+      value: `${completedOrders.toLocaleString()} / ${totalOrders.toLocaleString()}`,
+      detail: `${orderCompletionPct}% fulfilled`,
+      progress: orderCompletionPct,
+      color: 'from-violet-500 to-purple-500',
     },
     {
-      label: 'Pending Orders',
-      value: (metrics.pendingOrders ?? 0).toLocaleString(),
-      max: 'checkout queue',
-      progress: Math.min(100, Math.max(10, ((metrics.pendingOrders ?? 0) / 20) * 100)),
+      label: 'Active Live Events',
+      value: `${activeEventsCount.toLocaleString()} of ${totalEventsCount.toLocaleString()}`,
+      detail: totalEventsCount > 0 ? `${activeEventsPct}% published` : 'No events',
+      progress: activeEventsPct,
       color: 'from-amber-500 to-orange-500',
+    },
+    {
+      label: 'Wallet Available',
+      value: format(wallet.available ?? 0),
+      detail: wallet.pending > 0 ? `${format(wallet.pending)} pending` : 'Settled',
+      progress: availableWalletPct,
+      color: 'from-emerald-500 to-teal-500',
     },
   ];
 
   return (
     <div className="space-y-6">
-      {/* ── Top Header & Welcome Banner ── */}
+      {/* ── Top Header & Actions ── */}
       <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -290,7 +321,7 @@ export default function OrganizerDashboard() {
               {greeting}, {firstName}
             </h1>
             <p className="text-xs sm:text-sm text-white/50 mt-0.5">
-              {orgName} · Live event pulse, real-time ticket sales, and event operations.
+              {orgName} · Performance overview, ticket sales, and event attendance.
             </p>
           </div>
 
@@ -314,7 +345,7 @@ export default function OrganizerDashboard() {
             <button
               onClick={() => fetchAll(false)}
               className="p-2.5 rounded-xl bg-[#141829] border border-white/[0.08] text-white/70 hover:text-white hover:border-violet-500/40 transition cursor-pointer"
-              title="Refresh Analytics"
+              title="Refresh Dashboard"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
@@ -328,440 +359,463 @@ export default function OrganizerDashboard() {
         <KpiCard
           title="Gross Revenue"
           value={format(metrics.totalRevenue ?? 0)}
-          delta={metrics.revenueTrend ? Number(metrics.revenueTrend.toFixed(1)) : 23}
-          isPositive={metrics.revenueTrend ? metrics.revenueTrend >= 0 : true}
-          period="Last month"
-          variant="coral"
+          delta={typeof metrics.revenueTrend === 'number' ? metrics.revenueTrend : null}
+          isPositive={(metrics.revenueTrend ?? 0) >= 0}
+          dataPoints={revenuePoints}
+          color="#f97316"
           id="org-rev"
-          subtext="vs prior month"
+          subtext={typeof metrics.revenueTrend === 'number' ? 'vs prior month' : `${metrics.totalOrders ?? 0} orders`}
         />
 
         {/* Card 2: Tickets Sold */}
         <KpiCard
           title="Tickets Sold"
           value={(metrics.ticketsSold ?? 0).toLocaleString()}
-          delta={metrics.ticketsSoldTrend ? Number(metrics.ticketsSoldTrend.toFixed(1)) : 18}
-          isPositive={metrics.ticketsSoldTrend ? metrics.ticketsSoldTrend >= 0 : true}
-          period="Last month"
-          variant="rose"
+          delta={typeof metrics.ticketsSoldTrend === 'number' ? metrics.ticketsSoldTrend : null}
+          isPositive={(metrics.ticketsSoldTrend ?? 0) >= 0}
+          dataPoints={orderPoints}
+          color="#ec4899"
           id="org-tickets"
-          subtext="Total attendee passes"
+          subtext={typeof metrics.ticketsSoldTrend === 'number' ? 'vs prior month' : 'Attendee passes'}
         />
 
         {/* Card 3: Active Live Events */}
         <KpiCard
           title="Active Events"
           value={(metrics.activeEvents ?? 0).toLocaleString()}
-          delta={metrics.activeEventsTrend ? Number(metrics.activeEventsTrend.toFixed(1)) : 10}
-          isPositive={metrics.activeEventsTrend ? metrics.activeEventsTrend >= 0 : true}
-          period="Last month"
-          variant="cyan"
+          delta={typeof metrics.activeEventsTrend === 'number' ? metrics.activeEventsTrend : null}
+          isPositive={(metrics.activeEventsTrend ?? 0) >= 0}
+          dataPoints={orderPoints}
+          color="#06b6d4"
           id="org-events"
-          subtext={`${metrics.totalEvents ?? 0} total events created`}
+          subtext={`${metrics.totalEvents ?? 0} total events`}
         />
 
-        {/* Card 4: Sales Channels Donut Chart (Exact match of Admin Dashboard) */}
+        {/* Card 4: Ticket Tiers / Order Status Donut Chart */}
         <CardShell className="p-4 sm:p-5 flex flex-col justify-between hover:border-violet-500/30 transition-all group">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-white/60">Sales Channels</span>
+            <span className="text-xs font-medium text-white/60">
+              {rawTicketTiers.length > 0 ? 'Ticket Tiers' : 'Order Status'}
+            </span>
             <Link
-              to="/organizer/payments"
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#1a1f35] border border-white/[0.06] text-[10px] text-white/60 group-hover:text-white transition"
+              to="/organizer/events"
+              className="text-[10px] text-violet-400 hover:text-violet-300 font-medium transition"
             >
-              <span>Wallet: {format(wallet.available ?? 0)}</span>
-              <ArrowRight className="w-3 h-3 text-white/40" />
+              View Tiers
             </Link>
           </div>
 
           <div className="mt-2 flex items-center justify-between gap-3">
-            {/* Center Donut Ring */}
-            <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={channelData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={28}
-                    outerRadius={40}
-                    paddingAngle={3}
-                    dataKey="value"
-                    strokeWidth={0}
-                  >
-                    {channelData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-[9px] text-white/50 leading-none">Total</span>
-                <span className="text-xs font-extrabold text-white leading-tight mt-0.5">{channelTotal.toLocaleString()}</span>
-              </div>
-            </div>
-
-            {/* Right Legend */}
-            <div className="flex-1 space-y-1.5 text-[11px]">
-              {channelData.map((item) => (
-                <div key={item.name} className="flex items-center justify-between gap-1 text-white/70">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="w-2 h-2 rounded-full shrink-0" style={{ background: item.color }} />
-                    <span className="truncate">{item.name}</span>
+            {tierDonutData.length > 0 ? (
+              <>
+                {/* Center Donut */}
+                <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={tierDonutData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={28}
+                        outerRadius={40}
+                        paddingAngle={3}
+                        dataKey="value"
+                        strokeWidth={0}
+                      >
+                        {tierDonutData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span className="text-[9px] text-white/50 leading-none">Total</span>
+                    <span className="text-xs font-extrabold text-white leading-tight mt-0.5">
+                      {tierTotal.toLocaleString()}
+                    </span>
                   </div>
-                  <span className="text-[10px] text-white/50 font-semibold tabular-nums shrink-0">
-                    {item.value} / {item.percentage}%
-                  </span>
                 </div>
-              ))}
-            </div>
+
+                {/* Right Legend */}
+                <div className="flex-1 space-y-1.5 text-[11px] min-w-0">
+                  {tierDonutData.slice(0, 3).map((item) => (
+                    <div key={item.name} className="flex items-center justify-between gap-1 text-white/70">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="w-2 h-2 rounded-full shrink-0" style={{ background: item.color }} />
+                        <span className="truncate">{item.name}</span>
+                      </div>
+                      <span className="text-[10px] text-white/50 font-semibold tabular-nums shrink-0">
+                        {item.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="py-4 text-center w-full">
+                <p className="text-xs text-white/40">No ticket sales recorded yet.</p>
+                <Link
+                  to="/organizer/events/create"
+                  className="mt-1 text-[11px] text-violet-400 hover:underline font-medium inline-block"
+                >
+                  Create event tiers
+                </Link>
+              </div>
+            )}
           </div>
         </CardShell>
       </div>
 
-      {/* ── MIDDLE ROW: Real-time Data + Site Traffic (Area Chart) + Top Events ── */}
+      {/* ── MIDDLE ROW: Operations + Revenue Over Time (Area Chart) + Top Events ── */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
-        {/* Left Card: Real-time Data / Live Pulse */}
+        {/* Left Card: Operational Fulfillment (3 cols) */}
         <CardShell className="xl:col-span-3 p-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <h2 className="text-xs font-bold text-white uppercase tracking-wider">
-                  Real-time Data
+                  Event Operations
                 </h2>
               </div>
-              <span className="text-[10px] text-white/40">Live Pulse</span>
+              <span className="text-[10px] text-white/40 font-mono">Live Status</span>
             </div>
 
             <div className="mt-4 space-y-4">
-              {realTimeStats.map((item) => (
+              {operationsStats.map((item) => (
                 <div key={item.label} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-white/70 font-medium text-[11px] truncate">{item.label}</span>
                     <span className="font-extrabold text-white tabular-nums">{item.value}</span>
                   </div>
-                  {/* Progress bar with benchmark */}
                   <div className="flex items-center gap-2">
                     <div className="flex-1 h-1.5 rounded-full bg-[#1b2038] overflow-hidden">
                       <div
                         className={`h-full rounded-full bg-gradient-to-r ${item.color} transition-all duration-500`}
-                        style={{ width: `${item.progress}%` }}
+                        style={{ width: `${Math.min(100, Math.max(0, item.progress))}%` }}
                       />
                     </div>
-                    <span className="text-[9px] text-white/40 tabular-nums shrink-0">{item.max}</span>
+                    <span className="text-[9px] text-white/40 tabular-nums shrink-0">{item.detail}</span>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="mt-5 pt-3 border-t border-white/[0.06] flex items-center justify-between">
-            <span className="text-[11px] text-white/50">Door Operations</span>
+          <div className="mt-5 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px]">
             <Link
-              to="/organizer/check-in"
-              className="text-[11px] text-violet-400 hover:text-violet-300 font-semibold flex items-center gap-1 transition"
+              to="/organizer/wallet"
+              className="text-violet-400 hover:text-violet-300 font-medium flex items-center gap-1 transition"
             >
-              Scan Check-Ins &rarr;
+              <span>Manage Wallet Payouts</span>
+              <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
         </CardShell>
 
-        {/* Center Card: Ticket Sales & Revenue Dual Spline Area Chart */}
-        <CardShell className="xl:col-span-6 p-5 flex flex-col justify-between overflow-hidden">
-          <div>
-            {/* Header: Title + Legends + Period */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
-              <div>
-                <h2 className="text-sm font-bold text-white">Ticket Sales &amp; Revenue</h2>
-                <p className="text-[11px] text-white/40 mt-0.5">Dual performance spline curve ({timeframe.toUpperCase()})</p>
+        {/* Center Card: Revenue & Ticket Orders Dual Spline Area Chart (6 cols) */}
+        <CardShell className="xl:col-span-6 p-5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-white/[0.06]">
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-xs font-bold text-white uppercase tracking-wider">
+                  Revenue & Ticket Sales
+                </h2>
+                {revenueLoading && (
+                  <span className="text-[10px] text-violet-400 animate-pulse font-mono">Updating...</span>
+                )}
               </div>
-
-              <div className="flex items-center gap-4 flex-wrap">
-                <div className="flex items-center gap-3 text-xs">
-                  <div className="flex items-center gap-1.5 text-white/70">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#c084fc]" />
-                    <span className="text-[11px]">Revenue</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-white/70">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#06b6d4]" />
-                    <span className="text-[11px]">Orders</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1 bg-[#1a1f35] p-1 rounded-lg border border-white/[0.06]">
-                  {TIMEFRAMES.map((t) => (
-                    <button
-                      key={t.key}
-                      onClick={() => handleTimeframeChange(t.key)}
-                      className={`px-2 py-0.5 rounded text-[11px] font-semibold transition cursor-pointer ${
-                        timeframe === t.key
-                          ? 'bg-violet-600 text-white shadow-sm'
-                          : 'text-white/60 hover:text-white'
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <p className="text-[11px] text-white/40 mt-0.5">
+                Daily sales totals and customer order volume
+              </p>
             </div>
 
-            {/* Recharts AreaChart with dual smooth curves */}
-            <div className="mt-4 h-60 w-full">
-              {revenueLoading ? (
-                <div className="flex items-center justify-center h-full">
-                  <LoadingSpinner label="Updating sales curve..." />
-                </div>
-              ) : revenueData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="cyanSpline" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.45} />
-                        <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.0} />
-                      </linearGradient>
-                      <linearGradient id="purpleSpline" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#c084fc" stopOpacity={0.4} />
-                        <stop offset="100%" stopColor="#c084fc" stopOpacity={0.0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#252a42" strokeOpacity={0.5} vertical={false} />
-                    <XAxis
-                      dataKey="date"
-                      stroke="#4b5574"
-                      fontSize={10}
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={fmtDay}
-                      minTickGap={28}
-                    />
-                    <YAxis
-                      stroke="#4b5574"
-                      fontSize={10}
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={shortFmt}
-                      width={52}
-                    />
-                    <Tooltip
-                      content={<ChartTip formatter={shortFmt} />}
-                      cursor={{ stroke: '#c084fc', strokeWidth: 1.5, strokeDasharray: '4 4' }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="revenue"
-                      stroke="#c084fc"
-                      strokeWidth={2.5}
-                      fill="url(#purpleSpline)"
-                      name="Revenue"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="orders"
-                      stroke="#06b6d4"
-                      strokeWidth={2.5}
-                      fill="url(#cyanSpline)"
-                      name="Orders"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="flex items-center justify-center h-full text-xs text-white/40">
-                  No ticket sales recorded in this timeframe yet.
-                </div>
-              )}
+            {/* Timeframe pill selector */}
+            <div className="inline-flex items-center p-0.5 rounded-xl bg-[#1a1f35] border border-white/[0.06] text-xs">
+              {TIMEFRAMES.map((tf) => (
+                <button
+                  key={tf.key}
+                  onClick={() => handleTimeframeChange(tf.key)}
+                  className={`px-2.5 py-1 rounded-lg font-medium transition cursor-pointer text-[11px] ${
+                    timeframe === tf.key
+                      ? 'bg-violet-600 text-white shadow-sm'
+                      : 'text-white/50 hover:text-white'
+                  }`}
+                >
+                  {tf.label}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-            <span className="text-white/50">
-              Total Orders: <span className="font-bold text-white">{(metrics.totalOrders ?? 0).toLocaleString()}</span>
-            </span>
-            <span className="text-white/50">
-              Available Balance: <span className="font-bold text-violet-400">{format(wallet.available ?? metrics.availableBalance ?? 0)}</span>
-            </span>
+          {/* Dual Spline Chart */}
+          <div className="mt-4 h-64 sm:h-72">
+            {revenueData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="orgRevAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#c084fc" stopOpacity={0.35} />
+                      <stop offset="100%" stopColor="#c084fc" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="orgOrderAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.25} />
+                      <stop offset="100%" stopColor="#06b6d4" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={fmtDay}
+                    stroke="rgba(255,255,255,0.3)"
+                    fontSize={10}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    stroke="rgba(255,255,255,0.3)"
+                    fontSize={10}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(v) => format(v, { compact: true })}
+                  />
+                  <Tooltip content={<ChartTip formatter={format} />} />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    name="Gross Revenue"
+                    stroke="#c084fc"
+                    strokeWidth={2.5}
+                    fill="url(#orgRevAreaGrad)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="orders"
+                    name="Orders Count"
+                    stroke="#06b6d4"
+                    strokeWidth={2}
+                    fill="url(#orgOrderAreaGrad)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState
+                icon={CalendarDays}
+                title="No sales recorded"
+                description="Ticket sales during this period will appear on this chart."
+                className="py-12"
+              />
+            )}
+          </div>
+
+          <div className="mt-2 pt-2 border-t border-white/[0.04] flex items-center justify-between text-[11px] text-white/50">
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#c084fc]" />
+                <span>Revenue</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#06b6d4]" />
+                <span>Orders</span>
+              </span>
+            </div>
+            <Link
+              to="/organizer/analytics"
+              className="text-violet-400 hover:text-violet-300 font-medium transition"
+            >
+              Full Analytics Report →
+            </Link>
           </div>
         </CardShell>
 
-        {/* Right Card: Top Events Ranked by Ticket Sales */}
+        {/* Right Card: Top Performing Events (3 cols) */}
         <CardShell className="xl:col-span-3 p-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
-              <div>
-                <h2 className="text-xs font-bold text-white uppercase tracking-wider">Top Events</h2>
-                <p className="text-[10px] text-white/40">Highest tickets sold</p>
-              </div>
-              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#1a1f35] border border-white/[0.06] text-[10px] text-white/60">
-                <span>Ranked</span>
-                <ChevronDown className="w-3 h-3 text-white/40" />
-              </div>
+              <h2 className="text-xs font-bold text-white uppercase tracking-wider">
+                Top Events
+              </h2>
+              <Link
+                to="/organizer/events"
+                className="text-[10px] text-violet-400 hover:text-violet-300 transition"
+              >
+                All Events
+              </Link>
             </div>
 
-            <div className="mt-4 space-y-3.5">
+            <div className="mt-3 divide-y divide-white/[0.05]">
               {topEvents.length > 0 ? (
-                topEvents.slice(0, 7).map((ev, idx) => {
+                topEvents.slice(0, 5).map((ev, idx) => {
                   const maxSold = Math.max(...topEvents.map((t) => Number(t.ticketsSold || 0)), 1);
-                  const barWidth = Math.min(100, Math.max(15, Math.round(((Number(ev.ticketsSold || 0)) / maxSold) * 100)));
+                  const ticketsSold = Number(ev.ticketsSold || 0);
+                  const pct = Math.min(100, Math.round((ticketsSold / maxSold) * 100));
+
                   return (
-                    <div key={ev.id || idx} className="space-y-1">
+                    <div key={ev.id || idx} className="py-2.5 first:pt-1 last:pb-1">
                       <div className="flex items-center justify-between text-xs">
-                        <Link
-                          to={`/organizer/events/${ev.id}/edit`}
-                          className="text-white/80 hover:text-white font-medium truncate max-w-[170px] transition"
-                        >
-                          {ev.name || ev.title}
-                        </Link>
-                        <span className="text-[11px] font-bold text-white/90 tabular-nums">
-                          {Number(ev.ticketsSold || 0).toLocaleString()} sold
+                        <span className="text-white font-medium truncate max-w-[150px]">
+                          {ev.name || ev.title || 'Untitled Event'}
+                        </span>
+                        <span className="text-white/60 font-semibold tabular-nums text-[11px]">
+                          {ticketsSold.toLocaleString()} tickets
                         </span>
                       </div>
-                      <div className="h-1 rounded-full bg-[#1b2038] overflow-hidden">
+                      <div className="mt-1.5 w-full h-1 rounded-full bg-[#1b2038] overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-rose-500 to-red-500"
-                          style={{ width: `${barWidth}%` }}
+                          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400"
+                          style={{ width: `${pct}%` }}
                         />
                       </div>
                     </div>
                   );
                 })
               ) : (
-                <div className="py-8 text-center text-xs text-white/40">
-                  Events will be ranked here as attendees purchase tickets.
-                </div>
+                <EmptyState
+                  icon={TicketIcon}
+                  title="No events yet"
+                  description="Top selling events will be ranked here."
+                  className="py-8"
+                />
               )}
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-white/[0.06]">
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-center">
             <Link
-              to="/organizer/events"
-              className="text-[11px] text-violet-400 hover:text-violet-300 font-semibold flex items-center justify-between transition"
+              to="/organizer/events/create"
+              className="text-xs text-violet-400 hover:text-violet-300 font-semibold inline-flex items-center gap-1 transition"
             >
-              <span>View All Events Directory</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>Create New Event</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </CardShell>
       </div>
 
-      {/* ── BOTTOM ROW: Recent Orders Table + Upcoming Events Capacity Tracker ── */}
+      {/* ── BOTTOM ROW: Recent Orders (7 cols) + Upcoming Events & Capacity (5 cols) ── */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
-        {/* Left (7 cols): Recent Ticket Orders Table */}
-        <CardShell className="xl:col-span-7 overflow-hidden flex flex-col justify-between">
-          <div>
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-              <div>
-                <h2 className="text-sm font-bold text-white">Recent Ticket Orders</h2>
-                <p className="text-[11px] text-white/40 mt-0.5">Real-time customer payments received</p>
-              </div>
-              <Link
-                to="/organizer/payments"
-                className="text-xs font-semibold text-violet-400 hover:text-violet-300 transition flex items-center gap-1"
-              >
-                <span>Manage Payments</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+        {/* Left Card: Recent Ticket Orders (7 cols) */}
+        <CardShell className="xl:col-span-7 overflow-hidden">
+          <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+            <div>
+              <h2 className="text-xs font-bold text-white uppercase tracking-wider">
+                Recent Customer Orders
+              </h2>
+              <p className="text-[11px] text-white/40 mt-0.5">
+                Real-time attendee purchases and booking transactions
+              </p>
             </div>
-
-            {recentOrders.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-xs font-medium text-white/50 border-b border-white/[0.06] bg-[#101424]">
-                      <th className="hidden md:table-cell px-5 py-3 font-semibold">Ref</th>
-                      <th className="px-5 py-3 font-semibold">Customer</th>
-                      <th className="hidden sm:table-cell px-5 py-3 font-semibold">Event</th>
-                      <th className="px-5 py-3 font-semibold text-right">Amount</th>
-                      <th className="px-5 py-3 font-semibold text-right">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/[0.05]">
-                    {recentOrders.map((o) => (
-                      <tr
-                        key={o.id}
-                        onClick={() => navigate('/organizer/payments')}
-                        className="hover:bg-white/[0.02] transition-colors cursor-pointer"
-                        title="Inspect payment details"
-                      >
-                        <td className="hidden md:table-cell px-5 py-3 font-mono text-xs text-white/80">
-                          #{o.reference ? o.reference.slice(-6) : String(o.id ?? '').slice(-6)}
-                        </td>
-                        <td className="px-5 py-3">
-                          <p className="font-semibold text-white text-xs truncate max-w-[130px]">
-                            {o.customerName || o.user?.name || 'Customer'}
-                          </p>
-                          <p className="text-[10px] text-white/50">{o.quantity || o.ticketCount || 1} ticket(s)</p>
-                        </td>
-                        <td className="hidden sm:table-cell px-5 py-3 text-xs text-white/70 max-w-[140px] truncate">
-                          {o.eventTitle || o.event?.title || '—'}
-                        </td>
-                        <td className="px-5 py-3 text-right font-bold text-xs text-white tabular-nums">
-                          {format(o.amount || o.total)}
-                        </td>
-                        <td className="px-5 py-3 text-right">
-                          <Badge variant={orderStatusVariant(o.status)} size="sm">{o.status}</Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="p-8 text-center">
-                <EmptyState icon={Activity} title="No orders yet" description="Orders will appear here once attendees purchase tickets." />
-              </div>
-            )}
-          </div>
-
-          <div className="p-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-white/50">
-            <span>Live order feed</span>
-            <Link to="/organizer/orders" className="text-violet-400 hover:text-violet-300 font-semibold flex items-center gap-1">
-              <span>View all orders</span>
+            <Link
+              to="/organizer/payments"
+              className="text-xs font-medium text-violet-400 hover:text-violet-300 transition flex items-center gap-1"
+            >
+              <span>All Payments</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
+
+          {recentOrders.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-left text-[11px] font-semibold text-white/40 border-b border-white/[0.06] bg-white/[0.01]">
+                    <th className="px-5 py-2.5 font-medium">Ref</th>
+                    <th className="px-5 py-2.5 font-medium">Attendee</th>
+                    <th className="hidden sm:table-cell px-5 py-2.5 font-medium">Event</th>
+                    <th className="px-5 py-2.5 font-medium text-right">Amount</th>
+                    <th className="px-5 py-2.5 font-medium text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.04]">
+                  {recentOrders.map((o) => (
+                    <tr
+                      key={o.id}
+                      onClick={() => navigate('/organizer/payments')}
+                      className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
+                    >
+                      <td className="px-5 py-3 font-mono text-[11px] text-violet-300">
+                        #{o.reference ? o.reference.slice(-6) : String(o.id ?? '').slice(-6)}
+                      </td>
+                      <td className="px-5 py-3">
+                        <p className="font-semibold text-white truncate max-w-[130px]">
+                          {o.customerName || o.user?.name || 'Customer'}
+                        </p>
+                        <p className="text-[10px] text-white/40">
+                          {o.ticketCount || o.quantity || 1} ticket(s)
+                        </p>
+                      </td>
+                      <td className="hidden sm:table-cell px-5 py-3 text-white/60 truncate max-w-[140px]">
+                        {o.eventTitle || o.event?.title || '—'}
+                      </td>
+                      <td className="px-5 py-3 text-right font-bold text-white tabular-nums">
+                        {format(o.amount || o.total)}
+                      </td>
+                      <td className="px-5 py-3 text-right">
+                        <Badge variant={orderStatusVariant(o.status)} size="sm">
+                          {o.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <EmptyState
+              icon={TicketIcon}
+              title="No orders yet"
+              description="Orders will appear here once attendees purchase tickets."
+              className="py-12"
+            />
+          )}
         </CardShell>
 
-        {/* Right (5 cols): Upcoming Events & Capacity Tracker */}
-        <CardShell className="xl:col-span-5 overflow-hidden flex flex-col justify-between">
+        {/* Right Card: Upcoming Events & Capacity Tracker (5 cols) */}
+        <CardShell className="xl:col-span-5 p-5 flex flex-col justify-between">
           <div>
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
               <div>
-                <h2 className="text-sm font-bold text-white">Upcoming Events</h2>
-                <p className="text-[11px] text-white/40 mt-0.5">Schedule &amp; ticket capacity status</p>
+                <h2 className="text-xs font-bold text-white uppercase tracking-wider">
+                  Upcoming Event Schedule
+                </h2>
+                <p className="text-[11px] text-white/40 mt-0.5">
+                  Venue capacities and scheduled dates
+                </p>
               </div>
               <Link
-                to="/organizer/events/create"
-                className="text-xs font-semibold text-violet-400 hover:text-violet-300 transition flex items-center gap-1"
+                to="/organizer/events"
+                className="text-xs text-violet-400 hover:text-violet-300 font-medium transition"
               >
-                <span>New Event</span>
-                <PlusCircle className="w-3.5 h-3.5" />
+                Manage
               </Link>
             </div>
 
-            {upcomingEvents.length > 0 ? (
-              <div className="p-5 space-y-3.5">
-                {upcomingEvents.map((e) => {
-                  const sold = e.ticketsSold || 0;
+            <div className="mt-3.5 space-y-3">
+              {upcomingEvents.length > 0 ? (
+                upcomingEvents.slice(0, 4).map((e) => {
+                  const sold = Number(e.ticketsSold || 0);
                   const cap = Number(e.totalCapacity || e.capacity || 0);
                   const pct = cap > 0 ? Math.min(100, Math.round((sold / cap) * 100)) : 0;
+
                   return (
                     <div
                       key={e.id}
-                      className="p-3.5 rounded-xl bg-[#1a1f35]/60 border border-white/[0.06] hover:border-violet-500/30 transition-all flex flex-col gap-2.5"
+                      onClick={() => navigate(`/organizer/events/${e.id}/edit`)}
+                      className="p-3 rounded-xl bg-[#1a1f35]/60 border border-white/[0.05] hover:border-violet-500/30 transition cursor-pointer group"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <Link
-                            to={`/organizer/events/${e.id}/edit`}
-                            className="text-xs sm:text-sm font-bold text-white hover:text-violet-300 truncate block transition"
-                          >
+                          <p className="text-xs font-bold text-white group-hover:text-violet-300 transition truncate">
                             {e.title}
-                          </Link>
-                          <p className="text-xs text-white/50 flex items-center gap-1.5 mt-0.5">
-                            <Calendar className="w-3 h-3 text-white/40 shrink-0" />
-                            <span>{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}</span>
-                            <span>•</span>
+                          </p>
+                          <p className="text-[10px] text-white/40 flex items-center gap-1.5 mt-0.5">
+                            <Calendar className="w-3 h-3 text-white/30" />
+                            <span>
+                              {e.startDate
+                                ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                                : 'TBD'}
+                            </span>
+                            <span>·</span>
                             <span className="truncate">{e.venue || e.city || 'TBD'}</span>
                           </p>
                         </div>
@@ -770,39 +824,45 @@ export default function OrganizerDashboard() {
                         </Badge>
                       </div>
 
-                      {/* Progress Bar with benchmark */}
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between text-[11px] text-white/50">
-                          <span>Capacity ({pct}%)</span>
-                          <span className="font-semibold text-white">{sold} / {cap > 0 ? cap : 'Open'} tickets</span>
+                      {/* Capacity progress */}
+                      <div className="mt-2.5 space-y-1">
+                        <div className="flex items-center justify-between text-[10px] text-white/50">
+                          <span>Capacity filled ({pct}%)</span>
+                          <span className="font-semibold text-white tabular-nums">
+                            {sold} / {cap > 0 ? cap : '—'}
+                          </span>
                         </div>
-                        <div className="h-1.5 rounded-full bg-[#101424] overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-[#141829] overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-500"
+                            className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-cyan-400 transition-all duration-500"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
                       </div>
                     </div>
                   );
-                })}
-              </div>
-            ) : (
-              <div className="p-8 text-center">
+                })
+              ) : (
                 <EmptyState
                   icon={CalendarDays}
                   title="No upcoming events"
-                  description="Your upcoming events and ticket capacities will be tracked here."
+                  description="Scheduled events and capacity tracking will appear here."
+                  className="py-8"
                 />
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
-          <div className="p-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-white/50">
-            <span>Event operations</span>
-            <Link to="/organizer/events" className="text-violet-400 hover:text-violet-300 font-semibold flex items-center gap-1">
-              <span>Manage all events</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+          <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
+            <span className="text-white/40 text-[11px]">
+              {upcomingEvents.length} event(s) scheduled
+            </span>
+            <Link
+              to="/organizer/events"
+              className="text-violet-400 hover:text-violet-300 font-semibold flex items-center gap-1 transition"
+            >
+              <span>View All Events</span>
+              <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
         </CardShell>
