@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   CalendarDays, Search, Eye, CheckCircle2, XCircle, Ban, Trash2, Star, RotateCcw,
-  Image as ImageIcon, Layers, DollarSign, MessageSquare, AlertCircle, Plus, Pencil,
+  Image as ImageIcon, Layers, DollarSign, MessageSquare, AlertCircle, Plus, Pencil, Ticket,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
@@ -384,7 +384,10 @@ export default function EventManagementPage() {
                         <Link to={`/admin/events/${ev.id}`} className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition" title="View Event in Admin">
                           <Eye className="w-4 h-4" />
                         </Link>
-                        <Link to={`/admin/events/${ev.id}/edit`} className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition" title="Edit Event & Ticket Pricing">
+                        <Link to={`/organizer/tickets?event=${ev.id}`} className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition" title="Manage Event Tickets & Passes">
+                          <Ticket className="w-4 h-4" />
+                        </Link>
+                        <Link to={`/admin/events/${ev.id}/edit`} className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition" title="Edit Event Details">
                           <Pencil className="w-4 h-4" />
                         </Link>
                         <button

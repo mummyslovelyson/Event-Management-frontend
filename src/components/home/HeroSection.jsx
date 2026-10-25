@@ -23,7 +23,10 @@ export default function HeroSection() {
   const handleSearch = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (search.query) params.set('search', search.query);
+    if (search.query) {
+      params.set('q', search.query);
+      params.set('search', search.query);
+    }
     if (search.city) params.set('city', search.city);
     if (search.category) params.set('category', search.category);
     if (search.date) params.set('date', search.date);

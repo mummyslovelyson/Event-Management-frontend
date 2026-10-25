@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -87,7 +88,7 @@ export default function ExplorePage() {
   );
 
   // Search input with local debounce state
-  const [searchInput, setSearchInput] = useState(searchParams.get('q') || '');
+  const [searchInput, setSearchInput] = useState(searchParams.get('q') || searchParams.get('search') || '');
   const [viewMode, setViewMode] = useState(() => {
     const v = searchParams.get('view');
     return v === 'map' ? 'map' : v === 'list' ? 'list' : 'grid';
@@ -127,7 +128,7 @@ export default function ExplorePage() {
 
   const [filters, setFilters] = useState(() => ({
     ...DEFAULT_FILTERS,
-    search: searchParams.get('q') || '',
+    search: searchParams.get('q') || searchParams.get('search') || '',
     city: searchParams.get('city') || '',
     categories: searchParams.get('category') ? searchParams.get('category').split(',') : [],
     dateFrom: searchParams.get('dateFrom') || '',

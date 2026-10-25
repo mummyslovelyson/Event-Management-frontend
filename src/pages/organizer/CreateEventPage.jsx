@@ -1052,8 +1052,8 @@ const StepPublish = ({
             </h4>
             <p className="text-xs text-neutral-400 mt-0.5 leading-relaxed">
               {isAdmin
-                ? 'As a platform administrator, you can immediately publish this event live for attendees to purchase tickets, or save it as a draft for later review.'
-                : 'You can save as a private draft to continue tweaking later, or submit for admin review. Once verified, tickets will instantly be accessible to attendees.'}
+                ? 'Create and publish the event details now. After submission, you will be taken straight to the Tickets page to configure ticket tiers and pricing.'
+                : 'Save as a draft or publish your event details now. After submission, you will be taken straight to the Tickets page to configure ticket tiers and pricing.'}
             </p>
           </div>
         </div>
@@ -1343,8 +1343,8 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
         toast.success(eventId ? 'Event changes saved!' : 'Event draft saved! Configure tickets on the Tickets page.');
       }
 
-      // If organizer created a new event, take them directly to the tickets page for this event
-      if (!isAdmin && resultId) {
+      // Direct both organizers and admins to the tickets page for this event
+      if (resultId) {
         navigate(`/organizer/tickets?event=${resultId}`);
       } else {
         navigate(isAdmin ? '/admin/events' : '/organizer/events');

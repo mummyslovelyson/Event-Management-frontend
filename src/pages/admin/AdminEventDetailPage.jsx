@@ -217,13 +217,23 @@ export default function AdminEventDetailPage() {
               <Star className="w-3.5 h-3.5" fill={ev.is_featured ? 'currentColor' : 'none'} />
             </button>
 
-            {/* Edit Event & Pricing */}
+            {/* Manage Tickets */}
+            <Link
+              to={`/organizer/tickets?event=${id}`}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-semibold text-white border border-white/[0.08] transition"
+              title="Configure ticket tiers, inventory, and passes"
+            >
+              <Ticket className="w-3.5 h-3.5 text-neutral-300" />
+              <span>Manage Tickets</span>
+            </Link>
+
+            {/* Edit Event Details */}
             <Link
               to={`/admin/events/${id}/edit`}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-semibold text-white border border-white/[0.08] transition"
             >
               <Pencil className="w-3.5 h-3.5 text-neutral-300" />
-              <span>Edit Details &amp; Pricing</span>
+              <span>Edit Details</span>
             </Link>
 
             {/* Moderation decisions */}
