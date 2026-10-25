@@ -454,7 +454,14 @@ export default function TicketManagementPage() {
           ) : loadingTickets ? (
             <LoadingSpinner label="Loading ticket types..." className="py-16" />
           ) : tickets.length === 0 ? (
-            <EmptyState icon={TicketIcon} title="No ticket types" description="Add ticket types like VIP, General, or Early Bird using the button above." className="py-16" />
+            <EmptyState
+              icon={TicketIcon}
+              title="No tickets created for this event yet"
+              description="Create ticket tiers (e.g. VIP, General Admission, Early Bird) with custom pricing and upload pre-generated barcode passes."
+              action={openAdd}
+              actionLabel="Create First Ticket Tier"
+              className="py-16"
+            />
           ) : (
             <>
               {/* Comprehensive 6-Metric Event Monitor */}

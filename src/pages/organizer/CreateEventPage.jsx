@@ -1,20 +1,19 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
+import { useForm, FormProvider, useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import {
   CalendarDays, Info, MapPin, Ticket as TicketIcon, CheckCircle2,
   ChevronLeft, ChevronRight, Plus, Trash2, Upload, X, Save, Send,
   AlertTriangle, Globe, Navigation, Clock, Layers, Building2,
   Calendar, Check, ShieldCheck, Tag, DollarSign, Image as ImageIcon,
-  UserCheck, Search
+  UserCheck, Search, ArrowRight
 } from 'lucide-react';
 import { createEvent, getEvent, getCategories, publishEvent, uploadImage } from '@/api/events';
 import { getUsers as getAdminUsers } from '@/api/admin';
 import { useAuth } from '@/context/AuthContext';
 import { POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
-import TicketFilesUploader from '@/components/organizer/TicketFilesUploader';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -23,8 +22,7 @@ const STEPS = [
   { id: 1, title: 'Basic Information', icon: Info, subtitle: 'Name, details, category & artwork' },
   { id: 2, title: 'Location', icon: MapPin, subtitle: 'Physical venue or virtual livestream' },
   { id: 3, title: 'Date & Time', icon: CalendarDays, subtitle: 'Event schedule & timings' },
-  { id: 4, title: 'Tickets', icon: TicketIcon, subtitle: 'Pricing, tiers & quantities' },
-  { id: 5, title: 'Publish', icon: CheckCircle2, subtitle: 'Review & submit for approval' },
+  { id: 4, title: 'Publish', icon: CheckCircle2, subtitle: 'Review & submit for approval' },
 ];
 
 const inputCls =
@@ -818,313 +816,7 @@ const StepDateTime = () => {
 };
 
 /* =========================================================================
-   STEP 4: TICKETS
-   - Ticket name
-   - Price (GHS)
-   - Quantity
-   - Sales start
-   - Sales end
-   - Standard presets: Regular GHS 100 1,000 | VIP GHS 250 300 | VVIP GHS 500 100
-   ========================================================================= */
-const StepTickets = () => {
-  const { control, register, watch, setValue, formState: { errors } } = useFormContext();
-  const { fields, append, remove } = useFieldArray({ control, name: 'ticketTypes' });
-  const { format, currency } = useCurrency();
-
-  const ticketTypes = watch('ticketTypes') || [];
-
-  // Calculate total tickets and projected gross revenue
-  const stats = useMemo(() => {
-    let totalQty = 0;
-    let totalGross = 0;
-    ticketTypes.forEach((t) => {
-      const q = Number(t.quantity) || 0;
-      const p = Number(t.price) || 0;
-      totalQty += q;
-      totalGross += q * p;
-    });
-    return { totalQty, totalGross };
-  }, [ticketTypes]);
-
-  const addTicket = () => {
-    append({
-      name: '',
-      price: '',
-      quantity: '',
-      description: '',
-      saleStartDate: '',
-      saleEndDate: '',
-      uploadedTickets: [],
-    });
-  };
-
-  /**
-   * Exact requirement preset:
-   * Ticket: Regular | Price: GHS 100 | Quantity: 1,000
-   * Ticket: VIP     | Price: GHS 250 | Quantity: 300
-   * Ticket: VVIP    | Price: GHS 500 | Quantity: 100
-   */
-  const loadGhanaianStandardPreset = () => {
-    setValue('ticketTypes', [
-      {
-        name: 'Regular',
-        price: 100,
-        quantity: 1000,
-        description: 'General admission pass with complete festival and stage access.',
-        saleStartDate: '',
-        saleEndDate: '',
-        uploadedTickets: [],
-      },
-      {
-        name: 'VIP',
-        price: 250,
-        quantity: 300,
-        description: 'Priority express gate entry, designated VIP lounge, private bar and restroom access.',
-        saleStartDate: '',
-        saleEndDate: '',
-        uploadedTickets: [],
-      },
-      {
-        name: 'VVIP',
-        price: 500,
-        quantity: 100,
-        description: 'Front-row stage view, complimentary champagne welcome, private wait-service, and backstage pass.',
-        saleStartDate: '',
-        saleEndDate: '',
-        uploadedTickets: [],
-      },
-    ], { shouldValidate: true, shouldDirty: true });
-
-    toast.success('Standard Ghanaian tiers loaded: Regular GHS 100 (1k) • VIP GHS 250 (300) • VVIP GHS 500 (100)');
-  };
-
-  return (
-    <div className="space-y-5">
-      {/* 1-Click Ghanaian Standard Tiers Preset */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#121620] border border-white/[0.08] shadow-sm">
-        <div>
-          <div className="text-xs font-semibold uppercase tracking-wider text-white flex items-center gap-2">
-            <Layers className="w-3.5 h-3.5 text-neutral-400" />
-            Standard Admission Matrix
-          </div>
-          <p className="text-[11px] text-neutral-400 mt-0.5">
-            Quickly fill platform standard admission tiers: Regular GHS 100 &bull; VIP GHS 250 &bull; VVIP GHS 500
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={loadGhanaianStandardPreset}
-          className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white hover:bg-neutral-200 text-black text-xs font-semibold transition cursor-pointer shrink-0"
-        >
-          Load Standard Matrix (Regular • VIP • VVIP)
-        </button>
-      </div>
-
-      {/* Dynamic Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <div className="p-3.5 rounded-2xl bg-[#121620] border border-white/[0.08]">
-          <span className="text-[10px] font-medium text-neutral-400 block uppercase">Ticket Tiers</span>
-          <span className="text-base font-bold text-white">{fields.length}</span>
-        </div>
-        <div className="p-3.5 rounded-2xl bg-[#121620] border border-white/[0.08]">
-          <span className="text-[10px] font-medium text-neutral-400 block uppercase">Total Capacity</span>
-          <span className="text-base font-bold text-white">{stats.totalQty.toLocaleString()} tickets</span>
-        </div>
-        <div className="col-span-2 sm:col-span-1 p-3.5 rounded-2xl bg-[#121620] border border-white/[0.08]">
-          <span className="text-[10px] font-medium text-neutral-400 block uppercase">Projected Gross Revenue</span>
-          <span className="text-base font-bold text-white">{format(stats.totalGross)}</span>
-        </div>
-      </div>
-
-      {/* Ticket List */}
-      <div className="space-y-4">
-        <AnimatePresence>
-          {fields.map((f, i) => {
-            const ticketErr = errors?.ticketTypes?.[i];
-            const currentUploaded = watch(`ticketTypes.${i}.uploadedTickets`) || [];
-            const hasUploaded = currentUploaded.length > 0;
-
-            return (
-              <motion.div
-                key={f.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, height: 0 }}
-                className="rounded-2xl bg-[#121620] border border-white/[0.08] p-4 sm:p-5 space-y-4 transition-all"
-              >
-                <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-white/[0.08] border border-white/[0.1] text-white flex items-center justify-center text-[10px] font-semibold">
-                      {i + 1}
-                    </span>
-                    <span className="text-xs font-semibold text-white">
-                      {watch(`ticketTypes.${i}.name`) || `Ticket Tier ${i + 1}`}
-                    </span>
-                    {hasUploaded && (
-                      <span className="text-[10px] font-medium text-neutral-300 bg-white/[0.04] px-2.5 py-0.5 rounded-full border border-white/[0.08]">
-                        {currentUploaded.length} pre-generated passes
-                      </span>
-                    )}
-                  </div>
-                  {fields.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => remove(i)}
-                      className="p-1.5 rounded-lg text-neutral-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer"
-                      title="Delete ticket tier"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-
-                {/* Primary Row: Name, Price, Quantity */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className={labelCls}>Ticket Name *</label>
-                    <input
-                      {...register(`ticketTypes.${i}.name`, { required: 'Ticket name is required' })}
-                      placeholder="Ticket tier name (e.g. VIP, Regular)"
-                      className={inputCls}
-                    />
-                    {ticketErr?.name && <p className={errCls}>{ticketErr.name.message}</p>}
-                  </div>
-
-                  <div>
-                    <label className={labelCls}>Price ({currency?.code || 'GHS'}) *</label>
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-2.5 text-xs text-neutral-400 font-semibold">{currency?.symbol || 'GHS'}</span>
-                      <input
-                        type="number"
-                        step="any"
-                        min="0"
-                        {...register(`ticketTypes.${i}.price`, {
-                          required: 'Price is required (enter 0 for free)',
-                          min: { value: 0, message: 'Price cannot be negative' }
-                        })}
-                        placeholder="0.00"
-                        className={`${inputCls} pl-12`}
-                      />
-                    </div>
-                    {/* Quick Pricing Chips */}
-                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      <span className="text-[10px] text-neutral-500">Quick set:</span>
-                      {[0, 50, 100, 200, 500].map((presetPrice) => (
-                        <button
-                          key={presetPrice}
-                          type="button"
-                          onClick={() => setValue(`ticketTypes.${i}.price`, presetPrice, { shouldDirty: true, shouldValidate: true })}
-                          className="px-2 py-0.5 rounded text-[10px] font-medium bg-white/[0.04] hover:bg-white/[0.08] text-neutral-300 hover:text-white border border-white/[0.08] transition cursor-pointer"
-                        >
-                          {presetPrice === 0 ? 'Free (0)' : `${presetPrice}`}
-                        </button>
-                      ))}
-                    </div>
-                    {ticketErr?.price && <p className={errCls}>{ticketErr.price.message}</p>}
-                  </div>
-
-                  <div>
-                    <label className={labelCls}>Quantity Available *</label>
-                    <input
-                      type="number"
-                      min="1"
-                      {...register(`ticketTypes.${i}.quantity`, {
-                        required: hasUploaded ? false : 'Quantity is required',
-                        min: { value: 1, message: 'Minimum 1 ticket required' }
-                      })}
-                      readOnly={hasUploaded}
-                      placeholder="Capacity limit"
-                      className={`${inputCls} ${hasUploaded ? 'bg-white/[0.04] text-white font-bold border-white/20' : ''}`}
-                    />
-                    {ticketErr?.quantity && <p className={errCls}>{ticketErr.quantity.message}</p>}
-                  </div>
-                </div>
-
-                {/* Sales Start & End Dates */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelCls}>Sales Start Date (Optional)</label>
-                    <input
-                      type="date"
-                      {...register(`ticketTypes.${i}.saleStartDate`)}
-                      className={inputCls}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Sales End Date (Optional)</label>
-                    <input
-                      type="date"
-                      {...register(`ticketTypes.${i}.saleEndDate`)}
-                      className={inputCls}
-                    />
-                  </div>
-                </div>
-
-                {/* Perks / Description */}
-                <div>
-                  <label className={labelCls}>Perks &amp; Description (Optional)</label>
-                  <input
-                    type="text"
-                    {...register(`ticketTypes.${i}.description`)}
-                    placeholder="Included perks, VIP access, or special accommodations"
-                    className={inputCls}
-                  />
-                </div>
-
-                {/* Optional pre-generated ticket files / barcode passes */}
-                <div className="pt-2 border-t border-white/[0.06]">
-                  <TicketFilesUploader
-                    files={currentUploaded}
-                    onChange={(newFiles) => {
-                      setValue(`ticketTypes.${i}.uploadedTickets`, newFiles, { shouldValidate: true, shouldDirty: true });
-                      if (newFiles && newFiles.length > 0) {
-                        setValue(`ticketTypes.${i}.quantity`, newFiles.length, { shouldValidate: true, shouldDirty: true });
-                      }
-                    }}
-                  />
-                </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <button
-            type="button"
-            onClick={addTicket}
-            className="flex-1 min-w-[200px] flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-white/[0.12] text-xs font-medium text-neutral-400 hover:border-white/20 hover:text-white transition cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" /> Add Custom Ticket Tier
-          </button>
-          <button
-            type="button"
-            onClick={() => append({ name: 'VIP Pass', price: 250, quantity: 200, description: 'VIP entrance, priority bar and lounge', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
-            className="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] transition cursor-pointer"
-          >
-            + VIP Tier
-          </button>
-          <button
-            type="button"
-            onClick={() => append({ name: 'Early Bird', price: 80, quantity: 150, description: 'Limited discounted early admission', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
-            className="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] transition cursor-pointer"
-          >
-            + Early Bird
-          </button>
-          <button
-            type="button"
-            onClick={() => append({ name: 'Free RSVP', price: 0, quantity: 500, description: 'Complimentary standard admission pass', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
-            className="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] transition cursor-pointer"
-          >
-            + Free Pass
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* =========================================================================
-   STEP 5: PUBLISH
+   STEP 4: PUBLISH & REVIEW
    - Review overview
    - Save Draft
    - or Submit for Approval
@@ -1280,53 +972,59 @@ const StepPublish = ({
         </div>
       </div>
 
-      {/* Ticket Tiers Table */}
-      <div className="rounded-2xl bg-[#121620] border border-white/[0.08] overflow-hidden">
-        <div className="p-4 border-b border-white/[0.06] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <TicketIcon className="w-4 h-4 text-neutral-400" />
-            <h3 className="text-xs font-semibold text-white">Configured Ticket Tiers ({(data.ticketTypes || []).length})</h3>
+      {/* Ticket Setup Notification Card */}
+      <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-5 space-y-4 shadow-sm">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+              <TicketIcon className="w-5 h-5 text-white" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <h4 className="text-xs font-semibold text-white">Tickets &amp; Admissions</h4>
+                <span className="text-[10px] font-semibold text-neutral-300 bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.08]">
+                  Configured Separately
+                </span>
+              </div>
+              <p className="text-xs text-neutral-400 leading-relaxed">
+                Tickets are created and managed separately on the Tickets page. You do not need to upload or configure ticket passes now. Once this event is saved, you will be directed straight to the Tickets dashboard to add tiers, pricing, capacity, and barcodes.
+              </p>
+            </div>
           </div>
-          <span className="text-xs font-semibold text-white bg-white/[0.04] px-3 py-1 rounded-full border border-white/[0.08]">
-            Est. Gross: {format(totalGross)}
-          </span>
+          {eventId && (
+            <a
+              href={`/organizer/tickets?event=${eventId}`}
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] transition shrink-0"
+            >
+              <span>Manage Tickets</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
+          )}
         </div>
 
-        <div className="divide-y divide-white/[0.06]">
-          {(data.ticketTypes || []).map((t, idx) => (
-            <div key={idx} className="p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-white text-xs">{t.name || `Tier ${idx + 1}`}</span>
-                  {(t.uploadedTickets || []).length > 0 && (
-                    <span className="text-[10px] text-neutral-300 bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.08]">
-                      {t.uploadedTickets.length} passes uploaded
-                    </span>
-                  )}
-                </div>
-                {t.description && <p className="text-neutral-400 text-[11px]">{t.description}</p>}
-                {(t.saleStartDate || t.saleEndDate) && (
-                  <p className="text-[10px] text-neutral-500">
-                    Sales: {t.saleStartDate || 'Anytime'} &rarr; {t.saleEndDate || 'Event start'}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center gap-4 shrink-0 sm:text-right">
-                <div>
-                  <span className="text-[10px] text-neutral-500 block uppercase">Available</span>
-                  <span className="font-semibold text-white">{Number(t.quantity || 0).toLocaleString()} qty</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-neutral-500 block uppercase">Price</span>
-                  <span className="font-bold text-white text-xs">
-                    {Number(t.price) > 0 ? format(t.price) : 'Free Admission'}
+        {/* Existing ticket tiers display if editing an event that already has tickets */}
+        {(data.ticketTypes || []).length > 0 && (
+          <div className="pt-3 border-t border-white/[0.06] space-y-2">
+            <p className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">
+              Existing Configured Tiers ({(data.ticketTypes || []).length})
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {data.ticketTypes.map((t, idx) => (
+                <div key={idx} className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between text-xs">
+                  <div>
+                    <span className="font-medium text-white">{t.name || `Tier ${idx + 1}`}</span>
+                    <span className="text-[11px] text-neutral-500 block">{Number(t.quantity || 0).toLocaleString()} passes</span>
+                  </div>
+                  <span className="font-semibold text-white">
+                    {Number(t.price) > 0 ? format(t.price) : 'Free'}
                   </span>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Gallery Preview (if present) */}
@@ -1445,9 +1143,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
       dressCode: '',
       bannerImage: '',
       additionalImages: [],
-      ticketTypes: [
-        { name: 'Regular', price: 100, quantity: 1000, description: 'Standard admission', saleStartDate: '', saleEndDate: '', uploadedTickets: [] },
-      ],
+      ticketTypes: [],
     },
   });
 
@@ -1532,7 +1228,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                       uploadedTickets: upl,
                     };
                   })
-                : [{ name: 'Regular', price: 100, quantity: 1000, description: '', saleStartDate: '', saleEndDate: '', uploadedTickets: [] }],
+                : [],
             });
           }
         })
@@ -1586,34 +1282,13 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
       }
     }
 
-    if (step === 4) {
-      const ticketTypes = methods.getValues('ticketTypes') || [];
-      if (!ticketTypes.length) {
-        toast.error('Please configure at least one ticket type');
-        return;
-      }
-      for (let i = 0; i < ticketTypes.length; i++) {
-        const t = ticketTypes[i];
-        if (!t.name?.trim()) {
-          toast.error(`Ticket Tier ${i + 1}: Name is required`);
-          return;
-        }
-        const qty = Number(t.quantity);
-        const utCount = (t.uploadedTickets || []).length;
-        if ((!qty || qty < 1) && utCount === 0) {
-          toast.error(`Ticket Tier ${i + 1}: Quantity must be at least 1`);
-          return;
-        }
-      }
-    }
-
-    setStep((s) => Math.min(5, s + 1));
+    setStep((s) => Math.min(4, s + 1));
   };
 
   const back = () => setStep((s) => Math.max(1, s - 1));
 
   const goToStep = (targetStep) => {
-    if (targetStep >= 1 && targetStep <= 5) {
+    if (targetStep >= 1 && targetStep <= 4) {
       setStep(targetStep);
     }
   };
@@ -1626,13 +1301,12 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
     const step1Keys = ['title', 'description', 'category', 'organizerId'];
     const step2Keys = ['venue', 'address', 'city'];
     const step3Keys = ['startDate', 'endDate', 'startTime', 'endTime'];
-    const step4Keys = ['ticketTypes'];
 
     let targetStep = 1;
     if (errorKeys.some((k) => step1Keys.includes(k))) targetStep = 1;
     else if (errorKeys.some((k) => step2Keys.includes(k))) targetStep = 2;
     else if (errorKeys.some((k) => step3Keys.includes(k))) targetStep = 3;
-    else if (errorKeys.some((k) => step4Keys.includes(k))) targetStep = 4;
+    else targetStep = 4;
 
     const firstErr = formErrors[errorKeys[0]];
     const msg = firstErr?.message || 'Please check the required fields';
@@ -1643,44 +1317,38 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
   const submit = async (data, status) => {
     setSubmitting(true);
     try {
-      const sanitizedTicketTypes = (data.ticketTypes || []).map((t) => ({
-        ...t,
-        price: (t.price === '' || t.price === null || t.price === undefined) ? 0 : Number(t.price),
-        quantity: (t.uploadedTickets && t.uploadedTickets.length > 0)
-          ? t.uploadedTickets.length
-          : Math.max(Number(t.quantity) || 1, 1),
-      }));
-
-      const totalCap = sanitizedTicketTypes.reduce((sum, t) => sum + t.quantity, 0);
-
       const payload = {
         ...data,
-        capacity: totalCap,
-        totalCapacity: totalCap,
-        ticketTypes: sanitizedTicketTypes,
-        ticket_types: sanitizedTicketTypes,
         tags: typeof data.tags === 'string' ? data.tags.split(',').map((t) => t.trim()).filter(Boolean) : data.tags,
         status,
       };
 
+      let resultId = eventId;
       if (customSubmit) {
-        await customSubmit(payload);
+        const res = await customSubmit(payload);
+        resultId = res?.data?.id || res?.data?.event?.id || eventId;
         if (status === 'pending' || status === 'published') {
           if (eventId) await publishEvent(eventId).catch(() => {});
         }
       } else {
-        await createEvent(payload);
+        const res = await createEvent(payload);
+        resultId = res?.data?.id || res?.data?.event?.id || res?.data?.eventId || res?.data?.insertId;
       }
 
       if (status === 'pending') {
-        toast.success(eventId ? 'Event changes submitted for review!' : 'Event submitted for admin approval! Review typically completes within 24h.');
+        toast.success(eventId ? 'Event changes submitted for review!' : 'Event created! Now configure tickets on the Tickets page.');
       } else if (status === 'published') {
-        toast.success('Event published! Tickets are live.');
+        toast.success('Event published! Now configure your tickets.');
       } else {
-        toast.success(eventId ? 'Event changes saved!' : 'Event saved as draft.');
+        toast.success(eventId ? 'Event changes saved!' : 'Event draft saved! Configure tickets on the Tickets page.');
       }
 
-      navigate(isAdmin ? '/admin/events' : '/organizer/events');
+      // If organizer created a new event, take them directly to the tickets page for this event
+      if (!isAdmin && resultId) {
+        navigate(`/organizer/tickets?event=${resultId}`);
+      } else {
+        navigate(isAdmin ? '/admin/events' : '/organizer/events');
+      }
     } catch (err) {
       console.error('[CreateEventPage.submit] Error:', err);
       toast.error(err.response?.data?.message || 'Failed to save event');
@@ -1742,7 +1410,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
           icon={CalendarDays}
           accent="gold"
           title={eventId ? 'Edit Event' : 'Create New Event'}
-          subtitle={isAdmin ? 'Configure event details, select the organizer, set ticket tiers and publish.' : 'Complete the 5-step event creation wizard to publish your event.'}
+          subtitle={isAdmin ? 'Configure event details, select the organizer, and publish.' : 'Complete the 4-step event creation wizard to publish your event. Tickets are managed separately on the Tickets page.'}
           actions={
             <div className="flex items-center gap-2">
               <button
@@ -1766,7 +1434,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
           }
         />
 
-        {/* 5-Step Clickable Progress Stepper */}
+        {/* 4-Step Clickable Progress Stepper */}
         <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-4 sm:p-5">
           <div className="flex items-center justify-between mb-3">
             {STEPS.map((s) => (
@@ -1828,12 +1496,12 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
               <div className="flex items-center justify-between pb-4 mb-6 border-b border-white/[0.06]">
                 <div>
                   <h2 className="text-sm font-semibold text-white">
-                    Step {step} of 5: {STEPS[step - 1].title}
+                    Step {step} of 4: {STEPS[step - 1].title}
                   </h2>
                   <p className="text-xs text-neutral-400 mt-0.5">{STEPS[step - 1].subtitle}</p>
                 </div>
                 <span className="text-[11px] font-mono font-medium text-neutral-300 bg-white/[0.04] px-2.5 py-0.5 rounded-full border border-white/[0.08]">
-                  Step {step} / 5
+                  Step {step} / 4
                 </span>
               </div>
 
@@ -1847,8 +1515,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
               )}
               {step === 2 && <StepLocation />}
               {step === 3 && <StepDateTime />}
-              {step === 4 && <StepTickets />}
-              {step === 5 && (
+              {step === 4 && (
                 <StepPublish
                   onSaveDraft={handleSubmit((d) => submit(d, 'draft'), onInvalid)}
                   onSubmitApproval={handleSubmit((d) => submit(d, 'pending'), onInvalid)}
@@ -1875,7 +1542,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
             <ChevronLeft className="w-3.5 h-3.5" /> Back
           </button>
 
-          {step < 5 ? (
+          {step < 4 ? (
             <button
               type="button"
               onClick={next}

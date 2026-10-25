@@ -601,9 +601,9 @@ function SidebarContent({ mainNav, secondaryNav, unreadCount, onNavigate, onLogo
               if (onNavigate) onNavigate();
               onLogout();
             }}
-            className="w-full group flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-white/50 hover:text-red-400 hover:bg-red-500/10 transition-all text-left"
+                  className="w-full group flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium text-white/50 hover:text-white hover:bg-white/[0.04] transition-all text-left"
           >
-            <LogOut className="w-4 h-4 shrink-0 text-white/40 group-hover:text-red-400" />
+            <LogOut className="w-4 h-4 shrink-0 text-white/40 group-hover:text-white" />
             <span className="truncate">Log out</span>
           </button>
         </div>
@@ -617,9 +617,9 @@ function SidebarContent({ mainNav, secondaryNav, unreadCount, onNavigate, onLogo
             <span className="text-[11px] font-medium text-white/60">Live Production</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-violet-500/80 cursor-pointer hover:scale-110 transition" title="Primary Theme" />
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400/80 cursor-pointer hover:scale-110 transition" title="Cyan Accent" />
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80 cursor-pointer hover:scale-110 transition" title="Amber Accent" />
+            <span className="w-2.5 h-2.5 rounded-full bg-white/60 cursor-pointer hover:scale-110 transition" title="Primary" />
+            <span className="w-2.5 h-2.5 rounded-full bg-white/30 cursor-pointer hover:scale-110 transition" title="Secondary" />
+            <span className="w-2.5 h-2.5 rounded-full bg-white/15 cursor-pointer hover:scale-110 transition" title="Tertiary" />
           </div>
         </div>
       </div>

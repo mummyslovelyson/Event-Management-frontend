@@ -96,9 +96,7 @@ export default function EditEventPage() {
         totalCapacity: e.capacity || '',
         visibility: e.visibility || 'public',
         organizerId: e.organizer_id || '',
-        ticketTypes: ticketTypes.length > 0
-          ? ticketTypes
-          : [{ name: '', price: '', quantity: '', description: '', saleStartDate: '', saleEndDate: '', uploadedTickets: [] }],
+        ticketTypes: ticketTypes.length > 0 ? ticketTypes : [],
       });
     } catch (err) {
       console.error('[EditEventPage.fetchEvent]', err);
