@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import {
@@ -55,6 +55,9 @@ export default function TicketManagementPage() {
   const [submitting, setSubmitting] = useState(false);
   const [uploadedTickets, setUploadedTickets] = useState([]);
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm();
+
+  const currentEvent = events.find((e) => String(e.id) === String(selectedEvent));
+  const isApproved = currentEvent ? (currentEvent.approval_status === 'approved' || currentEvent.approvalStatus === 'approved') : false;
 
   const fetchEvents = useCallback(async () => {
     setLoading(true);
@@ -149,6 +152,14 @@ export default function TicketManagementPage() {
   };
 
   const openAdd = () => {
+    if (!selectedEvent) {
+      toast.error('Please select an event first');
+      return;
+    }
+    if (!isApproved) {
+      toast.error('This event must be approved by an administrator before tickets can be created.');
+      return;
+    }
     setEditTarget(null);
     setUploadedTickets([]);
     reset({ name: '', price: '', quantity: '', description: '', saleStartDate: '', saleEndDate: '' });
@@ -202,6 +213,10 @@ export default function TicketManagementPage() {
   };
 
   const onSubmit = async (data) => {
+    if (!isApproved && !editTarget) {
+      toast.error('This event must be approved by an administrator before tickets can be created.');
+      return;
+    }
     setSubmitting(true);
     try {
       const payload = {
@@ -259,11 +274,16 @@ export default function TicketManagementPage() {
         subtitle="Monitor sales, remaining capacity, reservations, cancellations, and ticket tier revenue."
         actions={
           activeTab === 'tiers' ? (
-            <button onClick={openAdd} disabled={!selectedEvent} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 disabled:opacity-50 transition-colors shrink-0">
+            <button
+              onClick={openAdd}
+              disabled={!selectedEvent || !isApproved}
+              title={!selectedEvent ? 'Select an event' : (!isApproved ? 'Event must be approved by admin before creating tickets' : 'Add Ticket Type')}
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 cursor-pointer"
+            >
               <Plus className="w-3.5 h-3.5" /> Add Ticket Type
             </button>
           ) : (
-            <button onClick={fetchResaleListings} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition-colors shrink-0">
+            <button onClick={fetchResaleListings} className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition-colors shrink-0 cursor-pointer">
               <RefreshCw className="w-3.5 h-3.5" /> Refresh Resale List
             </button>
           )
@@ -443,7 +463,15 @@ export default function TicketManagementPage() {
             <label className="text-xs font-medium uppercase tracking-wider text-neutral-400">Select Event</label>
             <select value={selectedEvent} onChange={(e) => setSelectedEvent(e.target.value)} className="flex-1 max-w-md px-3.5 py-2.5 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition cursor-pointer">
               <option value="">Choose an event...</option>
-              {events.map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
+              {events.map((e) => {
+                const appStatus = e.approval_status || e.approvalStatus || 'pending';
+                const statusBadge = appStatus === 'approved' ? '' : ` (${appStatus === 'changes_requested' ? 'Changes Requested' : (appStatus === 'rejected' ? 'Rejected' : 'Pending Approval')})`;
+                return (
+                  <option key={e.id} value={e.id}>
+                    {e.title}{statusBadge}
+                  </option>
+                );
+              })}
             </select>
           </div>
 
@@ -451,6 +479,39 @@ export default function TicketManagementPage() {
             <EmptyState icon={TicketIcon} title="No events yet" description="Create an event first to manage tickets." className="py-16" />
           ) : !selectedEvent ? (
             <EmptyState icon={TicketIcon} title="Select an event" description="Choose an event above to view its ticket types." className="py-16" />
+          ) : !isApproved ? (
+            <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-8 text-center space-y-4 max-w-xl mx-auto my-8">
+              <div className="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center mx-auto text-amber-400">
+                <Clock className="w-6 h-6" />
+              </div>
+              <div className="space-y-1.5">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-400/10 text-amber-300 border border-amber-400/20 uppercase tracking-wider">
+                  {currentEvent?.approval_status === 'changes_requested'
+                    ? 'Changes Requested'
+                    : (currentEvent?.approval_status === 'rejected' ? 'Rejected' : 'Awaiting Admin Approval')}
+                </div>
+                <h3 className="text-base font-bold text-white">
+                  Tickets Disabled Until Event Is Approved
+                </h3>
+                <p className="text-xs text-neutral-400 leading-relaxed max-w-md mx-auto">
+                  {currentEvent?.approval_status === 'changes_requested'
+                    ? `An administrator requested modifications before approving this event: "${currentEvent?.rejection_reason || currentEvent?.rejectionReason || 'Please review your event details.'}". Please update and resubmit for approval.`
+                    : currentEvent?.approval_status === 'rejected'
+                    ? `This event was rejected by platform moderation: "${currentEvent?.rejection_reason || currentEvent?.rejectionReason || 'Contact support for more details.'}".`
+                    : 'This event is currently in the administrator review queue. All events must be approved by an administrator before tickets can be created, configured, and sold to attendees.'}
+                </p>
+              </div>
+              {currentEvent?.approval_status === 'changes_requested' && (
+                <div className="pt-2">
+                  <Link
+                    to={`/organizer/events/${currentEvent.id}/edit`}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" /> Edit &amp; Resubmit Event
+                  </Link>
+                </div>
+              )}
+            </div>
           ) : loadingTickets ? (
             <LoadingSpinner label="Loading ticket types..." className="py-16" />
           ) : tickets.length === 0 ? (

@@ -1048,12 +1048,12 @@ const StepPublish = ({
           <ShieldCheck className="w-5 h-5 text-neutral-300 shrink-0 mt-0.5" />
           <div>
             <h4 className="text-xs font-semibold text-white">
-              {isAdmin ? 'Platform Administrator Publishing Authority' : 'Ready to publish your event?'}
+              {isAdmin ? 'Platform Administrator Publishing Authority' : 'Submit Event for Admin Review'}
             </h4>
             <p className="text-xs text-neutral-400 mt-0.5 leading-relaxed">
               {isAdmin
                 ? 'Create and publish the event details now. After submission, you will be taken straight to the Tickets page to configure ticket tiers and pricing.'
-                : 'Save as a draft or publish your event details now. After submission, you will be taken straight to the Tickets page to configure ticket tiers and pricing.'}
+                : 'Submit your event for administrator review. All events must be approved by an administrator before tickets can be created and put on sale.'}
             </p>
           </div>
         </div>
@@ -1335,19 +1335,24 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
         resultId = res?.data?.id || res?.data?.event?.id || res?.data?.eventId || res?.data?.insertId;
       }
 
-      if (status === 'pending') {
-        toast.success(eventId ? 'Event changes submitted for review!' : 'Event created! Now configure tickets on the Tickets page.');
-      } else if (status === 'published') {
-        toast.success('Event published! Now configure your tickets.');
+      if (isAdmin) {
+        if (status === 'published') {
+          toast.success('Event published! Now configure your tickets.');
+        } else {
+          toast.success('Event draft saved! Configure tickets on the Tickets page.');
+        }
+        if (resultId) {
+          navigate(`/organizer/tickets?event=${resultId}`);
+        } else {
+          navigate('/admin/events');
+        }
       } else {
-        toast.success(eventId ? 'Event changes saved!' : 'Event draft saved! Configure tickets on the Tickets page.');
-      }
-
-      // Direct both organizers and admins to the tickets page for this event
-      if (resultId) {
-        navigate(`/organizer/tickets?event=${resultId}`);
-      } else {
-        navigate(isAdmin ? '/admin/events' : '/organizer/events');
+        if (status === 'draft') {
+          toast.success(eventId ? 'Event draft updated!' : 'Event draft saved! Submit for review when ready.');
+        } else {
+          toast.success('Event submitted for admin approval! Once approved, ticket creation will be enabled.');
+        }
+        navigate('/organizer/events');
       }
     } catch (err) {
       console.error('[CreateEventPage.submit] Error:', err);
