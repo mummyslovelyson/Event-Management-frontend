@@ -58,9 +58,9 @@ const getOrganizerStatus = (u) => {
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 const fmtDateTime = (d) => (d ? new Date(d).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
 const initials = (name = '') => name.split(' ').map((w) => w[0]).filter(Boolean).join('').slice(0, 2).toUpperCase() || 'OR';
-const avatarBg = ['bg-white/10 text-white', 'bg-[#EFEFF1]/10 text-[#EFEFF1]', 'bg-[#494F55]/40 text-[#9AA1A6]', 'bg-white/10 text-[#E8C75E]'];
-const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition';
-const actionBtn = 'p-2 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition disabled:opacity-50';
+const avatarBg = ['bg-white/10 text-white', 'bg-white/5 text-neutral-300', 'bg-neutral-800 text-neutral-400', 'bg-white/10 text-neutral-200'];
+const inputCls = 'w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition';
+const actionBtn = 'p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition disabled:opacity-50';
 
 const panelTabs = [
   { key: 'overview', label: 'Profile & Brand', icon: Building2 },
@@ -521,9 +521,9 @@ export default function OrganizerApprovalsPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleExport}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#242B32] border border-[#494F55]/40 text-sm text-[#EFEFF1] hover:border-white/40 transition"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white hover:bg-white/[0.06] transition"
             >
-              <Download className="w-4 h-4" /> Export CSV
+              <Download className="w-3.5 h-3.5" /> Export CSV
             </button>
           </div>
         }
@@ -538,17 +538,17 @@ export default function OrganizerApprovalsPage() {
       </div>
 
       {/* ── Filter & Search Block (identical layout to UserManagementPage) ── */}
-      <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4 space-y-3">
+      <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4 space-y-3">
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search organizer, contact name, email, city..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
             />
           </div>
 
@@ -556,7 +556,7 @@ export default function OrganizerApprovalsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer"
+            className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition cursor-pointer"
           >
             <option value="">All Statuses</option>
             <option value="approved">Approved &amp; Active</option>
@@ -569,7 +569,7 @@ export default function OrganizerApprovalsPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer"
+            className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition cursor-pointer"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c === 'All Categories' ? '' : c}>
@@ -582,7 +582,7 @@ export default function OrganizerApprovalsPage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer"
+            className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition cursor-pointer"
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -590,17 +590,17 @@ export default function OrganizerApprovalsPage() {
           </select>
 
           {/* View Mode Toggle */}
-          <div className="flex rounded-lg border border-[#494F55]/40 overflow-hidden shrink-0">
+          <div className="flex rounded-lg border border-white/[0.08] overflow-hidden shrink-0">
             <button
               onClick={() => setViewMode('cards')}
-              className={`p-2.5 transition ${viewMode === 'cards' ? 'bg-white text-[#1C232B]' : 'bg-[#1C232B] text-[#949599] hover:text-[#EFEFF1]'}`}
+              className={`p-2 transition ${viewMode === 'cards' ? 'bg-white text-black' : 'bg-transparent text-neutral-400 hover:text-white'}`}
               title="Cards View"
             >
               <LayoutGrid className="w-4 h-4" />
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`p-2.5 transition ${viewMode === 'table' ? 'bg-white text-[#1C232B]' : 'bg-[#1C232B] text-[#949599] hover:text-[#EFEFF1]'}`}
+              className={`p-2 transition ${viewMode === 'table' ? 'bg-white text-black' : 'bg-transparent text-neutral-400 hover:text-white'}`}
               title="Table View"
             >
               <TableIcon className="w-4 h-4" />
@@ -614,17 +614,17 @@ export default function OrganizerApprovalsPage() {
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                 tab === t.key
-                  ? 'bg-white text-[#1C232B] font-semibold'
-                  : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
+                  ? 'bg-white text-black'
+                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
               }`}
             >
               <span>{t.label}</span>
               {t.key === 'pending' && stats.pending > 0 && (
                 <span
-                  className={`px-1.5 py-0.5 rounded-full text-xs font-bold ${
-                    tab === t.key ? 'bg-[#1C232B] text-white' : 'bg-amber-500/20 text-amber-400'
+                  className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    tab === t.key ? 'bg-black/15 text-black' : 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
                   }`}
                 >
                   {stats.pending}
@@ -661,11 +661,11 @@ export default function OrganizerApprovalsPage() {
 
       {/* ── Main Content: Cards or Table ── */}
       {loading ? (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F]">
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08]">
           <LoadingSpinner label="Loading organizers..." className="py-16" />
         </div>
       ) : displayedOrganizers.length === 0 ? (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F]">
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08]">
           <EmptyState
             icon={Building2}
             title={search ? 'No matching organizers found' : `No ${tab} organizers`}
@@ -696,8 +696,8 @@ export default function OrganizerApprovalsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
                 onClick={() => openPanel(u)}
-                className={`group relative rounded-xl bg-[#171A1D] border p-5 transition-all cursor-pointer hover:border-white/30 hover:shadow-lg hover:shadow-black/20 ${
-                  selected.has(u.id) ? 'border-white/40 bg-white/5' : 'border-[#262B2F]'
+                className={`group relative rounded-xl bg-[#121620] border p-5 transition-all cursor-pointer hover:border-white/20 hover:bg-white/[0.01] ${
+                  selected.has(u.id) ? 'border-white/30 bg-white/[0.04]' : 'border-white/[0.08]'
                 }`}
               >
                 {/* Top-left checkbox */}
@@ -706,7 +706,7 @@ export default function OrganizerApprovalsPage() {
                     type="checkbox"
                     checked={selected.has(u.id)}
                     onChange={() => toggleSelect(u.id)}
-                    className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#EFEFF1]"
+                    className="w-4 h-4 rounded border-white/20 bg-white/5 accent-white"
                   />
                 </div>
 
@@ -722,7 +722,7 @@ export default function OrganizerApprovalsPage() {
                   >
                     <Ban className="w-3.5 h-3.5" />
                   </button>
-                  <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-red-400`} title="Delete">
+                  <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-rose-400`} title="Delete">
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -733,10 +733,10 @@ export default function OrganizerApprovalsPage() {
                     {uInit}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-[#EFEFF1] truncate flex items-center gap-1.5">
+                    <p className="font-medium text-white truncate flex items-center gap-1.5">
                       {orgTitle}
                     </p>
-                    <p className="text-xs text-[#949599] truncate">
+                    <p className="text-xs text-neutral-400 truncate">
                       {u.name} • {u.email}
                     </p>
                   </div>
@@ -759,7 +759,7 @@ export default function OrganizerApprovalsPage() {
                       </button>
                       <button
                         onClick={() => { setRejectTarget(u); setRejectReason(''); }}
-                        className="p-1.5 rounded-md text-red-400 hover:bg-red-500/15 transition"
+                        className="p-1.5 rounded-md text-rose-400 hover:bg-rose-500/15 transition"
                         title="Reject Application"
                       >
                         <XCircle className="w-4 h-4" />
@@ -769,18 +769,18 @@ export default function OrganizerApprovalsPage() {
                 </div>
 
                 {/* 3-Column Metrics (Events, Tickets, Joined) */}
-                <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-[#262B2F]/70">
+                <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/[0.06]">
                   <div className="text-center">
-                    <p className="text-sm font-semibold text-[#EFEFF1] tabular-nums">{u.eventsCount ?? 0}</p>
-                    <p className="text-[10px] text-[#949599] uppercase tracking-wider">Events</p>
+                    <p className="text-sm font-semibold text-neutral-200 tabular-nums">{u.eventsCount ?? 0}</p>
+                    <p className="text-[10px] text-neutral-400 uppercase tracking-wider">Events</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-semibold text-[#EFEFF1] tabular-nums">{u.ticketsCount ?? 0}</p>
-                    <p className="text-[10px] text-[#949599] uppercase tracking-wider">Tickets</p>
+                    <p className="text-sm font-semibold text-neutral-200 tabular-nums">{u.ticketsCount ?? 0}</p>
+                    <p className="text-[10px] text-neutral-400 uppercase tracking-wider">Tickets</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-[11px] text-[#949599] mt-0.5">{fmtDate(u.createdAt || u.created_at)}</p>
-                    <p className="text-[10px] text-[#949599] uppercase tracking-wider">Joined</p>
+                    <p className="text-[11px] text-neutral-400 mt-0.5">{fmtDate(u.createdAt || u.created_at)}</p>
+                    <p className="text-[10px] text-neutral-400 uppercase tracking-wider">Joined</p>
                   </div>
                 </div>
               </motion.div>
@@ -789,29 +789,29 @@ export default function OrganizerApprovalsPage() {
         </div>
       ) : (
         /* Table View */
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08] overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-xs">
               <thead>
-                <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
+                <tr className="text-left text-[11px] font-medium text-neutral-400 border-b border-white/[0.06] bg-white/[0.02]">
                   <th className="hidden md:table-cell px-4 py-3 w-10">
                     <input
                       type="checkbox"
                       checked={selected.size === displayedOrganizers.length && displayedOrganizers.length > 0}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#EFEFF1]"
+                      className="w-4 h-4 rounded border-white/20 bg-white/5 accent-white"
                     />
                   </th>
-                  <th className="px-4 py-3">Organizer</th>
-                  <th className="hidden md:table-cell px-4 py-3">Category</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="hidden md:table-cell px-4 py-3 text-center">Events</th>
-                  <th className="hidden md:table-cell px-4 py-3 text-center">Tickets</th>
-                  <th className="hidden md:table-cell px-4 py-3">Joined</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-4 py-3 font-medium">Organizer</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium">Category</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="hidden md:table-cell px-4 py-3 text-center font-medium">Events</th>
+                  <th className="hidden md:table-cell px-4 py-3 text-center font-medium">Tickets</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium">Joined</th>
+                  <th className="px-4 py-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#262B2F]/70">
+              <tbody className="divide-y divide-white/[0.06]">
                 {displayedOrganizers.map((u, i) => {
                   const orgTitle = u.organizationName || u.organization_name || u.organization?.name || u.name || 'Organizer';
                   const uInit = initials(orgTitle);
@@ -822,14 +822,14 @@ export default function OrganizerApprovalsPage() {
                   return (
                     <tr
                       key={u.id}
-                      className={`hover:bg-[#1D2124] transition-colors ${selected.has(u.id) ? 'bg-white/5' : ''}`}
+                      className={`hover:bg-white/[0.02] transition-colors ${selected.has(u.id) ? 'bg-white/[0.04]' : ''}`}
                     >
                       <td className="hidden md:table-cell px-4 py-3">
                         <input
                           type="checkbox"
                           checked={selected.has(u.id)}
                           onChange={() => toggleSelect(u.id)}
-                          className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#EFEFF1]"
+                          className="w-4 h-4 rounded border-white/20 bg-white/5 accent-white"
                         />
                       </td>
                       <td className="px-4 py-3">
@@ -838,31 +838,31 @@ export default function OrganizerApprovalsPage() {
                             {uInit}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-medium text-[#EFEFF1] truncate max-w-[180px]">
+                            <p className="font-medium text-white truncate max-w-[180px]">
                               {orgTitle}
                             </p>
-                            <p className="text-xs text-[#949599] truncate max-w-[200px]">
+                            <p className="text-xs text-neutral-400 truncate max-w-[200px]">
                               {u.name} • {u.email}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="hidden md:table-cell px-4 py-3 text-xs text-[#949599]">
+                      <td className="hidden md:table-cell px-4 py-3 text-neutral-400">
                         {u.category || u.org_category || u.organization?.category || 'General'}
                       </td>
                       <td className="px-4 py-3">
                         <Badge variant={statusInfo.variant} size="sm" dot>{statusInfo.label}</Badge>
                       </td>
-                      <td className="hidden md:table-cell px-4 py-3 text-center text-[#949599]">{u.eventsCount ?? 0}</td>
-                      <td className="hidden md:table-cell px-4 py-3 text-center text-[#949599]">{u.ticketsCount ?? 0}</td>
-                      <td className="hidden md:table-cell px-4 py-3 text-xs text-[#949599]">{fmtDate(u.createdAt || u.created_at)}</td>
+                      <td className="hidden md:table-cell px-4 py-3 text-center text-neutral-300 tabular-nums">{u.eventsCount ?? 0}</td>
+                      <td className="hidden md:table-cell px-4 py-3 text-center text-neutral-300 tabular-nums">{u.ticketsCount ?? 0}</td>
+                      <td className="hidden md:table-cell px-4 py-3 text-neutral-400">{fmtDate(u.createdAt || u.created_at)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
                           <button onClick={() => openPanel(u)} className={actionBtn} title="View Details">
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-3.5 h-3.5" />
                           </button>
                           <button onClick={() => setEditTarget(u)} className={actionBtn} title="Edit Profile">
-                            <Pencil className="w-4 h-4" />
+                            <Pencil className="w-3.5 h-3.5" />
                           </button>
                           {isPending && (
                             <button
@@ -871,7 +871,7 @@ export default function OrganizerApprovalsPage() {
                               className={`${actionBtn} text-emerald-400`}
                               title="Approve Organizer"
                             >
-                              <CheckCircle2 className="w-4 h-4" />
+                              <CheckCircle2 className="w-3.5 h-3.5" />
                             </button>
                           )}
                           <button
@@ -879,10 +879,10 @@ export default function OrganizerApprovalsPage() {
                             className={`${actionBtn} ${isSuspendedUser(u) ? 'text-emerald-400' : 'text-amber-400'}`}
                             title={isSuspendedUser(u) ? 'Unsuspend' : 'Suspend'}
                           >
-                            <Ban className="w-4 h-4" />
+                            <Ban className="w-3.5 h-3.5" />
                           </button>
-                          <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-red-400`} title="Delete">
-                            <Trash2 className="w-4 h-4" />
+                          <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-rose-400`} title="Delete">
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </td>
@@ -892,8 +892,8 @@ export default function OrganizerApprovalsPage() {
               </tbody>
             </table>
           </div>
-          <div className="px-5 py-4 border-t border-[#262B2F] flex items-center justify-between">
-            <span className="text-xs text-[#949599]">Page {page} of {totalPages}</span>
+          <div className="px-5 py-4 border-t border-white/[0.06] flex items-center justify-between">
+            <span className="text-xs text-neutral-400">Page {page} of {totalPages}</span>
             <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
         </div>
@@ -909,7 +909,7 @@ export default function OrganizerApprovalsPage() {
           d ? (
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-xl bg-[#161D22] border border-[#262B2F] text-white flex items-center justify-center text-base font-bold shadow-inner ring-1 ring-white/10">
+                <div className="w-12 h-12 rounded-xl bg-[#121620] border border-white/[0.08] text-white flex items-center justify-center text-base font-bold shadow-inner ring-1 ring-white/10">
                   {initials(d.organizationName || d.name)}
                 </div>
                 <div>
@@ -917,7 +917,7 @@ export default function OrganizerApprovalsPage() {
                     <h3 className="text-base font-bold text-white tracking-tight">
                       {d.organizationName || d.organization_name || d.name}
                     </h3>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#161D22] border border-[#262B2F] text-[#EFEFF1]">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#121620] border border-white/[0.08] text-white">
                       <span className={`w-1.5 h-1.5 rounded-full ${
                         getOrganizerStatus(d).label === 'Approved' ? 'bg-emerald-400' :
                         getOrganizerStatus(d).label === 'Suspended' ? 'bg-red-400' :
@@ -926,7 +926,7 @@ export default function OrganizerApprovalsPage() {
                       {getOrganizerStatus(d).label}
                     </span>
                   </div>
-                  <p className="text-xs text-[#949599] mt-0.5">
+                  <p className="text-xs text-neutral-400 mt-0.5">
                     Contact: {d.name} • {d.email} {d.phone ? `• ${d.phone}` : ''}
                   </p>
                 </div>
@@ -937,10 +937,10 @@ export default function OrganizerApprovalsPage() {
                   href={`/organizers/${d.id}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] text-xs font-medium text-[#EFEFF1] border border-[#262B2F] hover:border-white/20 transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] text-xs font-medium text-neutral-200 border border-white/[0.08] hover:border-white/20 transition"
                   title="Open live public storefront in new tab"
                 >
-                  <ExternalLink className="w-3.5 h-3.5 text-[#CBD5E1]" />
+                  <ExternalLink className="w-3.5 h-3.5 text-neutral-400" />
                   Public Storefront
                 </a>
               </div>
@@ -955,62 +955,62 @@ export default function OrganizerApprovalsPage() {
         ) : d ? (
           <div className="space-y-5">
             {/* Administrative Quick Actions */}
-            <div className="flex items-center gap-2 flex-wrap border-b border-[#262B2F] pb-3">
+            <div className="flex items-center gap-2 flex-wrap border-b border-white/[0.08] pb-3">
               <button
                 onClick={() => { setPanelUser(null); setEditTarget(d); }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] border border-[#262B2F] hover:border-white/20 text-xs font-medium text-[#CBD5E1] hover:text-white transition group"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/20 text-xs font-medium text-neutral-300 hover:text-white transition group"
               >
-                <Pencil className="w-3.5 h-3.5 text-[#949599] group-hover:text-white transition-colors" /> Edit Profile
+                <Pencil className="w-3.5 h-3.5 text-neutral-400 group-hover:text-white transition-colors" /> Edit Profile
               </button>
               <button
                 onClick={() => { setPanelUser(null); setResetTarget(d); setResetResult(null); }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] border border-[#262B2F] hover:border-white/20 text-xs font-medium text-[#CBD5E1] hover:text-white transition group"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/20 text-xs font-medium text-neutral-300 hover:text-white transition group"
               >
-                <KeyRound className="w-3.5 h-3.5 text-[#949599] group-hover:text-white transition-colors" /> Reset Password
+                <KeyRound className="w-3.5 h-3.5 text-neutral-400 group-hover:text-white transition-colors" /> Reset Password
               </button>
               <button
                 onClick={() => handleForceLogout(d.id)}
                 disabled={actionLoading === `logout-${d.id}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] border border-[#262B2F] hover:border-white/20 text-xs font-medium text-[#CBD5E1] hover:text-white transition disabled:opacity-50 group"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/20 text-xs font-medium text-neutral-300 hover:text-white transition disabled:opacity-50 group"
               >
-                <LogOut className="w-3.5 h-3.5 text-[#949599] group-hover:text-white transition-colors" /> Revoke Sessions
+                <LogOut className="w-3.5 h-3.5 text-neutral-400 group-hover:text-white transition-colors" /> Revoke Sessions
               </button>
               {isSuspendedUser(d) ? (
                 <button
                   onClick={() => { setPanelUser(null); setSuspendTarget(d); setSuspendReason(''); }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] border border-[#262B2F] hover:border-white/20 text-xs font-medium text-[#CBD5E1] hover:text-white transition group"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/20 text-xs font-medium text-neutral-300 hover:text-white transition group"
                 >
-                  <UserCheck className="w-3.5 h-3.5 text-[#949599] group-hover:text-white transition-colors" /> Unsuspend
+                  <UserCheck className="w-3.5 h-3.5 text-neutral-400 group-hover:text-white transition-colors" /> Unsuspend
                 </button>
               ) : (
                 <button
                   onClick={() => { setPanelUser(null); setSuspendTarget(d); setSuspendReason(''); }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-[#242B32] border border-[#262B2F] hover:border-amber-500/30 text-xs font-medium text-[#CBD5E1] hover:text-amber-300 transition group"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-amber-500/30 text-xs font-medium text-neutral-300 hover:text-amber-300 transition group"
                 >
-                  <Ban className="w-3.5 h-3.5 text-[#949599] group-hover:text-amber-300 transition-colors" /> Suspend
+                  <Ban className="w-3.5 h-3.5 text-neutral-400 group-hover:text-amber-300 transition-colors" /> Suspend
                 </button>
               )}
               <button
                 onClick={() => { setPanelUser(null); setDeleteTarget(d); }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161D22] hover:bg-red-500/10 border border-[#262B2F] hover:border-red-500/30 text-xs font-medium text-[#949599] hover:text-red-300 transition ml-auto group"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-rose-500/10 border border-white/[0.08] hover:border-rose-500/30 text-xs font-medium text-neutral-400 hover:text-rose-300 transition ml-auto group"
               >
-                <Trash2 className="w-3.5 h-3.5 text-[#949599] group-hover:text-red-400 transition-colors" /> Delete Account
+                <Trash2 className="w-3.5 h-3.5 text-neutral-400 group-hover:text-rose-400 transition-colors" /> Delete Account
               </button>
             </div>
 
             {/* Application Review Banner (if pending) */}
             {(!d.is_approved && d.status !== 'active' && d.status !== 'suspended' && d.status !== 'rejected') && (
-              <div className="rounded-xl bg-[#161D22] border border-[#262B2F] p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-black/20">
+              <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center text-[#CBD5E1] shrink-0 mt-0.5">
+                  <div className="w-9 h-9 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-neutral-300 shrink-0 mt-0.5">
                     <Clock className="w-4 h-4" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <h4 className="text-sm font-semibold text-white tracking-tight">Organizer Application Awaiting Review</h4>
-                      <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded bg-[#242B32] text-[#949599] border border-white/5">Action Required</span>
+                      <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded bg-white/[0.06] text-neutral-400 border border-white/5">Action Required</span>
                     </div>
-                    <p className="text-xs text-[#949599] mt-0.5 max-w-xl leading-relaxed">
+                    <p className="text-xs text-neutral-400 mt-0.5 max-w-xl leading-relaxed">
                       Review organization credentials and business profile below before granting publishing access.
                     </p>
                   </div>
@@ -1018,16 +1018,16 @@ export default function OrganizerApprovalsPage() {
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                   <button
                     onClick={() => { setRejectTarget(d); setRejectReason(''); }}
-                    className="px-3.5 py-2 rounded-lg bg-[#242B32] hover:bg-red-500/10 border border-[#262B2F] hover:border-red-500/30 text-xs font-medium text-[#CBD5E1] hover:text-red-300 transition flex items-center gap-1.5"
+                    className="px-3.5 py-2 rounded-lg bg-white/[0.04] hover:bg-rose-500/10 border border-white/[0.08] hover:border-rose-500/30 text-xs font-medium text-neutral-300 hover:text-rose-300 transition flex items-center gap-1.5"
                   >
                     <XCircle className="w-3.5 h-3.5" /> Reject Application
                   </button>
                   <button
                     onClick={() => handleApprove(d)}
                     disabled={actionLoading === `approve-${d.id}`}
-                    className="px-4 py-2 rounded-lg bg-white hover:bg-[#CBD5E1] text-[#1C232B] font-bold text-xs shadow-md transition flex items-center gap-1.5 disabled:opacity-50"
+                    className="px-4 py-2 rounded-lg bg-white hover:bg-neutral-200 text-black font-semibold text-xs transition flex items-center gap-1.5 disabled:opacity-50"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#1C232B]" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-black" />
                     {actionLoading === `approve-${d.id}` ? 'Approving...' : 'Approve Organizer'}
                   </button>
                 </div>
@@ -1035,7 +1035,7 @@ export default function OrganizerApprovalsPage() {
             )}
 
             {/* Navigation Tabs inside Panel */}
-            <div className="flex gap-1 border-b border-[#262B2F] -mx-5 px-5 overflow-x-auto">
+            <div className="flex gap-1 border-b border-white/[0.08] -mx-5 px-5 overflow-x-auto">
               {panelTabs.map((pt) => (
                 <button
                   key={pt.key}
@@ -1065,9 +1065,9 @@ export default function OrganizerApprovalsPage() {
                         { l: 'Total Revenue', v: `₵${(pStats.revenue || 0).toLocaleString()}` },
                         { l: 'Completed Orders', v: pStats.orders || 0 },
                       ].map((s) => (
-                        <div key={s.l} className="rounded-xl bg-[#1C232B]/60 border border-[#262B2F] p-3 text-center">
-                          <p className="text-xl font-bold text-[#EFEFF1] tabular-nums">{s.v}</p>
-                          <p className="text-[10px] text-[#949599] uppercase tracking-wider mt-1">{s.l}</p>
+                        <div key={s.l} className="rounded-xl bg-[#121620] border border-white/[0.08] p-3 text-center">
+                          <p className="text-xl font-bold text-white tabular-nums">{s.v}</p>
+                          <p className="text-[10px] text-neutral-400 uppercase tracking-wider mt-1">{s.l}</p>
                         </div>
                       ))}
                     </div>
@@ -1084,28 +1084,28 @@ export default function OrganizerApprovalsPage() {
                       { l: 'Email Verification', v: (d.email_verified || d.emailVerified) ? 'Verified' : 'Unverified' },
                       { l: 'Last Active', v: d.last_login_at ? fmtDateTime(d.last_login_at) : '—' },
                     ].map((f) => (
-                      <div key={f.l} className="rounded-lg bg-[#1C232B]/40 border border-[#262B2F] p-3">
-                        <p className="text-xs text-[#949599]">{f.l}</p>
+                      <div key={f.l} className="rounded-lg bg-white/[0.02] border border-white/[0.08] p-3">
+                        <p className="text-xs text-neutral-400">{f.l}</p>
                         {f.isLink && f.v !== '—' ? (
                           <a
                             href={f.v.startsWith('http') ? f.v : `https://${f.v}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="mt-1 text-sm font-medium text-blue-400 hover:underline truncate block"
+                            className="mt-1 text-sm font-medium text-white hover:underline truncate block"
                           >
                             {f.v}
                           </a>
                         ) : (
-                          <p className="mt-1 text-sm font-medium text-[#EFEFF1] truncate">{f.v}</p>
+                          <p className="mt-1 text-sm font-medium text-white truncate">{f.v}</p>
                         )}
                       </div>
                     ))}
                   </div>
 
                   {(d.bio || d.org_description || d.organization?.description || d.description) && (
-                    <div className="rounded-xl bg-[#1C232B]/40 border border-[#262B2F] p-4">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Organizer Bio &amp; Scope</p>
-                      <p className="text-sm text-[#EFEFF1] leading-relaxed whitespace-pre-wrap">
+                    <div className="rounded-xl bg-white/[0.02] border border-white/[0.08] p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">Organizer Bio &amp; Scope</p>
+                      <p className="text-sm text-neutral-200 leading-relaxed whitespace-pre-wrap">
                         {d.bio || d.org_description || d.organization?.description || d.description}
                       </p>
                     </div>
@@ -1117,13 +1117,13 @@ export default function OrganizerApprovalsPage() {
               {panelTab === 'events' && (
                 <div className="space-y-3">
                   {panelEvents.length === 0 ? (
-                    <div className="py-12 text-center rounded-xl bg-[#1C232B]/30 border border-[#262B2F] p-6">
-                      <Calendar className="w-8 h-8 text-[#949599] mx-auto mb-2 opacity-50" />
-                      <p className="text-sm font-medium text-[#EFEFF1]">No events found for this organizer</p>
-                      <p className="text-xs text-[#949599] mt-1 mb-4">You can create an event directly on behalf of this organizer.</p>
+                    <div className="py-12 text-center rounded-xl bg-[#121620] border border-white/[0.08] p-6">
+                      <Calendar className="w-8 h-8 text-neutral-500 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm font-medium text-white">No events found for this organizer</p>
+                      <p className="text-xs text-neutral-400 mt-1 mb-4">You can create an event directly on behalf of this organizer.</p>
                       <Link
                         to="/admin/events/create"
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-xs font-semibold hover:bg-slate-200 transition"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition"
                       >
                         Create Event for Organizer
                       </Link>
@@ -1133,7 +1133,7 @@ export default function OrganizerApprovalsPage() {
                       {panelEvents.map((ev) => (
                         <div
                           key={ev.id}
-                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-[#1C232B]/50 border border-[#262B2F] hover:border-white/30 transition group"
+                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-[#121620] border border-white/[0.08] hover:border-white/20 transition group"
                         >
                           <div className="flex items-center gap-3 min-w-0">
                             {ev.banner_image || ev.banner || ev.thumbnail ? (
@@ -1149,12 +1149,12 @@ export default function OrganizerApprovalsPage() {
                             )}
                             <div className="min-w-0">
                               <div className="flex items-center gap-2">
-                                <p className="font-semibold text-sm text-[#EFEFF1] truncate">{ev.title}</p>
+                                <p className="font-semibold text-sm text-white truncate">{ev.title}</p>
                                 <Badge variant={ev.status === 'published' ? 'success' : ev.status === 'pending' ? 'warning' : 'neutral'} size="xs">
                                   {ev.status}
                                 </Badge>
                               </div>
-                              <p className="text-xs text-[#949599] mt-0.5 truncate">
+                              <p className="text-xs text-neutral-400 mt-0.5 truncate">
                                 {fmtDate(ev.start_date || ev.startDate)} • {ev.venue || ev.location || 'Venue TBA'}
                               </p>
                             </div>
@@ -1163,13 +1163,13 @@ export default function OrganizerApprovalsPage() {
                           <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
                             <Link
                               to={`/admin/events/${ev.id}`}
-                              className="px-3 py-1.5 rounded-lg bg-[#262B2F] hover:bg-[#343B42] text-xs font-medium text-[#EFEFF1] transition"
+                              className="px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-neutral-200 transition"
                             >
                               View in Admin
                             </Link>
                             <Link
                               to={`/admin/events/${ev.id}/edit`}
-                              className="p-1.5 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition"
+                              className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition"
                               title="Edit"
                             >
                               <Pencil className="w-3.5 h-3.5" />
@@ -1185,28 +1185,28 @@ export default function OrganizerApprovalsPage() {
               {/* Tab: Payout Details */}
               {panelTab === 'financials' && (
                 <div className="space-y-4">
-                  <div className="rounded-xl bg-[#1C232B]/50 border border-[#262B2F] p-4 space-y-3">
-                    <h4 className="text-sm font-semibold text-[#EFEFF1] flex items-center gap-2">
+                  <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4 space-y-3">
+                    <h4 className="text-sm font-semibold text-white flex items-center gap-2">
                       <CreditCard className="w-4 h-4 text-emerald-400" /> Banking &amp; Settlement Account
                     </h4>
-                    <p className="text-xs text-[#949599]">Payment details used for ticket revenue disbursement</p>
+                    <p className="text-xs text-neutral-400">Payment details used for ticket revenue disbursement</p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
-                        <p className="text-[#949599]">Payout Method</p>
-                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5 capitalize">{d.payout_method || 'Bank Transfer'}</p>
+                      <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08]">
+                        <p className="text-neutral-400">Payout Method</p>
+                        <p className="text-sm font-medium text-white mt-0.5 capitalize">{d.payout_method || 'Bank Transfer'}</p>
                       </div>
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
-                        <p className="text-[#949599]">Bank / Mobile Money Provider</p>
-                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.bank_name || d.momo_provider || 'Not provided'}</p>
+                      <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08]">
+                        <p className="text-neutral-400">Bank / Mobile Money Provider</p>
+                        <p className="text-sm font-medium text-white mt-0.5">{d.bank_name || d.momo_provider || 'Not provided'}</p>
                       </div>
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
-                        <p className="text-[#949599]">Account Name</p>
-                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.account_name || d.name || 'Not provided'}</p>
+                      <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08]">
+                        <p className="text-neutral-400">Account Name</p>
+                        <p className="text-sm font-medium text-white mt-0.5">{d.account_name || d.name || 'Not provided'}</p>
                       </div>
-                      <div className="p-3 rounded-lg bg-[#171A1D] border border-[#262B2F]">
-                        <p className="text-[#949599]">Account Number / Phone</p>
-                        <p className="text-sm font-medium text-[#EFEFF1] mt-0.5">{d.account_number || d.mobile_money || d.phone || 'Not provided'}</p>
+                      <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08]">
+                        <p className="text-neutral-400">Account Number / Phone</p>
+                        <p className="text-sm font-medium text-white mt-0.5">{d.account_number || d.mobile_money || d.phone || 'Not provided'}</p>
                       </div>
                     </div>
                   </div>

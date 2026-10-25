@@ -248,8 +248,10 @@ export default function EventManagementPage() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-              tab === t.key ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+              tab === t.key
+                ? 'bg-white text-black'
+                : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
             {t.label}
@@ -258,22 +260,22 @@ export default function EventManagementPage() {
       </div>
 
       {/* Filters */}
-      <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
+      <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search events..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+              className="w-full pl-9 pr-4 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
             />
           </div>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition"
+            className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition"
           >
             <option value="">All Categories</option>
             <option value="music">Music</option>
@@ -287,7 +289,7 @@ export default function EventManagementPage() {
             value={organizerFilter}
             onChange={(e) => setOrganizerFilter(e.target.value)}
             placeholder="Organizer..."
-            className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+            className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
           />
         </div>
 
@@ -295,55 +297,55 @@ export default function EventManagementPage() {
           <motion.div
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 mt-3 pt-3 border-t border-[#494F55]/20"
+            className="flex items-center gap-3 mt-3 pt-3 border-t border-white/[0.06]"
           >
-            <span className="text-xs text-[#CBD5E1] font-mono">{selected.size} selected</span>
+            <span className="text-xs text-neutral-400 font-mono">{selected.size} selected</span>
             <button
               onClick={bulkApprove}
               disabled={bulkLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-[#111417] text-xs font-bold hover:bg-[#CBD5E1] transition disabled:opacity-50 cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition disabled:opacity-40 cursor-pointer shadow-sm"
             >
               <CheckCircle2 className="w-3.5 h-3.5" /> Approve All
             </button>
             <button
               onClick={bulkReject}
               disabled={bulkLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#242B32] text-red-300 hover:text-red-200 border border-red-500/20 text-xs font-semibold hover:bg-red-500/10 transition disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-medium hover:bg-rose-500/20 transition disabled:opacity-40 cursor-pointer"
             >
               <XCircle className="w-3.5 h-3.5" /> Reject All
             </button>
-            <button onClick={() => setSelected(new Set())} className="text-xs text-[#949599] hover:text-[#EFEFF1] ml-auto cursor-pointer">Clear</button>
+            <button onClick={() => setSelected(new Set())} className="text-xs text-neutral-400 hover:text-white ml-auto cursor-pointer">Clear</button>
           </motion.div>
         )}
       </div>
 
       {/* Table */}
-      <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
+      <div className="rounded-xl bg-[#121620] border border-white/[0.08] overflow-hidden">
         {loading ? (
           <LoadingSpinner label="Loading events..." className="py-16" />
         ) : events.length === 0 ? (
           <EmptyState icon={CalendarDays} title="No events found" description="Try adjusting your filters." className="py-16" />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-xs">
               <thead>
-                <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                  <th className="hidden md:table-cell px-4 py-3.5 font-medium w-10">
-                    <input type="checkbox" checked={selected.size === events.length && events.length > 0} onChange={toggleSelectAll} className="w-4 h-4 rounded border-[#3A4045] bg-[#111417] accent-[#EFEFF1]" />
+                <tr className="text-left text-[11px] font-medium text-neutral-400 border-b border-white/[0.06] bg-white/[0.02]">
+                  <th className="hidden md:table-cell px-4 py-3 font-medium w-10">
+                    <input type="checkbox" checked={selected.size === events.length && events.length > 0} onChange={toggleSelectAll} className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 accent-white" />
                   </th>
-                  <th className="px-4 py-3.5 font-medium">Event</th>
-                  <th className="hidden md:table-cell px-4 py-3.5 font-medium">Organizer</th>
-                  <th className="hidden md:table-cell px-4 py-3.5 font-medium">Category</th>
-                  <th className="hidden md:table-cell px-4 py-3.5 font-medium">Date</th>
-                  <th className="hidden md:table-cell px-4 py-3.5 font-medium text-center">Tickets</th>
-                  <th className="hidden md:table-cell px-4 py-3.5 font-medium text-right">Revenue</th>
-                  <th className="px-4 py-3.5 font-medium">Status</th>
-                  <th className="px-4 py-3.5 font-medium text-right">Actions</th>
+                  <th className="px-4 py-3 font-medium">Event</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium">Organizer</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium">Category</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium">Date</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium text-center">Tickets</th>
+                  <th className="hidden md:table-cell px-4 py-3 font-medium text-right">Revenue</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#262B2F]/70">
+              <tbody className="divide-y divide-white/[0.06]">
                 {events.map((ev) => (
-                  <tr key={ev.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(ev.id) ? 'bg-white/10' : ''}`}>
+                  <tr key={ev.id} className={`hover:bg-white/[0.02] transition-colors ${selected.has(ev.id) ? 'bg-white/[0.04]' : ''}`}>
                     <td className="hidden md:table-cell px-4 py-3">
                       <input type="checkbox" checked={selected.has(ev.id)} onChange={() => toggleSelect(ev.id)} className="w-4 h-4 rounded border-[#3A4045] bg-[#111417] accent-[#EFEFF1]" />
                     </td>

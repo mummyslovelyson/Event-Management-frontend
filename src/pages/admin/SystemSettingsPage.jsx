@@ -227,8 +227,8 @@ export default function SystemSettingsPage() {
     setTimeout(() => setCopiedWebhook(false), 2000);
   };
 
-  const inputCls = 'w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition';
-  const labelCls = 'block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5';
+  const inputCls = 'w-full px-3.5 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition';
+  const labelCls = 'block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5';
 
   return (
     <div className="space-y-6">
@@ -242,13 +242,13 @@ export default function SystemSettingsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Tabs sidebar */}
         <div className="lg:col-span-1">
-          <div className="rounded-2xl bg-[#171A1D] border border-[#262B2F] p-3 space-y-1.5 lg:sticky lg:top-20 shadow-sm">
+          <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-2 space-y-1 lg:sticky lg:top-20">
             {tabs.map(({ key, label, icon: Icon }) => (
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  tab === key ? 'bg-white text-[#1C232B] font-bold shadow-sm' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'
+                className={`flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  tab === key ? 'bg-white text-black' : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
                 }`}
               >
                 <Icon className="w-4 h-4 shrink-0" /> {label}
@@ -259,7 +259,7 @@ export default function SystemSettingsPage() {
 
         {/* Content */}
         <div className="lg:col-span-3">
-          <div className="rounded-2xl bg-[#171A1D] border border-[#262B2F] p-6 sm:p-8 shadow-sm">
+          <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-6 sm:p-8">
             {loading ? (
               <LoadingSpinner label="Loading settings..." className="py-16" />
             ) : (
@@ -285,7 +285,7 @@ export default function SystemSettingsPage() {
                       <div>
                         <label className={labelCls}>USD Exchange Rate (GHS per $1)</label>
                         <input type="number" step="0.01" min="0.01" className={inputCls} value={settings.general?.usdRate ?? settings.usdRate ?? 15} onChange={(e) => update('usdRate', parseFloat(e.target.value))} />
-                        <p className="mt-1 text-xs text-[#949599]">Used to convert GHS ticket amounts into USD for international display.</p>
+                        <p className="mt-1 text-xs text-neutral-400">Used to convert GHS ticket amounts into USD for international display.</p>
                       </div>
                       <div>
                         <label className={labelCls}>Timezone</label>
@@ -307,11 +307,11 @@ export default function SystemSettingsPage() {
                     </div>
 
                     {/* Maintenance Mode Card */}
-                    <div className="rounded-2xl bg-[#14171A] border border-[#262B2F] p-5 space-y-4">
+                    <div className="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-5 space-y-4">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="text-sm font-bold text-[#EFEFF1]">Maintenance Mode</h4>
+                            <h4 className="text-sm font-semibold text-white">Maintenance Mode</h4>
                             {settings.general?.maintenanceMode ? (
                               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
                                 Active • Public Access Blocked
@@ -322,7 +322,7 @@ export default function SystemSettingsPage() {
                               </span>
                             )}
                           </div>
-                          <p className="mt-1 text-xs text-[#949599]">
+                          <p className="mt-1 text-xs text-neutral-400">
                             When active, public visitors will see a maintenance notice. Admins can still sign in and access backend dashboards.
                           </p>
                         </div>
@@ -331,7 +331,7 @@ export default function SystemSettingsPage() {
                             type="button"
                             onClick={() => update('maintenanceMode', !settings.general?.maintenanceMode)}
                             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                              settings.general?.maintenanceMode ? 'bg-amber-500' : 'bg-[#262B2F]'
+                              settings.general?.maintenanceMode ? 'bg-amber-400' : 'bg-white/10'
                             }`}
                           >
                             <span
@@ -344,7 +344,7 @@ export default function SystemSettingsPage() {
                       </div>
 
                       {settings.general?.maintenanceMode && (
-                        <div className="pt-3 border-t border-[#262B2F] space-y-2">
+                        <div className="pt-3 border-t border-white/[0.06] space-y-2">
                           <label className={labelCls}>Custom Maintenance Message</label>
                           <textarea
                             rows={2}
@@ -394,7 +394,7 @@ export default function SystemSettingsPage() {
                           value={settings.payment?.commissionRate ?? settings.commissionRate ?? 5}
                           onChange={(e) => update('commissionRate', parseFloat(e.target.value))}
                         />
-                        <p className="mt-1 text-xs text-[#949599]">Percentage deducted from organizer ticket sales.</p>
+                        <p className="mt-1 text-xs text-neutral-400">Percentage deducted from organizer ticket sales.</p>
                       </div>
                       <div>
                         <label className={labelCls}>Webhook URL</label>
@@ -407,22 +407,22 @@ export default function SystemSettingsPage() {
                           <button
                             type="button"
                             onClick={() => copyWebhook(settings.payment?.webhookUrl || `${window.location.origin}/api/orders/verify-payment`)}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-[#949599] hover:text-white transition"
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-neutral-400 hover:text-white transition"
                             title="Copy Webhook URL"
                           >
                             {copiedWebhook ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                           </button>
                         </div>
-                        <p className="mt-1 text-xs text-[#949599]">Set this in your Paystack dashboard under Settings → Webhooks.</p>
+                        <p className="mt-1 text-xs text-neutral-400">Set this in your Paystack dashboard under Settings → Webhooks.</p>
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-[#262B2F]">
+                    <div className="pt-3 border-t border-white/[0.06]">
                       <button
                         type="button"
                         onClick={handleVerifyPaystack}
                         disabled={verifyingPaystack}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#242B32] border border-[#494F55]/40 text-sm font-semibold text-[#EFEFF1] hover:bg-[#2C353E] hover:text-white transition disabled:opacity-50"
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-xs font-semibold text-white hover:bg-white/[0.08] transition disabled:opacity-50"
                       >
                         {verifyingPaystack ? <LoadingSpinner size="sm" /> : <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
                         Verify Paystack Connection
@@ -492,21 +492,21 @@ export default function SystemSettingsPage() {
                     </div>
 
                     {/* Email Live Tester Box */}
-                    <div className="rounded-2xl bg-[#14171A] border border-[#262B2F] p-5 space-y-3">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#CBD5E1]">Send Test Email</h4>
-                      <p className="text-xs text-[#949599]">Verify that your email credentials can successfully deliver an email right now.</p>
+                    <div className="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-5 space-y-3">
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-300">Send Test Email</h4>
+                      <p className="text-xs text-neutral-400">Verify that your email credentials can successfully deliver an email right now.</p>
                       <form onSubmit={handleTestEmail} className="flex flex-col sm:flex-row gap-3">
                         <input
                           type="email"
                           value={testEmailAddr}
                           onChange={(e) => setTestEmailAddr(e.target.value)}
                           placeholder="admin@tribesandcliqs.com"
-                          className="flex-1 px-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50"
+                          className="flex-1 px-3.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30"
                         />
                         <button
                           type="submit"
                           disabled={sendingTestEmail}
-                          className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] transition disabled:opacity-50"
+                          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition disabled:opacity-50"
                         >
                           {sendingTestEmail ? <LoadingSpinner size="sm" /> : <><Send className="w-3.5 h-3.5" /> Dispatch Test</>}
                         </button>
@@ -521,11 +521,11 @@ export default function SystemSettingsPage() {
                     <SectionTitle icon={Smartphone} title="SMS Gateway (SMSOnlineGH)" desc="Manage your SMS API credentials, approved Sender ID, and live credits balance." />
                     
                     {/* Live SMS Balance Card */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-[#14171A] border border-[#262B2F]">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
                       <div className="space-y-1">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-[#949599]">SMSOnlineGH Live Balance</span>
+                        <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">SMSOnlineGH Live Balance</span>
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl font-extrabold text-white">
+                          <span className="text-2xl font-bold text-white">
                             {smsBalance !== null ? `${smsBalance} Credits` : 'Loading...'}
                           </span>
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
@@ -537,7 +537,7 @@ export default function SystemSettingsPage() {
                         type="button"
                         onClick={fetchSmsBalance}
                         disabled={loadingBalance}
-                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#262B2F] text-xs font-medium text-[#CBD5E1] hover:text-white transition disabled:opacity-50"
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white transition disabled:opacity-50"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 ${loadingBalance ? 'animate-spin' : ''}`} /> Refresh Balance
                       </button>
@@ -561,27 +561,27 @@ export default function SystemSettingsPage() {
                         placeholder="TribesCliq"
                         maxLength={11}
                       />
-                      <p className="mt-1 text-xs text-[#949599]">
+                      <p className="mt-1 text-xs text-neutral-400">
                         Must match your approved Sender ID on SMSOnlineGH dashboard. Letters and digits only (no spaces or &).
                       </p>
                     </div>
 
                     {/* SMS Live Tester Box */}
-                    <div className="rounded-2xl bg-[#14171A] border border-[#262B2F] p-5 space-y-3">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#CBD5E1]">Send Test SMS</h4>
-                      <p className="text-xs text-[#949599]">Send a test verification SMS to verify phone delivery in real-time.</p>
+                    <div className="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-5 space-y-3">
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-300">Send Test SMS</h4>
+                      <p className="text-xs text-neutral-400">Send a test verification SMS to verify phone delivery in real-time.</p>
                       <form onSubmit={handleTestSms} className="flex flex-col sm:flex-row gap-3">
                         <input
                           type="tel"
                           value={testPhoneNum}
                           onChange={(e) => setTestPhoneNum(e.target.value)}
                           placeholder="024 123 4567 or +233 24 123 4567"
-                          className="flex-1 px-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50"
+                          className="flex-1 px-3.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30"
                         />
                         <button
                           type="submit"
                           disabled={sendingTestSms}
-                          className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] transition disabled:opacity-50"
+                          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition disabled:opacity-50"
                         >
                           {sendingTestSms ? <LoadingSpinner size="sm" /> : <><Send className="w-3.5 h-3.5" /> Dispatch Test</>}
                         </button>
@@ -669,16 +669,16 @@ export default function SystemSettingsPage() {
                 )}
 
                 {/* Save button bar */}
-                <div className="mt-8 pt-6 border-t border-[#494F55]/20 flex items-center justify-between">
-                  <p className="text-xs text-[#949599]">
+                <div className="mt-8 pt-6 border-t border-white/[0.06] flex items-center justify-between">
+                  <p className="text-xs text-neutral-400">
                     Changes take effect immediately across all platform endpoints.
                   </p>
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] transition shadow-md active:scale-95 disabled:opacity-50"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition active:scale-95 disabled:opacity-50"
                   >
-                    {saving ? <LoadingSpinner size="sm" /> : <><Save className="w-4 h-4" /> Save {tabs.find((t) => t.key === tab)?.label} Settings</>}
+                    {saving ? <LoadingSpinner size="sm" /> : <><Save className="w-3.5 h-3.5" /> Save {tabs.find((t) => t.key === tab)?.label} Settings</>}
                   </button>
                 </div>
               </>
@@ -692,13 +692,13 @@ export default function SystemSettingsPage() {
 
 function SectionTitle({ icon: Icon, title, desc }) {
   return (
-    <div className="flex items-center gap-3.5 pb-5 border-b border-[#494F55]/20">
-      <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center shrink-0">
-        <Icon className="w-5 h-5" />
+    <div className="flex items-center gap-3.5 pb-5 border-b border-white/[0.06]">
+      <div className="w-9 h-9 rounded-lg bg-white/[0.06] text-white flex items-center justify-center shrink-0">
+        <Icon className="w-4 h-4" />
       </div>
       <div>
-        <h2 className="text-base font-bold text-[#EFEFF1]">{title}</h2>
-        <p className="text-xs text-[#949599] mt-0.5">{desc}</p>
+        <h2 className="text-base font-semibold text-white">{title}</h2>
+        <p className="text-xs text-neutral-400 mt-0.5">{desc}</p>
       </div>
     </div>
   );
@@ -706,18 +706,18 @@ function SectionTitle({ icon: Icon, title, desc }) {
 
 function ToggleRow({ label, desc, value, onChange }) {
   return (
-    <div className="flex items-center justify-between p-4 rounded-xl bg-[#14171A] border border-[#262B2F]">
+    <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/[0.08]">
       <div className="pr-4">
-        <p className="text-sm font-semibold text-[#EFEFF1]">{label}</p>
-        <p className="text-xs text-[#949599] mt-0.5">{desc}</p>
+        <p className="text-xs font-semibold text-white">{label}</p>
+        <p className="text-[11px] text-neutral-400 mt-0.5">{desc}</p>
       </div>
       <button
         type="button"
         onClick={() => onChange(!value)}
-        className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${value ? 'bg-white' : 'bg-[#262B2F]'}`}
+        className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${value ? 'bg-white' : 'bg-white/10'}`}
       >
         <span
-          className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-[#1C232B] transition-transform ${value ? 'translate-x-5 bg-[#1C232B]' : 'bg-[#949599]'}`}
+          className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-transform ${value ? 'translate-x-5 bg-black' : 'bg-neutral-500'}`}
         />
       </button>
     </div>
@@ -725,8 +725,8 @@ function ToggleRow({ label, desc, value, onChange }) {
 }
 
 function SecretInput({ label, value, show, onToggle, onChange, placeholder }) {
-  const inputCls = 'w-full px-3.5 py-2.5 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition pr-10';
-  const labelCls = 'block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5';
+  const inputCls = 'w-full px-3.5 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition pr-10';
+  const labelCls = 'block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5';
   const displayValue = show ? value : (value ? '••••••••••••••••••••••••••••••••' : '');
   
   return (
@@ -743,9 +743,9 @@ function SecretInput({ label, value, show, onToggle, onChange, placeholder }) {
         <button
           type="button"
           onClick={onToggle}
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 text-[#949599] hover:text-white transition"
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 text-neutral-400 hover:text-white transition"
         >
-          {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          {show ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
         </button>
       </div>
     </div>

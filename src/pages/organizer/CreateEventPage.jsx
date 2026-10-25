@@ -28,9 +28,9 @@ const STEPS = [
 ];
 
 const inputCls =
-  'w-full px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
-const labelCls = 'block text-xs font-semibold text-[#949599] mb-1.5 uppercase tracking-wider';
-const errCls = 'mt-1 text-xs text-red-400 font-medium';
+  'w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition';
+const labelCls = 'block text-[11px] font-medium text-neutral-400 mb-1.5 uppercase tracking-wider';
+const errCls = 'mt-1 text-xs text-rose-400 font-medium';
 
 function Field({ name, label, type = 'text', placeholder, validation, options, textarea, rows, helperText }) {
   const { register, formState: { errors } } = useFormContext();
@@ -162,27 +162,27 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
     <div className="space-y-6">
       {/* Admin Organizer Selector */}
       {isAdmin && (
-        <div className="p-4 sm:p-5 rounded-xl bg-[#161D22] border border-[#262B2F] space-y-4 shadow-sm">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#121620] border border-white/[0.08] space-y-4 shadow-sm">
           {/* Header */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#242B32] border border-[#32383F] text-[#CBD5E1] flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white flex items-center justify-center shrink-0">
                 <Building2 className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <h3 className="text-xs font-semibold text-white flex items-center gap-2">
                   Event Organizer &amp; Host Assignment
-                  <span className="text-[10px] font-mono uppercase tracking-wider bg-[#242B32] text-[#949599] border border-white/5 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-mono uppercase tracking-wider bg-white/[0.06] text-neutral-400 border border-white/[0.08] px-2 py-0.5 rounded-md">
                     Admin Control
                   </span>
                 </h3>
-                <p className="text-xs text-[#949599] mt-0.5">
+                <p className="text-[11px] text-neutral-400 mt-0.5">
                   Select which organizer account hosts this event and receives attendee ticket sales.
                 </p>
               </div>
             </div>
             {loadingOrganizers && (
-              <span className="text-xs text-[#CBD5E1] animate-pulse">Loading organizers...</span>
+              <span className="text-xs text-neutral-400 animate-pulse">Loading organizers...</span>
             )}
           </div>
 
@@ -197,22 +197,22 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
 
           {/* Selected Organizer Summary Card */}
           {selectedOrganizer && !isSearchingOrg ? (
-            <div className="p-3.5 rounded-xl bg-[#1C232B] border border-[#262B2F] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-[#161D22] border border-[#262B2F] text-white flex items-center justify-center font-bold text-sm ring-1 ring-white/10 shadow-inner shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/[0.08] text-white flex items-center justify-center font-bold text-xs shrink-0">
                   {getInitials(selectedOrganizer.organizationName || selectedOrganizer.name)}
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-white text-sm truncate">
+                    <span className="font-semibold text-white text-xs truncate">
                       {selectedOrganizer.organizationName || selectedOrganizer.name}
                     </span>
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#161D22] border border-[#262B2F] text-[#CBD5E1]">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-400/10 border border-emerald-400/20 text-emerald-300">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                       {selectedOrganizer.isSelf ? 'Admin Account' : 'Verified Host'}
                     </span>
                   </div>
-                  <p className="text-xs text-[#949599] mt-0.5 truncate">
+                  <p className="text-[11px] text-neutral-400 mt-0.5 truncate">
                     {selectedOrganizer.email} {selectedOrganizer.phone ? `• ${selectedOrganizer.phone}` : ''}
                   </p>
                 </div>
@@ -222,7 +222,7 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
                 <button
                   type="button"
                   onClick={() => { setIsSearchingOrg(true); setOrgSearch(''); }}
-                  className="px-3 py-1.5 rounded-lg bg-[#242B32] hover:bg-[#2C343D] text-xs font-semibold text-[#EFEFF1] border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] transition cursor-pointer"
                 >
                   Change Organizer
                 </button>
@@ -239,7 +239,7 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
                   <button
                     type="button"
                     onClick={() => setIsSearchingOrg(false)}
-                    className="text-xs text-[#949599] hover:text-[#EFEFF1] transition cursor-pointer"
+                    className="text-xs text-neutral-400 hover:text-white transition cursor-pointer"
                   >
                     Keep Current Selection
                   </button>
@@ -247,7 +247,7 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
               </div>
 
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#949599]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400" />
                 <input
                   type="text"
                   value={orgSearch}
@@ -260,7 +260,7 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
                   <button
                     type="button"
                     onClick={() => setOrgSearch('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#949599] hover:text-[#EFEFF1]"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-neutral-400 hover:text-white"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -268,9 +268,9 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
               </div>
 
               {/* Filtered Results Dropdown */}
-              <div className="max-h-56 overflow-y-auto rounded-xl bg-[#171A1D] border border-[#262B2F] divide-y divide-[#262B2F]/60">
+              <div className="max-h-56 overflow-y-auto rounded-xl bg-[#0b0e14] border border-white/[0.08] divide-y divide-white/[0.06]">
                 {filteredOrganizers.length === 0 ? (
-                  <div className="p-4 text-center text-xs text-[#949599]">
+                  <div className="p-4 text-center text-xs text-neutral-400">
                     No organizers found matching &ldquo;{orgSearch}&rdquo;
                   </div>
                 ) : (
@@ -286,19 +286,19 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
                         }}
                         className={`p-3 flex items-center justify-between gap-3 cursor-pointer transition ${
                           isSelected
-                            ? 'bg-white/10 text-white'
-                            : 'hover:bg-[#1E2328] text-[#CBD5E1]'
+                            ? 'bg-white/10 text-white font-medium'
+                            : 'hover:bg-white/[0.04] text-neutral-300'
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-8 h-8 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center font-bold text-xs text-white shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-white/[0.06] border border-white/[0.08] flex items-center justify-center font-bold text-xs text-white shrink-0">
                             {getInitials(org.organizationName || org.name)}
                           </div>
                           <div className="min-w-0">
-                            <p className="text-xs font-semibold text-[#EFEFF1] truncate">
+                            <p className="text-xs font-medium text-white truncate">
                               {org.organizationName ? `${org.organizationName} (${org.name})` : org.name}
                             </p>
-                            <p className="text-[11px] text-[#949599] truncate">
+                            <p className="text-[11px] text-neutral-400 truncate">
                               {org.email} {org.phone ? `• ${org.phone}` : ''}
                             </p>
                           </div>
@@ -306,7 +306,7 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
 
                         <div className="flex items-center gap-2 shrink-0">
                           {org.isSelf && (
-                            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-[#242B32] text-[#949599] border border-white/5">
+                            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-neutral-400 border border-white/[0.08]">
                               Admin
                             </span>
                           )}
@@ -380,31 +380,31 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className={labelCls}>Event Image (Cover Banner) *</label>
-          <span className="text-[11px] text-[#949599]">Recommended 1600 × 900px (16:9), Max 5MB</span>
+          <span className="text-[11px] text-neutral-400">Recommended 1600 × 900px (16:9), Max 5MB</span>
         </div>
         <div
           onClick={() => { if (!uploading) fileRef.current?.click(); }}
-          className={`relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
+          className={`relative border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all ${
             bannerUrl
-              ? 'border-white/30 bg-[#161D22]'
-              : 'border-[#494F55]/50 hover:border-white/40 bg-[#161D22]'
+              ? 'border-white/20 bg-white/[0.02]'
+              : 'border-white/[0.12] hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.03]'
           }`}
         >
           {uploading === 'banner' ? (
             <div className="flex flex-col items-center gap-2 py-6">
               <Upload className="w-8 h-8 text-white mx-auto animate-pulse" />
-              <p className="text-sm text-[#949599]">Uploading event cover image...</p>
+              <p className="text-xs text-neutral-400">Uploading event cover image...</p>
             </div>
           ) : bannerUrl ? (
             <div className="relative group">
-              <img src={bannerUrl} alt="Event cover" className="w-full h-52 object-cover rounded-lg shadow-md" />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-3">
-                <span className="text-xs font-semibold text-white bg-black/70 px-3 py-1.5 rounded-md">Click to change cover</span>
+              <img src={bannerUrl} alt="Event cover" className="w-full h-52 object-cover rounded-xl shadow-md" />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-3">
+                <span className="text-xs font-semibold text-white bg-black/70 px-3 py-1.5 rounded-lg">Click to change cover</span>
               </div>
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setValue('bannerImage', '', { shouldDirty: true }); }}
-                className="absolute top-2 right-2 p-2 rounded-md bg-black/70 text-white hover:bg-red-600 transition shadow-lg"
+                className="absolute top-2 right-2 p-2 rounded-lg bg-black/70 text-white hover:bg-red-600 transition shadow-lg"
                 title="Remove image"
               >
                 <X className="w-4 h-4" />
@@ -412,9 +412,9 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
             </div>
           ) : (
             <div className="py-4">
-              <Upload className="w-8 h-8 text-[#494F55] mx-auto mb-2" />
-              <p className="text-sm text-[#EFEFF1] font-medium">Click to upload or drag &amp; drop event cover</p>
-              <p className="text-xs text-[#6B7278] mt-1">PNG, JPG, or WebP under 5MB</p>
+              <Upload className="w-8 h-8 text-neutral-500 mx-auto mb-2" />
+              <p className="text-xs text-white font-medium">Click to upload or drag &amp; drop event cover</p>
+              <p className="text-[11px] text-neutral-500 mt-1">PNG, JPG, or WebP under 5MB</p>
             </div>
           )}
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleBanner} />
@@ -425,20 +425,20 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className={labelCls}>Gallery (Up to 5 Photos)</label>
-          <span className="text-[11px] text-[#949599]">{gallery.length}/5 uploaded</span>
+          <span className="text-[11px] text-neutral-400">{gallery.length}/5 uploaded</span>
         </div>
-        <p className="text-xs text-[#6B7278] mb-3">
+        <p className="text-[11px] text-neutral-400 mb-3">
           Showcase past editions, venue scenery, artist performances, or seating atmosphere.
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           {gallery.map((url, idx) => (
-            <div key={idx} className="relative aspect-video sm:aspect-square rounded-lg overflow-hidden bg-[#242B32] border border-[#3A4045] group">
+            <div key={idx} className="relative aspect-video sm:aspect-square rounded-xl overflow-hidden bg-white/[0.02] border border-white/[0.08] group">
               <img src={url} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" />
               <button
                 type="button"
                 onClick={() => removeGalleryImage(idx)}
-                className="absolute top-1.5 right-1.5 p-1.5 rounded-md bg-black/70 text-white hover:bg-red-600 transition shadow"
+                className="absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/70 text-white hover:bg-red-600 transition shadow"
                 title="Remove image"
               >
                 <X className="w-3.5 h-3.5" />
@@ -451,13 +451,13 @@ const StepBasicInfo = ({ categories = [], organizers = [], loadingOrganizers = f
               type="button"
               onClick={() => { if (!uploading) galleryRef.current?.click(); }}
               disabled={!!uploading}
-              className="aspect-video sm:aspect-square rounded-lg border-2 border-dashed border-[#494F55]/50 flex flex-col items-center justify-center text-[#949599] hover:border-white/40 hover:text-white transition-all bg-[#171A1D]/60 hover:bg-[#171A1D] disabled:opacity-50 cursor-pointer"
+              className="aspect-video sm:aspect-square rounded-xl border-2 border-dashed border-white/[0.12] flex flex-col items-center justify-center text-neutral-400 hover:border-white/20 hover:text-white transition-all bg-white/[0.02] hover:bg-white/[0.04] disabled:opacity-50 cursor-pointer"
             >
               {uploading === 'gallery' ? (
                 <Upload className="w-5 h-5 animate-pulse text-white" />
               ) : (
                 <>
-                  <Plus className="w-5 h-5 mb-1" />
+                  <Plus className="w-5 h-5 mb-1 text-neutral-400" />
                   <span className="text-[11px] font-medium">Add Photo</span>
                 </>
               )}
@@ -529,42 +529,42 @@ const StepLocation = () => {
           <button
             type="button"
             onClick={() => handleLocationTypeChange('physical')}
-            className={`p-4 rounded-xl border text-left transition-all flex items-start gap-3.5 cursor-pointer ${
+            className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 cursor-pointer ${
               locationType === 'physical'
-                ? 'bg-white/10 border-white text-white ring-1 ring-white/30 shadow-md'
-                : 'bg-[#171A1D] border-[#262B2F] text-[#949599] hover:border-[#494F55]'
+                ? 'bg-white/[0.08] border-white/30 text-white ring-1 ring-white/20 shadow-sm'
+                : 'bg-[#121620] border-white/[0.08] text-neutral-400 hover:border-white/20'
             }`}
           >
-            <div className={`p-2 rounded-lg ${locationType === 'physical' ? 'bg-white text-[#111417]' : 'bg-[#242B32] text-[#949599]'}`}>
-              <Building2 className="w-5 h-5" />
+            <div className={`p-2.5 rounded-xl border ${locationType === 'physical' ? 'bg-white text-black border-transparent' : 'bg-white/[0.04] text-neutral-400 border-white/[0.06]'}`}>
+              <Building2 className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-semibold text-[#EFEFF1] flex items-center gap-1.5">
+              <div className="text-xs font-semibold text-white flex items-center gap-1.5">
                 Physical Venue
-                {locationType === 'physical' && <Check className="w-4 h-4 text-white" />}
+                {locationType === 'physical' && <Check className="w-3.5 h-3.5 text-white" />}
               </div>
-              <p className="text-xs text-[#949599] mt-0.5">In-person gathering at a hall, beach, arena, or outdoor grounds.</p>
+              <p className="text-[11px] text-neutral-400 mt-0.5">In-person gathering at a hall, beach, arena, or outdoor grounds.</p>
             </div>
           </button>
 
           <button
             type="button"
             onClick={() => handleLocationTypeChange('online')}
-            className={`p-4 rounded-xl border text-left transition-all flex items-start gap-3.5 cursor-pointer ${
+            className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 cursor-pointer ${
               locationType === 'online'
-                ? 'bg-white/10 border-white text-white ring-1 ring-white/30 shadow-md'
-                : 'bg-[#171A1D] border-[#262B2F] text-[#949599] hover:border-[#494F55]'
+                ? 'bg-white/[0.08] border-white/30 text-white ring-1 ring-white/20 shadow-sm'
+                : 'bg-[#121620] border-white/[0.08] text-neutral-400 hover:border-white/20'
             }`}
           >
-            <div className={`p-2 rounded-lg ${locationType === 'online' ? 'bg-white text-[#111417]' : 'bg-[#242B32] text-[#949599]'}`}>
-              <Globe className="w-5 h-5" />
+            <div className={`p-2.5 rounded-xl border ${locationType === 'online' ? 'bg-white text-black border-transparent' : 'bg-white/[0.04] text-neutral-400 border-white/[0.06]'}`}>
+              <Globe className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-semibold text-[#EFEFF1] flex items-center gap-1.5">
+              <div className="text-xs font-semibold text-white flex items-center gap-1.5">
                 Online / Virtual
-                {locationType === 'online' && <Check className="w-4 h-4 text-white" />}
+                {locationType === 'online' && <Check className="w-3.5 h-3.5 text-white" />}
               </div>
-              <p className="text-xs text-[#949599] mt-0.5">Livestreamed via Zoom, YouTube Live, Google Meet, etc.</p>
+              <p className="text-[11px] text-neutral-400 mt-0.5">Livestreamed via Zoom, YouTube Live, Google Meet, etc.</p>
             </div>
           </button>
         </div>
@@ -609,9 +609,9 @@ const StepLocation = () => {
                 type="button"
                 onClick={detectGps}
                 disabled={detectingGps}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#CBD5E1] hover:text-white px-2.5 py-1 rounded-md bg-[#242B32] hover:bg-[#2C343D] border border-[#262B2F] transition cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-300 hover:text-white px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition cursor-pointer disabled:opacity-50"
               >
-                <Navigation className={`w-3.5 h-3.5 text-[#CBD5E1] ${detectingGps ? 'animate-spin' : ''}`} />
+                <Navigation className={`w-3.5 h-3.5 text-neutral-300 ${detectingGps ? 'animate-spin' : ''}`} />
                 <span>{detectingGps ? 'Detecting Location...' : 'Auto-Detect Coordinates'}</span>
               </button>
             </div>
@@ -713,30 +713,30 @@ const StepDateTime = () => {
   return (
     <div className="space-y-6">
       {/* Quick Schedule Presets */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#161D22] border border-[#262B2F]">
-        <div className="flex items-center gap-2 text-xs text-[#949599]">
-          <Clock className="w-4 h-4 text-[#CBD5E1]" />
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-[#121620] border border-white/[0.08]">
+        <div className="flex items-center gap-2 text-xs text-neutral-400">
+          <Clock className="w-4 h-4 text-neutral-400" />
           <span>Quick schedule helpers:</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setPreset('sameday')}
-            className="px-3 py-1.5 rounded-lg bg-[#242B32] hover:bg-[#2C343D] text-[#CBD5E1] hover:text-white text-xs font-semibold border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
+            className="px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-neutral-300 hover:text-white text-xs font-medium border border-white/[0.08] transition cursor-pointer"
           >
             Same Day
           </button>
           <button
             type="button"
             onClick={() => setPreset('nextday')}
-            className="px-3 py-1.5 rounded-lg bg-[#242B32] hover:bg-[#2C343D] text-[#CBD5E1] hover:text-white text-xs font-semibold border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
+            className="px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-neutral-300 hover:text-white text-xs font-medium border border-white/[0.08] transition cursor-pointer"
           >
             Overnight
           </button>
           <button
             type="button"
             onClick={() => setPreset('weekend')}
-            className="px-3 py-1.5 rounded-lg bg-[#242B32] hover:bg-[#2C343D] text-[#CBD5E1] hover:text-white text-xs font-semibold border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
+            className="px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-neutral-300 hover:text-white text-xs font-medium border border-white/[0.08] transition cursor-pointer"
           >
             3-Day Weekend
           </button>
@@ -803,12 +803,12 @@ const StepDateTime = () => {
           helperText="Suggested attire for attendees."
         />
 
-        <div className="p-3.5 rounded-lg bg-[#171A1D] border border-[#262B2F] flex items-center justify-between">
+        <div className="p-3.5 rounded-xl bg-[#121620] border border-white/[0.08] flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-[#EFEFF1]">Event Time Zone</p>
-            <p className="text-[11px] text-[#6B7278]">GMT / Greenwich Mean Time (Accra, London)</p>
+            <p className="text-xs font-medium text-white">Event Time Zone</p>
+            <p className="text-[11px] text-neutral-400">GMT / Greenwich Mean Time (Accra, London)</p>
           </div>
-          <span className="text-[11px] font-semibold text-[#CBD5E1] bg-[#161D22] px-2.5 py-0.5 rounded-full border border-[#262B2F]">
+          <span className="text-[11px] font-semibold text-neutral-300 bg-white/[0.04] px-2.5 py-0.5 rounded-full border border-white/[0.08]">
             UTC +0
           </span>
         </div>
@@ -901,20 +901,20 @@ const StepTickets = () => {
   return (
     <div className="space-y-5">
       {/* 1-Click Ghanaian Standard Tiers Preset */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-[#161D22] border border-[#262B2F] shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#121620] border border-white/[0.08] shadow-sm">
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
-            <Layers className="w-3.5 h-3.5 text-[#CBD5E1]" />
+          <div className="text-xs font-semibold uppercase tracking-wider text-white flex items-center gap-2">
+            <Layers className="w-3.5 h-3.5 text-neutral-400" />
             Standard Admission Matrix
           </div>
-          <p className="text-xs text-[#949599] mt-0.5">
+          <p className="text-[11px] text-neutral-400 mt-0.5">
             Quickly fill platform standard admission tiers: Regular GHS 100 &bull; VIP GHS 250 &bull; VVIP GHS 500
           </p>
         </div>
         <button
           type="button"
           onClick={loadGhanaianStandardPreset}
-          className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition shadow-sm cursor-pointer shrink-0"
+          className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white hover:bg-neutral-200 text-black text-xs font-semibold transition cursor-pointer shrink-0"
         >
           Load Standard Matrix (Regular • VIP • VVIP)
         </button>
@@ -922,17 +922,17 @@ const StepTickets = () => {
 
       {/* Dynamic Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <div className="p-3.5 rounded-xl bg-[#171A1D] border border-[#262B2F]">
-          <span className="text-[11px] font-medium text-[#949599] block uppercase">Ticket Tiers</span>
-          <span className="text-lg font-bold text-[#EFEFF1]">{fields.length}</span>
+        <div className="p-3.5 rounded-2xl bg-[#121620] border border-white/[0.08]">
+          <span className="text-[10px] font-medium text-neutral-400 block uppercase">Ticket Tiers</span>
+          <span className="text-base font-bold text-white">{fields.length}</span>
         </div>
-        <div className="p-3.5 rounded-xl bg-[#171A1D] border border-[#262B2F]">
-          <span className="text-[11px] font-medium text-[#949599] block uppercase">Total Capacity</span>
-          <span className="text-lg font-bold text-white">{stats.totalQty.toLocaleString()} tickets</span>
+        <div className="p-3.5 rounded-2xl bg-[#121620] border border-white/[0.08]">
+          <span className="text-[10px] font-medium text-neutral-400 block uppercase">Total Capacity</span>
+          <span className="text-base font-bold text-white">{stats.totalQty.toLocaleString()} tickets</span>
         </div>
-        <div className="col-span-2 sm:col-span-1 p-3.5 rounded-xl bg-[#171A1D] border border-white/10">
-          <span className="text-[11px] font-medium text-[#949599] block uppercase">Projected Gross Revenue</span>
-          <span className="text-lg font-bold text-white">{format(stats.totalGross)}</span>
+        <div className="col-span-2 sm:col-span-1 p-3.5 rounded-2xl bg-[#121620] border border-white/[0.08]">
+          <span className="text-[10px] font-medium text-neutral-400 block uppercase">Projected Gross Revenue</span>
+          <span className="text-base font-bold text-white">{format(stats.totalGross)}</span>
         </div>
       </div>
 
@@ -950,18 +950,18 @@ const StepTickets = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, height: 0 }}
-                className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4 sm:p-5 space-y-4 transition-all"
+                className="rounded-2xl bg-[#121620] border border-white/[0.08] p-4 sm:p-5 space-y-4 transition-all"
               >
-                <div className="flex items-center justify-between pb-2 border-b border-[#262B2F]">
+                <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
                   <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-white/10 text-white flex items-center justify-center text-xs font-bold">
+                    <span className="w-5 h-5 rounded-full bg-white/[0.08] border border-white/[0.1] text-white flex items-center justify-center text-[10px] font-semibold">
                       {i + 1}
                     </span>
-                    <span className="text-sm font-semibold text-white">
+                    <span className="text-xs font-semibold text-white">
                       {watch(`ticketTypes.${i}.name`) || `Ticket Tier ${i + 1}`}
                     </span>
                     {hasUploaded && (
-                      <span className="text-[10px] font-semibold text-[#CBD5E1] bg-[#161D22] px-2.5 py-0.5 rounded-full border border-[#262B2F]">
+                      <span className="text-[10px] font-medium text-neutral-300 bg-white/[0.04] px-2.5 py-0.5 rounded-full border border-white/[0.08]">
                         {currentUploaded.length} pre-generated passes
                       </span>
                     )}
@@ -970,10 +970,10 @@ const StepTickets = () => {
                     <button
                       type="button"
                       onClick={() => remove(i)}
-                      className="p-1.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer"
+                      className="p-1.5 rounded-lg text-neutral-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer"
                       title="Delete ticket tier"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   )}
                 </div>
@@ -993,7 +993,7 @@ const StepTickets = () => {
                   <div>
                     <label className={labelCls}>Price ({currency?.code || 'GHS'}) *</label>
                     <div className="relative">
-                      <span className="absolute left-3 top-2.5 text-xs text-[#949599] font-semibold">{currency?.symbol || 'GHS'}</span>
+                      <span className="absolute left-3.5 top-2.5 text-xs text-neutral-400 font-semibold">{currency?.symbol || 'GHS'}</span>
                       <input
                         type="number"
                         step="any"
@@ -1008,13 +1008,13 @@ const StepTickets = () => {
                     </div>
                     {/* Quick Pricing Chips */}
                     <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      <span className="text-[10px] text-[#6B7278]">Quick set:</span>
+                      <span className="text-[10px] text-neutral-500">Quick set:</span>
                       {[0, 50, 100, 200, 500].map((presetPrice) => (
                         <button
                           key={presetPrice}
                           type="button"
                           onClick={() => setValue(`ticketTypes.${i}.price`, presetPrice, { shouldDirty: true, shouldValidate: true })}
-                          className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#242B32] hover:bg-[#2C343D] text-[#CBD5E1] hover:text-white border border-[#262B2F] transition cursor-pointer"
+                          className="px-2 py-0.5 rounded text-[10px] font-medium bg-white/[0.04] hover:bg-white/[0.08] text-neutral-300 hover:text-white border border-white/[0.08] transition cursor-pointer"
                         >
                           {presetPrice === 0 ? 'Free (0)' : `${presetPrice}`}
                         </button>
@@ -1034,7 +1034,7 @@ const StepTickets = () => {
                       })}
                       readOnly={hasUploaded}
                       placeholder="Capacity limit"
-                      className={`${inputCls} ${hasUploaded ? 'bg-[#12161A] text-white font-bold border-white/20' : ''}`}
+                      className={`${inputCls} ${hasUploaded ? 'bg-white/[0.04] text-white font-bold border-white/20' : ''}`}
                     />
                     {ticketErr?.quantity && <p className={errCls}>{ticketErr.quantity.message}</p>}
                   </div>
@@ -1072,7 +1072,7 @@ const StepTickets = () => {
                 </div>
 
                 {/* Optional pre-generated ticket files / barcode passes */}
-                <div className="pt-2 border-t border-[#262B2F]">
+                <div className="pt-2 border-t border-white/[0.06]">
                   <TicketFilesUploader
                     files={currentUploaded}
                     onChange={(newFiles) => {
@@ -1092,28 +1092,28 @@ const StepTickets = () => {
           <button
             type="button"
             onClick={addTicket}
-            className="flex-1 min-w-[200px] flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-[#494F55]/40 text-sm font-medium text-[#949599] hover:border-white/40 hover:text-white transition cursor-pointer"
+            className="flex-1 min-w-[200px] flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-white/[0.12] text-xs font-medium text-neutral-400 hover:border-white/20 hover:text-white transition cursor-pointer"
           >
-            <Plus className="w-4 h-4" /> Add Custom Ticket Tier
+            <Plus className="w-3.5 h-3.5" /> Add Custom Ticket Tier
           </button>
           <button
             type="button"
             onClick={() => append({ name: 'VIP Pass', price: 250, quantity: 200, description: 'VIP entrance, priority bar and lounge', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
-            className="px-3.5 py-2.5 rounded-xl bg-[#242B32] hover:bg-[#2C343D] text-xs font-semibold text-[#EFEFF1] border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] transition cursor-pointer"
           >
             + VIP Tier
           </button>
           <button
             type="button"
             onClick={() => append({ name: 'Early Bird', price: 80, quantity: 150, description: 'Limited discounted early admission', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
-            className="px-3.5 py-2.5 rounded-xl bg-[#242B32] hover:bg-[#2C343D] text-xs font-semibold text-[#EFEFF1] border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] transition cursor-pointer"
           >
             + Early Bird
           </button>
           <button
             type="button"
             onClick={() => append({ name: 'Free RSVP', price: 0, quantity: 500, description: 'Complimentary standard admission pass', saleStartDate: '', saleEndDate: '', uploadedTickets: [] })}
-            className="px-3.5 py-2.5 rounded-xl bg-[#242B32] hover:bg-[#2C343D] text-xs font-semibold text-[#EFEFF1] border border-[#262B2F] hover:border-white/20 transition cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] transition cursor-pointer"
           >
             + Free Pass
           </button>
@@ -1159,32 +1159,32 @@ const StepPublish = ({
   return (
     <div className="space-y-6">
       {/* Overview Hero Card */}
-      <div className="relative rounded-2xl overflow-hidden border border-[#262B2F] bg-[#171A1D]">
+      <div className="relative rounded-2xl overflow-hidden border border-white/[0.08] bg-[#121620]">
         {data.bannerImage ? (
           <div className="relative h-44 sm:h-56 w-full">
             <img src={data.bannerImage} alt="Event cover" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#111417] via-[#111417]/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#121620] via-[#121620]/60 to-transparent" />
           </div>
         ) : (
-          <div className="h-28 bg-[#161D22] border-b border-[#262B2F]" />
+          <div className="h-28 bg-white/[0.02] border-b border-white/[0.06]" />
         )}
 
         <div className="p-5 sm:p-6 -mt-12 relative z-10 space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-white text-[#1C232B]">
+            <span className="px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-white text-black">
               {data.category || 'General Event'}
             </span>
-            <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#161D22] text-[#EFEFF1] border border-[#262B2F]">
+            <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-white/[0.04] text-white border border-white/[0.08]">
               {data.locationType === 'online' ? 'Online Event' : 'Physical Venue'}
             </span>
-            <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#161D22] text-[#CBD5E1] border border-[#262B2F]">
+            <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-white/[0.04] text-neutral-300 border border-white/[0.08]">
               {totalTickets.toLocaleString()} Total Capacity
             </span>
           </div>
 
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-white">{data.title || 'Untitled Event'}</h2>
-            <p className="text-sm text-[#949599] mt-1.5 line-clamp-3 leading-relaxed">
+            <h2 className="text-xl sm:text-2xl font-bold text-white">{data.title || 'Untitled Event'}</h2>
+            <p className="text-xs text-neutral-400 mt-1.5 line-clamp-3 leading-relaxed">
               {data.description || 'No description provided.'}
             </p>
           </div>
@@ -1193,21 +1193,21 @@ const StepPublish = ({
 
       {/* Admin Host Banner (if admin) */}
       {isAdmin && selectedOrganizer && (
-        <div className="p-4 rounded-xl bg-[#161D22] border border-[#262B2F] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="p-4 rounded-2xl bg-[#121620] border border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-[#242B32] border border-[#32383F] text-white flex items-center justify-center font-bold shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white flex items-center justify-center font-bold shrink-0">
               <Building2 className="w-4 h-4 text-white" />
             </div>
             <div>
-              <span className="text-[11px] text-[#949599] uppercase tracking-wider font-semibold block">
+              <span className="text-[10px] text-neutral-400 uppercase tracking-wider font-semibold block">
                 Assigned Event Organizer / Host:
               </span>
-              <span className="text-sm font-bold text-white">
+              <span className="text-xs font-semibold text-white">
                 {selectedOrganizer.organizationName ? `${selectedOrganizer.organizationName} (${selectedOrganizer.name})` : selectedOrganizer.name}
               </span>
             </div>
           </div>
-          <span className="text-xs text-[#CBD5E1] bg-[#242B32] px-2.5 py-1 rounded-md border border-[#262B2F] self-start sm:self-center font-mono">
+          <span className="text-xs text-neutral-300 bg-white/[0.04] px-2.5 py-1 rounded-md border border-white/[0.08] self-start sm:self-center font-mono">
             {selectedOrganizer.email}
           </span>
         </div>
@@ -1216,64 +1216,64 @@ const StepPublish = ({
       {/* 2-Column Summary Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Location Box */}
-        <div className="p-4 sm:p-5 rounded-xl bg-[#171A1D] border border-[#262B2F] space-y-3">
-          <div className="flex items-center gap-2 text-white font-semibold text-sm">
-            <MapPin className="w-4 h-4 text-[#CBD5E1]" />
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#121620] border border-white/[0.08] space-y-3">
+          <div className="flex items-center gap-2 text-white font-semibold text-xs">
+            <MapPin className="w-3.5 h-3.5 text-neutral-400" />
             <span>Location Details</span>
           </div>
-          <div className="text-xs space-y-2 text-[#949599]">
+          <div className="text-xs space-y-2 text-neutral-400">
             <div>
-              <span className="text-[#6B7278] block">Venue</span>
-              <span className="text-[#EFEFF1] font-medium text-sm">{data.venue || '—'}</span>
+              <span className="text-neutral-500 block text-[10px] uppercase">Venue</span>
+              <span className="text-white font-medium text-xs">{data.venue || '—'}</span>
             </div>
             <div>
-              <span className="text-[#6B7278] block">Address</span>
-              <span className="text-[#EFEFF1]">{data.address || '—'}</span>
+              <span className="text-neutral-500 block text-[10px] uppercase">Address</span>
+              <span className="text-neutral-300 text-xs">{data.address || '—'}</span>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <span className="text-[#6B7278] block">City</span>
-                <span className="text-[#EFEFF1] font-medium">{data.city || '—'}</span>
+                <span className="text-neutral-500 block text-[10px] uppercase">City</span>
+                <span className="text-white font-medium text-xs">{data.city || '—'}</span>
               </div>
               <div>
-                <span className="text-[#6B7278] block">GPS / Coords</span>
-                <span className="text-[#EFEFF1] font-mono">{data.gpsLocation || '—'}</span>
+                <span className="text-neutral-500 block text-[10px] uppercase">GPS / Coords</span>
+                <span className="text-neutral-300 font-mono text-xs">{data.gpsLocation || '—'}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Date & Time Box */}
-        <div className="p-4 sm:p-5 rounded-xl bg-[#171A1D] border border-[#262B2F] space-y-3">
-          <div className="flex items-center gap-2 text-white font-semibold text-sm">
-            <CalendarDays className="w-4 h-4 text-[#CBD5E1]" />
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#121620] border border-white/[0.08] space-y-3">
+          <div className="flex items-center gap-2 text-white font-semibold text-xs">
+            <CalendarDays className="w-3.5 h-3.5 text-neutral-400" />
             <span>Date &amp; Schedule</span>
           </div>
-          <div className="text-xs space-y-2 text-[#949599]">
+          <div className="text-xs space-y-2 text-neutral-400">
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <span className="text-[#6B7278] block">Start Date</span>
-                <span className="text-[#EFEFF1] font-medium text-sm">{data.startDate || '—'}</span>
+                <span className="text-neutral-500 block text-[10px] uppercase">Start Date</span>
+                <span className="text-white font-medium text-xs">{data.startDate || '—'}</span>
               </div>
               <div>
-                <span className="text-[#6B7278] block">Start Time</span>
-                <span className="text-[#EFEFF1] font-medium text-sm">{data.startTime || '—'}</span>
+                <span className="text-neutral-500 block text-[10px] uppercase">Start Time</span>
+                <span className="text-white font-medium text-xs">{data.startTime || '—'}</span>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <span className="text-[#6B7278] block">End Date</span>
-                <span className="text-[#EFEFF1] font-medium text-sm">{data.endDate || '—'}</span>
+                <span className="text-neutral-500 block text-[10px] uppercase">End Date</span>
+                <span className="text-white font-medium text-xs">{data.endDate || '—'}</span>
               </div>
               <div>
-                <span className="text-[#6B7278] block">End Time</span>
-                <span className="text-[#EFEFF1] font-medium text-sm">{data.endTime || '—'}</span>
+                <span className="text-neutral-500 block text-[10px] uppercase">End Time</span>
+                <span className="text-white font-medium text-xs">{data.endTime || '—'}</span>
               </div>
             </div>
             {data.dressCode && (
               <div>
-                <span className="text-[#6B7278] block">Dress Code</span>
-                <span className="text-[#EFEFF1]">{data.dressCode}</span>
+                <span className="text-neutral-500 block text-[10px] uppercase">Dress Code</span>
+                <span className="text-neutral-300 text-xs">{data.dressCode}</span>
               </div>
             )}
           </div>
@@ -1281,32 +1281,32 @@ const StepPublish = ({
       </div>
 
       {/* Ticket Tiers Table */}
-      <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
-        <div className="p-4 border-b border-[#262B2F] flex items-center justify-between">
+      <div className="rounded-2xl bg-[#121620] border border-white/[0.08] overflow-hidden">
+        <div className="p-4 border-b border-white/[0.06] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TicketIcon className="w-4 h-4 text-[#CBD5E1]" />
-            <h3 className="text-sm font-semibold text-white">Configured Ticket Tiers ({(data.ticketTypes || []).length})</h3>
+            <TicketIcon className="w-4 h-4 text-neutral-400" />
+            <h3 className="text-xs font-semibold text-white">Configured Ticket Tiers ({(data.ticketTypes || []).length})</h3>
           </div>
-          <span className="text-xs font-bold text-white bg-[#161D22] px-3 py-1 rounded-full border border-[#262B2F]">
+          <span className="text-xs font-semibold text-white bg-white/[0.04] px-3 py-1 rounded-full border border-white/[0.08]">
             Est. Gross: {format(totalGross)}
           </span>
         </div>
 
-        <div className="divide-y divide-[#262B2F]">
+        <div className="divide-y divide-white/[0.06]">
           {(data.ticketTypes || []).map((t, idx) => (
             <div key={idx} className="p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-[#EFEFF1] text-sm">{t.name || `Tier ${idx + 1}`}</span>
+                  <span className="font-semibold text-white text-xs">{t.name || `Tier ${idx + 1}`}</span>
                   {(t.uploadedTickets || []).length > 0 && (
-                    <span className="text-[10px] text-[#CBD5E1] bg-[#161D22] px-2 py-0.5 rounded border border-[#262B2F]">
+                    <span className="text-[10px] text-neutral-300 bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.08]">
                       {t.uploadedTickets.length} passes uploaded
                     </span>
                   )}
                 </div>
-                {t.description && <p className="text-[#949599]">{t.description}</p>}
+                {t.description && <p className="text-neutral-400 text-[11px]">{t.description}</p>}
                 {(t.saleStartDate || t.saleEndDate) && (
-                  <p className="text-[11px] text-[#6B7278]">
+                  <p className="text-[10px] text-neutral-500">
                     Sales: {t.saleStartDate || 'Anytime'} &rarr; {t.saleEndDate || 'Event start'}
                   </p>
                 )}
@@ -1314,12 +1314,12 @@ const StepPublish = ({
 
               <div className="flex items-center gap-4 shrink-0 sm:text-right">
                 <div>
-                  <span className="text-[10px] text-[#6B7278] block uppercase">Available</span>
+                  <span className="text-[10px] text-neutral-500 block uppercase">Available</span>
                   <span className="font-semibold text-white">{Number(t.quantity || 0).toLocaleString()} qty</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-[#6B7278] block uppercase">Price</span>
-                  <span className="font-bold text-white text-sm">
+                  <span className="text-[10px] text-neutral-500 block uppercase">Price</span>
+                  <span className="font-bold text-white text-xs">
                     {Number(t.price) > 0 ? format(t.price) : 'Free Admission'}
                   </span>
                 </div>
@@ -1331,28 +1331,28 @@ const StepPublish = ({
 
       {/* Gallery Preview (if present) */}
       {(data.additionalImages || []).length > 0 && (
-        <div className="p-4 rounded-xl bg-[#171A1D] border border-[#262B2F] space-y-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#949599] uppercase tracking-wider">
-            <ImageIcon className="w-3.5 h-3.5 text-[#CBD5E1]" />
+        <div className="p-4 rounded-2xl bg-[#121620] border border-white/[0.08] space-y-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+            <ImageIcon className="w-3.5 h-3.5 text-neutral-400" />
             <span>Gallery Images ({(data.additionalImages || []).length})</span>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
             {data.additionalImages.map((img, i) => (
-              <img key={i} src={img} alt="" className="aspect-square object-cover rounded-lg border border-[#262B2F]" />
+              <img key={i} src={img} alt="" className="aspect-square object-cover rounded-xl border border-white/[0.08]" />
             ))}
           </div>
         </div>
       )}
 
       {/* Publish Actions Callout */}
-      <div className="p-5 rounded-2xl bg-[#161D22] border border-[#262B2F] space-y-4 shadow-sm">
+      <div className="p-5 rounded-2xl bg-[#121620] border border-white/[0.08] space-y-4 shadow-sm">
         <div className="flex items-start gap-3">
-          <ShieldCheck className="w-6 h-6 text-[#CBD5E1] shrink-0 mt-0.5" />
+          <ShieldCheck className="w-5 h-5 text-neutral-300 shrink-0 mt-0.5" />
           <div>
-            <h4 className="text-sm font-bold text-white">
+            <h4 className="text-xs font-semibold text-white">
               {isAdmin ? 'Platform Administrator Publishing Authority' : 'Ready to publish your event?'}
             </h4>
-            <p className="text-xs text-[#949599] mt-0.5 leading-relaxed">
+            <p className="text-xs text-neutral-400 mt-0.5 leading-relaxed">
               {isAdmin
                 ? 'As a platform administrator, you can immediately publish this event live for attendees to purchase tickets, or save it as a draft for later review.'
                 : 'You can save as a private draft to continue tweaking later, or submit for admin review. Once verified, tickets will instantly be accessible to attendees.'}
@@ -1360,14 +1360,14 @@ const StepPublish = ({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row items-center gap-2 pt-2">
           <button
             type="button"
             onClick={onSaveDraft}
             disabled={submitting}
-            className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-[#262B2F] bg-[#171A1D] hover:bg-[#242B32] text-sm font-semibold text-[#EFEFF1] transition cursor-pointer disabled:opacity-50"
+            className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white transition cursor-pointer disabled:opacity-50"
           >
-            <Save className="w-4 h-4 text-[#949599]" />
+            <Save className="w-3.5 h-3.5 text-neutral-400" />
             <span>{submitting ? 'Saving...' : 'Save Draft'}</span>
           </button>
 
@@ -1377,9 +1377,9 @@ const StepPublish = ({
                 type="button"
                 onClick={onSubmitApproval}
                 disabled={submitting}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-[#262B2F] bg-[#171A1D] hover:bg-[#242B32] text-xs font-semibold text-[#EFEFF1] transition cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white transition cursor-pointer disabled:opacity-50"
               >
-                <Send className="w-3.5 h-3.5 text-[#949599]" />
+                <Send className="w-3.5 h-3.5 text-neutral-400" />
                 <span>Save as Pending</span>
               </button>
 
@@ -1387,9 +1387,9 @@ const StepPublish = ({
                 type="button"
                 onClick={onPublishImmediately}
                 disabled={submitting}
-                className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-[#111417] hover:bg-[#CBD5E1] text-sm font-extrabold transition shadow-lg shadow-white/10 cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-5 py-2 rounded-lg bg-white text-black hover:bg-neutral-200 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
               >
-                <CheckCircle2 className="w-4 h-4 text-[#111417]" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-black" />
                 <span>{submitting ? 'Publishing...' : 'Publish Event Live (Instant)'}</span>
               </button>
             </>
@@ -1398,9 +1398,9 @@ const StepPublish = ({
               type="button"
               onClick={onSubmitApproval}
               disabled={submitting}
-              className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-[#111417] hover:bg-[#CBD5E1] text-sm font-extrabold transition shadow-lg shadow-white/10 cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-5 py-2 rounded-lg bg-white text-black hover:bg-neutral-200 text-xs font-semibold transition cursor-pointer disabled:opacity-50"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-3.5 h-3.5" />
               <span>{submitting ? 'Submitting...' : (eventId ? 'Submit Changes for Approval' : 'Submit for Approval')}</span>
             </button>
           )}
@@ -1697,13 +1697,13 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
     <FormProvider {...methods}>
       <form onSubmit={(e) => { e.preventDefault(); }} className="space-y-6">
         {eventStatus === 'changes_requested' && (
-          <div className="rounded-xl border border-[#262B2F] bg-[#161D22] p-4 text-sm flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-4 h-4 text-white" />
+          <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4 text-xs flex items-start gap-3">
+            <div className="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-4 h-4 text-amber-400" />
             </div>
             <div>
               <p className="font-semibold text-white">Admin Requested Changes</p>
-              <p className="text-xs text-[#949599] mt-1 leading-relaxed">
+              <p className="text-xs text-neutral-300 mt-0.5 leading-relaxed">
                 {rejectionReason || 'Please review the requested changes below, make the modifications, and resubmit for approval.'}
               </p>
             </div>
@@ -1711,13 +1711,13 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
         )}
 
         {eventStatus === 'rejected' && (
-          <div className="rounded-xl border border-red-500/30 bg-[#161D22] p-4 text-sm flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-4 h-4 text-red-400" />
+          <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-4 text-xs flex items-start gap-3">
+            <div className="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-4 h-4 text-rose-400" />
             </div>
             <div>
               <p className="font-semibold text-white">Event Submission Rejected</p>
-              <p className="text-xs text-[#949599] mt-1 leading-relaxed">
+              <p className="text-xs text-neutral-300 mt-0.5 leading-relaxed">
                 {rejectionReason ? `Reason: ${rejectionReason}` : 'Review the feedback, make any requested adjustments, and resubmit for approval.'}
               </p>
             </div>
@@ -1725,13 +1725,13 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
         )}
 
         {eventStatus === 'pending' && (
-          <div className="rounded-xl border border-[#262B2F] bg-[#161D22] p-4 text-sm flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#242B32] border border-[#32383F] flex items-center justify-center shrink-0">
-              <Clock className="w-4 h-4 text-[#CBD5E1]" />
+          <div className="rounded-2xl border border-white/[0.08] bg-[#121620] p-4 text-xs flex items-start gap-3">
+            <div className="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4 text-neutral-400" />
             </div>
             <div>
               <p className="font-semibold text-white">Event Currently Under Review</p>
-              <p className="text-xs text-[#949599] mt-1 leading-relaxed">
+              <p className="text-xs text-neutral-400 mt-0.5 leading-relaxed">
                 This event has been submitted to the platform admin team for moderation. You can still make updates and resubmit anytime.
               </p>
             </div>
@@ -1748,7 +1748,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
               <button
                 type="button"
                 onClick={() => navigate(isAdmin ? '/admin/events' : '/organizer/events')}
-                className="px-3.5 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition cursor-pointer"
+                className="px-3.5 py-2 rounded-lg text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/[0.04] transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -1756,10 +1756,10 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                 type="button"
                 onClick={handleSubmit((d) => submit(d, 'draft'), onInvalid)}
                 disabled={submitting}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-lg text-sm font-semibold bg-white/10 text-white hover:bg-white/20 border border-white/20 transition disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-white/[0.04] text-neutral-300 hover:text-white hover:bg-white/[0.08] border border-white/[0.08] transition disabled:opacity-50 cursor-pointer"
                 title="Save progress as draft at any stage"
               >
-                <Save className="w-4 h-4 text-[#CBD5E1]" />
+                <Save className="w-3.5 h-3.5 text-neutral-400" />
                 <span>{submitting ? 'Saving...' : 'Save Draft'}</span>
               </button>
             </div>
@@ -1767,7 +1767,7 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
         />
 
         {/* 5-Step Clickable Progress Stepper */}
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4 sm:p-5">
+        <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-4 sm:p-5">
           <div className="flex items-center justify-between mb-3">
             {STEPS.map((s) => (
               <div key={s.id} className="flex items-center flex-1 last:flex-none">
@@ -1778,24 +1778,24 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                   title={`Step ${s.id}: ${s.title}`}
                 >
                   <div
-                    className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all ${
+                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all ${
                       step === s.id
-                        ? 'bg-white text-[#1C232B] ring-4 ring-white/20 font-bold scale-110 shadow-lg'
+                        ? 'bg-white text-black ring-4 ring-white/20 font-bold scale-105 shadow-md'
                         : step > s.id
-                        ? 'bg-[#242B32] text-white border border-white/20 group-hover:bg-white group-hover:text-black'
-                        : 'bg-[#262B2F]/60 text-[#949599] group-hover:bg-[#32383F] group-hover:text-white'
+                        ? 'bg-white/[0.08] text-white border border-white/20 group-hover:bg-white group-hover:text-black'
+                        : 'bg-white/[0.03] text-neutral-500 border border-white/[0.06] group-hover:text-neutral-300'
                     }`}
                   >
-                    {step > s.id ? <Check className="w-4 h-4 text-white group-hover:text-black" /> : <s.icon className="w-4 h-4 sm:w-5 sm:h-5" />}
+                    {step > s.id ? <Check className="w-3.5 h-3.5 text-white group-hover:text-black" /> : <s.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
                   </div>
                   <div className="text-center hidden sm:block">
                     <span
-                      className={`text-xs font-semibold block transition-colors ${
+                      className={`text-[11px] font-medium block transition-colors ${
                         step === s.id
-                          ? 'text-white font-bold'
+                          ? 'text-white font-semibold'
                           : step > s.id
-                          ? 'text-[#EFEFF1]'
-                          : 'text-[#949599] group-hover:text-[#EFEFF1]'
+                          ? 'text-neutral-300'
+                          : 'text-neutral-500 group-hover:text-neutral-300'
                       }`}
                     >
                       {s.title}
@@ -1803,20 +1803,20 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                   </div>
                 </button>
                 {s.id < STEPS.length && (
-                  <div className={`flex-1 h-0.5 mx-2 transition-colors ${step > s.id ? 'bg-white/40' : 'bg-[#262B2F]'}`} />
+                  <div className={`flex-1 h-0.5 mx-2 transition-colors ${step > s.id ? 'bg-white/40' : 'bg-white/[0.06]'}`} />
                 )}
               </div>
             ))}
           </div>
 
           {/* Progress bar */}
-          <div className="h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
+          <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
             <div className="h-full bg-white transition-all duration-300" style={{ width: `${progress}%` }} />
           </div>
         </div>
 
         {/* Step Container */}
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 sm:p-7 min-h-[360px]">
+        <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-5 sm:p-7 min-h-[360px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={step}
@@ -1825,14 +1825,14 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#262B2F]">
+              <div className="flex items-center justify-between pb-4 mb-6 border-b border-white/[0.06]">
                 <div>
-                  <h2 className="text-lg font-bold text-[#EFEFF1]">
+                  <h2 className="text-sm font-semibold text-white">
                     Step {step} of 5: {STEPS[step - 1].title}
                   </h2>
-                  <p className="text-xs text-[#949599] mt-0.5">{STEPS[step - 1].subtitle}</p>
+                  <p className="text-xs text-neutral-400 mt-0.5">{STEPS[step - 1].subtitle}</p>
                 </div>
-                <span className="text-xs font-mono font-medium text-[#CBD5E1] bg-[#161D22] px-3 py-1 rounded-full border border-[#262B2F]">
+                <span className="text-[11px] font-mono font-medium text-neutral-300 bg-white/[0.04] px-2.5 py-0.5 rounded-full border border-white/[0.08]">
                   Step {step} / 5
                 </span>
               </div>
@@ -1870,9 +1870,9 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
             type="button"
             onClick={back}
             disabled={step === 1 || submitting}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/[0.04] disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
           >
-            <ChevronLeft className="w-4 h-4" /> Back
+            <ChevronLeft className="w-3.5 h-3.5" /> Back
           </button>
 
           {step < 5 ? (
@@ -1880,19 +1880,19 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
               type="button"
               onClick={next}
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg text-sm font-bold bg-white text-[#1C232B] hover:bg-[#CBD5E1] disabled:opacity-60 transition shadow-md cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-semibold bg-white text-black hover:bg-neutral-200 disabled:opacity-60 transition shadow-sm cursor-pointer"
             >
-              Continue to Step {step + 1} <ChevronRight className="w-4 h-4" />
+              Continue to Step {step + 1} <ChevronRight className="w-3.5 h-3.5" />
             </button>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={handleSubmit((d) => submit(d, 'draft'), onInvalid)}
                 disabled={submitting}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-white border border-[#494F55]/40 hover:bg-[#242B32] transition cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] transition cursor-pointer disabled:opacity-50"
               >
-                <Save className="w-4 h-4" /> Save Draft
+                <Save className="w-3.5 h-3.5" /> Save Draft
               </button>
               {isAdmin ? (
                 <>
@@ -1900,17 +1900,17 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                     type="button"
                     onClick={handleSubmit((d) => submit(d, 'pending'), onInvalid)}
                     disabled={submitting}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-white border border-[#494F55]/40 hover:bg-[#242B32] transition cursor-pointer disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] transition cursor-pointer disabled:opacity-50"
                   >
-                    <Send className="w-4 h-4" /> Save as Pending
+                    <Send className="w-3.5 h-3.5" /> Save as Pending
                   </button>
                   <button
                     type="button"
                     onClick={handleSubmit((d) => submit(d, 'published'), onInvalid)}
                     disabled={submitting}
-                    className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg text-sm font-bold bg-white text-[#111417] hover:bg-[#CBD5E1] transition shadow-lg cursor-pointer disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-white text-black hover:bg-neutral-200 transition shadow-sm cursor-pointer disabled:opacity-50"
                   >
-                    <CheckCircle2 className="w-4 h-4 text-[#111417]" /> Publish Event Live
+                    <CheckCircle2 className="w-3.5 h-3.5 text-black" /> Publish Event Live
                   </button>
                 </>
               ) : (
@@ -1918,9 +1918,9 @@ export default function CreateEventPage({ initialValues, eventId, onSubmit: cust
                   type="button"
                   onClick={handleSubmit((d) => submit(d, 'pending'), onInvalid)}
                   disabled={submitting}
-                  className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg text-sm font-bold bg-white text-[#111417] hover:bg-[#CBD5E1] transition shadow-lg cursor-pointer disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-white text-black hover:bg-neutral-200 transition shadow-sm cursor-pointer disabled:opacity-50"
                 >
-                  <Send className="w-4 h-4" /> Submit for Approval
+                  <Send className="w-3.5 h-3.5" /> Submit for Approval
                 </button>
               )}
             </div>

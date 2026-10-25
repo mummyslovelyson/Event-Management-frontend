@@ -304,79 +304,79 @@ export default function NotificationCenterPage() {
         title="Notification Center"
         subtitle="Live administrative activity feed, system alerts, and multi-channel user broadcasts."
         actions={
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => {
                 if (activeTab === 'inbox') fetchAlerts();
                 else fetchBroadcasts();
               }}
               title="Refresh"
-              className="p-2 rounded-lg bg-[#262B2F] text-[#949599] hover:text-[#EFEFF1] hover:bg-[#32383E] transition"
+              className="p-2 rounded-lg bg-white/[0.04] text-neutral-400 border border-white/[0.08] hover:text-white hover:bg-white/[0.08] transition"
             >
-              <RefreshCw className={`w-4 h-4 ${alertsLoading || broadcastsLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${alertsLoading || broadcastsLoading ? 'animate-spin' : ''}`} />
             </button>
 
             {activeTab === 'inbox' && unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#262B2F] text-sm text-[#EFEFF1] hover:bg-[#32383E] transition font-medium"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.04] text-xs text-neutral-300 border border-white/[0.08] hover:text-white hover:bg-white/[0.08] transition font-medium"
               >
-                <CheckCircle className="w-4 h-4 text-emerald-400" /> Mark All Read
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> Mark All Read
               </button>
             )}
 
             {activeTab === 'inbox' && alerts.some((a) => a.is_read) && (
               <button
                 onClick={handleClearRead}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#262B2F] text-sm text-[#949599] hover:text-red-400 hover:bg-[#32383E] transition font-medium"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.04] text-xs text-neutral-400 border border-white/[0.08] hover:text-rose-400 hover:bg-white/[0.08] transition font-medium"
               >
-                <Trash2 className="w-4 h-4" /> Clear Read
+                <Trash2 className="w-3.5 h-3.5" /> Clear Read
               </button>
             )}
 
             <button
               onClick={() => setShowSend(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-sm"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition"
             >
-              <Send className="w-4 h-4" /> Dispatch Broadcast
+              <Send className="w-3.5 h-3.5" /> Dispatch Broadcast
             </button>
           </div>
         }
       />
 
       {/* Tabs */}
-      <div className="flex items-center justify-between border-b border-[#262B2F] pb-3">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between pb-1">
+        <div className="flex items-center gap-1.5 p-1 bg-white/[0.02] border border-white/[0.08] rounded-xl w-fit">
           <button
             onClick={() => setActiveTab('inbox')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
               activeTab === 'inbox'
-                ? 'bg-white/10 text-white border border-white/20'
-                : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#1D2124]'
+                ? 'bg-white text-black font-semibold'
+                : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
-            <Inbox className="w-4 h-4" /> Live Platform Alerts
+            <Inbox className="w-3.5 h-3.5" /> Live Platform Alerts
             {unreadCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-red-500 text-white text-[11px] font-bold">
+              <span className="px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-bold">
                 {unreadCount}
               </span>
             )}
           </button>
           <button
             onClick={() => setActiveTab('broadcast')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
               activeTab === 'broadcast'
-                ? 'bg-white/10 text-white border border-white/20'
-                : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#1D2124]'
+                ? 'bg-white text-black font-semibold'
+                : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
-            <Radio className="w-4 h-4" /> Broadcast History &amp; Templates
+            <Radio className="w-3.5 h-3.5" /> Broadcast History &amp; Templates
           </button>
         </div>
 
         {activeTab === 'inbox' && (
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 text-xs text-[#949599] cursor-pointer hover:text-[#EFEFF1] transition">
+            <label className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer hover:text-white transition">
               <input
                 type="checkbox"
                 checked={unreadOnly}
@@ -384,7 +384,7 @@ export default function NotificationCenterPage() {
                   setUnreadOnly(e.target.checked);
                   setAlertsPage(1);
                 }}
-                className="w-4 h-4 rounded bg-[#1C232B] border-[#262B2F] text-white focus:ring-0"
+                className="w-3.5 h-3.5 rounded bg-white/[0.04] border border-white/[0.08] text-white focus:ring-0"
               />
               <span>Unread only</span>
             </label>
@@ -398,7 +398,7 @@ export default function NotificationCenterPage() {
         /* ============================================================== */
         <div className="space-y-4">
           {/* Filter Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-[#171A1D] border border-[#262B2F]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-2xl bg-[#121620] border border-white/[0.08]">
             {/* Category Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
               {categoryFilters.map((cat) => {
@@ -413,15 +413,15 @@ export default function NotificationCenterPage() {
                     }}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-1.5 ${
                       isActive
-                        ? 'bg-white text-[#1C232B] font-semibold'
-                        : 'bg-[#1C232B] text-[#949599] hover:text-[#EFEFF1] border border-[#262B2F]'
+                        ? 'bg-white text-black font-semibold'
+                        : 'bg-white/[0.03] text-neutral-400 hover:text-white border border-white/[0.08]'
                     }`}
                   >
                     <span>{cat.label}</span>
                     {countVal > 0 && (
                       <span
                         className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                          isActive ? 'bg-[#1C232B] text-white' : 'bg-white/10 text-white'
+                          isActive ? 'bg-black text-white' : 'bg-white/10 text-white'
                         }`}
                       >
                         {countVal}
@@ -434,7 +434,7 @@ export default function NotificationCenterPage() {
 
             {/* Search Input */}
             <div className="relative min-w-[200px] sm:w-64">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7278]" />
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
               <input
                 type="text"
                 placeholder="Search alerts..."
@@ -443,12 +443,12 @@ export default function NotificationCenterPage() {
                   setSearchQuery(e.target.value);
                   setAlertsPage(1);
                 }}
-                className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#14171A] border border-[#262B2F] text-xs text-[#EFEFF1] placeholder-[#6B7278] focus:outline-none focus:border-[#494F55] transition"
+                className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6B7278] hover:text-[#EFEFF1]"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -457,15 +457,15 @@ export default function NotificationCenterPage() {
           </div>
 
           {/* Alerts List Container */}
-          <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-[#262B2F] flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-[#EFEFF1] flex items-center gap-2">
+          <div className="rounded-2xl bg-[#121620] border border-white/[0.08] overflow-hidden">
+            <div className="px-5 py-3.5 border-b border-white/[0.06] bg-white/[0.02] flex items-center justify-between">
+              <h2 className="text-xs font-semibold text-white flex items-center gap-2">
                 <span>Alerts Feed</span>
-                <span className="text-xs text-[#6B7278] font-normal">
+                <span className="text-[11px] text-neutral-500 font-normal">
                   ({counts.all} total records in database)
                 </span>
               </h2>
-              <span className="text-xs text-[#949599]">Auto-refreshes on live transactions</span>
+              <span className="text-xs text-neutral-400">Auto-refreshes on live transactions</span>
             </div>
 
             {alertsLoading ? (
@@ -483,20 +483,20 @@ export default function NotificationCenterPage() {
               />
             ) : (
               <>
-                <div className="divide-y divide-[#262B2F]/60">
+                <div className="divide-y divide-white/[0.06]">
                   {alerts.map((n) => {
                     const { Icon: TypeIcon, label: typeLabel, badgeClass, pillClass } = getAlertMeta(n.type);
                     return (
                       <div
                         key={n.id}
-                        className={`p-4 transition flex items-start gap-4 hover:bg-[#1D2124] ${
-                          !n.is_read ? 'bg-white/[0.04]' : 'opacity-90'
+                        className={`p-4 transition flex items-start gap-4 hover:bg-white/[0.02] ${
+                          !n.is_read ? 'bg-white/[0.03]' : 'opacity-90'
                         }`}
                       >
                         <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${badgeClass}`}
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${badgeClass}`}
                         >
-                          <TypeIcon className="w-5 h-5" />
+                          <TypeIcon className="w-4 h-4" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between gap-3">
@@ -504,20 +504,20 @@ export default function NotificationCenterPage() {
                               <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${pillClass}`}>
                                 {typeLabel}
                               </span>
-                              <p className="text-sm font-semibold text-[#EFEFF1] truncate">{n.title}</p>
+                              <p className="text-xs font-semibold text-white truncate">{n.title}</p>
                               {!n.is_read && (
-                                <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" title="Unread" />
+                                <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" title="Unread" />
                               )}
                             </div>
                             <span
-                              className="text-xs text-[#6B7278] shrink-0 font-medium cursor-default"
+                              className="text-xs text-neutral-500 shrink-0 font-medium cursor-default"
                               title={fmtDate(n.created_at || n.createdAt)}
                             >
                               {formatTimeAgo(n.created_at || n.createdAt)}
                             </span>
                           </div>
 
-                          <p className="text-sm text-[#949599] mt-1.5 leading-relaxed break-words">{n.message}</p>
+                          <p className="text-xs text-neutral-400 mt-1.5 leading-relaxed break-words">{n.message}</p>
 
                           <div className="flex items-center justify-between mt-3 pt-2 border-t border-white/[0.04]">
                             {n.link ? (
@@ -531,7 +531,7 @@ export default function NotificationCenterPage() {
                                 Review details <ExternalLink className="w-3.5 h-3.5" />
                               </Link>
                             ) : (
-                              <span className="text-[11px] text-[#6B7278]">Platform Notice</span>
+                              <span className="text-[11px] text-neutral-500">Platform Notice</span>
                             )}
 
                             <div className="flex items-center gap-2">
@@ -539,7 +539,7 @@ export default function NotificationCenterPage() {
                                 <button
                                   type="button"
                                   onClick={() => handleMarkOneRead(n.id)}
-                                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs text-[#949599] hover:text-emerald-300 hover:bg-emerald-500/10 transition"
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs text-neutral-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition"
                                 >
                                   <Check className="w-3.5 h-3.5" /> Mark read
                                 </button>
@@ -548,7 +548,7 @@ export default function NotificationCenterPage() {
                                 type="button"
                                 onClick={() => handleDeleteAlert(n.id)}
                                 title="Dismiss notification"
-                                className="p-1 rounded text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition"
+                                className="p-1 rounded text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -560,8 +560,8 @@ export default function NotificationCenterPage() {
                   })}
                 </div>
 
-                <div className="px-5 py-3.5 border-t border-[#262B2F] flex items-center justify-between">
-                  <span className="text-xs text-[#949599]">
+                <div className="px-5 py-3.5 border-t border-white/[0.06] flex items-center justify-between">
+                  <span className="text-xs text-neutral-400">
                     Page {alertsPage} of {alertsTotalPages}
                   </span>
                   <Pagination
@@ -579,17 +579,17 @@ export default function NotificationCenterPage() {
         /* Broadcast History & Templates Tab                              */
         /* ============================================================== */
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <div className="xl:col-span-2 rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#262B2F] flex items-center justify-between">
+          <div className="xl:col-span-2 rounded-2xl bg-[#121620] border border-white/[0.08] overflow-hidden">
+            <div className="px-5 py-4 border-b border-white/[0.06] bg-white/[0.02] flex items-center justify-between">
               <div>
-                <h2 className="text-base font-semibold text-[#EFEFF1]">Broadcast History</h2>
-                <p className="text-xs text-[#949599] mt-0.5">
+                <h2 className="text-sm font-semibold text-white">Broadcast History</h2>
+                <p className="text-xs text-neutral-400 mt-0.5">
                   Platform-wide announcements dispatched from the admin console.
                 </p>
               </div>
               <button
                 onClick={() => setShowSend(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-[#1C232B] text-xs font-semibold hover:bg-[#CBD5E1] transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition"
               >
                 <Send className="w-3 h-3" /> New Announcement
               </button>
@@ -609,7 +609,7 @@ export default function NotificationCenterPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
+                      <tr className="text-left text-[11px] font-medium text-neutral-400 border-b border-white/[0.06] bg-white/[0.02]">
                         <th className="px-5 py-3 font-medium">Subject / Message</th>
                         <th className="px-5 py-3 font-medium">Target</th>
                         <th className="px-5 py-3 font-medium">Channel</th>
@@ -617,12 +617,12 @@ export default function NotificationCenterPage() {
                         <th className="px-5 py-3 font-medium">Dispatched</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#262B2F]/70">
+                    <tbody className="divide-y divide-white/[0.06]">
                       {broadcasts.map((b) => (
-                        <tr key={b.id} className="hover:bg-[#1D2124] transition-colors">
+                        <tr key={b.id} className="hover:bg-white/[0.02] transition-colors">
                           <td className="px-5 py-3.5 max-w-[280px]">
-                            <p className="font-semibold text-[#EFEFF1] truncate">{b.title}</p>
-                            <p className="text-xs text-[#949599] line-clamp-1 mt-0.5">{b.message}</p>
+                            <p className="font-semibold text-white text-xs truncate">{b.title}</p>
+                            <p className="text-xs text-neutral-400 line-clamp-1 mt-0.5">{b.message}</p>
                           </td>
                           <td className="px-5 py-3.5">
                             <Badge variant="info" size="sm" className="capitalize">
@@ -630,15 +630,15 @@ export default function NotificationCenterPage() {
                             </Badge>
                           </td>
                           <td className="px-5 py-3.5">
-                            <span className="inline-flex items-center gap-1 text-xs text-[#EFEFF1] capitalize">
-                              <Radio className="w-3 h-3 text-[#949599]" />
+                            <span className="inline-flex items-center gap-1 text-xs text-neutral-300 capitalize">
+                              <Radio className="w-3 h-3 text-neutral-500" />
                               {b.channel || 'In-App'}
                             </span>
                           </td>
-                          <td className="px-5 py-3.5 text-center text-xs font-medium text-[#EFEFF1]">
+                          <td className="px-5 py-3.5 text-center text-xs font-medium text-white">
                             {(Number(b.sent_count) || 0).toLocaleString()} users
                           </td>
-                          <td className="px-5 py-3.5 text-xs text-[#949599]">
+                          <td className="px-5 py-3.5 text-xs text-neutral-400">
                             {fmtDate(b.created_at)}
                           </td>
                         </tr>
@@ -647,8 +647,8 @@ export default function NotificationCenterPage() {
                   </table>
                 </div>
 
-                <div className="px-5 py-3.5 border-t border-[#262B2F] flex items-center justify-between">
-                  <span className="text-xs text-[#949599]">
+                <div className="px-5 py-3.5 border-t border-white/[0.06] flex items-center justify-between">
+                  <span className="text-xs text-neutral-400">
                     Page {broadcastsPage} of {broadcastsTotalPages}
                   </span>
                   <Pagination
@@ -662,18 +662,18 @@ export default function NotificationCenterPage() {
           </div>
 
           {/* Live Notification Templates */}
-          <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 h-fit space-y-4">
+          <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-5 h-fit space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-[#EFEFF1] flex items-center gap-2">
-                <FileText className="w-4 h-4 text-white" /> Pre-built Templates
+              <h2 className="text-xs font-semibold text-white flex items-center gap-2">
+                <FileText className="w-3.5 h-3.5 text-neutral-400" /> Pre-built Templates
               </h2>
-              <span className="text-[11px] text-[#6B7278]">Click to use</span>
+              <span className="text-[11px] text-neutral-500">Click to use</span>
             </div>
 
             {templatesLoading ? (
               <LoadingSpinner size="sm" label="Loading templates..." className="py-6" />
             ) : templates.length === 0 ? (
-              <p className="text-xs text-[#6B7278] py-4">No notification templates configured.</p>
+              <p className="text-xs text-neutral-500 py-4">No notification templates configured.</p>
             ) : (
               <div className="space-y-2.5">
                 {templates.map((t) => {
@@ -682,17 +682,17 @@ export default function NotificationCenterPage() {
                     <div
                       key={t.id}
                       onClick={() => handleUseTemplate(t)}
-                      className="group p-3 rounded-lg bg-[#1D2124] border border-[#262B2F] hover:border-white/40 cursor-pointer transition flex items-start gap-3"
+                      className="group p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.04] cursor-pointer transition flex items-start gap-3"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center shrink-0 group-hover:bg-white group-hover:text-[#1C232B] transition">
+                      <div className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center shrink-0 group-hover:bg-white group-hover:text-black transition">
                         <ChannelIcon className="w-4 h-4" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between">
-                          <p className="text-xs font-semibold text-[#EFEFF1] truncate">{t.name}</p>
-                          <span className="text-[10px] text-[#6B7278] uppercase">{t.type}</span>
+                          <p className="text-xs font-semibold text-white truncate">{t.name}</p>
+                          <span className="text-[10px] text-neutral-500 uppercase">{t.type}</span>
                         </div>
-                        <p className="text-[11px] text-[#949599] line-clamp-1 mt-0.5">{t.subject}</p>
+                        <p className="text-[11px] text-neutral-400 line-clamp-1 mt-0.5">{t.subject}</p>
                       </div>
                     </div>
                   );
@@ -713,20 +713,20 @@ export default function NotificationCenterPage() {
           <>
             <button
               onClick={() => setShowSend(false)}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition"
+              className="px-3.5 py-2 rounded-lg text-xs font-medium text-neutral-400 hover:text-white transition"
             >
               Cancel
             </button>
             <button
               onClick={handleSendBroadcast}
               disabled={sending}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50 shadow-sm"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition disabled:opacity-50"
             >
               {sending ? (
                 <LoadingSpinner size="sm" />
               ) : (
                 <>
-                  <Send className="w-4 h-4" /> Send Broadcast
+                  <Send className="w-3.5 h-3.5" /> Send Broadcast
                 </>
               )}
             </button>
@@ -735,7 +735,7 @@ export default function NotificationCenterPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
               Subject / Title
             </label>
             <input
@@ -743,12 +743,12 @@ export default function NotificationCenterPage() {
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               placeholder="Notification subject or title"
-              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] placeholder-[#6B7278] focus:outline-none focus:border-white/50 transition"
+              className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
               Message Content
             </label>
             <textarea
@@ -756,12 +756,12 @@ export default function NotificationCenterPage() {
               onChange={(e) => setForm({ ...form, message: e.target.value })}
               placeholder="Type your announcement or alert message..."
               rows={4}
-              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#262B2F] text-sm text-[#EFEFF1] placeholder-[#6B7278] focus:outline-none focus:border-white/50 resize-none transition leading-relaxed"
+              className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 resize-none transition leading-relaxed"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2">
               Target Audience
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -772,8 +772,8 @@ export default function NotificationCenterPage() {
                   onClick={() => setForm({ ...form, target: t.key })}
                   className={`px-3 py-2 rounded-lg text-xs font-medium border transition ${
                     form.target === t.key
-                      ? 'bg-white text-[#1C232B] font-semibold border-white'
-                      : 'bg-[#1C232B] text-[#949599] border-[#262B2F] hover:border-[#494F55]'
+                      ? 'bg-white text-black font-semibold border-white'
+                      : 'bg-white/[0.03] text-neutral-400 border-white/[0.08] hover:text-white hover:bg-white/[0.06]'
                   }`}
                 >
                   {t.label}
@@ -787,13 +787,13 @@ export default function NotificationCenterPage() {
                 value={form.userId}
                 onChange={(e) => setForm({ ...form, userId: e.target.value })}
                 placeholder="Enter User ID or User Email..."
-                className="mt-2.5 w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#262B2F] text-xs text-[#EFEFF1] placeholder-[#6B7278] focus:outline-none focus:border-white/50 transition"
+                className="mt-2.5 w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
               />
             )}
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2">
               Delivery Channel
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -804,8 +804,8 @@ export default function NotificationCenterPage() {
                   onClick={() => setForm({ ...form, channel: key })}
                   className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium border transition ${
                     form.channel === key
-                      ? 'bg-white text-[#1C232B] font-semibold border-white'
-                      : 'bg-[#1C232B] text-[#949599] border-[#262B2F] hover:border-[#494F55]'
+                      ? 'bg-white text-black font-semibold border-white'
+                      : 'bg-white/[0.03] text-neutral-400 border-white/[0.08] hover:text-white hover:bg-white/[0.06]'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" /> {label}
@@ -815,18 +815,18 @@ export default function NotificationCenterPage() {
           </div>
 
           {/* Live Preview */}
-          <div className="rounded-lg bg-[#14171A] border border-[#262B2F] p-3.5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#949599] mb-2">
+          <div className="rounded-xl bg-[#0b0e14] border border-white/[0.08] p-3.5">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500 mb-2">
               Preview (How users will see this)
             </p>
-            <div className="p-3 rounded-lg bg-[#1C232B] border border-[#262B2F]">
+            <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08]">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-[#EFEFF1]">
+                <p className="text-xs font-semibold text-white">
                   {form.title || 'Untitled Notification'}
                 </p>
-                <span className="text-[10px] text-[#6B7278]">Just now</span>
+                <span className="text-[10px] text-neutral-500">Just now</span>
               </div>
-              <p className="text-xs text-[#949599] mt-1 leading-relaxed">
+              <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
                 {form.message || 'Notification body will appear here once typed...'}
               </p>
             </div>

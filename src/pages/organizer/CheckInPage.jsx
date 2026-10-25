@@ -596,20 +596,20 @@ export default function CheckInPage() {
       />
 
       {/* Control Bar: Event Selector & Audio / Auto-resume Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#171A1D] border border-[#262B2F] p-4 rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#121620] border border-white/[0.08] p-3.5 rounded-xl">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-[#949599]">Active Event</label>
+          <label className="text-xs font-medium uppercase tracking-wider text-neutral-400">Active Event</label>
           <select
             value={selectedEvent}
             onChange={(e) => {
               setSelectedEvent(e.target.value);
               setScanResult(null);
             }}
-            className="flex-1 max-w-md px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer"
+            className="flex-1 max-w-md px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-neutral-200 focus:outline-none focus:border-white/30 transition cursor-pointer"
           >
-            {isAdmin && <option value="all">⭐ All Events (Platform Global Check-In)</option>}
+            {isAdmin && <option value="all" className="bg-[#121620]">⭐ All Events (Platform Global Check-In)</option>}
             {events.map((e) => (
-              <option key={e.id} value={e.id}>{e.title}</option>
+              <option key={e.id} value={e.id} className="bg-[#121620]">{e.title}</option>
             ))}
           </select>
         </div>
@@ -618,8 +618,8 @@ export default function CheckInPage() {
           {/* Auto Resume Toggle */}
           <button
             onClick={() => setAutoResume(!autoResume)}
-            className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-semibold transition ${
-              autoResume ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599]'
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition ${
+              autoResume ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-white/[0.03] border-white/[0.08] text-neutral-400 hover:text-white'
             }`}
             title="Auto-resume next scan after 3.5 seconds"
           >
@@ -630,8 +630,8 @@ export default function CheckInPage() {
           {/* Sound Toggle */}
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className={`p-2.5 rounded-lg border transition ${
-              soundEnabled ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-[#1C232B] border-[#494F55]/40 text-[#949599]'
+            className={`p-2 rounded-lg border transition ${
+              soundEnabled ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-white/[0.03] border-white/[0.08] text-neutral-400 hover:text-white'
             }`}
             title={soundEnabled ? 'Audio Chime Enabled' : 'Muted'}
           >
@@ -644,7 +644,7 @@ export default function CheckInPage() {
               fetchLiveStats();
               fetchAttendees();
             }}
-            className="p-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] hover:text-white transition"
+            className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-neutral-400 hover:text-white transition"
             title="Refresh Live Attendance"
           >
             <RefreshCw className="w-4 h-4" />
@@ -654,7 +654,7 @@ export default function CheckInPage() {
           {selectedEvent !== 'all' && (
             <button
               onClick={exportCheckInCsv}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs font-semibold text-[#EFEFF1] hover:border-white/40 transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white hover:bg-white/[0.06] transition"
             >
               <Download className="w-3.5 h-3.5" /> Export CSV
             </button>
@@ -664,71 +664,71 @@ export default function CheckInPage() {
 
       {/* Live Check-in Statistics Scoreboard (Synced with DB) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-          <div className="flex items-center gap-2 text-xs text-[#949599] font-bold uppercase tracking-wider">
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4">
+          <div className="flex items-center gap-2 text-xs text-neutral-400 font-medium uppercase tracking-wider">
             <Users className="w-4 h-4 text-sky-400" /> TOTAL PASSES
           </div>
-          <p className="mt-2 text-3xl font-extrabold text-[#EFEFF1] tabular-nums">{stats.total.toLocaleString()}</p>
-          <span className="text-[11px] text-[#6B7278]">Total registered tickets</span>
+          <p className="mt-2 text-2xl font-bold text-white tabular-nums">{stats.total.toLocaleString()}</p>
+          <span className="text-[11px] text-neutral-500">Total registered tickets</span>
         </div>
 
-        <div className="rounded-xl bg-[#171A1D] border border-emerald-500/30 p-4">
-          <div className="flex items-center gap-2 text-xs text-emerald-400 font-bold uppercase tracking-wider">
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4">
+          <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium uppercase tracking-wider">
             <UserCheck className="w-4 h-4" /> ADMITTED INSIDE
           </div>
-          <p className="mt-2 text-3xl font-extrabold text-emerald-400 tabular-nums">{stats.checkedIn.toLocaleString()}</p>
-          <span className="text-[11px] text-emerald-500/70">Scanned & approved at gate</span>
+          <p className="mt-2 text-2xl font-bold text-emerald-400 tabular-nums">{stats.checkedIn.toLocaleString()}</p>
+          <span className="text-[11px] text-neutral-500">Scanned &amp; approved at gate</span>
         </div>
 
-        <div className="rounded-xl bg-[#171A1D] border border-amber-500/30 p-4">
-          <div className="flex items-center gap-2 text-xs text-amber-400 font-bold uppercase tracking-wider">
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4">
+          <div className="flex items-center gap-2 text-xs text-amber-400 font-medium uppercase tracking-wider">
             <Clock className="w-4 h-4" /> REMAINING
           </div>
-          <p className="mt-2 text-3xl font-extrabold text-amber-300 tabular-nums">{stats.notArrived.toLocaleString()}</p>
-          <span className="text-[11px] text-amber-500/70">Awaiting gate arrival</span>
+          <p className="mt-2 text-2xl font-bold text-amber-300 tabular-nums">{stats.notArrived.toLocaleString()}</p>
+          <span className="text-[11px] text-neutral-500">Awaiting gate arrival</span>
         </div>
 
-        <div className="rounded-xl bg-gradient-to-br from-emerald-500/20 via-[#171A1D] to-[#1C232B] border border-emerald-500/40 p-4">
-          <div className="flex items-center gap-2 text-xs text-emerald-300 font-bold uppercase tracking-wider">
-            <Zap className="w-4 h-4 text-emerald-400" /> ADMISSION RATE
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4">
+          <div className="flex items-center gap-2 text-xs text-neutral-400 font-medium uppercase tracking-wider">
+            <Zap className="w-4 h-4 text-white" /> ADMISSION RATE
           </div>
-          <p className="mt-2 text-3xl font-black text-white tabular-nums">{stats.rate}%</p>
-          <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">{stats.rate}% OF GUESTS ADMITTED</span>
+          <p className="mt-2 text-2xl font-bold text-white tabular-nums">{stats.rate}%</p>
+          <span className="text-[11px] text-neutral-500">{stats.rate}% of guests admitted</span>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
-        <div className="flex items-center justify-between text-xs text-[#949599] mb-2">
+      <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4">
+        <div className="flex items-center justify-between text-xs text-neutral-400 mb-2">
           <span>Live Gate Check-in Progress</span>
-          <span className="tabular-nums font-semibold text-[#EFEFF1]">{stats.checkedIn} of {stats.total} Attendees</span>
+          <span className="tabular-nums font-medium text-white">{stats.checkedIn} of {stats.total} Attendees</span>
         </div>
-        <div className="h-2.5 rounded-full bg-[#494F55]/30 overflow-hidden">
+        <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-white to-emerald-400 rounded-full transition-all duration-500"
+            className="h-full bg-white rounded-full transition-all duration-500"
             style={{ width: `${Math.min(Number(stats.rate), 100)}%` }}
           />
         </div>
       </div>
 
       {/* Tabs: Camera Scanner vs Attendee Roster */}
-      <div className="flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#262B2F] w-fit">
+      <div className="flex items-center gap-1 p-1 rounded-lg bg-[#121620] border border-white/[0.08] w-fit">
         <button
           onClick={() => setTab('scanner')}
-          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition ${
-            tab === 'scanner' ? 'bg-white text-[#1C232B] font-bold' : 'text-[#949599] hover:text-[#EFEFF1]'
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition ${
+            tab === 'scanner' ? 'bg-white text-black' : 'text-neutral-400 hover:text-white'
           }`}
         >
-          <ScanLine className="w-4 h-4" /> Camera Scanner & Manual Input
+          <ScanLine className="w-3.5 h-3.5" /> Camera Scanner &amp; Manual Input
         </button>
         {selectedEvent !== 'all' && (
           <button
             onClick={() => setTab('manual')}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition ${
-              tab === 'manual' ? 'bg-white text-[#1C232B] font-bold' : 'text-[#949599] hover:text-[#EFEFF1]'
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition ${
+              tab === 'manual' ? 'bg-white text-black' : 'text-neutral-400 hover:text-white'
             }`}
           >
-            <Search className="w-4 h-4" /> Attendee Roster ({attendees.length})
+            <Search className="w-3.5 h-3.5" /> Attendee Roster ({attendees.length})
           </button>
         )}
       </div>
@@ -737,18 +737,18 @@ export default function CheckInPage() {
         {/* Main Scanner Section */}
         <div className="lg:col-span-2">
           {tab === 'scanner' ? (
-            <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-6 space-y-5">
+            <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-5 space-y-4">
               {/* Camera Device Selector & Hardware Controls */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-[#14181C] border border-[#262B2F]">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-lg bg-white/[0.02] border border-white/[0.08]">
                 <div className="flex items-center gap-2 flex-1 min-w-[240px]">
                   <Camera className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span className="text-xs font-bold text-[#949599] uppercase tracking-wider shrink-0">
-                    Camera Source:
+                  <span className="text-xs font-medium text-neutral-400 uppercase tracking-wider shrink-0">
+                    Camera:
                   </span>
                   <select
                     value={selectedCameraId}
                     onChange={(e) => handleCameraChange(e.target.value)}
-                    className="flex-1 bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs rounded-lg px-3 py-2 font-medium focus:outline-none focus:border-white/50 transition cursor-pointer"
+                    className="flex-1 bg-[#121620] border border-white/[0.08] text-neutral-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-white/30 transition cursor-pointer"
                   >
                     {cameras.length === 0 && <option value="">Default Web Camera</option>}
                     {cameras.map((c, idx) => {
@@ -765,7 +765,7 @@ export default function CheckInPage() {
                   <button
                     type="button"
                     onClick={() => loadCameras()}
-                    className="p-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-[#949599] hover:text-white transition"
+                    className="p-1.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-neutral-400 hover:text-white transition"
                     title="Refresh detected cameras"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
@@ -778,7 +778,7 @@ export default function CheckInPage() {
                         const nextIndex = (currentIndex + 1) % cameras.length;
                         handleCameraChange(cameras[nextIndex].id);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs font-semibold text-[#EFEFF1] hover:text-white transition"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs font-medium text-neutral-200 hover:text-white transition"
                       title="Switch to next camera"
                     >
                       <SwitchCamera className="w-3.5 h-3.5" /> Flip Camera
@@ -787,20 +787,20 @@ export default function CheckInPage() {
                 </div>
               </div>
 
-              {/* Virtual Camera Notice (Directly fixes 'Please start Iriun Webcam' standby) */}
+              {/* Virtual Camera Notice */}
               {isCurrentCameraVirtual && (
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs">
                   <div className="flex items-start sm:items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 sm:mt-0" />
                     <span>
-                      <strong>Virtual Camera ({activeCameraInfo?.label || 'Iriun'}) is active.</strong> If the feed displays &quot;Please start Iriun Webcam&quot; or is blank, switch to your computer&apos;s physical webcam.
+                      <strong>Virtual Camera ({activeCameraInfo?.label || 'Iriun'}) is active.</strong> Switch to your physical webcam if feed is blank.
                     </span>
                   </div>
                   {physicalCameras.length > 0 && (
                     <button
                       type="button"
                       onClick={() => handleCameraChange(physicalCameras[0].id)}
-                      className="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 text-xs font-bold hover:bg-amber-500/30 shrink-0 transition"
+                      className="px-2.5 py-1 rounded bg-amber-500/20 border border-amber-500/30 text-amber-200 text-xs font-semibold hover:bg-amber-500/30 shrink-0 transition"
                     >
                       Switch to {physicalCameras[0].label || 'Built-in Webcam'}
                     </button>
@@ -809,14 +809,14 @@ export default function CheckInPage() {
               )}
 
               {/* Camera Scanner Viewfinder */}
-              <div className="relative rounded-xl bg-[#14181C] border-2 border-dashed border-[#494F55]/40 overflow-hidden min-h-[300px] flex flex-col items-center justify-center">
+              <div className="relative rounded-xl bg-white/[0.01] border-2 border-dashed border-white/10 overflow-hidden min-h-[280px] flex flex-col items-center justify-center">
                 {cameraActive ? (
                   <div className="w-full flex flex-col items-center p-4">
                     <div id="qr-reader-video" className="w-full max-w-sm rounded-xl overflow-hidden shadow-2xl" />
                     <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                       <button
                         onClick={stopCamera}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 text-xs font-semibold hover:bg-red-500/30 transition"
+                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-semibold hover:bg-rose-500/25 transition"
                       >
                         <VideoOff className="w-3.5 h-3.5" /> Stop Camera
                       </button>
@@ -828,7 +828,7 @@ export default function CheckInPage() {
                             const nextIndex = (currentIndex + 1) % cameras.length;
                             handleCameraChange(cameras[nextIndex].id);
                           }}
-                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs font-semibold text-[#EFEFF1] hover:text-white transition"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white transition"
                         >
                           <SwitchCamera className="w-3.5 h-3.5" /> Switch Camera
                         </button>
@@ -836,19 +836,19 @@ export default function CheckInPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="py-12 px-6 text-center">
-                    <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
-                      <Camera className="w-8 h-8 text-[#949599]" />
+                  <div className="py-10 px-6 text-center">
+                    <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3">
+                      <Camera className="w-6 h-6 text-neutral-400" />
                     </div>
-                    <h3 className="text-base font-semibold text-[#EFEFF1]">Live Camera Scanner Ready</h3>
-                    <p className="text-xs text-[#949599] max-w-sm mx-auto mt-1 mb-5">
-                      Point web camera or webcam at attendee QR code on phone or printed pass for automatic gate check-in.
+                    <h3 className="text-sm font-semibold text-white">Live Camera Scanner Ready</h3>
+                    <p className="text-xs text-neutral-400 max-w-sm mx-auto mt-1 mb-4">
+                      Point web camera at attendee QR code on phone or printed pass for automatic gate check-in.
                     </p>
                     <button
                       onClick={() => startCamera()}
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-lg active:scale-95"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition shadow"
                     >
-                      <Camera className="w-4 h-4" /> Start Camera Scanner
+                      <Camera className="w-3.5 h-3.5" /> Start Camera Scanner
                     </button>
                   </div>
                 )}
@@ -856,24 +856,24 @@ export default function CheckInPage() {
 
               {/* Manual Code / Barcode Input */}
               <div>
-                <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">
+                <label className="block text-xs font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">
                   Manual Ticket Code / Barcode Input
                 </label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <QrCode className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+                    <QrCode className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
                     <input
                       value={qrInput}
                       onChange={(e) => setQrInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleScan(qrInput)}
                       placeholder="Paste QR code string or enter pass number (e.g. TC-ABC123)..."
-                      className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+                      className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
                     />
                   </div>
                   <button
                     onClick={() => handleScan(qrInput)}
                     disabled={!qrInput.trim() || scanning}
-                    className="px-5 py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-50 transition shadow-md active:scale-95"
+                    className="px-4 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 disabled:opacity-50 transition"
                   >
                     {scanning ? 'Verifying...' : 'Check In'}
                   </button>
@@ -943,7 +943,7 @@ export default function CheckInPage() {
                         <div className="flex items-center justify-between gap-3 pt-1">
                           <button
                             onClick={handleResetScan}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 text-[#161D22] text-xs font-bold hover:bg-emerald-400 transition shadow"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 text-neutral-950 text-xs font-bold hover:bg-emerald-400 transition shadow"
                           >
                             <Check className="w-3.5 h-3.5" /> Scan Next Ticket
                           </button>
@@ -1011,7 +1011,7 @@ export default function CheckInPage() {
                         <div className="flex items-center justify-between gap-3 pt-1">
                           <button
                             onClick={handleResetScan}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-[#161D22] text-xs font-bold hover:bg-amber-400 transition shadow"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-neutral-950 text-xs font-bold hover:bg-amber-400 transition shadow"
                           >
                             <RefreshCw className="w-3.5 h-3.5" /> Dismiss &amp; Scan Next Ticket
                           </button>
@@ -1063,14 +1063,14 @@ export default function CheckInPage() {
             </div>
           ) : (
             /* MANUAL ATTENDEE ROSTER TAB */
-            <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-6 space-y-5">
+            <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-5 space-y-4">
               <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
                 <input
                   value={manualQuery}
                   onChange={(e) => setManualQuery(e.target.value)}
                   placeholder="Filter attendees by name, email, phone, or ticket code..."
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
                 />
               </div>
 
@@ -1081,11 +1081,11 @@ export default function CheckInPage() {
                     return (
                       <div
                         key={a.id}
-                        className="flex items-center justify-between p-4 rounded-xl bg-[#1C232B] border border-[#262B2F] hover:border-white/20 transition"
+                        className="flex items-center justify-between p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.08] hover:border-white/20 transition"
                       >
                         <div className="min-w-0 pr-4">
-                          <p className="text-sm font-semibold text-[#EFEFF1] truncate">{a.name || a.attendeeName}</p>
-                          <p className="text-xs text-[#949599] truncate mt-0.5">
+                          <p className="text-sm font-medium text-white truncate">{a.name || a.attendeeName}</p>
+                          <p className="text-xs text-neutral-400 truncate mt-0.5">
                             {a.email || a.attendeeEmail} · {a.ticketType || a.ticket_type_name || 'Ticket'} · #{a.ticketCode || a.id}
                           </p>
                         </div>
@@ -1095,7 +1095,7 @@ export default function CheckInPage() {
                           <button
                             onClick={() => handleManualCheckIn(a)}
                             disabled={checkingIn === a.id}
-                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] disabled:opacity-50 transition shadow active:scale-95"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 disabled:opacity-50 transition active:scale-95"
                           >
                             <UserCheck className="w-3.5 h-3.5" />
                             {checkingIn === a.id ? 'Checking In...' : 'Check In'}
@@ -1118,20 +1118,20 @@ export default function CheckInPage() {
         </div>
 
         {/* Live Gate Admission Feed (Shared across Web & Mobile) */}
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 h-fit space-y-4">
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4 h-fit space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-[#EFEFF1] flex items-center gap-2">
+            <h3 className="text-xs font-semibold text-white flex items-center gap-2">
               <TicketIcon className="w-4 h-4 text-white" /> Recent Gate Admissions
             </h3>
             {recentScans.length > 0 && (
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                 {recentScans.length} Live
               </span>
             )}
           </div>
 
           {recentScans.length === 0 ? (
-            <div className="py-10 text-center text-xs text-[#949599] border border-dashed border-[#262B2F] rounded-lg">
+            <div className="py-8 text-center text-xs text-neutral-500 border border-dashed border-white/[0.08] rounded-lg">
               No admissions recorded for this event yet.
             </div>
           ) : (
@@ -1143,14 +1143,14 @@ export default function CheckInPage() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0 }}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-[#1C232B] border border-[#262B2F]"
+                    className="flex items-center gap-3 p-2.5 rounded-lg bg-white/[0.02] border border-white/[0.08]"
                   >
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-[#EFEFF1] truncate">
+                      <p className="text-xs font-medium text-white truncate">
                         {item.attendee || item.name || 'Guest'}
                       </p>
-                      <p className="text-[11px] text-[#949599] truncate">
+                      <p className="text-[11px] text-neutral-400 truncate">
                         #{item.code || item.ticket_number} · {item.tier || 'General Admission'} {item.time ? `· ${item.time}` : ''}
                       </p>
                     </div>

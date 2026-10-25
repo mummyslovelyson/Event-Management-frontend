@@ -408,7 +408,7 @@ export default function MobileAppManagementPage() {
                               }}
                             />
                           ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-[#242B32] to-[#1C232B] flex items-center justify-center text-gray-500">
+                            <div className="w-full h-full bg-[#1C232B] flex items-center justify-center text-gray-500">
                               <ImageIcon className="w-6 h-6" />
                             </div>
                           )}
@@ -761,11 +761,11 @@ export default function MobileAppManagementPage() {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full bg-gradient-to-tr from-accent/40 to-[#242B32] flex items-center justify-center">
+                            <div className="w-full h-full bg-white/5 flex items-center justify-center">
                               <Layers className="w-6 h-6 text-white/40" />
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-2.5 flex flex-col justify-end">
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-2.5 flex flex-col justify-end">
                             <h6 className="text-[11px] font-bold text-white line-clamp-1">
                               {activeBanners[previewBannerIndex % activeBanners.length]?.title}
                             </h6>

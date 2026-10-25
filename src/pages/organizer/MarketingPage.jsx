@@ -12,7 +12,7 @@ import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 
-const inputCls = 'w-full px-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition';
+const inputCls = 'w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition';
 
 const TABS = [
   { key: 'email', label: 'Email Campaign', icon: Mail },
@@ -114,7 +114,7 @@ export default function MarketingPage() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
         icon={Megaphone}
         accent="rose"
@@ -123,16 +123,19 @@ export default function MarketingPage() {
       />
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 overflow-x-auto border-b border-[#262B2F]">
+      <div className="flex items-center gap-1.5 p-1 bg-white/[0.02] border border-white/[0.08] rounded-xl w-fit">
         {TABS.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
-            className={`relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${tab === key ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition ${
+              tab === key
+                ? 'bg-white text-black font-semibold shadow-sm'
+                : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
+            }`}
           >
-            <Icon className="w-4 h-4" />
+            <Icon className="w-3.5 h-3.5" />
             {label}
-            {tab === key && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-white" />}
           </button>
         ))}
       </div>
@@ -140,22 +143,22 @@ export default function MarketingPage() {
       {/* Campaign composer + preview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Composer */}
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 space-y-4">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#EFEFF1]">
-            {(() => { const I = TABS.find((x) => x.key === tab).icon; return <I className="w-5 h-5 text-white" />; })()}
+        <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-5 space-y-4">
+          <div className="flex items-center gap-2 text-xs font-semibold text-white">
+            {(() => { const I = TABS.find((x) => x.key === tab).icon; return <I className="w-4 h-4 text-neutral-400" />; })()}
             {TABS.find((x) => x.key === tab).label}
           </div>
 
           {/* Event selector (email + sms) */}
           {(tab === 'email' || tab === 'sms') && (
             <div>
-              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Event (optional)</label>
+              <label className="block text-[11px] font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">Event (optional)</label>
               <select
                 value={tab === 'email' ? emailForm.eventId : smsForm.eventId}
                 onChange={(e) => tab === 'email'
                   ? setEmailForm((f) => ({ ...f, eventId: e.target.value }))
                   : setSmsForm((f) => ({ ...f, eventId: e.target.value }))}
-                className={inputCls}
+                className={`${inputCls} bg-[#121620]`}
               >
                 <option value="">All events</option>
                 {events.map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
@@ -166,7 +169,7 @@ export default function MarketingPage() {
           {/* Push title */}
           {tab === 'push' && (
             <div>
-              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Notification Title</label>
+              <label className="block text-[11px] font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">Notification Title</label>
               <input
                 value={pushForm.title}
                 onChange={(e) => setPushForm((f) => ({ ...f, title: e.target.value }))}
@@ -180,7 +183,7 @@ export default function MarketingPage() {
           {/* Email subject */}
           {tab === 'email' && (
             <div>
-              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Subject</label>
+              <label className="block text-[11px] font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">Subject</label>
               <input
                 value={emailForm.subject}
                 onChange={(e) => setEmailForm((f) => ({ ...f, subject: e.target.value }))}
@@ -193,7 +196,7 @@ export default function MarketingPage() {
 
           {/* Message */}
           <div>
-            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Message</label>
+            <label className="block text-[11px] font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">Message</label>
             <textarea
               value={tab === 'email' ? emailForm.message : tab === 'sms' ? smsForm.message : pushForm.message}
               onChange={(e) => {
@@ -207,14 +210,14 @@ export default function MarketingPage() {
               placeholder={tab === 'sms' ? 'Your SMS message (max 160 chars)...' : 'Write your message...'}
               className={`${inputCls} resize-none`}
             />
-            <div className="mt-1 flex justify-between text-xs">
-              <span className="text-[#494F55]">
+            <div className="mt-1 flex justify-between text-[11px]">
+              <span className="text-neutral-500">
                 {tab === 'email' && `${emailCharCount} characters`}
                 {tab === 'sms' && `${smsForm.message?.length || 0}/${SMS_LIMIT} characters`}
                 {tab === 'push' && `${pushForm.message?.length || 0} characters`}
               </span>
               {tab === 'sms' && (
-                <span className={smsCount < 20 ? 'text-amber-400' : 'text-[#949599]'}>
+                <span className={smsCount < 20 ? 'text-amber-400 font-medium' : 'text-neutral-400'}>
                   {smsCount} left
                 </span>
               )}
@@ -223,7 +226,7 @@ export default function MarketingPage() {
 
           {/* Audience */}
           <div>
-            <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Audience</label>
+            <label className="block text-[11px] font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">Audience</label>
             <select
               value={tab === 'email' ? emailForm.audience : tab === 'sms' ? smsForm.audience : pushForm.audience}
               onChange={(e) => {
@@ -232,7 +235,7 @@ export default function MarketingPage() {
                 else if (tab === 'sms') setSmsForm((f) => ({ ...f, audience: val, ticketType: '' }));
                 else setPushForm((f) => ({ ...f, audience: val, ticketType: '' }));
               }}
-              className={inputCls}
+              className={`${inputCls} bg-[#121620]`}
             >
               {audienceOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
@@ -243,7 +246,7 @@ export default function MarketingPage() {
             (tab === 'sms' && smsForm.audience === 'ticket_type') ||
             (tab === 'push' && pushForm.audience === 'ticket_type')) && (
             <div>
-              <label className="block text-xs font-medium text-[#949599] mb-1.5 uppercase tracking-wider">Ticket Type</label>
+              <label className="block text-[11px] font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">Ticket Type</label>
               <input
                 value={tab === 'email' ? emailForm.ticketType : tab === 'sms' ? smsForm.ticketType : pushForm.ticketType}
                 onChange={(e) => {
@@ -263,56 +266,56 @@ export default function MarketingPage() {
             <button
               onClick={() => handleSend(tab)}
               disabled={sending}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] disabled:opacity-60 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 disabled:opacity-60 transition"
             >
-              <Send className="w-4 h-4" /> {sending ? 'Sending...' : 'Send Campaign'}
+              <Send className="w-3.5 h-3.5" /> {sending ? 'Sending...' : 'Send Campaign'}
             </button>
             {tab === 'email' && (
               <button
                 onClick={() => setShowPreview((v) => !v)}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] border border-[#494F55]/40 hover:text-[#EFEFF1] hover:bg-[#494F55]/20 transition"
+                className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium text-neutral-300 border border-white/[0.08] bg-white/[0.02] hover:text-white hover:bg-white/[0.06] transition"
               >
-                <Eye className="w-4 h-4" /> Preview
+                <Eye className="w-3.5 h-3.5" /> Preview
               </button>
             )}
           </div>
         </div>
 
         {/* Preview pane */}
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5">
-          <p className="text-xs font-medium uppercase tracking-wider text-[#949599] mb-3">Preview</p>
+        <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-5">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-400 mb-3">Live Preview</p>
           {tab === 'email' ? (
-            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] overflow-hidden">
-              <div className="px-4 py-3 border-b border-[#262B2F]">
-                <p className="text-xs text-[#949599]">From: Tribes & Cliqs &lt;noreply@tribesandcliqs.com&gt;</p>
-                <p className="text-sm font-semibold text-[#EFEFF1] mt-1">{emailForm.subject || '(no subject)'}</p>
+            <div className="rounded-xl bg-[#0b0e14] border border-white/[0.08] overflow-hidden">
+              <div className="px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
+                <p className="text-[11px] text-neutral-400">From: Tribes & Cliqs &lt;noreply@tribesandcliqs.com&gt;</p>
+                <p className="text-xs font-semibold text-white mt-1">{emailForm.subject || '(no subject)'}</p>
               </div>
               <div className="p-4">
-                <p className="text-sm text-[#EFEFF1] whitespace-pre-wrap leading-relaxed min-h-[120px]">
+                <p className="text-xs text-neutral-300 whitespace-pre-wrap leading-relaxed min-h-[140px]">
                   {emailForm.message || 'Your email content will appear here...'}
                 </p>
               </div>
             </div>
           ) : tab === 'sms' ? (
             <div className="space-y-3">
-              <div className="max-w-[280px] rounded-2xl rounded-bl-sm bg-white/10 border border-white/20 px-4 py-3">
-                <p className="text-sm text-[#EFEFF1] leading-relaxed">{smsForm.message || 'SMS preview...'}</p>
-                <p className="text-[10px] text-[#949599] mt-1.5 text-right">{new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
+              <div className="max-w-[280px] rounded-2xl rounded-bl-sm bg-white/[0.06] border border-white/[0.1] px-4 py-3">
+                <p className="text-xs text-white leading-relaxed">{smsForm.message || 'SMS preview...'}</p>
+                <p className="text-[10px] text-neutral-500 mt-1.5 text-right">{new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-[#949599]">
+              <div className="flex items-center gap-1.5 text-xs text-neutral-400">
                 <AlertCircle className="w-3.5 h-3.5" /> {smsForm.message?.length || 0}/160 chars · {Math.ceil((smsForm.message?.length || 0) / 160) || 1} SMS
               </div>
             </div>
           ) : (
-            <div className="rounded-lg bg-[#1C232B] border border-[#262B2F] p-4">
+            <div className="rounded-xl bg-[#0b0e14] border border-white/[0.08] p-4">
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0">
-                  <Megaphone className="w-4 h-4 text-[#1C232B]" />
+                <div className="w-9 h-9 rounded-xl bg-white/[0.08] border border-white/[0.1] text-white flex items-center justify-center shrink-0">
+                  <Megaphone className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[#EFEFF1]">{pushForm.title || 'Notification Title'}</p>
-                  <p className="text-sm text-[#949599] mt-0.5">{pushForm.message || 'Notification message...'}</p>
-                  <p className="text-[10px] text-[#494F55] mt-1">Tribes & Cliqs · now</p>
+                  <p className="text-xs font-semibold text-white">{pushForm.title || 'Notification Title'}</p>
+                  <p className="text-xs text-neutral-400 mt-0.5 leading-relaxed">{pushForm.message || 'Notification message...'}</p>
+                  <p className="text-[10px] text-neutral-500 mt-1.5">Tribes & Cliqs · now</p>
                 </div>
               </div>
             </div>
@@ -322,18 +325,18 @@ export default function MarketingPage() {
 
       {/* Campaign History */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-[#EFEFF1]">Campaign History</h2>
+        <h2 className="text-sm font-semibold text-white">Campaign History</h2>
         {loadingCampaigns ? (
           <LoadingSpinner label="Loading campaigns..." className="py-12" />
         ) : campaigns.length === 0 ? (
-          <div className="rounded-xl bg-[#171A1D] border border-[#262B2F]">
+          <div className="rounded-2xl bg-[#121620] border border-white/[0.08]">
             <EmptyState icon={Megaphone} title="No campaigns yet" description="Your sent campaigns will appear here." className="py-12" />
           </div>
         ) : (
-          <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden overflow-x-auto">
-            <table className="w-full text-sm min-w-[720px]">
+          <div className="rounded-2xl bg-[#121620] border border-white/[0.08] overflow-hidden overflow-x-auto">
+            <table className="w-full text-xs min-w-[720px]">
               <thead>
-                <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
+                <tr className="text-left text-[11px] font-medium text-neutral-400 border-b border-white/[0.06] bg-white/[0.02]">
                   <th className="px-4 py-3 font-medium">Type</th>
                   <th className="px-4 py-3 font-medium">Event</th>
                   <th className="px-4 py-3 font-medium">Audience</th>
@@ -342,21 +345,21 @@ export default function MarketingPage() {
                   <th className="px-4 py-3 font-medium">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#262B2F]/70">
+              <tbody className="divide-y divide-white/[0.06]">
                 {campaigns.map((c) => {
                   const meta = campaignTypeVariant(c.type || c.channel);
                   return (
-                    <tr key={c.id} className="hover:bg-[#1D2124] transition-colors">
+                    <tr key={c.id} className="hover:bg-white/[0.02] transition-colors">
                       <td className="px-4 py-3">
                         <span className="inline-flex items-center gap-1.5">
-                          <meta.Icon className="w-4 h-4 text-[#949599]" />
-                          <span className="text-[#EFEFF1] font-medium">{meta.label}</span>
+                          <meta.Icon className="w-3.5 h-3.5 text-neutral-400" />
+                          <span className="text-white font-medium">{meta.label}</span>
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-[#949599] max-w-[160px] truncate">{c.eventTitle || c.event?.title || 'All events'}</td>
-                      <td className="px-4 py-3 text-[#949599] capitalize">{(c.audience || 'all').replace('_', ' ')}</td>
-                      <td className="px-4 py-3 text-right text-[#EFEFF1] font-medium">{c.audienceSize ?? c.recipients ?? '—'}</td>
-                      <td className="px-4 py-3 text-xs text-[#949599] whitespace-nowrap">
+                      <td className="px-4 py-3 text-neutral-300 max-w-[160px] truncate">{c.eventTitle || c.event?.title || 'All events'}</td>
+                      <td className="px-4 py-3 text-neutral-400 capitalize">{(c.audience || 'all').replace('_', ' ')}</td>
+                      <td className="px-4 py-3 text-right text-white font-medium">{c.audienceSize ?? c.recipients ?? '—'}</td>
+                      <td className="px-4 py-3 text-xs text-neutral-400 whitespace-nowrap">
                         {c.sentAt || c.createdAt ? new Date(c.sentAt || c.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
                       </td>
                       <td className="px-4 py-3">

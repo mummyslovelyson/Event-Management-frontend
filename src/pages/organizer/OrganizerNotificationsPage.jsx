@@ -151,48 +151,48 @@ export default function OrganizerNotificationsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-white">Organizer Notifications</h1>
+            <h1 className="text-xl font-bold text-white">Organizer Notifications</h1>
             {unreadCount > 0 && (
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white text-[#111417]">
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-white text-black">
                 {unreadCount} new
               </span>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-[#949599] mt-1">
+          <p className="text-xs text-neutral-400 mt-1">
             Real-time ticket sales alerts, payout updates, gate check-in milestones, and attendee broadcasts.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setBroadcastOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-[#111417] text-xs sm:text-sm font-bold hover:bg-[#CBD5E1] transition shadow-sm cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition cursor-pointer"
           >
-            <Megaphone className="w-4 h-4" /> Broadcast to Attendees
+            <Megaphone className="w-3.5 h-3.5" /> Broadcast to Attendees
           </button>
 
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllRead}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#262B2F] text-white text-xs font-medium hover:bg-[#3A4045] transition cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.04] text-neutral-300 border border-white/[0.08] text-xs font-medium hover:text-white hover:bg-white/[0.08] transition cursor-pointer"
             >
-              <CheckCheck className="w-4 h-4" /> Mark all read
+              <CheckCheck className="w-3.5 h-3.5 text-emerald-400" /> Mark all read
             </button>
           )}
 
           <button
             onClick={fetchNotifs}
             disabled={loading}
-            className="p-2 rounded-xl bg-[#171A1D] border border-[#262B2F] text-[#949599] hover:text-white transition disabled:opacity-50"
+            className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-neutral-400 hover:text-white transition disabled:opacity-50"
             title="Refresh"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-[#262B2F] no-scrollbar">
+      <div className="flex items-center gap-1.5 p-1 bg-white/[0.02] border border-white/[0.08] rounded-xl w-fit overflow-x-auto no-scrollbar">
         {[
           { id: 'all', label: 'All Alerts' },
           { id: 'unread', label: `Unread (${unreadCount})` },
@@ -203,10 +203,10 @@ export default function OrganizerNotificationsPage() {
           <button
             key={tab.id}
             onClick={() => setFilter(tab.id)}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition shrink-0 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition shrink-0 ${
               filter === tab.id
-                ? 'bg-white text-[#111417]'
-                : 'text-[#949599] hover:text-white hover:bg-[#1D2124]'
+                ? 'bg-white text-black font-semibold'
+                : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
             {tab.label}
@@ -217,17 +217,17 @@ export default function OrganizerNotificationsPage() {
       {/* Notifications List */}
       <div className="space-y-2.5">
         {loading ? (
-          <div className="py-16 text-center text-sm text-[#949599] flex flex-col items-center gap-3">
-            <RefreshCw className="w-6 h-6 animate-spin text-white" />
+          <div className="py-16 text-center text-xs text-neutral-400 flex flex-col items-center gap-3">
+            <RefreshCw className="w-5 h-5 animate-spin text-white" />
             Loading organizer alerts...
           </div>
         ) : filteredNotifications.length === 0 ? (
-          <div className="p-12 rounded-2xl bg-[#171A1D] border border-[#262B2F] text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#262B2F] flex items-center justify-center text-[#6B7278] mx-auto">
-              <Bell className="w-6 h-6" />
+          <div className="p-12 rounded-2xl bg-[#121620] border border-white/[0.08] text-center space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-neutral-400 mx-auto">
+              <Bell className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white">No notifications in this view</h3>
-            <p className="text-xs text-[#949599] max-w-sm mx-auto">
+            <h3 className="text-sm font-semibold text-white">No notifications in this view</h3>
+            <p className="text-xs text-neutral-400 max-w-sm mx-auto">
               You are all caught up! As tickets are purchased or payouts are disbursed, alerts will appear right here.
             </p>
           </div>
@@ -240,29 +240,29 @@ export default function OrganizerNotificationsPage() {
                 layout
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`p-4 rounded-xl border transition flex items-start justify-between gap-4 ${
+                className={`p-4 rounded-2xl border transition flex items-start justify-between gap-4 ${
                   isRead
-                    ? 'bg-[#171A1D]/60 border-[#262B2F] hover:border-[#3A4045]'
-                    : 'bg-[#1C232B] border-white/20 shadow-md hover:border-white/40'
+                    ? 'bg-[#121620] border-white/[0.08] hover:border-white/20 hover:bg-white/[0.02]'
+                    : 'bg-[#121620] border-white/20 shadow-sm hover:border-white/40'
                 }`}
               >
                 <div className="flex items-start gap-3.5 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-[#262B2F] flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0 mt-0.5">
                     {getIconForType(n.type)}
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className={`text-sm font-semibold truncate ${isRead ? 'text-[#EFEFF1]' : 'text-white font-bold'}`}>
+                      <h4 className={`text-xs font-semibold truncate ${isRead ? 'text-neutral-200' : 'text-white'}`}>
                         {n.title || 'Platform Notification'}
                       </h4>
                       {!isRead && (
-                        <span className="w-2 h-2 rounded-full bg-white shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
                       )}
                     </div>
-                    <p className="text-xs text-[#949599] mt-1 leading-relaxed">
+                    <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
                       {n.message || n.body}
                     </p>
-                    <span className="inline-block text-[11px] text-[#6B7278] mt-2">
+                    <span className="inline-block text-[11px] text-neutral-500 mt-2">
                       {n.created_at ? new Date(n.created_at).toLocaleString() : 'Just now'}
                     </span>
                   </div>
@@ -272,7 +272,7 @@ export default function OrganizerNotificationsPage() {
                   {!isRead && (
                     <button
                       onClick={() => handleMarkAsRead(n.id)}
-                      className="p-1.5 rounded-lg text-[#949599] hover:text-white hover:bg-[#262B2F] transition"
+                      className="p-1.5 rounded-lg text-neutral-400 hover:text-emerald-300 hover:bg-white/[0.06] transition"
                       title="Mark as read"
                     >
                       <CheckCircle2 className="w-4 h-4" />
@@ -280,7 +280,7 @@ export default function OrganizerNotificationsPage() {
                   )}
                   <button
                     onClick={() => handleDelete(n.id)}
-                    className="p-1.5 rounded-lg text-[#949599] hover:text-rose-400 hover:bg-rose-500/10 transition"
+                    className="p-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition"
                     title="Delete"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -300,18 +300,18 @@ export default function OrganizerNotificationsPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-2xl bg-[#171A1D] border border-[#262B2F] shadow-2xl p-6 space-y-5"
+              className="w-full max-w-lg rounded-2xl bg-[#121620] border border-white/[0.08] shadow-2xl p-6 space-y-5"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-[#262B2F]">
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center">
                     <Megaphone className="w-4 h-4" />
                   </div>
-                  <h3 className="text-base font-bold text-white">Broadcast Announcement</h3>
+                  <h3 className="text-sm font-semibold text-white">Broadcast Announcement</h3>
                 </div>
                 <button
                   onClick={() => setBroadcastOpen(false)}
-                  className="text-xs text-[#949599] hover:text-white"
+                  className="text-xs text-neutral-400 hover:text-white"
                 >
                   ✕
                 </button>
@@ -319,16 +319,16 @@ export default function OrganizerNotificationsPage() {
 
               <form onSubmit={handleSendBroadcast} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[#EFEFF1] mb-1.5">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
                     Target Event
                   </label>
                   <select
                     value={selectedEventId}
                     onChange={(e) => setSelectedEventId(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl bg-[#1C232B] border border-[#3A4045] text-sm text-white focus:outline-none focus:border-white transition"
+                    className="w-full h-10 px-3 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white focus:outline-none focus:border-white/30 transition"
                   >
                     {events.map((e) => (
-                      <option key={e.id} value={e.id} className="bg-[#1C232B]">
+                      <option key={e.id} value={e.id} className="bg-[#121620]">
                         {e.title}
                       </option>
                     ))}
@@ -336,7 +336,7 @@ export default function OrganizerNotificationsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#EFEFF1] mb-1.5">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
                     Announcement Subject
                   </label>
                   <input
@@ -345,12 +345,12 @@ export default function OrganizerNotificationsPage() {
                     placeholder="Announcement subject or headline"
                     value={broadcastTitle}
                     onChange={(e) => setBroadcastTitle(e.target.value)}
-                    className="w-full h-10 px-3.5 rounded-xl bg-[#1C232B] border border-[#3A4045] text-sm text-white placeholder-[#6B7278] focus:outline-none focus:border-white transition"
+                    className="w-full h-10 px-3.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#EFEFF1] mb-1.5">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
                     Message Body
                   </label>
                   <textarea
@@ -359,7 +359,7 @@ export default function OrganizerNotificationsPage() {
                     placeholder="Important update for verified ticket holders attending this event..."
                     value={broadcastMessage}
                     onChange={(e) => setBroadcastMessage(e.target.value)}
-                    className="w-full p-3.5 rounded-xl bg-[#1C232B] border border-[#3A4045] text-sm text-white placeholder-[#6B7278] focus:outline-none focus:border-white transition leading-relaxed resize-none"
+                    className="w-full p-3.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition leading-relaxed resize-none"
                   />
                 </div>
 
@@ -367,14 +367,14 @@ export default function OrganizerNotificationsPage() {
                   <button
                     type="button"
                     onClick={() => setBroadcastOpen(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold text-[#949599] hover:text-white transition"
+                    className="px-3.5 py-2 rounded-lg text-xs font-medium text-neutral-400 hover:text-white transition"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={broadcasting}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#111417] text-xs sm:text-sm font-bold hover:bg-[#CBD5E1] transition disabled:opacity-50 cursor-pointer shadow-md"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition disabled:opacity-50 cursor-pointer"
                   >
                     {broadcasting ? 'Sending...' : 'Send Broadcast'}
                     <Send className="w-3.5 h-3.5" />

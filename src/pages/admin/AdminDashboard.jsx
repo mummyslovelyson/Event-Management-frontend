@@ -254,14 +254,14 @@ export default function AdminDashboard() {
             </div>
 
             <div className="flex items-center gap-4 text-xs text-neutral-400">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-white" />
-                <span>Revenue</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-indigo-400" />
-                <span>Orders</span>
-              </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-white" />
+                    <span>Revenue</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-white/50" />
+                    <span>Orders</span>
+                  </span>
             </div>
           </div>
 
@@ -271,12 +271,12 @@ export default function AdminDashboard() {
                 <AreaChart data={revenueSeries} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="adminRevGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0.12} />
+                      <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0.08} />
                       <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0.0} />
                     </linearGradient>
                     <linearGradient id="adminOrderGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#818CF8" stopOpacity={0.12} />
-                      <stop offset="100%" stopColor="#818CF8" stopOpacity={0.0} />
+                      <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0.05} />
+                      <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />

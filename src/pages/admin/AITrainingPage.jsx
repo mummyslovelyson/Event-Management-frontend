@@ -671,8 +671,8 @@ export default function AITrainingPage() {
                   key={item.id}
                   className={`rounded-2xl p-5 border transition-all flex flex-col justify-between ${
                     item.is_active
-                      ? 'bg-[#161D22] border-[#2E363E] hover:border-white/30'
-                      : 'bg-[#14181C] border-[#242B32] opacity-60'
+                      ? 'bg-[#121620] border-white/[0.08] hover:border-white/20'
+                      : 'bg-white/[0.02] border-white/[0.06] opacity-60'
                   }`}
                 >
                   <div>
@@ -1051,40 +1051,40 @@ export default function AITrainingPage() {
                       )}
 
                       {/* User Info */}
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14181C] border border-[#242B32] text-white text-[11px] font-medium">
-                        <User className="w-3.5 h-3.5 text-[#949599]" />
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.02] border border-white/[0.08] text-white text-[11px] font-medium">
+                        <User className="w-3.5 h-3.5 text-neutral-400" />
                         <span>{item.user_name || 'Guest Visitor'}</span>
                         {item.user_email && (
-                          <span className="text-[#949599] font-normal">({item.user_email})</span>
+                          <span className="text-neutral-400 font-normal">({item.user_email})</span>
                         )}
                       </span>
 
                       {/* Intent Badge */}
                       {item.intent && (
-                        <span className="px-2 py-0.5 rounded bg-[#1C232B] text-[10px] uppercase font-semibold text-[#949599] border border-[#242B32]">
+                        <span className="px-2 py-0.5 rounded bg-white/[0.04] text-[10px] uppercase font-semibold text-neutral-400 border border-white/[0.08]">
                           {item.intent}
                         </span>
                       )}
 
                       {/* Page Location */}
                       {item.page_path && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#14181C] text-[10px] text-[#949599] border border-[#242B32] font-mono">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.02] text-[10px] text-neutral-400 border border-white/[0.08] font-mono">
                           <Globe className="w-3 h-3" />
                           <span>{item.page_path}</span>
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-3 text-xs text-[#949599]">
+                    <div className="flex items-center gap-3 text-xs text-neutral-400">
                       <span className="inline-flex items-center gap-1 text-[11px]">
-                        <Clock className="w-3.5 h-3.5 text-[#494F55]" />
+                        <Clock className="w-3.5 h-3.5 text-neutral-500" />
                         <span>{new Date(item.created_at).toLocaleString()}</span>
                       </span>
 
                       <button
                         type="button"
                         onClick={() => handleDeleteConversation(item.id)}
-                        className="p-1.5 rounded-lg text-[#949599] hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
+                        className="p-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
                         title="Delete log entry"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1096,11 +1096,11 @@ export default function AITrainingPage() {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {/* User Question */}
                     <div className="space-y-1.5">
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[#949599] uppercase tracking-wider">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-400 uppercase tracking-wider">
                         <User className="w-3.5 h-3.5" />
                         <span>User Question / Voice Query:</span>
                       </div>
-                      <div className="p-3.5 rounded-xl bg-[#14181C] border border-[#242B32] text-xs text-white leading-relaxed font-medium">
+                      <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.08] text-xs text-white leading-relaxed font-medium">
                         &quot;{item.question}&quot;
                       </div>
                     </div>
@@ -1166,7 +1166,7 @@ export default function AITrainingPage() {
       {activeTab === 'voice_model' && (
         <div className="space-y-8 animate-fade-in">
           {/* Neural Architecture & Performance Card */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#1C232B] via-[#161D22] to-[#12161A] border border-amber-500/30 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+          <div className="rounded-3xl bg-white/5 border border-white/10 p-6 sm:p-8 relative overflow-hidden">
             <div className="absolute -top-16 -right-16 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
@@ -1197,7 +1197,7 @@ export default function AITrainingPage() {
                   type="button"
                   onClick={handleRetrainVoiceModel}
                   disabled={voiceTraining}
-                  className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-300 text-black font-extrabold text-xs shadow-xl shadow-amber-400/20 hover:brightness-110 transition disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-white/10 text-white font-medium text-xs hover:bg-white/15 transition disabled:opacity-50 cursor-pointer"
                 >
                   {voiceTraining ? (
                     <>
@@ -1232,7 +1232,7 @@ export default function AITrainingPage() {
                 </div>
                 <div className="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 transition-all duration-300 rounded-full"
+                    className="h-full bg-white/70 transition-all duration-300 rounded-full"
                     style={{ width: `${(voiceTrainingProgress.epoch / voiceTrainingProgress.maxEpochs) * 100}%` }}
                   />
                 </div>

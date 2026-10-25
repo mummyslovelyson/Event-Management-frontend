@@ -98,27 +98,27 @@ export default function AuditLogsPage() {
         actions={
           <button
             onClick={() => exportCSV(logs, 'audit-logs.csv')}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#262B2F] text-sm font-medium text-[#EFEFF1] hover:bg-[#2A2F33] transition"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.04] text-xs font-medium text-neutral-300 border border-white/[0.08] hover:text-white hover:bg-white/[0.08] transition"
           >
-            <Download className="w-4 h-4" /> Export CSV
+            <Download className="w-3.5 h-3.5" /> Export CSV
           </button>
         }
       />
 
       {/* Filters */}
-      <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4">
+      <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-4">
         <div className="flex flex-col lg:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search logs..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+              className="w-full pl-9 pr-4 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
             />
           </div>
-          <select value={actionFilter} onChange={(e) => setActionFilter(e.target.value)} className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition">
+          <select value={actionFilter} onChange={(e) => setActionFilter(e.target.value)} className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition">
             <option value="">All Actions</option>
             <option value="CREATE">Create</option>
             <option value="UPDATE">Update</option>
@@ -126,7 +126,7 @@ export default function AuditLogsPage() {
             <option value="LOGIN">Login</option>
             <option value="SUSPEND">Suspend</option>
           </select>
-          <select value={entityFilter} onChange={(e) => setEntityFilter(e.target.value)} className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition">
+          <select value={entityFilter} onChange={(e) => setEntityFilter(e.target.value)} className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition">
             <option value="">All Entities</option>
             <option value="user">User</option>
             <option value="event">Event</option>
@@ -135,17 +135,17 @@ export default function AuditLogsPage() {
             <option value="content">Content</option>
             <option value="settings">Settings</option>
           </select>
-          <input type="text" value={userFilter} onChange={(e) => setUserFilter(e.target.value)} placeholder="User..." className="px-4 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition" />
+          <input type="text" value={userFilter} onChange={(e) => setUserFilter(e.target.value)} placeholder="User..." className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition" />
           <div className="flex items-center gap-2">
-            <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs text-[#EFEFF1] focus:outline-none focus:border-white/50 transition" />
-            <span className="text-[#494F55]">—</span>
-            <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-xs text-[#EFEFF1] focus:outline-none focus:border-white/50 transition" />
+            <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition" />
+            <span className="text-neutral-500">—</span>
+            <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition" />
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
+      <div className="rounded-2xl bg-[#121620] border border-white/[0.08] overflow-hidden">
         {loading ? (
           <LoadingSpinner label="Loading logs..." className="py-16" />
         ) : logs.length === 0 ? (
@@ -154,17 +154,17 @@ export default function AuditLogsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                  <th className="px-4 py-3.5 font-medium w-8"></th>
-                  <th className="px-4 py-3.5 font-medium">Timestamp</th>
-                  <th className="px-4 py-3.5 font-medium">User</th>
-                  <th className="px-4 py-3.5 font-medium">Action</th>
-                  <th className="px-4 py-3.5 font-medium">Entity</th>
-                  <th className="px-4 py-3.5 font-medium">Entity ID</th>
-                  <th className="px-4 py-3.5 font-medium">IP Address</th>
+                <tr className="text-left text-[11px] font-medium text-neutral-400 border-b border-white/[0.06] bg-white/[0.02]">
+                  <th className="px-4 py-3 font-medium w-8"></th>
+                  <th className="px-4 py-3 font-medium">Timestamp</th>
+                  <th className="px-4 py-3 font-medium">User</th>
+                  <th className="px-4 py-3 font-medium">Action</th>
+                  <th className="px-4 py-3 font-medium">Entity</th>
+                  <th className="px-4 py-3 font-medium">Entity ID</th>
+                  <th className="px-4 py-3 font-medium">IP Address</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#262B2F]/70">
+              <tbody className="divide-y divide-white/[0.06]">
                 {logs.map((log) => {
                   const cfg = getActionConfig(log.action);
                   const ActionIcon = cfg.icon;
@@ -173,24 +173,24 @@ export default function AuditLogsPage() {
                     <Fragment key={log.id}>
                       <tr
                         onClick={() => toggleExpand(log.id)}
-                        className="hover:bg-[#1D2124] transition-colors cursor-pointer"
+                        className="hover:bg-white/[0.02] transition-colors cursor-pointer"
                       >
                         <td className="px-4 py-3">
-                          <ChevronDown className={`w-4 h-4 text-[#949599] transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                          <ChevronDown className={`w-4 h-4 text-neutral-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                         </td>
-                        <td className="px-4 py-3 text-xs text-[#949599] whitespace-nowrap">{fmtDateTime(log.timestamp || log.createdAt)}</td>
+                        <td className="px-4 py-3 text-xs text-neutral-400 whitespace-nowrap">{fmtDateTime(log.timestamp || log.createdAt)}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-[#EFEFF1] max-w-[140px] truncate">{log.user?.name || log.userName || 'System'}</span>
+                            <span className="font-medium text-white max-w-[140px] truncate">{log.user?.name || log.userName || 'System'}</span>
                             {log.user?.role && <Badge variant={roleVariant(log.user.role)} size="sm">{log.user.role}</Badge>}
                           </div>
                         </td>
                         <td className="px-4 py-3">
                           <Badge variant={cfg.badge} size="sm"><ActionIcon className="w-3 h-3" /> {log.action}</Badge>
                         </td>
-                        <td className="px-4 py-3 text-[#949599] capitalize">{log.entityType || '—'}</td>
-                        <td className="px-4 py-3 font-mono text-xs text-[#949599]">{log.entityId ? `#${String(log.entityId).slice(-8)}` : '—'}</td>
-                        <td className="px-4 py-3 font-mono text-xs text-[#949599]">{log.ip || log.ipAddress || '—'}</td>
+                        <td className="px-4 py-3 text-neutral-400 capitalize">{log.entityType || '—'}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-neutral-400">{log.entityId ? `#${String(log.entityId).slice(-8)}` : '—'}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-neutral-400">{log.ip || log.ipAddress || '—'}</td>
                       </tr>
                       <AnimatePresence>
                         {isExpanded && (
@@ -203,9 +203,9 @@ export default function AuditLogsPage() {
                                 className="overflow-hidden"
                               >
                                 <div className="py-4 px-2">
-                                  <p className="text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">Details</p>
-                                  <div className="rounded-lg bg-[#111417] border border-[#262B2F] p-4 overflow-x-auto">
-                                    <pre className="text-xs text-[#EFEFF1] font-mono whitespace-pre-wrap break-words">
+                                  <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2">Details Payload</p>
+                                  <div className="rounded-xl bg-[#0b0e14] border border-white/[0.08] p-4 overflow-x-auto">
+                                    <pre className="text-xs text-neutral-300 font-mono whitespace-pre-wrap break-words">
                                       {JSON.stringify(log.details || log.metadata || log, null, 2)}
                                     </pre>
                                   </div>
@@ -223,8 +223,8 @@ export default function AuditLogsPage() {
           </div>
         )}
         {!loading && logs.length > 0 && (
-          <div className="px-5 py-4 border-t border-[#262B2F] flex items-center justify-between">
-            <span className="text-xs text-[#949599]">Page {page} of {totalPages} · {total} total entries</span>
+          <div className="px-5 py-3.5 border-t border-white/[0.06] flex items-center justify-between">
+            <span className="text-xs text-neutral-400">Page {page} of {totalPages} · {total} total entries</span>
             <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
         )}

@@ -521,17 +521,17 @@ export const generateAndPrintExecutiveReport = ({ data, range, fromDate, toDate,
   toast.success('Executive report generated and ready to print');
 };
 
-/* ── Custom Sleek Dark Tooltip matching VALUE Analytics ── */
+/* ── Minimalist SaaS Tooltip ── */
 function ChartTip({ active, payload, label, formatter }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl bg-[#141829]/95 border border-white/15 px-3.5 py-2.5 shadow-2xl shadow-black/80 backdrop-blur-md">
-      {label && <p className="text-[11px] font-semibold text-white/50 mb-1.5">{fmtDay(label)}</p>}
+    <div className="rounded-lg bg-[#121620] border border-white/10 px-3 py-2 shadow-xl backdrop-blur-md">
+      {label && <p className="text-[11px] font-medium text-neutral-400 mb-1">{fmtDay(label)}</p>}
       {payload.map((p) => (
-        <div key={p.dataKey || p.name} className="flex items-center gap-2.5 text-xs py-0.5">
-          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: p.stroke || p.color || p.fill }} />
-          <span className="text-white/70">{p.name}</span>
-          <span className="ml-auto pl-4 font-bold text-white tabular-nums">
+        <div key={p.dataKey || p.name} className="flex items-center gap-3 text-xs py-0.5">
+          <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: p.stroke || p.color || p.fill }} />
+          <span className="text-neutral-300">{p.name}</span>
+          <span className="ml-auto font-semibold text-white tabular-nums">
             {formatter ? formatter(p.value) : p.value?.toLocaleString?.() ?? p.value}
           </span>
         </div>
@@ -540,93 +540,46 @@ function ChartTip({ active, payload, label, formatter }) {
   );
 }
 
-/* ── Card Shell with rounded borders and elevated dark backdrop ── */
+/* ── Linear / Stripe Style Card Surface ── */
 function CardShell({ className = '', children }) {
   return (
-    <div className={`rounded-2xl bg-[#141829] border border-white/[0.07] shadow-xl shadow-black/25 ${className}`}>
+    <div className={`rounded-xl bg-[#121620] border border-white/[0.08] shadow-sm ${className}`}>
       {children}
     </div>
   );
 }
 
-/* ── Wavy SVG Sparklines (Inspired by Sessions/Users/Time spent in reference) ── */
-function Sparkline({ variant = 'coral', id = 'sp1' }) {
-  const configs = {
-    coral: {
-      color: '#f97316',
-      d: 'M 0,28 C 18,34 30,12 48,22 C 68,30 82,8 100,12',
-      area: 'M 0,28 C 18,34 30,12 48,22 C 68,30 82,8 100,12 L 100,42 L 0,42 Z',
-    },
-    cyan: {
-      color: '#06b6d4',
-      d: 'M 0,30 C 22,26 38,36 56,16 C 72,0 84,20 100,8',
-      area: 'M 0,30 C 22,26 38,36 56,16 C 72,0 84,20 100,8 L 100,42 L 0,42 Z',
-    },
-    purple: {
-      color: '#a855f7',
-      d: 'M 0,25 C 20,35 35,15 55,20 C 75,25 85,10 100,5',
-      area: 'M 0,25 C 20,35 35,15 55,20 C 75,25 85,10 100,5 L 100,42 L 0,42 Z',
-    },
-  };
-  const cfg = configs[variant] || configs.coral;
+/* ── Metric Card ── */
+function MetricCard({ title, value, delta, subtext }) {
+  const hasDelta = typeof delta === 'number' && !isNaN(delta);
+  const isPositive = (delta ?? 0) >= 0;
 
   return (
-    <svg className="w-24 sm:w-28 h-10 sm:h-12 shrink-0 overflow-visible" viewBox="0 0 100 42">
-      <defs>
-        <linearGradient id={`grad-${id}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={cfg.color} stopOpacity={0.35} />
-          <stop offset="100%" stopColor={cfg.color} stopOpacity={0} />
-        </linearGradient>
-      </defs>
-      <path d={cfg.area} fill={`url(#grad-${id})`} />
-      <path
-        d={cfg.d}
-        fill="none"
-        stroke={cfg.color}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-/* ── KPI Card matching VALUE Analytics ── */
-function KpiCard({ title, value, delta, isPositive, period = 'Period', variant = 'coral', id, subtext }) {
-  return (
-    <CardShell className="p-4 sm:p-5 flex flex-col justify-between hover:border-violet-500/30 transition-all group">
+    <CardShell className="p-5 flex flex-col justify-between hover:border-white/20 transition-colors">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-medium text-white/60">{title}</span>
-        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#1a1f35] border border-white/[0.06] text-[10px] text-white/60 group-hover:text-white transition cursor-pointer">
-          <span>{period}</span>
-          <ChevronDown className="w-3 h-3 text-white/40" />
-        </div>
+        <span className="text-xs font-medium text-neutral-400 uppercase tracking-wider">{title}</span>
       </div>
 
-      <div className="mt-3 sm:mt-4 flex items-end justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight tabular-nums truncate">
-            {value}
-          </p>
-          <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
-            {delta !== undefined && delta !== null ? (
-              <span
-                className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[11px] font-bold tabular-nums ${
-                  isPositive
-                    ? 'bg-emerald-500/15 text-emerald-400'
-                    : 'bg-red-500/15 text-red-400'
-                }`}
-              >
-                {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                {isPositive ? '+' : ''}{delta}%
-              </span>
-            ) : null}
-            {subtext && (
-              <span className="text-[11px] text-white/40 truncate">{subtext}</span>
-            )}
-          </div>
-        </div>
+      <div className="mt-3">
+        <p className="text-2xl sm:text-3xl font-semibold text-white tracking-tight tabular-nums">
+          {value}
+        </p>
 
-        <Sparkline variant={variant} id={id} />
+        <div className="mt-2 flex items-center gap-2 flex-wrap">
+          {hasDelta ? (
+            <span
+              className={`inline-flex items-center gap-0.5 text-xs font-medium tabular-nums ${
+                isPositive ? 'text-emerald-400' : 'text-rose-400'
+              }`}
+            >
+              {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+              {isPositive ? '+' : ''}{delta.toFixed(1)}%
+            </span>
+          ) : null}
+          {subtext && (
+            <span className="text-xs text-neutral-400">{subtext}</span>
+          )}
+        </div>
       </div>
     </CardShell>
   );
@@ -667,16 +620,8 @@ export default function PlatformReportsPage() {
   const revenueSeries = revenue.series || [];
   const userSeries = users.newUsersSeries || [];
   const categoryDist = events.byCategory || [];
-  const eventsCreated = events.createdOverTime || [];
   const ticketTrend = tickets.salesTrend || [];
   const topEvents = tickets.topEvents || [];
-
-  // Retention Donut Simulation
-  const retentionValue = users.retention ?? 74;
-  const retentionDonutData = [
-    { name: 'Retained', value: retentionValue, color: '#8b5cf6' },
-    { name: 'Active New', value: Math.max(10, 100 - retentionValue), color: '#06b6d4' },
-  ];
 
   const handlePrintReport = () => {
     generateAndPrintExecutiveReport({
@@ -690,207 +635,133 @@ export default function PlatformReportsPage() {
 
   return (
     <div className="space-y-6">
-      {/* ── Top Header Banner with Range & Export Actions ── */}
-      <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-violet-400">
-                Performance Intelligence
-              </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            </div>
-            <h1 className="mt-0.5 text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-              Platform Analytics
-            </h1>
-            <p className="text-xs sm:text-sm text-white/50 mt-0.5">
-              Financial reconciliation, user acquisition velocity, ticket tier trends &amp; geographic distribution.
-            </p>
-          </div>
-
-          {/* Action Toolbar */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* Quick Range Pills */}
-            <div className="flex items-center p-1 rounded-xl bg-[#141829] border border-white/[0.08]">
-              {['7d', '30d', '90d', '1y'].map((r) => (
-                <button
-                  key={r}
-                  onClick={() => { setRange(r); setFromDate(''); setToDate(''); }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                    range === r
-                      ? 'bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 text-white shadow-md shadow-purple-600/30'
-                      : 'text-white/60 hover:text-white'
-                  }`}
-                >
-                  {r === '1y' ? '1 Year' : r.toUpperCase()}
-                </button>
-              ))}
-            </div>
-
-            {/* Date Pickers */}
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#141829] border border-white/[0.08]">
-              <input
-                type="date"
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-                className="bg-transparent text-xs text-white/90 focus:outline-none cursor-pointer"
-              />
-              <span className="text-white/30 text-xs">—</span>
-              <input
-                type="date"
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-                className="bg-transparent text-xs text-white/90 focus:outline-none cursor-pointer"
-              />
-            </div>
-
-            {/* Export Buttons */}
-            <button
-              onClick={() => {
-                if (!data) return toast.error('No report data available');
-                const rows = [
-                  { Metric: 'Total Gross Revenue', Value: format(revenue.total || 0), Period: range },
-                  { Metric: 'Revenue Growth', Value: `${revenue.growth || 0}%`, Period: range },
-                  { Metric: 'Platform Commission (5%)', Value: format(revenue.commission || 0), Period: range },
-                  { Metric: 'New User Signups', Value: (users.newUsers || 0).toString(), Period: range },
-                  { Metric: 'Active Users', Value: (users.active || 0).toString(), Period: range },
-                  { Metric: 'User Retention Rate', Value: `${users.retention || 0}%`, Period: range },
-                  { Metric: 'Tickets Sold', Value: ticketTrend.reduce((acc, c) => acc + (c.tickets || 0), 0).toString(), Period: range },
-                ];
-                exportCSV(rows, `platform-analytics-${range}.csv`);
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#141829] border border-white/[0.08] hover:border-violet-500/40 text-xs font-semibold text-white/80 hover:text-white transition"
-              title="Download CSV"
-            >
-              <Download className="w-3.5 h-3.5 text-violet-400" />
-              <span>CSV</span>
-            </button>
-
-            {/* GENERATE & PRINT FORMAL EXECUTIVE REPORT */}
-            <button
-              onClick={handlePrintReport}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-600/30 text-xs font-bold transition active:scale-95 border border-white/20"
-              title="Generate & Print Formal Business Report Document"
-            >
-              <Printer className="w-3.5 h-3.5" />
-              <span>Generate Report (PDF)</span>
-            </button>
-          </div>
+      {/* ── Page Header & Controls ── */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-2">
+        <div>
+          <span className="text-xs font-medium text-neutral-400">
+            Performance Reports
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white mt-1">
+            Platform Analytics
+          </h1>
+          <p className="text-xs sm:text-sm text-neutral-400 mt-1">
+            Financial reconciliation, commission earnings, user acquisition, and ticket volume.
+          </p>
         </div>
-      </motion.div>
+
+        {/* Action Toolbar */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Quick Range Pills */}
+          <div className="inline-flex items-center p-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-xs">
+            {['7d', '30d', '90d', '1y'].map((r) => (
+              <button
+                key={r}
+                onClick={() => { setRange(r); setFromDate(''); setToDate(''); }}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
+                  range === r
+                    ? 'bg-white text-black font-semibold'
+                    : 'text-neutral-400 hover:text-white'
+                }`}
+              >
+                {r === '1y' ? '1 Year' : r.toUpperCase()}
+              </button>
+            ))}
+          </div>
+
+          {/* Date Pickers */}
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-xs">
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              className="bg-transparent text-xs text-white/90 focus:outline-none cursor-pointer"
+            />
+            <span className="text-neutral-500 text-xs">—</span>
+            <input
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              className="bg-transparent text-xs text-white/90 focus:outline-none cursor-pointer"
+            />
+          </div>
+
+          {/* Export CSV */}
+          <button
+            onClick={() => {
+              if (!data) return toast.error('No report data available');
+              const rows = [
+                { Metric: 'Total Gross Revenue', Value: format(revenue.total || 0), Period: range },
+                { Metric: 'Revenue Growth', Value: `${revenue.growth || 0}%`, Period: range },
+                { Metric: 'Platform Commission (5%)', Value: format(revenue.commission || 0), Period: range },
+                { Metric: 'New User Signups', Value: (users.newUsers || 0).toString(), Period: range },
+                { Metric: 'Active Users', Value: (users.active || 0).toString(), Period: range },
+                { Metric: 'Tickets Sold', Value: ticketTrend.reduce((acc, c) => acc + (c.tickets || 0), 0).toString(), Period: range },
+              ];
+              exportCSV(rows, `platform-analytics-${range}.csv`);
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] text-xs font-medium text-white transition cursor-pointer"
+            title="Download CSV"
+          >
+            <Download className="w-3.5 h-3.5 text-neutral-400" />
+            <span>CSV</span>
+          </button>
+
+          {/* Generate Report (PDF) */}
+          <button
+            onClick={handlePrintReport}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition cursor-pointer shadow-sm"
+            title="Generate & Print Report Document"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>Generate Report (PDF)</span>
+          </button>
+        </div>
+      </div>
 
       {loading ? (
-        <LoadingSpinner label="Crunching platform analytics..." className="py-24" />
+        <LoadingSpinner label="Loading analytics..." className="py-24" />
       ) : (
         <>
-          {/* ── TOP KPI ROW (4 Cards matching VALUE Analytics) ── */}
+          {/* ── TOP KPI ROW (4 Cards) ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            <KpiCard
-              title="Gross Revenue"
+            <MetricCard
+              title="Gross Platform Revenue"
               value={format(revenue.total || 0)}
-              delta={revenue.growth ?? 18}
-              isPositive={(revenue.growth ?? 0) >= 0}
-              period={range.toUpperCase()}
-              variant="coral"
-              id="rep-rev"
-              subtext="vs previous window"
+              delta={typeof revenue.growth === 'number' ? revenue.growth : null}
+              subtext="Total transaction volume"
             />
 
-            <KpiCard
+            <MetricCard
               title="Platform Commission"
               value={format(revenue.commission || 0)}
-              delta={revenue.growth ?? 18}
-              isPositive={true}
-              period="5% Fee"
-              variant="purple"
-              id="rep-comm"
-              subtext="net platform fee"
+              subtext="5% platform fee revenue"
             />
 
-            <KpiCard
+            <MetricCard
               title="New Signups"
               value={(users.newUsers ?? 0).toLocaleString()}
-              delta={users.growth ?? 12}
-              isPositive={(users.growth ?? 0) >= 0}
-              period={range.toUpperCase()}
-              variant="cyan"
-              id="rep-users"
+              delta={typeof users.growth === 'number' ? users.growth : null}
               subtext={`${(users.active ?? 0).toLocaleString()} active users`}
             />
 
-            {/* Retention Rate Donut Card */}
-            <CardShell className="p-4 sm:p-5 flex flex-col justify-between hover:border-violet-500/30 transition-all group">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium text-white/60">User Retention</span>
-                <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#1a1f35] border border-white/[0.06] text-[10px] text-white/60">
-                  <span>{range.toUpperCase()}</span>
-                  <ChevronDown className="w-3 h-3 text-white/40" />
-                </div>
-              </div>
-
-              <div className="mt-2 flex items-center justify-between gap-3">
-                <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={retentionDonutData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={28}
-                        outerRadius={40}
-                        paddingAngle={3}
-                        dataKey="value"
-                        strokeWidth={0}
-                      >
-                        {retentionDonutData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-[9px] text-white/50 leading-none">Rate</span>
-                    <span className="text-xs font-extrabold text-white leading-tight mt-0.5">{retentionValue}%</span>
-                  </div>
-                </div>
-
-                <div className="flex-1 space-y-1.5 text-[11px]">
-                  <div className="flex items-center justify-between gap-1 text-white/70">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <span className="w-2 h-2 rounded-full bg-violet-500 shrink-0" />
-                      <span className="truncate">Retained</span>
-                    </div>
-                    <span className="text-[10px] text-white/50 font-semibold tabular-nums">{retentionValue}%</span>
-                  </div>
-                  <div className="flex items-center justify-between gap-1 text-white/70">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0" />
-                      <span className="truncate">Active New</span>
-                    </div>
-                    <span className="text-[10px] text-white/50 font-semibold tabular-nums">{Math.max(10, 100 - retentionValue)}%</span>
-                  </div>
-                </div>
-              </div>
-            </CardShell>
+            <MetricCard
+              title="Tickets Issued"
+              value={ticketTrend.reduce((acc, c) => acc + (c.tickets || 0), 0).toLocaleString()}
+              subtext="Total attendee tickets sold"
+            />
           </div>
 
-          {/* ── MIDDLE ROW: Revenue Trend (Dual Area Spline) + Commission Breakdown ── */}
+          {/* ── MIDDLE ROW: Revenue Area Chart (8 cols) + Fee Breakdown (4 cols) ── */}
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
-            {/* Revenue Trend Spline */}
+            {/* Revenue Trend Area Chart */}
             <CardShell className="xl:col-span-8 p-5 flex flex-col justify-between overflow-hidden">
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
                   <div>
-                    <h2 className="text-sm font-bold text-white">Gross Revenue Performance</h2>
-                    <p className="text-[11px] text-white/40 mt-0.5">Ticket sales revenue trend over selected window</p>
+                    <h2 className="text-sm font-semibold text-white">Revenue Performance</h2>
+                    <p className="text-xs text-neutral-400 mt-0.5">Gross ticket sales trend over selected period</p>
                   </div>
-                  <div className="flex items-center gap-3 text-xs">
-                    <div className="flex items-center gap-1.5 text-white/70">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#c084fc]" />
-                      <span className="text-[11px]">Revenue</span>
-                    </div>
-                    <span className="text-[11px] text-violet-400 font-bold">{format(revenue.total || 0)}</span>
-                  </div>
+                  <span className="text-xs font-semibold text-white">{format(revenue.total || 0)}</span>
                 </div>
 
                 <div className="mt-4 h-64 w-full">
@@ -898,15 +769,15 @@ export default function PlatformReportsPage() {
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={revenueSeries} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
-                          <linearGradient id="analyticsRevSpline" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#c084fc" stopOpacity={0.45} />
-                            <stop offset="100%" stopColor="#c084fc" stopOpacity={0.0} />
+                          <linearGradient id="analyticsRevGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0.12} />
+                            <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0.0} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#252a42" strokeOpacity={0.5} vertical={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
                         <XAxis
                           dataKey="date"
-                          stroke="#4b5574"
+                          stroke="rgba(255,255,255,0.3)"
                           fontSize={10}
                           tickLine={false}
                           axisLine={false}
@@ -914,42 +785,37 @@ export default function PlatformReportsPage() {
                           minTickGap={28}
                         />
                         <YAxis
-                          stroke="#4b5574"
+                          stroke="rgba(255,255,255,0.3)"
                           fontSize={10}
                           tickLine={false}
                           axisLine={false}
                           tickFormatter={shortFmt}
                           width={52}
                         />
-                        <Tooltip
-                          content={<ChartTip formatter={shortFmt} />}
-                          cursor={{ stroke: '#c084fc', strokeWidth: 1.5, strokeDasharray: '4 4' }}
-                        />
+                        <Tooltip content={<ChartTip formatter={shortFmt} />} />
                         <Area
                           type="monotone"
                           dataKey="revenue"
-                          stroke="#c084fc"
-                          strokeWidth={2.5}
-                          fill="url(#analyticsRevSpline)"
+                          stroke="#FFFFFF"
+                          strokeWidth={1.8}
+                          fill="url(#analyticsRevGrad)"
                           name="Revenue"
                         />
                       </AreaChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="flex items-center justify-center h-full text-xs text-white/40">
-                      No revenue data in this period.
+                    <div className="flex items-center justify-center h-full text-xs text-neutral-500">
+                      No revenue recorded in this period.
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                <span className="text-white/50">
-                  Estimated Commission: <span className="font-bold text-white">{format(revenue.commission || 0)}</span>
-                </span>
-                <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                  <TrendingUp className="w-3.5 h-3.5" /> +{revenue.growth ?? 0}% growth
-                </span>
+              <div className="pt-3 border-t border-white/[0.04] flex items-center justify-between text-xs text-neutral-400">
+                <span>Estimated Commission: <strong className="text-white font-medium">{format(revenue.commission || 0)}</strong></span>
+                {typeof revenue.growth === 'number' && (
+                  <span className="text-emerald-400 font-medium">+{revenue.growth}% vs prior window</span>
+                )}
               </div>
             </CardShell>
 
@@ -958,10 +824,10 @@ export default function PlatformReportsPage() {
               <div>
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
                   <div>
-                    <h2 className="text-xs font-bold text-white uppercase tracking-wider">Fee Breakdown</h2>
-                    <p className="text-[10px] text-white/40">Commissions &amp; processing</p>
+                    <h2 className="text-sm font-semibold text-white">Fee Breakdown</h2>
+                    <p className="text-xs text-neutral-400 mt-0.5">Platform commissions and processing</p>
                   </div>
-                  <span className="text-[10px] text-violet-400 font-semibold">Net 5%</span>
+                  <span className="text-[11px] text-neutral-400 font-mono">Net 5%</span>
                 </div>
 
                 <div className="mt-4 space-y-4">
@@ -975,17 +841,17 @@ export default function PlatformReportsPage() {
                     return (
                       <div key={i} className="space-y-1.5">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-white/70 font-medium text-[11px] truncate">{c.label}</span>
-                          <span className="font-extrabold text-white tabular-nums">{format(c.value)}</span>
+                          <span className="text-neutral-300 font-medium truncate">{c.label}</span>
+                          <span className="font-semibold text-white tabular-nums">{format(c.value)}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 h-1.5 rounded-full bg-[#1b2038] overflow-hidden">
+                          <div className="flex-1 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
                             <div
-                              className="h-full rounded-full transition-all duration-500"
-                              style={{ width: `${pct}%`, backgroundColor: pieColors[i % pieColors.length] }}
+                              className="h-full rounded-full bg-neutral-300 transition-all duration-300"
+                              style={{ width: `${pct}%` }}
                             />
                           </div>
-                          <span className="text-[9px] text-white/40 font-semibold tabular-nums shrink-0">{pct}%</span>
+                          <span className="text-[10px] text-neutral-400 tabular-nums shrink-0">{pct}%</span>
                         </div>
                       </div>
                     );
@@ -993,27 +859,24 @@ export default function PlatformReportsPage() {
                 </div>
               </div>
 
-              <div className="mt-5 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                <span className="text-white/40 text-[11px]">Automatic Settlement</span>
-                <span className="text-white font-semibold">{format(revenue.commission || 0)}</span>
+              <div className="mt-5 pt-3 border-t border-white/[0.04] flex items-center justify-between text-xs text-neutral-400">
+                <span>Total Retained</span>
+                <span className="text-white font-medium">{format(revenue.commission || 0)}</span>
               </div>
             </CardShell>
           </div>
 
-          {/* ── USER SIGNUPS & EVENTS CREATED ── */}
+          {/* ── USER SIGNUPS & EVENTS BY CATEGORY ── */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {/* New User Signups Spline */}
+            {/* User Acquisition Trend */}
             <CardShell className="p-5 flex flex-col justify-between overflow-hidden">
               <div>
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
                   <div>
-                    <h2 className="text-xs font-bold text-white uppercase tracking-wider">User Acquisition Trend</h2>
-                    <p className="text-[10px] text-white/40">New signups over time</p>
+                    <h2 className="text-sm font-semibold text-white">User Acquisition</h2>
+                    <p className="text-xs text-neutral-400 mt-0.5">New signups over time</p>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-white/70">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#06b6d4]" />
-                    <span className="text-[11px]">Attendees</span>
-                  </div>
+                  <span className="text-xs text-neutral-400 font-mono">Signups</span>
                 </div>
 
                 <div className="mt-4 h-56 w-full">
@@ -1021,39 +884,39 @@ export default function PlatformReportsPage() {
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={userSeries} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
-                          <linearGradient id="userSpline" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.45} />
-                            <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.0} />
+                          <linearGradient id="userGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#818CF8" stopOpacity={0.12} />
+                            <stop offset="100%" stopColor="#818CF8" stopOpacity={0.0} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#252a42" strokeOpacity={0.5} vertical={false} />
-                        <XAxis dataKey="date" stroke="#4b5574" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmtDay} minTickGap={24} />
-                        <YAxis stroke="#4b5574" fontSize={10} tickLine={false} axisLine={false} width={36} allowDecimals={false} />
-                        <Tooltip content={<ChartTip />} cursor={{ stroke: '#06b6d4', strokeWidth: 1.5, strokeDasharray: '4 4' }} />
-                        <Area type="monotone" dataKey="users" stroke="#06b6d4" strokeWidth={2.5} fill="url(#userSpline)" name="Signups" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                        <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmtDay} minTickGap={24} />
+                        <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} tickLine={false} axisLine={false} width={36} allowDecimals={false} />
+                        <Tooltip content={<ChartTip />} />
+                        <Area type="monotone" dataKey="users" stroke="#818CF8" strokeWidth={1.8} fill="url(#userGrad)" name="Signups" />
                       </AreaChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="flex items-center justify-center h-full text-xs text-white/40">No signups in this window.</div>
+                    <div className="flex items-center justify-center h-full text-xs text-neutral-500">No signups in this window.</div>
                   )}
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                <span className="text-white/50">Total New Users: <span className="font-bold text-white">{(users.newUsers ?? 0).toLocaleString()}</span></span>
-                <span className="text-white/50">Active Base: <span className="font-bold text-cyan-400">{(users.active ?? 0).toLocaleString()}</span></span>
+              <div className="pt-3 border-t border-white/[0.04] flex items-center justify-between text-xs text-neutral-400">
+                <span>Total New Users: <strong className="text-white font-medium">{(users.newUsers ?? 0).toLocaleString()}</strong></span>
+                <span>Active Base: <strong className="text-white font-medium">{(users.active ?? 0).toLocaleString()}</strong></span>
               </div>
             </CardShell>
 
-            {/* Events by Category Donut Chart */}
+            {/* Events by Category */}
             <CardShell className="p-5 flex flex-col justify-between overflow-hidden">
               <div>
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
                   <div>
-                    <h2 className="text-xs font-bold text-white uppercase tracking-wider">Events by Category</h2>
-                    <p className="text-[10px] text-white/40">Market share across niches</p>
+                    <h2 className="text-sm font-semibold text-white">Events by Category</h2>
+                    <p className="text-xs text-neutral-400 mt-0.5">Distribution across event niches</p>
                   </div>
-                  <span className="text-[10px] text-white/40">{categoryDist.length} categories</span>
+                  <span className="text-xs text-neutral-400 font-mono">{categoryDist.length} categories</span>
                 </div>
 
                 <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-5">
@@ -1066,7 +929,7 @@ export default function PlatformReportsPage() {
                             cx="50%"
                             cy="50%"
                             innerRadius={42}
-                            outerRadius={62}
+                            outerRadius={60}
                             paddingAngle={3}
                             dataKey="value"
                             nameKey="name"
@@ -1080,8 +943,8 @@ export default function PlatformReportsPage() {
                       </ResponsiveContainer>
                     ) : null}
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                      <span className="text-[9px] text-white/40 uppercase tracking-widest leading-none">Total</span>
-                      <span className="text-sm font-extrabold text-white leading-tight mt-0.5">
+                      <span className="text-[9px] text-neutral-400 uppercase tracking-widest leading-none">Total</span>
+                      <span className="text-sm font-bold text-white leading-tight mt-0.5">
                         {categoryDist.reduce((acc, c) => acc + (c.value || 0), 0)}
                       </span>
                     </div>
@@ -1092,9 +955,9 @@ export default function PlatformReportsPage() {
                       <div key={cat.name || i} className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="w-2 h-2 rounded-full shrink-0" style={{ background: pieColors[i % pieColors.length] }} />
-                          <span className="text-white/70 text-[11px] truncate">{cat.name || 'General'}</span>
+                          <span className="text-neutral-300 text-[11px] truncate">{cat.name || 'General'}</span>
                         </div>
-                        <span className="text-[10px] text-white/50 font-semibold tabular-nums shrink-0">
+                        <span className="text-[10px] text-neutral-400 font-semibold tabular-nums shrink-0">
                           {cat.value}
                         </span>
                       </div>
@@ -1103,27 +966,24 @@ export default function PlatformReportsPage() {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                <span className="text-white/40 text-[11px]">Primary category: <span className="text-white font-semibold">{categoryDist[0]?.name || 'Concerts'}</span></span>
-                <span className="text-violet-400 font-semibold text-[11px]">Live distribution</span>
+              <div className="pt-3 border-t border-white/[0.04] flex items-center justify-between text-xs text-neutral-400">
+                <span>Top: <strong className="text-white font-medium">{categoryDist[0]?.name || 'Concerts'}</strong></span>
+                <span className="text-neutral-500 text-[11px]">Real-time category share</span>
               </div>
             </CardShell>
           </div>
 
-          {/* ── TICKET SALES TREND & TOP EVENTS LEADERBOARD ("Pages" style) ── */}
+          {/* ── TICKET SALES VELOCITY & TOP EVENTS ── */}
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
-            {/* Ticket Sales Trend */}
+            {/* Ticket Sales Velocity */}
             <CardShell className="xl:col-span-7 p-5 flex flex-col justify-between overflow-hidden">
               <div>
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
                   <div>
-                    <h2 className="text-xs font-bold text-white uppercase tracking-wider">Ticket Sales Velocity</h2>
-                    <p className="text-[10px] text-white/40">Daily tickets checked out</p>
+                    <h2 className="text-sm font-semibold text-white">Ticket Sales Velocity</h2>
+                    <p className="text-xs text-neutral-400 mt-0.5">Daily tickets issued and checked out</p>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-white/70">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#f97316]" />
-                    <span className="text-[11px]">Volume</span>
-                  </div>
+                  <span className="text-xs text-neutral-400 font-mono">Volume</span>
                 </div>
 
                 <div className="mt-4 h-60 w-full">
@@ -1131,64 +991,66 @@ export default function PlatformReportsPage() {
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={ticketTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
-                          <linearGradient id="ticketSpline" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#f97316" stopOpacity={0.45} />
-                            <stop offset="100%" stopColor="#f97316" stopOpacity={0.0} />
+                          <linearGradient id="ticketGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0.12} />
+                            <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0.0} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#252a42" strokeOpacity={0.5} vertical={false} />
-                        <XAxis dataKey="date" stroke="#4b5574" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmtDay} minTickGap={24} />
-                        <YAxis stroke="#4b5574" fontSize={10} tickLine={false} axisLine={false} width={36} />
-                        <Tooltip content={<ChartTip />} cursor={{ stroke: '#f97316', strokeWidth: 1.5, strokeDasharray: '4 4' }} />
-                        <Area type="monotone" dataKey="tickets" stroke="#f97316" strokeWidth={2.5} fill="url(#ticketSpline)" name="Tickets" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                        <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmtDay} minTickGap={24} />
+                        <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} tickLine={false} axisLine={false} width={36} />
+                        <Tooltip content={<ChartTip />} />
+                        <Area type="monotone" dataKey="tickets" stroke="#FFFFFF" strokeWidth={1.8} fill="url(#ticketGrad)" name="Tickets" />
                       </AreaChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="flex items-center justify-center h-full text-xs text-white/40">No ticket sales in this window.</div>
+                    <div className="flex items-center justify-center h-full text-xs text-neutral-500">No ticket sales in this window.</div>
                   )}
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                <span className="text-white/50">Total Tickets Sold: <span className="font-bold text-white">{ticketTrend.reduce((s, x) => s + (x.tickets || 0), 0)}</span></span>
-                <span className="text-white/40 text-[11px]">Real-time ticketing engine</span>
+              <div className="pt-3 border-t border-white/[0.04] flex items-center justify-between text-xs text-neutral-400">
+                <span>Total Tickets: <strong className="text-white font-medium">{ticketTrend.reduce((s, x) => s + (x.tickets || 0), 0)}</strong></span>
+                <span className="text-neutral-500 text-[11px]">Real-time ticketing engine</span>
               </div>
             </CardShell>
 
-            {/* Top Events Leaderboard (Modeled directly after "Pages" in reference image) */}
+            {/* Top Events Leaderboard */}
             <CardShell className="xl:col-span-5 p-5 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
                   <div>
-                    <h2 className="text-xs font-bold text-white uppercase tracking-wider">Top Events by Sales</h2>
-                    <p className="text-[10px] text-white/40">Leaderboard by volume</p>
+                    <h2 className="text-sm font-semibold text-white">Top Events by Sales</h2>
+                    <p className="text-xs text-neutral-400 mt-0.5">Ranked by tickets sold</p>
                   </div>
-                  <span className="text-[10px] text-violet-400 font-semibold">Rankings</span>
+                  <span className="text-[11px] text-neutral-400 font-mono">Rankings</span>
                 </div>
 
                 <div className="mt-4 space-y-3.5">
                   {topEvents.length > 0 ? (
                     topEvents.slice(0, 6).map((e, idx) => {
-                      const barWidth = Math.max(25, 95 - idx * 12);
+                      const maxTickets = Math.max(...topEvents.map((t) => Number(t.tickets ?? t.value ?? 0)), 1);
+                      const count = Number(e.tickets ?? e.value ?? 0);
+                      const barWidth = Math.min(100, Math.round((count / maxTickets) * 100));
+
                       return (
                         <div key={e.id || idx} className="space-y-1">
                           <div className="flex items-center justify-between text-xs">
                             <div className="flex items-center gap-2 min-w-0">
-                              <span className="w-5 h-5 rounded-md bg-[#1d2238] border border-white/[0.08] text-violet-300 text-[10px] font-bold flex items-center justify-center shrink-0">
+                              <span className="w-5 h-5 rounded bg-white/[0.06] text-neutral-400 text-[10px] font-semibold flex items-center justify-center shrink-0">
                                 {idx + 1}
                               </span>
-                              <span className="text-white/80 hover:text-white font-medium truncate max-w-[200px] transition">
+                              <span className="text-neutral-200 hover:text-white font-medium truncate max-w-[200px] transition">
                                 {e.title || e.name}
                               </span>
                             </div>
-                            <span className="text-[11px] font-bold text-white/90 tabular-nums">
-                              {(e.tickets ?? e.value ?? 0).toLocaleString()}
+                            <span className="text-[11px] font-semibold text-white tabular-nums">
+                              {count.toLocaleString()}
                             </span>
                           </div>
-                          {/* Coral / Red horizontal indicator bar matching reference */}
-                          <div className="h-1 rounded-full bg-[#1b2038] overflow-hidden ml-7">
+                          <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden ml-7">
                             <div
-                              className="h-full rounded-full bg-gradient-to-r from-rose-500 to-red-500"
+                              className="h-full rounded-full bg-neutral-300"
                               style={{ width: `${barWidth}%` }}
                             />
                           </div>
@@ -1196,14 +1058,14 @@ export default function PlatformReportsPage() {
                       );
                     })
                   ) : (
-                    <div className="py-10 text-center text-xs text-white/40">No event sales logged yet.</div>
+                    <div className="py-10 text-center text-xs text-neutral-500">No event sales logged yet.</div>
                   )}
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                <span className="text-[11px] text-white/50">Top performer: <span className="font-semibold text-white">{topEvents[0]?.title || '—'}</span></span>
-                <span className="text-violet-400 text-[11px] font-semibold">Live Feed</span>
+              <div className="mt-4 pt-3 border-t border-white/[0.04] flex items-center justify-between text-xs text-neutral-400">
+                <span>Top performer: <strong className="text-white font-medium">{topEvents[0]?.title || '—'}</strong></span>
+                <span className="text-neutral-500 text-[11px]">Leaderboard</span>
               </div>
             </CardShell>
           </div>
@@ -1212,42 +1074,42 @@ export default function PlatformReportsPage() {
           <CardShell className="overflow-hidden">
             <div className="p-4 sm:p-5 border-b border-white/[0.06] flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Globe2 className="w-4 h-4 text-violet-400" />
-                <h2 className="text-xs sm:text-sm font-bold text-white">Geographic Market Distribution</h2>
+                <Globe2 className="w-4 h-4 text-neutral-400" />
+                <h2 className="text-sm font-semibold text-white">Geographic Market Distribution</h2>
               </div>
-              <span className="text-[10px] text-white/40">City Breakdown</span>
+              <span className="text-xs text-neutral-500">Regional Breakdown</span>
             </div>
 
             {geographic.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="text-left text-[11px] uppercase tracking-wider text-white/40 border-b border-white/[0.06] bg-[#111424]">
-                      <th className="px-5 py-3 font-semibold">Rank</th>
-                      <th className="px-5 py-3 font-semibold">City / Region</th>
-                      <th className="px-5 py-3 font-semibold text-right">Registered Users</th>
-                      <th className="px-5 py-3 font-semibold text-right">Events Hosted</th>
-                      <th className="px-5 py-3 font-semibold text-right">Gross Revenue</th>
+                    <tr className="text-left text-[11px] font-semibold text-neutral-400 border-b border-white/[0.06] bg-white/[0.01]">
+                      <th className="px-5 py-3 font-medium">Rank</th>
+                      <th className="px-5 py-3 font-medium">City / Region</th>
+                      <th className="px-5 py-3 font-medium text-right">Registered Users</th>
+                      <th className="px-5 py-3 font-medium text-right">Events Hosted</th>
+                      <th className="px-5 py-3 font-medium text-right">Gross Revenue</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.04]">
                     {geographic.map((c, i) => (
                       <tr key={i} className="hover:bg-white/[0.02] transition-colors">
                         <td className="px-5 py-3.5">
-                          <span className="w-5 h-5 rounded-md bg-[#1d2238] border border-white/[0.08] text-violet-300 text-[10px] font-bold inline-flex items-center justify-center">
+                          <span className="w-5 h-5 rounded bg-white/[0.06] text-neutral-400 text-[10px] font-semibold inline-flex items-center justify-center">
                             {i + 1}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 font-semibold text-white">
-                          {c.city || c.name || 'Lagos'}
+                        <td className="px-5 py-3.5 font-medium text-white">
+                          {c.city || c.name || 'Accra'}
                         </td>
-                        <td className="px-5 py-3.5 text-right text-white/60 tabular-nums">
+                        <td className="px-5 py-3.5 text-right text-neutral-400 tabular-nums">
                           {(c.users ?? 0).toLocaleString()}
                         </td>
-                        <td className="px-5 py-3.5 text-right text-white/60 tabular-nums">
+                        <td className="px-5 py-3.5 text-right text-neutral-400 tabular-nums">
                           {(c.events ?? 0).toLocaleString()}
                         </td>
-                        <td className="px-5 py-3.5 text-right font-bold text-violet-400 tabular-nums">
+                        <td className="px-5 py-3.5 text-right font-semibold text-white tabular-nums">
                           {format(c.revenue || 0)}
                         </td>
                       </tr>
@@ -1256,7 +1118,7 @@ export default function PlatformReportsPage() {
                 </table>
               </div>
             ) : (
-              <div className="py-12 text-center text-xs text-white/40">
+              <div className="py-12 text-center text-xs text-neutral-500">
                 <MapPin className="w-8 h-8 text-white/20 mx-auto mb-2" />
                 No geographic distribution data recorded yet.
               </div>

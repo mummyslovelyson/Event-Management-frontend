@@ -124,34 +124,34 @@ export default function EventsPage() {
       {/* Filters */}
       <div className="flex flex-col lg:flex-row lg:items-center gap-3">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search events..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/30 transition"
+            className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
           />
         </div>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="px-4 py-2.5 rounded-lg bg-[#171A1D] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition cursor-pointer"
+          className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition cursor-pointer"
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
             <option key={c.id || c} value={c.id || c.name || c}>{c.name || c}</option>
           ))}
         </select>
-        <div className="flex items-center gap-1 p-1 rounded-lg bg-[#171A1D] border border-[#494F55]/40">
+        <div className="flex items-center gap-1 p-1 rounded-lg border border-white/[0.08] bg-white/[0.02]">
           <button
             onClick={() => setView('table')}
-            className={`p-2 rounded-md transition-colors ${view === 'table' ? 'bg-white/10 text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+            className={`p-1.5 rounded-md transition-colors ${view === 'table' ? 'bg-white text-black' : 'text-neutral-400 hover:text-white'}`}
           >
             <List className="w-4 h-4" />
           </button>
           <button
             onClick={() => setView('grid')}
-            className={`p-2 rounded-md transition-colors ${view === 'grid' ? 'bg-white/10 text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+            className={`p-1.5 rounded-md transition-colors ${view === 'grid' ? 'bg-white text-black' : 'text-neutral-400 hover:text-white'}`}
           >
             <LayoutGrid className="w-4 h-4" />
           </button>
@@ -159,15 +159,18 @@ export default function EventsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 overflow-x-auto border-b border-[#262B2F]">
+      <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`relative px-4 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${tab === t ? 'text-white' : 'text-[#949599] hover:text-[#EFEFF1]'}`}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+              tab === t
+                ? 'bg-white text-black'
+                : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
+            }`}
           >
             {t}
-            {tab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-white" />}
           </button>
         ))}
       </div>
@@ -199,10 +202,10 @@ export default function EventsPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden overflow-x-auto">
-          <table className="w-full text-sm min-w-[820px]">
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08] overflow-hidden overflow-x-auto">
+          <table className="w-full text-xs min-w-[820px]">
             <thead>
-              <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
+              <tr className="text-left text-[11px] font-medium text-neutral-400 border-b border-white/[0.06] bg-white/[0.02]">
                 <th className="px-5 py-3 font-medium">Event</th>
                 <th className="px-5 py-3 font-medium">Category</th>
                 <th className="px-5 py-3 font-medium">Date</th>
@@ -213,23 +216,23 @@ export default function EventsPage() {
                 <th className="px-5 py-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#262B2F]/70">
+            <tbody className="divide-y divide-white/[0.06]">
               {events.map((e) => {
                 const sold = e.ticketsSold || 0;
-                const cap = e.totalCapacity || e.capacity || 0;
+                const cap = e.totalCapacity || event?.capacity || 0;
                 return (
-                  <tr key={e.id} className="hover:bg-[#1D2124] transition-colors">
+                  <tr key={e.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <img src={e.banner_image || e.thumbnail || '/assets/images/Logo.jpeg'} alt="" className="w-11 h-11 rounded-lg object-cover bg-[#242B32]" />
-                        <span className="font-medium text-[#EFEFF1] max-w-[180px] truncate">{e.title}</span>
+                        <img src={e.banner_image || e.thumbnail || '/assets/images/Logo.jpeg'} alt="" className="w-10 h-10 rounded-lg object-cover bg-white/5" />
+                        <span className="font-medium text-white max-w-[180px] truncate">{e.title}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-[#949599]">{e.category?.name || e.category || '—'}</td>
-                    <td className="px-5 py-3 text-[#949599]">{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}</td>
-                    <td className="px-5 py-3 text-[#949599] max-w-[140px] truncate">{e.venue || e.city || '—'}</td>
-                    <td className="px-5 py-3 text-center text-[#949599]">{sold}/{cap}</td>
-                    <td className="px-5 py-3 text-right font-medium text-[#EFEFF1]">{format(e.revenue)}</td>
+                    <td className="px-5 py-3 text-neutral-400">{e.category?.name || e.category || '—'}</td>
+                    <td className="px-5 py-3 text-neutral-400">{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}</td>
+                    <td className="px-5 py-3 text-neutral-400 max-w-[140px] truncate">{e.venue || e.city || '—'}</td>
+                    <td className="px-5 py-3 text-center text-neutral-300 tabular-nums">{sold}/{cap}</td>
+                    <td className="px-5 py-3 text-right font-medium text-white tabular-nums">{format(e.revenue)}</td>
                     <td className="px-5 py-3">
                       <div className="flex flex-col gap-1 items-start">
                         <Badge variant={statusVariant(e.status)} size="sm">
@@ -239,7 +242,7 @@ export default function EventsPage() {
                           <button
                             type="button"
                             onClick={(ev) => { ev.stopPropagation(); setFeedbackTarget(e); }}
-                            className="inline-flex items-center gap-1 text-[11px] text-[#CBD5E1] hover:text-white underline underline-offset-2 transition"
+                            className="inline-flex items-center gap-1 text-[11px] text-neutral-300 hover:text-white underline underline-offset-2 transition"
                           >
                             <MessageSquare className="w-3 h-3" /> View Feedback
                           </button>
@@ -248,23 +251,23 @@ export default function EventsPage() {
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-1" onClick={(ev) => ev.stopPropagation()}>
-                        <button onClick={() => navigate(`/organizer/events/${e.id}/edit`)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition" title="Edit Event"><Edit2 className="w-4 h-4" /></button>
-                        <button onClick={() => navigate(`/organizer/tickets?event=${e.id}`)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition" title="Manage & Upload Tickets"><TicketIcon className="w-4 h-4" /></button>
-                        <button onClick={() => navigate(`/events/${e.id}`)} className="p-2.5 rounded-md text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F] transition" title="View Public Page"><Eye className="w-4 h-4" /></button>
+                        <button onClick={() => navigate(`/organizer/events/${e.id}/edit`)} className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition" title="Edit Event"><Edit2 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => navigate(`/organizer/tickets?event=${e.id}`)} className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition" title="Manage & Upload Tickets"><TicketIcon className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => navigate(`/events/${e.id}`)} className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition" title="View Public Page"><Eye className="w-3.5 h-3.5" /></button>
                         {e.status === 'published' ? (
-                          <button onClick={() => togglePublish(e)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#262B2F] transition" title="Unpublish (Return to Draft)">
-                            <EyeOff className="w-4 h-4" />
+                          <button onClick={() => togglePublish(e)} className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition" title="Unpublish (Return to Draft)">
+                            <EyeOff className="w-3.5 h-3.5" />
                           </button>
                         ) : e.status === 'pending' ? (
-                          <button onClick={() => togglePublish(e)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#262B2F] transition" title="Awaiting Admin Review">
-                            <Clock className="w-4 h-4" />
+                          <button onClick={() => togglePublish(e)} className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition" title="Awaiting Admin Review">
+                            <Clock className="w-3.5 h-3.5" />
                           </button>
                         ) : (
-                          <button onClick={() => togglePublish(e)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#262B2F] transition" title={e.status === 'changes_requested' ? 'Resubmit for Review' : 'Submit for Review'}>
-                            <Send className="w-4 h-4" />
+                          <button onClick={() => togglePublish(e)} className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition" title={e.status === 'changes_requested' ? 'Resubmit for Review' : 'Submit for Review'}>
+                            <Send className="w-3.5 h-3.5" />
                           </button>
                         )}
-                        <button onClick={() => setDeleteTarget(e)} className="p-2.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/10 transition" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                        <button onClick={() => setDeleteTarget(e)} className="p-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </td>
                   </tr>
@@ -309,13 +312,13 @@ export default function EventsPage() {
                 setFeedbackTarget(null);
                 navigate(`/organizer/events/${targetId}/edit`);
               }}
-              className="px-4 py-2.5 rounded-lg text-sm font-semibold bg-white text-black hover:bg-[#CBD5E1] transition cursor-pointer"
+              className="px-4 py-2 rounded-lg text-xs font-semibold bg-white text-black hover:bg-neutral-200 transition cursor-pointer"
             >
               Edit &amp; Fix Event
             </button>
             <button
               onClick={() => setFeedbackTarget(null)}
-              className="px-4 py-2.5 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition cursor-pointer"
+              className="px-4 py-2 rounded-lg text-xs font-medium text-neutral-400 hover:text-white transition cursor-pointer"
             >
               Close
             </button>
@@ -323,10 +326,10 @@ export default function EventsPage() {
         }
       >
         <div className="space-y-3">
-          <p className="text-sm text-[#EFEFF1]">
+          <p className="text-xs text-neutral-300">
             Moderation feedback for <span className="font-semibold text-white">{feedbackTarget?.title}</span>:
           </p>
-          <div className="p-3.5 rounded-xl bg-[#161D22] border border-[#262B2F] text-[#CBD5E1] text-sm leading-relaxed whitespace-pre-wrap">
+          <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-neutral-300 text-xs leading-relaxed whitespace-pre-wrap">
             {feedbackTarget?.rejection_reason || 'No specific notes were left by the moderation team. Please ensure event details and banner meet platform requirements before resubmitting.'}
           </div>
         </div>
@@ -357,11 +360,11 @@ function EventCard({ event, onEdit, onManageTickets, onView, onTogglePublish, on
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -3 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden hover:border-[#3A4045] hover:shadow-lg hover:shadow-black/20 transition-all group"
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      className="rounded-xl bg-[#121620] border border-white/[0.08] overflow-hidden hover:border-white/20 transition-all group"
     >
-      <div className="relative h-36 bg-[#242B32]">
+      <div className="relative h-36 bg-white/[0.03]">
         <img src={event.banner_image || '/assets/images/Logo.jpeg'} alt="" className="w-full h-full object-cover" />
         <div className="absolute top-3 left-3 flex items-center gap-1.5">
           <Badge variant={statusVariant(event.status)} size="sm">
@@ -370,7 +373,7 @@ function EventCard({ event, onEdit, onManageTickets, onView, onTogglePublish, on
           {(event.status === 'changes_requested' || (event.status === 'rejected' && event.rejection_reason)) && (
             <button
               onClick={(e) => { e.stopPropagation(); onViewFeedback?.(event); }}
-              className="p-1 rounded-md bg-white text-black hover:bg-[#CBD5E1] transition"
+              className="p-1 rounded-md bg-white text-black hover:bg-neutral-200 transition"
               title="View Admin Feedback"
             >
               <MessageSquare className="w-3.5 h-3.5" />
@@ -379,20 +382,20 @@ function EventCard({ event, onEdit, onManageTickets, onView, onTogglePublish, on
         </div>
         <div className="absolute top-3 right-3">
           <div className="relative">
-            <button onClick={(e) => { e.stopPropagation(); setMenu((v) => !v); }} className="p-2.5 rounded-md bg-black/40 text-white hover:bg-black/60 transition"><MoreVertical className="w-4 h-4" /></button>
+            <button onClick={(e) => { e.stopPropagation(); setMenu((v) => !v); }} className="p-2 rounded-lg bg-black/60 text-white hover:bg-black/80 transition"><MoreVertical className="w-4 h-4" /></button>
             <AnimatePresence>
               {menu && (
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="absolute right-0 mt-1 w-48 rounded-lg bg-[#171A1D] border border-[#494F55]/40 shadow-xl py-1 z-10">
-                  <button onClick={() => { setMenu(false); onEdit(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F]"><Edit2 className="w-4 h-4" /> Edit Event</button>
-                  <button onClick={() => { setMenu(false); onManageTickets?.(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-white hover:bg-[#262B2F]"><TicketIcon className="w-4 h-4" /> Manage Tickets</button>
-                  <button onClick={() => { setMenu(false); onView(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F]"><Eye className="w-4 h-4" /> View Public Page</button>
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="absolute right-0 mt-1 w-48 rounded-lg bg-[#121620] border border-white/[0.08] shadow-xl py-1 z-10">
+                  <button onClick={() => { setMenu(false); onEdit(); }} className="flex items-center gap-2 w-full px-3 py-2 text-xs text-neutral-300 hover:text-white hover:bg-white/[0.06]"><Edit2 className="w-3.5 h-3.5" /> Edit Event</button>
+                  <button onClick={() => { setMenu(false); onManageTickets?.(); }} className="flex items-center gap-2 w-full px-3 py-2 text-xs text-neutral-300 hover:text-white hover:bg-white/[0.06]"><TicketIcon className="w-3.5 h-3.5" /> Manage Tickets</button>
+                  <button onClick={() => { setMenu(false); onView(); }} className="flex items-center gap-2 w-full px-3 py-2 text-xs text-neutral-300 hover:text-white hover:bg-white/[0.06]"><Eye className="w-3.5 h-3.5" /> View Public Page</button>
                   {(event.status === 'changes_requested' || (event.status === 'rejected' && event.rejection_reason)) && (
-                    <button onClick={() => { setMenu(false); onViewFeedback?.(event); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#CBD5E1] hover:text-white hover:bg-[#262B2F]"><MessageSquare className="w-4 h-4" /> View Feedback</button>
+                    <button onClick={() => { setMenu(false); onViewFeedback?.(event); }} className="flex items-center gap-2 w-full px-3 py-2 text-xs text-neutral-300 hover:text-white hover:bg-white/[0.06]"><MessageSquare className="w-3.5 h-3.5" /> View Feedback</button>
                   )}
-                  <button onClick={() => { setMenu(false); onTogglePublish(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-[#EFEFF1] hover:bg-[#262B2F]">
-                    {event.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Send className="w-4 h-4" />} {publishActionLabel}
+                  <button onClick={() => { setMenu(false); onTogglePublish(); }} className="flex items-center gap-2 w-full px-3 py-2 text-xs text-neutral-300 hover:text-white hover:bg-white/[0.06]">
+                    {event.status === 'published' ? <EyeOff className="w-3.5 h-3.5" /> : <Send className="w-3.5 h-3.5" />} {publishActionLabel}
                   </button>
-                  <button onClick={() => { setMenu(false); onDelete(); }} className="flex items-center gap-2 w-full px-3 py-3 text-sm text-[#949599] hover:text-red-400 hover:bg-red-500/10"><Trash2 className="w-4 h-4" /> Delete</button>
+                  <button onClick={() => { setMenu(false); onDelete(); }} className="flex items-center gap-2 w-full px-3 py-2 text-xs text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -400,20 +403,20 @@ function EventCard({ event, onEdit, onManageTickets, onView, onTogglePublish, on
         </div>
       </div>
       <div className="p-4">
-        <h3 className="font-semibold text-[#EFEFF1] truncate">{event.title}</h3>
-        <div className="mt-2 space-y-1.5 text-xs text-[#949599]">
+        <h3 className="font-medium text-white truncate text-sm">{event.title}</h3>
+        <div className="mt-2 space-y-1 text-xs text-neutral-400">
           <p className="flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> {event.startDate ? new Date(event.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}</p>
           <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {event.venue || event.city || '—'}</p>
         </div>
         <div className="mt-3 flex items-center gap-2">
-          <div className="flex-1 h-1.5 rounded-full bg-[#494F55]/30 overflow-hidden">
+          <div className="flex-1 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
             <div className="h-full bg-white rounded-full" style={{ width: `${pct}%` }} />
           </div>
-          <span className="text-[10px] font-medium text-[#949599] tabular-nums">{sold}/{cap}</span>
+          <span className="text-[10px] font-medium text-neutral-400 tabular-nums">{sold}/{cap}</span>
         </div>
         <div className="mt-3 flex items-center justify-between">
           <span className="flex items-center gap-1 text-xs text-white font-medium"><DollarSign className="w-3.5 h-3.5" /> {format(event.revenue)}</span>
-          <span className="flex items-center gap-1 text-xs text-[#949599]"><TicketIcon className="w-3.5 h-3.5" /> {event.category?.name || event.category || '—'}</span>
+          <span className="flex items-center gap-1 text-xs text-neutral-400"><TicketIcon className="w-3.5 h-3.5" /> {event.category?.name || event.category || '—'}</span>
         </div>
       </div>
     </motion.div>

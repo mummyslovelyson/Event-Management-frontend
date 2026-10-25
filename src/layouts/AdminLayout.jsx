@@ -418,9 +418,9 @@ export default function AdminLayout() {
                   onClick={() => setProfileOpen((v) => !v)}
                   className="flex items-center gap-2 pl-1.5 pr-2.5 py-1 rounded-xl bg-[#171b2d] border border-white/[0.08] hover:border-violet-500/40 hover:bg-[#1d2238] transition"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-violet-600 to-fuchsia-600 text-white text-[11px] font-bold flex items-center justify-center shadow-sm">
-                    {initials}
-                  </div>
+                <div className="w-7 h-7 rounded-lg bg-white/10 text-white text-[11px] font-semibold flex items-center justify-center">
+                  {initials}
+                </div>
                   <span className="hidden sm:block text-xs font-semibold text-white/90 max-w-[110px] truncate">
                     {user?.name || 'Administrator'}
                   </span>
@@ -470,9 +470,9 @@ export default function AdminLayout() {
                       <div className="border-t border-white/[0.08] mt-1 pt-1">
                         <button
                           onClick={handleLogout}
-                          className="flex items-center gap-2.5 w-full px-4 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 transition"
+                          className="flex items-center gap-2.5 w-full px-4 py-2 text-xs text-white/70 hover:text-white hover:bg-white/[0.04] transition"
                         >
-                          <LogOut className="w-4 h-4" /> Sign Out
+                          <LogOut className="w-4 h-4 text-white/50" /> Sign Out
                         </button>
                       </div>
                     </motion.div>
@@ -498,7 +498,7 @@ function SidebarContent({ mainNav, secondaryNav, unreadCount, onNavigate, onLogo
       {/* Brand Logo Header (Inspired by "VALUE ANALYTICS" in reference image) */}
       <div className="flex items-center justify-between h-16 px-5 border-b border-white/[0.06] shrink-0">
         <Link to="/admin/dashboard" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 via-purple-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/25 p-0.5 group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-xl bg-[#1C232B] border border-white/10 flex items-center justify-center p-0.5 group-hover:scale-105 transition-transform">
             <img
               src="/assets/images/Logo.jpeg"
               alt="Logo"
@@ -509,11 +509,11 @@ function SidebarContent({ mainNav, secondaryNav, unreadCount, onNavigate, onLogo
             />
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="text-sm font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-300 to-white">
+            <span className="text-sm font-semibold tracking-wide text-white">
               CLIQS
             </span>
-            <span className="text-[9px] font-semibold uppercase tracking-widest text-violet-400/80">
-              Analytics
+            <span className="text-[9px] font-medium uppercase tracking-widest text-white/50">
+              Admin
             </span>
           </div>
         </Link>
@@ -540,7 +540,7 @@ function SidebarContent({ mainNav, secondaryNav, unreadCount, onNavigate, onLogo
               className={({ isActive }) =>
                 `group relative flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30'
+                    ? 'bg-white/10 text-white'
                     : 'text-white/60 hover:text-white hover:bg-white/[0.04]'
                 }`
               }
@@ -582,7 +582,7 @@ function SidebarContent({ mainNav, secondaryNav, unreadCount, onNavigate, onLogo
               className={({ isActive }) =>
                 `group flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition-all ${
                   isActive
-                    ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md shadow-purple-600/25'
+                    ? 'bg-white/10 text-white'
                     : 'text-white/50 hover:text-white hover:bg-white/[0.04]'
                 }`
               }

@@ -119,19 +119,19 @@ export default function OrganizerCategoriesPage() {
         actions={
           <button
             onClick={openAdd}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition"
           >
-            <Plus className="w-4 h-4" /> Add Category
+            <Plus className="w-3.5 h-3.5" /> Add Category
           </button>
         }
       />
 
       {loading ? (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F]">
+        <div className="rounded-2xl bg-[#121620] border border-white/[0.08]">
           <LoadingSpinner label="Loading categories..." className="py-16" />
         </div>
       ) : categories.length === 0 ? (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F]">
+        <div className="rounded-2xl bg-[#121620] border border-white/[0.08]">
           <EmptyState
             icon={Layers}
             title="No categories yet"
@@ -140,11 +140,11 @@ export default function OrganizerCategoriesPage() {
           />
         </div>
       ) : (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
+        <div className="rounded-2xl bg-[#121620] border border-white/[0.08] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
+                <tr className="text-left text-[11px] font-medium text-neutral-400 border-b border-white/[0.06] bg-white/[0.02]">
                   <th className="px-5 py-3 font-medium">Category</th>
                   <th className="hidden sm:table-cell px-5 py-3 font-medium">Slug</th>
                   <th className="px-5 py-3 font-medium text-center">Events</th>
@@ -152,42 +152,42 @@ export default function OrganizerCategoriesPage() {
                   <th className="px-5 py-3 font-medium text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#262B2F]/70">
+              <tbody className="divide-y divide-white/[0.06]">
                 {categories.map((cat) => {
                   const Icon = getIcon(cat.icon);
                   const active = cat.is_active !== 0 && cat.is_active !== false;
                   return (
-                    <tr key={cat.id} className="hover:bg-[#1D2124] transition-colors">
+                    <tr key={cat.id} className="hover:bg-white/[0.02] transition-colors">
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-white/10 text-white flex items-center justify-center shrink-0">
-                            <Icon className="w-5 h-5" />
+                          <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white flex items-center justify-center shrink-0">
+                            <Icon className="w-4 h-4" />
                           </div>
-                          <span className="font-medium text-[#EFEFF1]">{cat.name}</span>
+                          <span className="font-medium text-white text-xs">{cat.name}</span>
                         </div>
                       </td>
-                      <td className="hidden sm:table-cell px-5 py-3 font-mono text-xs text-[#949599]">/{cat.slug}</td>
+                      <td className="hidden sm:table-cell px-5 py-3 font-mono text-xs text-neutral-400">/{cat.slug}</td>
                       <td className="px-5 py-3 text-center">
                         <Badge variant="neutral" size="sm">{cat.eventCount ?? cat.events ?? 0}</Badge>
                       </td>
                       <td className="px-5 py-3 text-right">
                         <label className="inline-flex items-center gap-2 cursor-pointer">
-                          <span className="text-xs text-[#949599]">{active ? 'Active' : 'Inactive'}</span>
+                          <span className="text-xs text-neutral-400">{active ? 'Active' : 'Inactive'}</span>
                           <button
                             onClick={() => toggleActive(cat)}
-                            className={`relative w-10 h-5 rounded-full transition-colors ${active ? 'bg-white' : 'bg-[#494F55]/40'}`}
+                            className={`relative w-9 h-5 rounded-full transition-colors ${active ? 'bg-white' : 'bg-white/[0.1] border border-white/[0.08]'}`}
                           >
-                            <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${active ? 'translate-x-5' : 'translate-x-0'}`} />
+                            <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform ${active ? 'translate-x-4 bg-black' : 'translate-x-0 bg-neutral-400'}`} />
                           </button>
                         </label>
                       </td>
                       <td className="px-5 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <button onClick={() => openEdit(cat)} className="p-2.5 rounded-md text-[#949599] hover:text-white hover:bg-[#494F55]/30 transition" title="Edit">
-                            <Pencil className="w-4 h-4" />
+                          <button onClick={() => openEdit(cat)} className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition" title="Edit">
+                            <Pencil className="w-3.5 h-3.5" />
                           </button>
-                          <button onClick={() => setDeleteTarget(cat)} className="p-2.5 rounded-md text-[#949599] hover:text-red-400 hover:bg-red-500/15 transition" title="Delete">
-                            <Trash2 className="w-4 h-4" />
+                          <button onClick={() => setDeleteTarget(cat)} className="p-2 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition" title="Delete">
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </td>
@@ -206,64 +206,66 @@ export default function OrganizerCategoriesPage() {
         title={editing ? 'Edit Category' : 'Add Category'}
         footer={
           <>
-            <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
+            <button onClick={() => setShowModal(false)} className="px-3.5 py-2 rounded-lg text-xs font-medium text-neutral-400 hover:text-white transition">Cancel</button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-4 py-2 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50"
+              className="px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition disabled:opacity-50"
             >
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? 'Saving...' : 'Save Category'}
             </button>
           </>
         }
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Name</label>
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">Name</label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value, slug: slugify(e.target.value) }))}
               placeholder="Category name"
-              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition"
+              className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-1.5">Slug</label>
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">Slug</label>
             <input
               type="text"
               value={form.slug}
               onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
               placeholder="auto-generated"
-              className="w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] font-mono focus:outline-none focus:border-white/50 transition"
+              className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 font-mono focus:outline-none focus:border-white/30 transition"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#949599] mb-2">Icon</label>
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2">Icon</label>
             <div className="grid grid-cols-5 gap-2">
               {iconOptions.map(({ key, icon: Icon }) => (
                 <button
                   key={key}
+                  type="button"
                   onClick={() => setForm((f) => ({ ...f, icon: key }))}
-                  className={`aspect-square rounded-lg flex items-center justify-center border transition ${
+                  className={`aspect-square rounded-xl flex items-center justify-center border transition ${
                     form.icon === key
-                      ? 'bg-white/10 text-white border-white/20'
-                      : 'bg-[#1C232B]/50 text-[#949599] border-[#494F55]/30 hover:border-[#494F55]/60'
+                      ? 'bg-white text-black border-white'
+                      : 'bg-white/[0.02] text-neutral-400 border-white/[0.08] hover:border-white/20 hover:text-white'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4" />
                 </button>
               ))}
             </div>
           </div>
           <label className="flex items-center gap-3 cursor-pointer">
             <button
+              type="button"
               onClick={() => setForm((f) => ({ ...f, is_active: !f.is_active }))}
-              className={`relative w-10 h-5 rounded-full transition-colors ${form.is_active ? 'bg-white' : 'bg-[#494F55]/40'}`}
+              className={`relative w-9 h-5 rounded-full transition-colors ${form.is_active ? 'bg-white' : 'bg-white/[0.1] border border-white/[0.08]'}`}
             >
-              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${form.is_active ? 'translate-x-5' : 'translate-x-0'}`} />
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform ${form.is_active ? 'translate-x-4 bg-black' : 'translate-x-0 bg-neutral-400'}`} />
             </button>
-            <span className="text-sm text-[#EFEFF1]">Active</span>
+            <span className="text-xs text-neutral-300">Active</span>
           </label>
         </div>
       </Modal>
@@ -274,11 +276,11 @@ export default function OrganizerCategoriesPage() {
         title="Delete Category"
         footer={
           <>
-            <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-[#949599] hover:text-[#EFEFF1] transition">Cancel</button>
+            <button onClick={() => setDeleteTarget(null)} className="px-3.5 py-2 rounded-lg text-xs font-medium text-neutral-400 hover:text-white transition">Cancel</button>
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="px-4 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition disabled:opacity-50"
+              className="px-3.5 py-2 rounded-lg bg-rose-500 text-white text-xs font-semibold hover:bg-rose-600 transition disabled:opacity-50"
             >
               {deleting ? 'Deleting...' : 'Delete'}
             </button>
@@ -286,12 +288,12 @@ export default function OrganizerCategoriesPage() {
         }
       >
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-lg bg-red-500/15 text-red-400 flex items-center justify-center shrink-0">
-            <Trash2 className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+            <Trash2 className="w-4 h-4" />
           </div>
           <div>
-            <p className="text-sm text-[#EFEFF1]">Delete category <span className="font-semibold">{deleteTarget?.name}</span>?</p>
-            <p className="text-xs text-[#949599] mt-1">Events in this category will become uncategorized.</p>
+            <p className="text-xs text-white">Delete category <span className="font-semibold">{deleteTarget?.name}</span>?</p>
+            <p className="text-xs text-neutral-400 mt-1">Events in this category will become uncategorized.</p>
           </div>
         </div>
       </Modal>

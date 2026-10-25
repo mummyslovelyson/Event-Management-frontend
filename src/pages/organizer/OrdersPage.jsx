@@ -186,7 +186,7 @@ export default function OrdersPage() {
         actions={
           <button
             onClick={() => exportCSV()}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1C232B] border border-[#262B2F] text-xs font-semibold text-white hover:bg-[#252E38] transition"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white hover:bg-white/[0.06] transition"
           >
             <Download className="w-3.5 h-3.5" />
             Export CSV
@@ -203,19 +203,19 @@ export default function OrdersPage() {
       </div>
 
       {/* Policy Notice Card */}
-      <div className="p-4 rounded-2xl bg-[#14181C] border border-amber-400/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+      <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
             <ShieldAlert className="w-4 h-4" />
           </div>
           <div>
-            <p className="font-bold text-white">TRIBESANDCLIQS 1-Day (24h) Response SLA</p>
-            <p className="text-[#949599]">Organizers have 24 hours to review buyer refund requests. If unaddressed, TRIBESANDCLIQS may issue refunds under Clause 5.</p>
+            <p className="font-semibold text-white">TRIBESANDCLIQS 1-Day (24h) Response SLA</p>
+            <p className="text-neutral-400">Organizers have 24 hours to review buyer refund requests. If unaddressed, TRIBESANDCLIQS may issue refunds under Clause 5.</p>
           </div>
         </div>
         <button
           onClick={() => setStatusTab('Refund Requests')}
-          className="px-3.5 py-1.5 rounded-lg bg-[#1C232B] border border-[#262B2F] text-amber-300 font-semibold hover:bg-white/5 transition whitespace-nowrap"
+          className="px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-amber-300 text-xs font-medium hover:bg-white/[0.06] transition whitespace-nowrap"
         >
           View Requests
         </button>
@@ -223,20 +223,22 @@ export default function OrdersPage() {
 
       {/* Tabs and search bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
           {STATUS_TABS.map((t) => (
             <button
               key={t}
               onClick={() => setStatusTab(t)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap ${
                 statusTab === t
-                  ? 'bg-white text-[#0E1216]'
-                  : 'bg-[#14181C] text-[#949599] hover:text-white border border-[#262B2F]'
+                  ? 'bg-white text-black'
+                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
               }`}
             >
-              {t}
+              <span>{t}</span>
               {t === 'Refund Requests' && refundRequests.filter((r) => r.status === 'pending').length > 0 && (
-                <span className="ml-1.5 px-1.5 py-0.2 rounded-full bg-amber-400 text-black text-[10px] font-bold">
+                <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                  statusTab === t ? 'bg-black/15 text-black' : 'bg-amber-400/20 text-amber-300'
+                }`}>
                   {refundRequests.filter((r) => r.status === 'pending').length}
                 </span>
               )}
@@ -245,13 +247,13 @@ export default function OrdersPage() {
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className="w-4 h-4 text-[#949599] absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search orders or buyer..."
-            className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#14181C] border border-[#262B2F] text-xs text-white focus:outline-none focus:border-white/40"
+            className="w-full pl-9 pr-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30"
           />
         </div>
       </div>
@@ -269,11 +271,11 @@ export default function OrdersPage() {
             className="py-16"
           />
         ) : (
-          <div className="rounded-2xl border border-[#262B2F] bg-[#14181C] overflow-hidden">
+          <div className="rounded-2xl border border-white/[0.08] bg-[#121620] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-[#262B2F] bg-[#101418] text-[#949599] font-semibold text-left">
+                  <tr className="border-b border-white/[0.06] bg-white/[0.02] text-[11px] font-medium text-neutral-400 text-left">
                     <th className="px-4 py-3.5">Order Ref</th>
                     <th className="px-4 py-3.5">Customer</th>
                     <th className="px-4 py-3.5">Event</th>
@@ -283,15 +285,15 @@ export default function OrdersPage() {
                     <th className="px-4 py-3.5 text-right">Organizer Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#262B2F]/60">
+                <tbody className="divide-y divide-white/[0.06]">
                   {refundRequests.map((req) => (
-                    <tr key={req.id} className="hover:bg-[#181D22] transition-colors">
+                    <tr key={req.id} className="hover:bg-white/[0.02] transition-colors">
                       <td className="px-4 py-3.5 font-mono text-white font-medium">
                         {req.orderReference || `#${req.orderId}`}
                       </td>
                       <td className="px-4 py-3.5">
                         <p className="font-semibold text-white">{req.buyerName}</p>
-                        <p className="text-[11px] text-[#949599]">{req.buyerEmail}</p>
+                        <p className="text-[11px] text-neutral-400">{req.buyerEmail}</p>
                       </td>
                       <td className="px-4 py-3.5 text-white max-w-[150px] truncate">
                         {req.eventTitle}
@@ -299,7 +301,7 @@ export default function OrdersPage() {
                       <td className="px-4 py-3.5 text-right font-bold text-amber-300">
                         {format(req.amount)}
                       </td>
-                      <td className="px-4 py-3.5 text-[#949599] max-w-[200px] truncate" title={req.reason}>
+                      <td className="px-4 py-3.5 text-neutral-400 max-w-[200px] truncate" title={req.reason}>
                         {req.reason || 'Not specified'}
                       </td>
                       <td className="px-4 py-3.5">
@@ -325,7 +327,7 @@ export default function OrdersPage() {
                             <button
                               onClick={() => handleAuthorizeRequest(req)}
                               disabled={actionLoading}
-                              className="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold hover:bg-emerald-500/30 transition"
+                              className="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[11px] font-semibold hover:bg-emerald-500/20 transition"
                               title="Authorize Refund (Clause 1)"
                             >
                               Authorize
@@ -336,14 +338,14 @@ export default function OrdersPage() {
                                 setDeclineReason('');
                               }}
                               disabled={actionLoading}
-                              className="px-2.5 py-1.5 rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[11px] font-bold hover:bg-rose-500/30 transition"
+                              className="px-2.5 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[11px] font-semibold hover:bg-rose-500/20 transition"
                               title="Decline Request"
                             >
                               Decline
                             </button>
                           </div>
                         ) : (
-                          <span className="text-[11px] text-[#949599]">Resolved</span>
+                          <span className="text-[11px] text-neutral-400">Resolved</span>
                         )}
                       </td>
                     </tr>
@@ -362,11 +364,11 @@ export default function OrdersPage() {
         />
       ) : (
         /* ─── ORDERS TABLE VIEW ─── */
-        <div className="rounded-2xl border border-[#262B2F] bg-[#14181C] overflow-hidden">
+        <div className="rounded-2xl border border-white/[0.08] bg-[#121620] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-[#262B2F] bg-[#101418] text-[#949599] font-semibold text-left">
+                <tr className="border-b border-white/[0.06] bg-white/[0.02] text-[11px] font-medium text-neutral-400 text-left">
                   <th className="px-4 py-3.5 w-10">
                     <input type="checkbox" checked={selected.size === orders.length} onChange={toggleAll} className="w-4 h-4 rounded accent-white cursor-pointer" />
                   </th>
@@ -381,12 +383,12 @@ export default function OrdersPage() {
                   <th className="px-4 py-3.5">Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#262B2F]/60">
+              <tbody className="divide-y divide-white/[0.06]">
                 {orders.map((o) => (
                   <tr
                     key={o.id}
                     onClick={() => setDetailOrder(o)}
-                    className="hover:bg-[#181D22] transition-colors cursor-pointer"
+                    className="hover:bg-white/[0.02] transition-colors cursor-pointer"
                   >
                     <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
                       <input
@@ -401,21 +403,21 @@ export default function OrdersPage() {
                     </td>
                     <td className="px-4 py-3.5">
                       <p className="font-semibold text-white">{o.customerName || o.user?.name || '—'}</p>
-                      <p className="text-[11px] text-[#949599]">{o.customerEmail || o.user?.email || ''}</p>
+                      <p className="text-[11px] text-neutral-400">{o.customerEmail || o.user?.email || ''}</p>
                     </td>
                     <td className="px-4 py-3.5 text-white max-w-[150px] truncate">
                       {o.eventTitle || o.event?.title || '—'}
                     </td>
-                    <td className="px-4 py-3.5 text-[#949599]">
+                    <td className="px-4 py-3.5 text-neutral-400">
                       {o.ticketType || o.ticket?.type || 'Standard'}
                     </td>
-                    <td className="px-4 py-3.5 text-center text-[#949599]">
+                    <td className="px-4 py-3.5 text-center text-neutral-400">
                       {o.quantity || o.ticketCount || 1}
                     </td>
                     <td className="px-4 py-3.5 text-right font-bold text-white">
                       {format(o.amount || o.total)}
                     </td>
-                    <td className="px-4 py-3.5 text-[#949599] capitalize">
+                    <td className="px-4 py-3.5 text-neutral-400 capitalize">
                       {o.paymentMethod || 'card'}
                     </td>
                     <td className="px-4 py-3.5">
@@ -423,7 +425,7 @@ export default function OrdersPage() {
                         {o.status}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3.5 text-[#949599]">
+                    <td className="px-4 py-3.5 text-neutral-400">
                       {o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'}
                     </td>
                   </tr>
@@ -431,7 +433,7 @@ export default function OrdersPage() {
               </tbody>
             </table>
           </div>
-          <div className="p-4 border-t border-[#262B2F] flex items-center justify-between text-xs text-[#949599]">
+          <div className="p-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-neutral-400">
             <span>Showing page {page} of {totalPages}</span>
             <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
@@ -448,7 +450,7 @@ export default function OrdersPage() {
             <div className="flex items-center justify-between w-full">
               <button
                 onClick={() => setDetailOrder(null)}
-                className="px-4 py-2 rounded-xl text-xs text-[#949599] hover:text-white transition"
+                className="px-4 py-2 rounded-xl text-xs text-neutral-400 hover:text-white transition"
               >
                 Close
               </button>
@@ -458,7 +460,7 @@ export default function OrdersPage() {
                     setRefundTarget(detailOrder);
                     setRefundReason('');
                   }}
-                  className="px-4 py-2 rounded-xl bg-amber-400 text-black text-xs font-bold hover:bg-amber-300 transition"
+                  className="px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition"
                 >
                   Authorize Refund (Clause 1)
                 </button>
@@ -469,9 +471,9 @@ export default function OrdersPage() {
       >
         {detailOrder && (
           <div className="space-y-4 text-xs">
-            <div className="p-3.5 rounded-xl bg-[#181D22] border border-[#262B2F] flex items-center justify-between">
+            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.08] flex items-center justify-between">
               <div>
-                <span className="text-[#949599] block">Total Amount</span>
+                <span className="text-neutral-400 block text-[11px]">Total Amount</span>
                 <span className="text-base font-bold text-white">{format(detailOrder.amount || detailOrder.total)}</span>
               </div>
               <Badge variant={statusVariant(detailOrder.status)} size="sm">
@@ -480,13 +482,13 @@ export default function OrdersPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 rounded-xl bg-[#181D22] border border-[#262B2F]">
-                <span className="text-[#949599] block">Customer</span>
+              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08]">
+                <span className="text-neutral-400 block text-[11px]">Customer</span>
                 <p className="font-semibold text-white mt-0.5">{detailOrder.customerName || detailOrder.user?.name}</p>
-                <p className="text-[#949599] text-[11px]">{detailOrder.customerEmail || detailOrder.user?.email}</p>
+                <p className="text-neutral-400 text-[11px]">{detailOrder.customerEmail || detailOrder.user?.email}</p>
               </div>
-              <div className="p-3 rounded-xl bg-[#181D22] border border-[#262B2F]">
-                <span className="text-[#949599] block">Event</span>
+              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08]">
+                <span className="text-neutral-400 block text-[11px]">Event</span>
                 <p className="font-semibold text-white mt-0.5">{detailOrder.eventTitle || detailOrder.event?.title}</p>
               </div>
             </div>
@@ -503,14 +505,14 @@ export default function OrdersPage() {
           <>
             <button
               onClick={() => setRefundTarget(null)}
-              className="px-4 py-2.5 rounded-xl text-xs font-medium text-[#949599] hover:text-white transition"
+              className="px-4 py-2.5 rounded-xl text-xs font-medium text-neutral-400 hover:text-white transition"
             >
               Cancel
             </button>
             <button
               onClick={handleRefundOrder}
               disabled={refunding}
-              className="px-5 py-2.5 rounded-xl bg-amber-400 text-black text-xs font-bold hover:bg-amber-300 transition disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition disabled:opacity-50"
             >
               {refunding ? 'Processing Reversal...' : 'Authorize Reversal (Clause 1)'}
             </button>
@@ -519,7 +521,7 @@ export default function OrdersPage() {
       >
         {refundTarget && (
           <div className="space-y-4 text-xs">
-            <p className="text-[#EFEFF1]">
+            <p className="text-neutral-300">
               Issue full refund of{' '}
               <span className="font-bold text-white">{format(refundTarget.amount || refundTarget.total)}</span> to{' '}
               <span className="font-semibold text-white">{refundTarget.customerName || refundTarget.user?.name}</span>?
@@ -530,13 +532,13 @@ export default function OrdersPage() {
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 TRIBESANDCLIQS Policy Clause 1
               </span>
-              <p className="text-[#EFEFF1] text-[11px]">
+              <p className="text-neutral-300 text-[11px]">
                 "Event Organizer has authorized refunds." Funds will be returned to the buyer's original payment method via Paystack.
               </p>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-[#949599] block mb-1">
+              <label className="text-xs font-semibold text-neutral-400 block mb-1">
                 Reason / Organizer Authorization Notes
               </label>
               <textarea
@@ -544,7 +546,7 @@ export default function OrdersPage() {
                 onChange={(e) => setRefundReason(e.target.value)}
                 placeholder="Reason or notes regarding this refund authorization..."
                 rows={2}
-                className="w-full px-3 py-2 rounded-xl bg-[#14181C] border border-[#262B2F] text-xs text-white focus:outline-none focus:border-white/40 resize-none"
+                className="w-full px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 resize-none"
               />
             </div>
           </div>
@@ -560,14 +562,14 @@ export default function OrdersPage() {
           <>
             <button
               onClick={() => setDeclineTarget(null)}
-              className="px-4 py-2.5 rounded-xl text-xs font-medium text-[#949599] hover:text-white transition"
+              className="px-4 py-2.5 rounded-xl text-xs font-medium text-neutral-400 hover:text-white transition"
             >
               Cancel
             </button>
             <button
               onClick={handleDeclineRequest}
               disabled={actionLoading || !declineReason.trim()}
-              className="px-5 py-2.5 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-rose-500 text-white text-xs font-semibold hover:bg-rose-600 transition disabled:opacity-50"
             >
               {actionLoading ? 'Declining...' : 'Decline Request'}
             </button>
@@ -576,11 +578,11 @@ export default function OrdersPage() {
       >
         {declineTarget && (
           <div className="space-y-4 text-xs">
-            <p className="text-[#EFEFF1]">
+            <p className="text-neutral-300">
               Decline refund request for order <span className="font-mono text-white">#{declineTarget.orderReference}</span> ({format(declineTarget.amount)})?
             </p>
             <div>
-              <label className="text-xs font-semibold text-[#949599] block mb-1">
+              <label className="text-xs font-semibold text-neutral-400 block mb-1">
                 Explanation for Decline (Required)
               </label>
               <textarea
@@ -588,9 +590,9 @@ export default function OrdersPage() {
                 onChange={(e) => setDeclineReason(e.target.value)}
                 placeholder="Explain why this request is declined per your event terms..."
                 rows={3}
-                className="w-full px-3 py-2 rounded-xl bg-[#14181C] border border-[#262B2F] text-xs text-white focus:outline-none focus:border-white/40 resize-none"
+                className="w-full px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 resize-none"
               />
-              <p className="text-[11px] text-[#949599] mt-1">
+              <p className="text-[11px] text-neutral-400 mt-1">
                 This explanation will be shared with the attendee and logged for platform compliance.
               </p>
             </div>

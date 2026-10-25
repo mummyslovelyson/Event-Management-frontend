@@ -47,9 +47,9 @@ const userStatus = (u) => {
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 const fmtDateTime = (d) => d ? new Date(d).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
 const initials = (name = '') => name.split(' ').map((w) => w[0]).filter(Boolean).join('').slice(0, 2).toUpperCase();
-const avatarBg = ['bg-white/10 text-white', 'bg-[#EFEFF1]/10 text-[#EFEFF1]', 'bg-[#494F55]/40 text-[#9AA1A6]', 'bg-white/10 text-[#E8C75E]'];
-const inputCls = 'w-full px-3 py-2 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition';
-const actionBtn = 'p-2 rounded-lg text-[#949599] hover:text-[#EFEFF1] hover:bg-[#494F55]/30 transition disabled:opacity-50';
+const avatarBg = ['bg-white/10 text-white', 'bg-white/5 text-neutral-300', 'bg-neutral-800 text-neutral-400', 'bg-white/10 text-neutral-200'];
+const inputCls = 'w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition';
+const actionBtn = 'p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition disabled:opacity-50';
 
 const panelTabs = [
   { key: 'overview', label: 'Overview', icon: Eye },
@@ -362,24 +362,24 @@ export default function UserManagementPage() {
         <StatCard icon={Clock} label="Pending Organizers" value={stats.pendingOrganizers?.toLocaleString() || '0'} />
       </div>
 
-      <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-4 space-y-3">
+      <div className="rounded-xl bg-[#121620] border border-white/[0.08] p-4 space-y-3">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#494F55]" />
-            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name, email, organization..." className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] placeholder-[#494F55] focus:outline-none focus:border-white/50 transition" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name, email, organization..." className="w-full pl-9 pr-4 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition" />
           </div>
-          <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition">
+          <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition">
             <option value="">All Roles</option><option value="attendee">Attendee</option><option value="organizer">Organizer</option><option value="admin">Admin</option>
           </select>
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition">
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition">
             <option value="">All Status</option><option value="active">Active</option><option value="suspended">Suspended</option><option value="pending">Pending</option>
           </select>
-          <select value={sort} onChange={(e) => setSort(e.target.value)} className="px-3 py-2.5 rounded-lg bg-[#1C232B] border border-[#494F55]/40 text-sm text-[#EFEFF1] focus:outline-none focus:border-white/50 transition">
+          <select value={sort} onChange={(e) => setSort(e.target.value)} className="px-3 py-2 rounded-lg bg-[#121620] border border-white/[0.08] text-xs text-neutral-300 focus:outline-none focus:border-white/30 transition">
             <option value="newest">Newest</option><option value="oldest">Oldest</option><option value="name">Name A-Z</option>
           </select>
-          <div className="flex rounded-lg border border-[#494F55]/40 overflow-hidden">
-            <button onClick={() => setViewMode('cards')} className={`p-2.5 transition ${viewMode === 'cards' ? 'bg-white text-[#1C232B]' : 'bg-[#1C232B] text-[#949599] hover:text-[#EFEFF1]'}`}><LayoutGrid className="w-4 h-4" /></button>
-            <button onClick={() => setViewMode('table')} className={`p-2.5 transition ${viewMode === 'table' ? 'bg-white text-[#1C232B]' : 'bg-[#1C232B] text-[#949599] hover:text-[#EFEFF1]'}`}><TableIcon className="w-4 h-4" /></button>
+          <div className="flex rounded-lg border border-white/[0.08] overflow-hidden">
+            <button onClick={() => setViewMode('cards')} className={`p-2 transition ${viewMode === 'cards' ? 'bg-white text-black' : 'bg-transparent text-neutral-400 hover:text-white'}`}><LayoutGrid className="w-4 h-4" /></button>
+            <button onClick={() => setViewMode('table')} className={`p-2 transition ${viewMode === 'table' ? 'bg-white text-black' : 'bg-transparent text-neutral-400 hover:text-white'}`}><TableIcon className="w-4 h-4" /></button>
           </div>
         </div>
 
@@ -391,29 +391,29 @@ export default function UserManagementPage() {
             { key: 'organizer', label: 'Organizers' },
             { key: 'suspended', label: 'Suspended' },
           ].map((t) => (
-            <button key={t.key} onClick={() => setTab(t.key)} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${tab === t.key ? 'bg-white text-[#1C232B]' : 'text-[#949599] hover:text-[#EFEFF1] hover:bg-[#242B32]'}`}>{t.label}</button>
+            <button key={t.key} onClick={() => setTab(t.key)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${tab === t.key ? 'bg-white text-black' : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'}`}>{t.label}</button>
           ))}
         </div>
 
         {selected.size > 0 && (
-          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap items-center gap-2 pt-3 border-t border-[#494F55]/20">
-            <span className="text-sm font-medium text-white mr-1">{selected.size} selected</span>
+          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap items-center gap-2 pt-3 border-t border-white/[0.06]">
+            <span className="text-xs font-medium text-neutral-300 mr-1">{selected.size} selected</span>
             {selectedNonAdmins && <>
-              <button onClick={() => handleBulkRoleChange('attendee')} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-blue-500/15 text-blue-400 border border-blue-500/30 text-xs font-semibold hover:bg-blue-500/25 transition"><UserCheck className="w-3.5 h-3.5" /> Set Attendee</button>
-              <button onClick={() => handleBulkRoleChange('organizer')} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-white/10 text-white border border-white/20 text-xs font-semibold hover:bg-white/20 transition"><ShieldCheck className="w-3.5 h-3.5" /> Set Organizer</button>
-              <button onClick={bulkSuspend} disabled={actionLoading === 'bulk'} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30 text-xs font-semibold hover:bg-amber-500/25 transition disabled:opacity-50"><Ban className="w-3.5 h-3.5" /> Suspend</button>
+              <button onClick={() => handleBulkRoleChange('attendee')} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/[0.04] text-neutral-300 border border-white/[0.08] text-xs font-medium hover:bg-white/[0.08] transition"><UserCheck className="w-3.5 h-3.5" /> Set Attendee</button>
+              <button onClick={() => handleBulkRoleChange('organizer')} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/[0.04] text-neutral-300 border border-white/[0.08] text-xs font-medium hover:bg-white/[0.08] transition"><ShieldCheck className="w-3.5 h-3.5" /> Set Organizer</button>
+              <button onClick={bulkSuspend} disabled={actionLoading === 'bulk'} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30 text-xs font-medium hover:bg-amber-500/25 transition disabled:opacity-50"><Ban className="w-3.5 h-3.5" /> Suspend</button>
             </>}
-            {hasSelectedSuspended && <button onClick={bulkUnsuspend} disabled={actionLoading === 'bulk'} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/25 transition disabled:opacity-50"><UserCheck className="w-3.5 h-3.5" /> Unsuspend</button>}
-            {selectedNonAdmins && <button onClick={handleBulkDelete} disabled={actionLoading === 'bulk'} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/25 transition disabled:opacity-50"><Trash2 className="w-3.5 h-3.5" /> Delete</button>}
-            <button onClick={() => setSelected(new Set())} className="text-xs text-[#949599] hover:text-[#EFEFF1] ml-auto"><X className="w-3.5 h-3.5" /></button>
+            {hasSelectedSuspended && <button onClick={bulkUnsuspend} disabled={actionLoading === 'bulk'} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-medium hover:bg-emerald-500/25 transition disabled:opacity-50"><UserCheck className="w-3.5 h-3.5" /> Unsuspend</button>}
+            {selectedNonAdmins && <button onClick={handleBulkDelete} disabled={actionLoading === 'bulk'} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 text-xs font-medium hover:bg-rose-500/25 transition disabled:opacity-50"><Trash2 className="w-3.5 h-3.5" /> Delete</button>}
+            <button onClick={() => setSelected(new Set())} className="text-xs text-neutral-400 hover:text-white ml-auto"><X className="w-3.5 h-3.5" /></button>
           </motion.div>
         )}
       </div>
 
       {loading ? (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F]"><LoadingSpinner label="Loading users..." className="py-16" /></div>
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08]"><LoadingSpinner label="Loading users..." className="py-16" /></div>
       ) : users.length === 0 ? (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F]"><EmptyState icon={Users} title="No users found" description="Try adjusting your filters." className="py-16" /></div>
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08]"><EmptyState icon={Users} title="No users found" description="Try adjusting your filters." className="py-16" /></div>
       ) : viewMode === 'cards' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {users.map((u, i) => {
@@ -423,75 +423,75 @@ export default function UserManagementPage() {
             return (
               <motion.div key={u.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                 onClick={() => openPanel(u)}
-                className={`group relative rounded-xl bg-[#171A1D] border p-5 transition-all cursor-pointer hover:border-white/30 hover:shadow-lg hover:shadow-black/20 ${selected.has(u.id) ? 'border-white/40 bg-white/5' : 'border-[#262B2F]'}`}>
+                className={`group relative rounded-xl bg-[#121620] border p-5 transition-all cursor-pointer hover:border-white/30 ${selected.has(u.id) ? 'border-white/40 bg-white/[0.04]' : 'border-white/[0.08]'}`}>
                 <div className="absolute top-4 left-4" onClick={(e) => e.stopPropagation()}>
-                  <input type="checkbox" checked={selected.has(u.id)} onChange={() => toggleSelect(u.id)} className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#EFEFF1]" />
+                  <input type="checkbox" checked={selected.has(u.id)} onChange={() => toggleSelect(u.id)} className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 accent-white" />
                 </div>
                 <div className="absolute top-4 right-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition" onClick={(e) => e.stopPropagation()}>
                   {canManage(u) && <button onClick={() => setEditTarget(u)} className={actionBtn} title="Edit"><Pencil className="w-3.5 h-3.5" /></button>}
                   {canManage(u) && <button onClick={() => setSuspendTarget(u)} className={`${actionBtn} ${isSuspendedUser(u) ? 'text-emerald-400' : 'text-amber-400'}`} title={isSuspendedUser(u) ? 'Unsuspend' : 'Suspend'}><Ban className="w-3.5 h-3.5" /></button>}
-                  {canManage(u) && <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-red-400`} title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>}
+                  {canManage(u) && <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-rose-400`} title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>}
                 </div>
                 <div className="flex items-center gap-3.5 mt-5">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${avatarBg[i % avatarBg.length]}`}>{uInit}</div>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${avatarBg[i % avatarBg.length]}`}>{uInit}</div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-[#EFEFF1] truncate flex items-center gap-1.5">{u.name || 'Unknown'}{(u.role === 'admin' || u.role === 'system_admin') && <ShieldCheck className="w-3.5 h-3.5 text-white shrink-0" />}</p>
-                    <p className="text-xs text-[#949599] truncate">{u.email}</p>
+                    <p className="font-medium text-white text-xs truncate flex items-center gap-1.5">{u.name || 'Unknown'}{(u.role === 'admin' || u.role === 'system_admin') && <ShieldCheck className="w-3.5 h-3.5 text-white shrink-0" />}</p>
+                    <p className="text-[11px] text-neutral-400 truncate">{u.email}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mt-3">
                   <Badge variant={roleVariant(u.role)} size="sm">{u.role}</Badge>
-                  <Badge variant={userStatus(u).variant} size="sm" dot>{userStatus(u).label}</Badge>
+                  <Badge variant={userStatus(u).variant} size="sm">{userStatus(u).label}</Badge>
                   {isPendingOrg && <div className="ml-auto flex gap-1" onClick={(e) => e.stopPropagation()}>
-                    <button onClick={() => handleVerify(u)} className="p-1.5 rounded-md text-emerald-400 hover:bg-emerald-500/15 transition" title="Approve"><CheckCircle2 className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => setRejectTarget(u)} className="p-1.5 rounded-md text-red-400 hover:bg-red-500/15 transition" title="Reject"><XCircle className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => handleVerify(u)} className="p-1 rounded-md text-emerald-400 hover:bg-emerald-500/15 transition" title="Approve"><CheckCircle2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setRejectTarget(u)} className="p-1 rounded-md text-rose-400 hover:bg-rose-500/15 transition" title="Reject"><XCircle className="w-3.5 h-3.5" /></button>
                   </div>}
                 </div>
-                <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-[#262B2F]/70">
-                  <div className="text-center"><p className="text-sm font-semibold text-[#EFEFF1] tabular-nums">{u.eventsCount ?? 0}</p><p className="text-[10px] text-[#949599] uppercase tracking-wider">Events</p></div>
-                  <div className="text-center"><p className="text-sm font-semibold text-[#EFEFF1] tabular-nums">{u.ticketsCount ?? 0}</p><p className="text-[10px] text-[#949599] uppercase tracking-wider">Tickets</p></div>
-                  <div className="text-center"><p className="text-[11px] text-[#949599] mt-0.5">{fmtDate(u.createdAt)}</p><p className="text-[10px] text-[#949599] uppercase tracking-wider">Joined</p></div>
+                <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/[0.06]">
+                  <div className="text-center"><p className="text-xs font-semibold text-white tabular-nums">{u.eventsCount ?? 0}</p><p className="text-[10px] text-neutral-500 uppercase tracking-wider">Events</p></div>
+                  <div className="text-center"><p className="text-xs font-semibold text-white tabular-nums">{u.ticketsCount ?? 0}</p><p className="text-[10px] text-neutral-500 uppercase tracking-wider">Tickets</p></div>
+                  <div className="text-center"><p className="text-[11px] text-neutral-400 mt-0.5">{fmtDate(u.createdAt)}</p><p className="text-[10px] text-neutral-500 uppercase tracking-wider">Joined</p></div>
                 </div>
               </motion.div>
             );
           })}
         </div>
       ) : (
-        <div className="rounded-xl bg-[#171A1D] border border-[#262B2F] overflow-hidden">
+        <div className="rounded-xl bg-[#121620] border border-white/[0.08] overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead><tr className="text-left text-xs font-medium text-[#6B7278] border-b border-[#262B2F]">
-                <th className="hidden md:table-cell px-4 py-3 w-10"><input type="checkbox" checked={selected.size === users.length && users.length > 0} onChange={toggleSelectAll} className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#EFEFF1]" /></th>
+            <table className="w-full text-xs">
+              <thead><tr className="text-left text-[11px] font-medium text-neutral-400 border-b border-white/[0.06] bg-white/[0.02]">
+                <th className="hidden md:table-cell px-4 py-3 w-10"><input type="checkbox" checked={selected.size === users.length && users.length > 0} onChange={toggleSelectAll} className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 accent-white" /></th>
                 <th className="px-4 py-3">User</th><th className="hidden md:table-cell px-4 py-3">Role</th><th className="px-4 py-3">Status</th>
                 <th className="hidden md:table-cell px-4 py-3 text-center">Events</th><th className="hidden md:table-cell px-4 py-3 text-center">Tickets</th>
                 <th className="hidden md:table-cell px-4 py-3">Joined</th><th className="px-4 py-3 text-right">Actions</th>
               </tr></thead>
-              <tbody className="divide-y divide-[#262B2F]/70">
+              <tbody className="divide-y divide-white/[0.06]">
                 {users.map((u, i) => {
                   const uInit = initials(u.name || u.email);
                   const isApproved = u.is_approved === true || u.is_approved === 1 || u.is_approved === 'true' || u.status === 'active';
                   const isPendingOrg = u.role === 'organizer' && !isApproved && u.status !== 'rejected' && u.status !== 'suspended';
                   return (
-                    <tr key={u.id} className={`hover:bg-[#1D2124] transition-colors ${selected.has(u.id) ? 'bg-white/5' : ''}`}>
-                      <td className="hidden md:table-cell px-4 py-3"><input type="checkbox" checked={selected.has(u.id)} onChange={() => toggleSelect(u.id)} className="w-4 h-4 rounded border-[#494F55] bg-[#1C232B] accent-[#EFEFF1]" /></td>
+                    <tr key={u.id} className={`hover:bg-white/[0.02] transition-colors ${selected.has(u.id) ? 'bg-white/[0.04]' : ''}`}>
+                      <td className="hidden md:table-cell px-4 py-3"><input type="checkbox" checked={selected.has(u.id)} onChange={() => toggleSelect(u.id)} className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 accent-white" /></td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3 cursor-pointer" onClick={() => openPanel(u)}>
-                          <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${avatarBg[i % avatarBg.length]}`}>{uInit}</div>
-                          <div className="min-w-0"><p className="font-medium text-[#EFEFF1] truncate max-w-[160px] flex items-center gap-1.5">{u.name || 'Unknown'}{(u.role === 'admin' || u.role === 'system_admin') && <ShieldCheck className="w-3.5 h-3.5 text-white" />}</p><p className="text-xs text-[#949599] truncate max-w-[180px]">{u.email}</p></div>
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${avatarBg[i % avatarBg.length]}`}>{uInit}</div>
+                          <div className="min-w-0"><p className="font-medium text-white truncate max-w-[160px] flex items-center gap-1.5">{u.name || 'Unknown'}{(u.role === 'admin' || u.role === 'system_admin') && <ShieldCheck className="w-3.5 h-3.5 text-white" />}</p><p className="text-[11px] text-neutral-400 truncate max-w-[180px]">{u.email}</p></div>
                         </div>
                       </td>
                       <td className="hidden md:table-cell px-4 py-3"><Badge variant={roleVariant(u.role)} size="sm">{u.role}</Badge></td>
-                      <td className="px-4 py-3"><Badge variant={userStatus(u).variant} size="sm" dot>{userStatus(u).label}</Badge></td>
-                      <td className="hidden md:table-cell px-4 py-3 text-center text-[#949599]">{u.eventsCount ?? 0}</td>
-                      <td className="hidden md:table-cell px-4 py-3 text-center text-[#949599]">{u.ticketsCount ?? 0}</td>
-                      <td className="hidden md:table-cell px-4 py-3 text-xs text-[#949599]">{fmtDate(u.createdAt)}</td>
+                      <td className="px-4 py-3"><Badge variant={userStatus(u).variant} size="sm">{userStatus(u).label}</Badge></td>
+                      <td className="hidden md:table-cell px-4 py-3 text-center text-neutral-400 tabular-nums">{u.eventsCount ?? 0}</td>
+                      <td className="hidden md:table-cell px-4 py-3 text-center text-neutral-400 tabular-nums">{u.ticketsCount ?? 0}</td>
+                      <td className="hidden md:table-cell px-4 py-3 text-xs text-neutral-400 tabular-nums">{fmtDate(u.createdAt)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
-                          <button onClick={() => openPanel(u)} className={actionBtn} title="View"><Eye className="w-4 h-4" /></button>
-                          {canManage(u) && <button onClick={() => setEditTarget(u)} className={actionBtn} title="Edit"><Pencil className="w-4 h-4" /></button>}
-                          {isPendingOrg && <button onClick={() => handleVerify(u)} className={`${actionBtn} text-emerald-400`} title="Approve"><CheckCircle2 className="w-4 h-4" /></button>}
-                          {canManage(u) && <button onClick={() => setSuspendTarget(u)} className={`${actionBtn} text-amber-400`} title="Suspend"><Ban className="w-4 h-4" /></button>}
-                          {canManage(u) && <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-red-400`} title="Delete"><Trash2 className="w-4 h-4" /></button>}
+                          <button onClick={() => openPanel(u)} className={actionBtn} title="View"><Eye className="w-3.5 h-3.5" /></button>
+                          {canManage(u) && <button onClick={() => setEditTarget(u)} className={actionBtn} title="Edit"><Pencil className="w-3.5 h-3.5" /></button>}
+                          {isPendingOrg && <button onClick={() => handleVerify(u)} className={`${actionBtn} text-emerald-400`} title="Approve"><CheckCircle2 className="w-3.5 h-3.5" /></button>}
+                          {canManage(u) && <button onClick={() => setSuspendTarget(u)} className={`${actionBtn} text-amber-400`} title="Suspend"><Ban className="w-3.5 h-3.5" /></button>}
+                          {canManage(u) && <button onClick={() => setDeleteTarget(u)} className={`${actionBtn} text-rose-400`} title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>}
                         </div>
                       </td>
                     </tr>
@@ -500,8 +500,8 @@ export default function UserManagementPage() {
               </tbody>
             </table>
           </div>
-          <div className="px-5 py-4 border-t border-[#262B2F] flex items-center justify-between">
-            <span className="text-xs text-[#949599]">Page {page} of {totalPages}</span>
+          <div className="px-5 py-3 border-t border-white/[0.06] flex items-center justify-between">
+            <span className="text-xs text-neutral-500">Page {page} of {totalPages}</span>
             <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
         </div>
