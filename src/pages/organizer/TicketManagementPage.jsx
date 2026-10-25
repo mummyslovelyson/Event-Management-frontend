@@ -475,6 +475,35 @@ export default function TicketManagementPage() {
             </select>
           </div>
 
+          {/* Event Banner Image & Overview Card */}
+          {currentEvent && (
+            <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="relative w-full sm:w-28 h-20 rounded-xl overflow-hidden bg-white/[0.03] shrink-0 border border-white/[0.08]">
+                <img
+                  src={currentEvent.banner_image || currentEvent.thumbnail || '/assets/images/Logo.jpeg'}
+                  alt={currentEvent.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.currentTarget.src = '/assets/images/Logo.jpeg'; }}
+                />
+              </div>
+              <div className="flex-1 min-w-0 space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm sm:text-base font-bold text-white truncate">
+                    {currentEvent.title}
+                  </h3>
+                  <Badge variant={currentEvent.approval_status === 'approved' ? 'success' : 'pending'} size="sm">
+                    {currentEvent.approval_status === 'approved' ? 'Approved & Live' : (currentEvent.approval_status === 'changes_requested' ? 'Changes Requested' : 'Pending Approval')}
+                  </Badge>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-neutral-400">
+                  <span>📍 {currentEvent.venue || currentEvent.city || 'Location TBD'}</span>
+                  <span>📅 {currentEvent.startDate || currentEvent.start_date ? new Date(currentEvent.startDate || currentEvent.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Date TBD'}</span>
+                  <span>👥 Capacity: {currentEvent.capacity || currentEvent.totalCapacity || 'Unlimited'}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {events.length === 0 ? (
             <EmptyState icon={TicketIcon} title="No events yet" description="Create an event first to manage tickets." className="py-16" />
           ) : !selectedEvent ? (
@@ -589,17 +618,41 @@ export default function TicketManagementPage() {
                         className="rounded-2xl bg-[#121620] border border-white/[0.08] p-5 hover:border-white/20 transition-colors"
                       >
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3">
-                              <h3 className="text-base font-semibold text-white">{t.name}</h3>
-                              <Badge variant={ss.v} size="sm">{ss.label}</Badge>
+                          <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                            {/* Ticket Tier Pass Thumbnail or Event Banner */}
+                            <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/[0.03] border border-white/[0.08] shrink-0 flex items-center justify-center relative">
+                              {t.uploadedTickets?.[0]?.file_url || t.uploaded_tickets?.[0]?.file_url ? (
+                                <img
+                                  src={t.uploadedTickets?.[0]?.file_url || t.uploaded_tickets?.[0]?.file_url}
+                                  alt={t.name}
+                                  className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                                  onClick={() => window.open(t.uploadedTickets?.[0]?.file_url || t.uploaded_tickets?.[0]?.file_url, '_blank')}
+                                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                />
+                              ) : currentEvent?.banner_image ? (
+                                <img
+                                  src={currentEvent.banner_image}
+                                  alt={t.name}
+                                  className="w-full h-full object-cover opacity-80"
+                                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                />
+                              ) : (
+                                <TicketIcon className="w-6 h-6 text-neutral-400" />
+                              )}
                             </div>
-                            {t.description && <p className="mt-1 text-xs text-neutral-400 line-clamp-1">{t.description}</p>}
-                            <div className="mt-2 flex items-center gap-4 text-xs text-neutral-400">
-                              <span className="flex items-center gap-1">
-                                <Calendar className="w-3.5 h-3.5" />
-                                {t.saleStartDate ? new Date(t.saleStartDate).toLocaleDateString('en-GB') : '—'} → {t.saleEndDate ? new Date(t.saleEndDate).toLocaleDateString('en-GB') : '—'}
-                              </span>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-3">
+                                <h3 className="text-base font-semibold text-white">{t.name}</h3>
+                                <Badge variant={ss.v} size="sm">{ss.label}</Badge>
+                              </div>
+                              {t.description && <p className="mt-1 text-xs text-neutral-400 line-clamp-1">{t.description}</p>}
+                              <div className="mt-2 flex items-center gap-4 text-xs text-neutral-400">
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-3.5 h-3.5" />
+                                  {t.saleStartDate ? new Date(t.saleStartDate).toLocaleDateString('en-GB') : '—'} → {t.saleEndDate ? new Date(t.saleEndDate).toLocaleDateString('en-GB') : '—'}
+                                </span>
+                              </div>
                             </div>
                           </div>
 
@@ -609,8 +662,6 @@ export default function TicketManagementPage() {
                               <p className="text-base font-bold text-white">
                                 {Number(t.price) > 0 ? (
                                   format(t.price)
-                                ) : hasUploaded ? (
-                                  <span className="text-amber-400 text-sm font-semibold">On pass</span>
                                 ) : (
                                   'Free'
                                 )}
@@ -621,11 +672,45 @@ export default function TicketManagementPage() {
                               <p className="text-base font-bold text-white">{format(revenue)}</p>
                             </div>
                             <div className="flex items-center gap-1">
-                              <button onClick={() => openEdit(t)} className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.04] transition" title="Edit"><Edit2 className="w-3.5 h-3.5" /></button>
-                              <button onClick={() => setDeleteTarget(t)} className="p-2 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
+                              <button onClick={() => openEdit(t)} className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.04] transition cursor-pointer" title="Edit"><Edit2 className="w-3.5 h-3.5" /></button>
+                              <button onClick={() => setDeleteTarget(t)} className="p-2 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
                             </div>
                           </div>
                         </div>
+
+                        {/* Uploaded Ticket Pass Images Gallery Strip */}
+                        {hasUploaded && (
+                          <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center gap-2 overflow-x-auto pb-1">
+                            <span className="text-[11px] text-neutral-400 shrink-0 font-medium">Uploaded Passes:</span>
+                            {(t.uploadedTickets || t.uploaded_tickets || []).slice(0, 6).map((ut, pIdx) => {
+                              const url = ut.file_url || ut.url;
+                              const isPdf = (ut.file_name || '').toLowerCase().endsWith('.pdf');
+                              return (
+                                <a
+                                  key={pIdx}
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="relative group shrink-0 w-11 h-11 rounded-lg overflow-hidden border border-white/10 hover:border-white/30 transition block bg-white/[0.02]"
+                                  title={ut.file_name || `Pass #${pIdx + 1}`}
+                                >
+                                  {!isPdf && url ? (
+                                    <img src={url} alt="" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-red-400 bg-red-500/10">
+                                      PDF
+                                    </div>
+                                  )}
+                                </a>
+                              );
+                            })}
+                            {(t.uploadedTickets || t.uploaded_tickets || []).length > 6 && (
+                              <span className="text-[11px] text-neutral-400 shrink-0 font-medium pl-1">
+                                +{(t.uploadedTickets || t.uploaded_tickets || []).length - 6} more
+                              </span>
+                            )}
+                          </div>
+                        )}
 
                         {/* Granular Tier Metrics Breakdown */}
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-4 pt-4 border-t border-white/[0.06] text-xs">
@@ -689,33 +774,65 @@ export default function TicketManagementPage() {
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">Name</label>
-            <input {...register('name', { required: 'Name is required' })} placeholder="VIP, General..." className={inputCls} />
+            <label className="block text-xs font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">
+              Ticket Tier Name *
+            </label>
+            <input {...register('name', { required: 'Name is required' })} placeholder="e.g. VIP, Regular, Early Bird, VVIP" className={inputCls} />
             {errors.name && <p className="mt-1 text-xs text-rose-400">{errors.name.message}</p>}
           </div>
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-medium text-neutral-400 uppercase tracking-wider">Total Quantity</label>
-              {uploadedTickets.length > 0 && (
-                <span className="text-[10px] font-bold text-amber-400">Locked to files</span>
-              )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">
+                Price (GHS) *
+              </label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-xs font-semibold">
+                  ₵
+                </span>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  {...register('price', {
+                    required: 'Price is required',
+                    min: { value: 0, message: 'Price cannot be negative' },
+                  })}
+                  placeholder="0.00"
+                  className={`${inputCls} pl-8 font-medium`}
+                />
+              </div>
+              <p className="mt-1 text-[11px] text-neutral-400">
+                Unit price in GHS (Enter 0 for Free admission)
+              </p>
+              {errors.price && <p className="mt-1 text-xs text-rose-400">{errors.price.message}</p>}
             </div>
-            <input
-              type="number"
-              {...register('quantity', {
-                required: uploadedTickets.length > 0 ? false : 'Quantity is required',
-                min: 1,
-              })}
-              placeholder="50"
-              readOnly={uploadedTickets.length > 0}
-              className={`${inputCls} ${uploadedTickets.length > 0 ? 'bg-amber-400/5 text-amber-300 font-bold border-amber-400/30' : ''}`}
-            />
-            <p className="mt-1 text-[11px] text-neutral-400">
-              {uploadedTickets.length > 0
-                ? `Auto-calculated from ${uploadedTickets.length} uploaded passes (amount is on pass)`
-                : 'Upload pre-generated passes below or set figure'}
-            </p>
-            {errors.quantity && <p className="mt-1 text-xs text-rose-400">{errors.quantity.message}</p>}
+
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-medium text-neutral-400 uppercase tracking-wider">Total Quantity *</label>
+                {uploadedTickets.length > 0 && (
+                  <span className="text-[10px] font-medium text-white bg-white/10 px-2 py-0.5 rounded">Locked to files</span>
+                )}
+              </div>
+              <input
+                type="number"
+                min="1"
+                {...register('quantity', {
+                  required: uploadedTickets.length > 0 ? false : 'Quantity is required',
+                  min: { value: 1, message: 'Quantity must be at least 1' },
+                })}
+                placeholder="50"
+                readOnly={uploadedTickets.length > 0}
+                className={`${inputCls} ${uploadedTickets.length > 0 ? 'bg-white/[0.05] text-white font-semibold border-white/20' : ''}`}
+              />
+              <p className="mt-1 text-[11px] text-neutral-400">
+                {uploadedTickets.length > 0
+                  ? `Auto-synced to ${uploadedTickets.length} uploaded passes`
+                  : 'Total capacity available for this tier'}
+              </p>
+              {errors.quantity && <p className="mt-1 text-xs text-rose-400">{errors.quantity.message}</p>}
+            </div>
           </div>
 
           {/* Ticket Files Uploader */}
