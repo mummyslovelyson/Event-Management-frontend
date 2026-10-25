@@ -586,15 +586,19 @@ export default function AITrainingPage() {
 
         <button
           onClick={() => setActiveTab('voice_model')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
             activeTab === 'voice_model'
-              ? 'bg-gradient-to-r from-amber-400 to-amber-300 text-black shadow-lg shadow-amber-400/20'
-              : 'text-[#949599] hover:text-white hover:bg-white/5'
+              ? 'bg-white text-black shadow-sm'
+              : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
           }`}
         >
-          <Mic className={`w-4 h-4 ${activeTab === 'voice_model' ? 'text-black' : 'text-amber-400'}`} />
+          <Mic className="w-4 h-4" />
           <span>Voice Agent ML &amp; Neural Models</span>
-          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${activeTab === 'voice_model' ? 'bg-black text-amber-300' : 'bg-amber-400/15 text-amber-300 border border-amber-400/30'}`}>
+          <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono ${
+            activeTab === 'voice_model'
+              ? 'bg-black/10 text-black font-semibold'
+              : 'bg-white/[0.06] text-neutral-400 border border-white/[0.08]'
+          }`}>
             Deep ML
           </span>
         </button>
@@ -1166,25 +1170,23 @@ export default function AITrainingPage() {
       {activeTab === 'voice_model' && (
         <div className="space-y-8 animate-fade-in">
           {/* Neural Architecture & Performance Card */}
-          <div className="rounded-3xl bg-white/5 border border-white/10 p-6 sm:p-8 relative overflow-hidden">
-            <div className="absolute -top-16 -right-16 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-
+          <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-6 sm:p-7 relative overflow-hidden">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
               <div className="space-y-2">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-amber-400">
-                    <Cpu className="w-5 h-5 animate-pulse" />
+                  <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white">
+                    <Cpu className="w-5 h-5 text-neutral-300" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                      <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                         Voice Agent Neural &amp; Intent Studio
                       </h2>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-400 text-black">
+                      <span className="px-2.5 py-0.5 rounded-md text-[10px] font-mono uppercase tracking-wider bg-white/[0.06] border border-white/[0.08] text-neutral-300">
                         {voiceMetrics.version}
                       </span>
                     </div>
-                    <p className="text-xs text-[#949599]">
+                    <p className="text-xs text-neutral-400 mt-0.5">
                       Acoustic speech normalization, phonetic Ghanaian lexicon correction, and deep multi-class intent classifier.
                     </p>
                   </div>
@@ -1197,16 +1199,16 @@ export default function AITrainingPage() {
                   type="button"
                   onClick={handleRetrainVoiceModel}
                   disabled={voiceTraining}
-                  className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-white/10 text-white font-medium text-xs hover:bg-white/15 transition disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/[0.08] text-xs font-medium transition disabled:opacity-50 cursor-pointer"
                 >
                   {voiceTraining ? (
                     <>
-                      <RefreshCw className="w-4 h-4 animate-spin text-black" />
+                      <RefreshCw className="w-4 h-4 animate-spin text-neutral-400" />
                       <span>Retraining Neural Weights...</span>
                     </>
                   ) : (
                     <>
-                      <Zap className="w-4 h-4 text-black fill-black" />
+                      <Zap className="w-4 h-4 text-neutral-300" />
                       <span>Retrain Voice Model</span>
                     </>
                   )}
@@ -1219,20 +1221,20 @@ export default function AITrainingPage() {
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                className="mt-6 pt-6 border-t border-white/10 space-y-2 relative z-10"
+                className="mt-6 pt-6 border-t border-white/[0.08] space-y-2 relative z-10"
               >
                 <div className="flex items-center justify-between text-xs text-white">
                   <div className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-amber-400 animate-spin" />
-                    <span className="font-bold">Fine-Tuning Softmax Class Centroids &amp; Word Embeddings</span>
+                    <Activity className="w-4 h-4 text-neutral-300 animate-spin" />
+                    <span className="font-medium">Fine-Tuning Softmax Class Centroids &amp; Word Embeddings</span>
                   </div>
-                  <span className="font-mono text-amber-300 text-xs">
+                  <span className="font-mono text-neutral-300 text-xs">
                     Epoch {voiceTrainingProgress.epoch}/{voiceTrainingProgress.maxEpochs} • Loss: {voiceTrainingProgress.loss} • Acc: {Math.round(voiceTrainingProgress.accuracy * 100)}%
                   </span>
                 </div>
-                <div className="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
+                <div className="w-full h-2 rounded-full bg-white/[0.08] overflow-hidden">
                   <div
-                    className="h-full bg-white/70 transition-all duration-300 rounded-full"
+                    className="h-full bg-white transition-all duration-300 rounded-full"
                     style={{ width: `${(voiceTrainingProgress.epoch / voiceTrainingProgress.maxEpochs) * 100}%` }}
                   />
                 </div>
@@ -1241,61 +1243,61 @@ export default function AITrainingPage() {
 
             {/* Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 relative z-10">
-              <div className="p-4 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
-                <span className="text-[11px] font-bold text-[#949599] uppercase tracking-wider flex items-center gap-1.5">
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.08]">
+                <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider flex items-center gap-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                   Intent Accuracy
                 </span>
-                <h4 className="text-2xl font-black text-white mt-1">
+                <h4 className="text-2xl font-bold text-white mt-1">
                   {Math.round((voiceMetrics.accuracy || 0.94) * 100)}%
                 </h4>
-                <span className="text-[10px] text-emerald-400 font-semibold">Empirical Cross-Validation</span>
+                <span className="text-[10px] text-neutral-500">Empirical Cross-Validation</span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
-                <span className="text-[11px] font-bold text-[#949599] uppercase tracking-wider flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.08]">
+                <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-neutral-400" />
                   Training Dataset
                 </span>
-                <h4 className="text-2xl font-black text-white mt-1">
+                <h4 className="text-2xl font-bold text-white mt-1">
                   {trainingSamples.length || voiceMetrics.totalSamples}
                 </h4>
-                <span className="text-[10px] text-[#949599]">Utterances across {voiceClasses.length || 11} intents</span>
+                <span className="text-[10px] text-neutral-500">Utterances across {voiceClasses.length || 11} intents</span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
-                <span className="text-[11px] font-bold text-[#949599] uppercase tracking-wider flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5 text-amber-400" />
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.08]">
+                <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Radio className="w-3.5 h-3.5 text-neutral-400" />
                   Phonetic Rules
                 </span>
-                <h4 className="text-2xl font-black text-amber-300 mt-1">
+                <h4 className="text-2xl font-bold text-white mt-1">
                   {pronunciationLexicon.length}
                 </h4>
-                <span className="text-[10px] text-amber-400/80">Active speech normalizations</span>
+                <span className="text-[10px] text-neutral-500">Active speech normalizations</span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
-                <span className="text-[11px] font-bold text-[#949599] uppercase tracking-wider flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-purple-400" />
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.08]">
+                <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5 text-neutral-400" />
                   Confidence Guard
                 </span>
-                <h4 className="text-2xl font-black text-white mt-1">
+                <h4 className="text-2xl font-bold text-white mt-1">
                   {Math.round((voiceMetrics.confidenceThreshold || 0.55) * 100)}%
                 </h4>
-                <span className="text-[10px] text-[#949599]">Below this threshold uses fallback</span>
+                <span className="text-[10px] text-neutral-500">Below this threshold uses fallback</span>
               </div>
             </div>
           </div>
 
           {/* INTERACTIVE VOICE DIAGNOSTICS & SIMULATOR LAB */}
-          <div className="rounded-3xl bg-[#161D22] border border-[#2E363E] p-6 sm:p-7 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#2E363E]">
+          <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-6 sm:p-7 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08]">
               <div>
                 <div className="flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-amber-400" />
-                  <h3 className="text-base font-bold text-white">Live Voice Diagnostic &amp; Simulation Lab</h3>
+                  <Activity className="w-4 h-4 text-neutral-300" />
+                  <h3 className="text-sm font-semibold text-white">Live Voice Diagnostic &amp; Simulation Lab</h3>
                 </div>
-                <p className="text-xs text-[#949599] mt-0.5">
+                <p className="text-xs text-neutral-400 mt-0.5">
                   Test acoustic speech transcripts in real-time. Inspect phonetic correction, softmax intent probabilities, and natural voice prosody.
                 </p>
               </div>
@@ -1304,13 +1306,13 @@ export default function AITrainingPage() {
                 <button
                   type="button"
                   onClick={toggleVoiceTestMic}
-                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow cursor-pointer ${
+                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${
                     isVoiceTestingListening
-                      ? 'bg-red-500 text-white animate-pulse ring-4 ring-red-500/20'
-                      : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
+                      ? 'bg-rose-500 text-white animate-pulse ring-4 ring-rose-500/20'
+                      : 'bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/[0.08]'
                   }`}
                 >
-                  <Mic className="w-3.5 h-3.5" />
+                  <Mic className="w-3.5 h-3.5 text-neutral-300" />
                   <span>{isVoiceTestingListening ? 'Listening to Mic...' : 'Speak via Mic'}</span>
                 </button>
               </div>
@@ -1326,13 +1328,13 @@ export default function AITrainingPage() {
                     onChange={(e) => setVoiceTestQuery(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') handleRunVoiceTest(); }}
                     placeholder="Enter spoken user sentence (e.g. 'book two vvip tickets for afro nation in kuma see for 200 cities')..."
-                    className="w-full px-4 py-3 rounded-2xl bg-[#1C232B] border border-[#2E363E] text-xs text-white placeholder-[#494F55] focus:outline-none focus:border-amber-400"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30"
                   />
                   {voiceTestQuery && (
                     <button
                       type="button"
                       onClick={() => setVoiceTestQuery('')}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#949599] hover:text-white"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -1343,7 +1345,7 @@ export default function AITrainingPage() {
                   type="button"
                   onClick={() => handleRunVoiceTest()}
                   disabled={!voiceTestQuery.trim() || voiceTestLoading}
-                  className="px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-black transition flex items-center gap-2 shadow disabled:opacity-40 shrink-0 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-semibold transition flex items-center gap-2 shadow-sm disabled:opacity-40 shrink-0 cursor-pointer"
                 >
                   {voiceTestLoading ? (
                     <RefreshCw className="w-4 h-4 animate-spin text-black" />
@@ -1356,7 +1358,7 @@ export default function AITrainingPage() {
 
               {/* Quick Preset Buttons */}
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[11px] text-[#949599] mr-1">Try vocal phrases:</span>
+                <span className="text-[11px] text-neutral-400 mr-1">Try vocal phrases:</span>
                 {[
                   'book two vvip tickets for afro nation in kuma see for 200 cities',
                   'verify my momo payment i completed the transaction',
@@ -1372,7 +1374,7 @@ export default function AITrainingPage() {
                       setVoiceTestQuery(preset);
                       handleRunVoiceTest(preset);
                     }}
-                    className="px-2.5 py-1 rounded-xl bg-[#1C232B] hover:bg-white/10 border border-[#2E363E] text-[11px] text-[#949599] hover:text-white transition truncate max-w-[280px] cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] text-[11px] text-neutral-400 hover:text-white transition truncate max-w-[280px] cursor-pointer"
                   >
                     &ldquo;{preset.slice(0, 36)}...&rdquo;
                   </button>
@@ -1385,45 +1387,45 @@ export default function AITrainingPage() {
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-4 border-t border-[#2E363E]"
+                className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-4 border-t border-white/[0.08]"
               >
                 {/* Left Card: Phonetic Correction & Entity Normalization */}
-                <div className="space-y-4 p-5 rounded-2xl bg-[#1C232B] border border-[#2E363E]">
+                <div className="space-y-4 p-5 rounded-2xl bg-[#0B0D13] border border-white/[0.08]">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                      <Radio className="w-3.5 h-3.5" />
+                    <span className="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-1.5">
+                      <Radio className="w-3.5 h-3.5 text-neutral-400" />
                       1. Acoustic Speech Normalization
                     </span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-white">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/[0.06] border border-white/[0.08] text-neutral-300">
                       {voiceTestResult.phoneticNormalization?.changesApplied?.length || 0} Corrections
                     </span>
                   </div>
 
                   <div className="space-y-2 text-xs">
                     <div>
-                      <p className="text-[11px] font-bold text-[#949599] mb-1">Raw Speech Heard:</p>
-                      <p className="p-2.5 rounded-xl bg-black/40 border border-white/5 font-mono text-[#EFEFF1]">
+                      <p className="text-[11px] font-medium text-neutral-400 mb-1">Raw Speech Heard:</p>
+                      <p className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.08] font-mono text-neutral-300">
                         &ldquo;{voiceTestResult.rawTranscript}&rdquo;
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-[11px] font-bold text-[#949599] mb-1">Phonetically Corrected Output:</p>
-                      <p className="p-2.5 rounded-xl bg-amber-400/10 border border-amber-400/30 font-mono text-amber-300 font-bold">
+                      <p className="text-[11px] font-medium text-neutral-400 mb-1">Phonetically Corrected Output:</p>
+                      <p className="p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.1] font-mono text-white font-medium">
                         &ldquo;{voiceTestResult.phoneticNormalization?.correctedText}&rdquo;
                       </p>
                     </div>
 
                     {voiceTestResult.phoneticNormalization?.changesApplied?.length > 0 && (
                       <div className="space-y-1.5 pt-1">
-                        <p className="text-[11px] font-bold text-[#949599]">Applied Normalizations:</p>
+                        <p className="text-[11px] font-medium text-neutral-400">Applied Normalizations:</p>
                         <div className="flex flex-wrap gap-1.5">
                           {voiceTestResult.phoneticNormalization.changesApplied.map((ch, i) => (
                             <span
                               key={i}
-                              className="px-2 py-1 rounded-lg bg-amber-400/20 border border-amber-400/40 text-[11px] text-amber-300 font-mono"
+                              className="px-2 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-[11px] text-neutral-300 font-mono"
                             >
-                              <span className="line-through text-white/50">{ch.original}</span> &rarr; <span className="font-bold">{ch.replacedWith}</span>
+                              <span className="line-through text-neutral-500">{ch.original}</span> &rarr; <span className="font-semibold text-white">{ch.replacedWith}</span>
                             </span>
                           ))}
                         </div>
@@ -1433,49 +1435,49 @@ export default function AITrainingPage() {
                 </div>
 
                 {/* Right Card: Softmax Probability Distribution */}
-                <div className="space-y-4 p-5 rounded-2xl bg-[#1C232B] border border-[#2E363E]">
+                <div className="space-y-4 p-5 rounded-2xl bg-[#0B0D13] border border-white/[0.08]">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                      <Cpu className="w-3.5 h-3.5" />
+                    <span className="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-1.5">
+                      <Cpu className="w-3.5 h-3.5 text-neutral-400" />
                       2. Deep Intent Softmax Probabilities
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-400/10 text-emerald-400 border border-emerald-400/20">
                       {Math.round((voiceTestResult.intentClassification?.confidenceScore || 0) * 100)}% Confidence
                     </span>
                   </div>
 
                   <div className="space-y-2.5 text-xs">
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-black/40 border border-white/10">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.08]">
                       <div>
-                        <span className="text-[11px] text-[#949599]">Top Predicted Intent</span>
-                        <h4 className="text-sm font-black text-white font-mono mt-0.5">
+                        <span className="text-[11px] text-neutral-400">Top Predicted Intent</span>
+                        <h4 className="text-sm font-semibold text-white font-mono mt-0.5">
                           {voiceTestResult.intentClassification?.predictedIntent}
                         </h4>
                       </div>
                       <div className="text-right">
-                        <span className="text-[11px] text-[#949599]">Second Best Alternative</span>
-                        <p className="text-xs font-mono text-[#949599]">
+                        <span className="text-[11px] text-neutral-400">Second Best Alternative</span>
+                        <p className="text-xs font-mono text-neutral-400">
                           {voiceTestResult.intentClassification?.secondBestIntent || 'None'} ({Math.round((voiceTestResult.intentClassification?.secondConfidence || 0) * 100)}%)
                         </p>
                       </div>
                     </div>
 
                     <div className="space-y-2 pt-1">
-                      <span className="text-[11px] font-bold text-[#949599]">Softmax Distribution across Classes:</span>
+                      <span className="text-[11px] font-medium text-neutral-400">Softmax Distribution across Classes:</span>
                       {Object.entries(voiceTestResult.intentClassification?.probabilityDistribution || {})
                         .sort((a, b) => b[1] - a[1])
                         .slice(0, 4)
                         .map(([intentKey, prob], idx) => (
                           <div key={idx} className="space-y-1">
                             <div className="flex items-center justify-between text-[11px] font-mono">
-                              <span className={idx === 0 ? 'text-amber-300 font-bold' : 'text-[#949599]'}>
+                              <span className={idx === 0 ? 'text-white font-semibold' : 'text-neutral-400'}>
                                 {intentKey}
                               </span>
-                              <span className="text-white font-bold">{Math.round(prob * 100)}%</span>
+                              <span className="text-white font-medium">{Math.round(prob * 100)}%</span>
                             </div>
-                            <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                            <div className="w-full h-1.5 rounded-full bg-white/[0.08] overflow-hidden">
                               <div
-                                className={`h-full rounded-full ${idx === 0 ? 'bg-amber-400' : 'bg-white/30'}`}
+                                className={`h-full rounded-full ${idx === 0 ? 'bg-white' : 'bg-white/30'}`}
                                 style={{ width: `${Math.round(prob * 100)}%` }}
                               />
                             </div>
@@ -1486,16 +1488,16 @@ export default function AITrainingPage() {
                 </div>
 
                 {/* Bottom Full Row: Natural Conversational Synthesized Speech Output */}
-                <div className="lg:col-span-2 p-5 rounded-2xl bg-[#1C232B] border border-amber-400/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="lg:col-span-2 p-5 rounded-2xl bg-white/[0.02] border border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
-                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                      <Volume2 className="w-4 h-4 text-amber-400" />
+                    <span className="text-xs font-semibold text-neutral-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <Volume2 className="w-4 h-4 text-neutral-400" />
                       3. Synthesized Natural Spoken Utterance (Voice Output)
                     </span>
                     <p className="text-sm font-semibold text-white leading-relaxed">
                       &ldquo;{voiceTestResult.synthesizedVoiceOutput}&rdquo;
                     </p>
-                    <p className="text-[11px] text-[#949599]">
+                    <p className="text-[11px] text-neutral-400">
                       Emotion: <strong className="text-white capitalize">{voiceTestResult.emotionAnalysis?.emotion}</strong> • Urgency: <strong className="text-white capitalize">{voiceTestResult.emotionAnalysis?.urgency}</strong> • Cadence: <strong className="text-white">Natural Conversational</strong>
                     </p>
                   </div>
@@ -1503,7 +1505,7 @@ export default function AITrainingPage() {
                   <button
                     type="button"
                     onClick={() => playSynthesizedVoice(voiceTestResult.synthesizedVoiceOutput)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-black shadow-lg shadow-amber-400/20 shrink-0 transition cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-semibold shrink-0 transition cursor-pointer"
                   >
                     <Volume2 className="w-4 h-4 text-black" />
                     <span>Listen to Voice</span>
@@ -1516,21 +1518,21 @@ export default function AITrainingPage() {
           {/* TWO COLUMN GRID: PHONETIC LEXICON & TRAINING DATASET */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* COLUMN 1: PHONETIC PRONUNCIATION LEXICON */}
-            <div className="rounded-3xl bg-[#161D22] border border-[#2E363E] p-6 space-y-4">
+            <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-base font-bold text-white flex items-center gap-2">
-                    <Radio className="w-4 h-4 text-amber-400" />
+                    <Radio className="w-4 h-4 text-neutral-300" />
                     <span>Phonetic Speech Lexicon</span>
                   </h3>
-                  <p className="text-xs text-[#949599] mt-0.5">
+                  <p className="text-xs text-neutral-400 mt-0.5">
                     Maps commonly misrecognized speech sounds to canonical platform terms.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsLexiconModalOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition shadow cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-medium transition shadow-sm cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add Rule</span>
@@ -1539,37 +1541,37 @@ export default function AITrainingPage() {
 
               {/* Search */}
               <div className="relative">
-                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#494F55]" />
+                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                 <input
                   type="text"
                   value={lexiconSearch}
                   onChange={(e) => setLexiconSearch(e.target.value)}
                   placeholder="Filter phonetic terms (e.g. 'city', 'kumasi')..."
-                  className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#2E363E] text-xs text-white placeholder-[#494F55] focus:outline-none focus:border-amber-400"
+                  className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30"
                 />
               </div>
 
               {/* Rules List */}
               <div className="max-h-[360px] overflow-y-auto space-y-2 pr-1">
                 {filteredLexicon.length === 0 ? (
-                  <p className="text-xs text-[#949599] text-center py-8">No phonetic rules match your search.</p>
+                  <p className="text-xs text-neutral-500 text-center py-8">No phonetic rules match your search.</p>
                 ) : (
                   filteredLexicon.map((item) => (
                     <div
                       key={item.id}
-                      className="p-3 rounded-xl bg-[#1C232B] border border-[#2E363E] flex items-center justify-between text-xs hover:border-amber-400/40 transition"
+                      className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] flex items-center justify-between text-xs hover:border-white/20 transition"
                     >
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-red-300 bg-red-500/10 px-2 py-0.5 rounded-md">
+                          <span className="font-mono text-red-400 bg-red-500/10 px-2 py-0.5 rounded-md">
                             &ldquo;{item.heard}&rdquo;
                           </span>
-                          <span className="text-[#949599]">&rarr;</span>
-                          <span className="font-mono font-bold text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-md">
+                          <span className="text-neutral-500">&rarr;</span>
+                          <span className="font-mono font-medium text-white bg-white/10 px-2 py-0.5 rounded-md">
                             {item.replacement}
                           </span>
                         </div>
-                        <span className="inline-block text-[10px] text-[#949599] uppercase tracking-wider font-semibold">
+                        <span className="inline-block text-[10px] text-neutral-500 uppercase tracking-wider font-medium">
                           {item.category}
                         </span>
                       </div>
@@ -1577,7 +1579,7 @@ export default function AITrainingPage() {
                       <button
                         type="button"
                         onClick={() => handleDeleteLexiconRule(item.id)}
-                        className="p-1.5 rounded-lg text-[#949599] hover:text-red-400 hover:bg-white/5 transition cursor-pointer"
+                        className="p-1.5 rounded-lg text-neutral-500 hover:text-red-400 hover:bg-white/5 transition cursor-pointer"
                         title="Delete rule"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1589,21 +1591,21 @@ export default function AITrainingPage() {
             </div>
 
             {/* COLUMN 2: VOICE INTENT TRAINING DATASET */}
-            <div className="rounded-3xl bg-[#161D22] border border-[#2E363E] p-6 space-y-4">
+            <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-base font-bold text-white flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-cyan-400" />
+                    <Layers className="w-4 h-4 text-neutral-300" />
                     <span>Voice Training Utterances</span>
                   </h3>
-                  <p className="text-xs text-[#949599] mt-0.5">
+                  <p className="text-xs text-neutral-400 mt-0.5">
                     Curated voice speech phrases used to train the Softmax Linear Intent Classifier.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsSampleModalOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition shadow cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-medium transition shadow-sm cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add Utterance</span>
@@ -1617,10 +1619,10 @@ export default function AITrainingPage() {
                     key={intentId}
                     type="button"
                     onClick={() => setSelectedVoiceIntent(intentId)}
-                    className={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${
                       selectedVoiceIntent === intentId
-                        ? 'bg-amber-400 text-black shadow'
-                        : 'bg-[#1C232B] text-[#949599] hover:text-white border border-[#2E363E]'
+                        ? 'bg-white text-black shadow-sm'
+                        : 'bg-white/[0.03] text-neutral-400 hover:text-white border border-white/[0.08]'
                     }`}
                   >
                     {intentId === 'all' ? 'All Classes' : intentId.replace(/_/g, ' ')}
@@ -1630,29 +1632,29 @@ export default function AITrainingPage() {
 
               {/* Search */}
               <div className="relative">
-                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#494F55]" />
+                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                 <input
                   type="text"
                   value={sampleSearch}
                   onChange={(e) => setSampleSearch(e.target.value)}
                   placeholder="Search utterances..."
-                  className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#2E363E] text-xs text-white placeholder-[#494F55] focus:outline-none focus:border-amber-400"
+                  className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30"
                 />
               </div>
 
               {/* Utterances List */}
               <div className="max-h-[320px] overflow-y-auto space-y-2 pr-1">
                 {filteredSamples.length === 0 ? (
-                  <p className="text-xs text-[#949599] text-center py-8">No training samples match your filter.</p>
+                  <p className="text-xs text-neutral-500 text-center py-8">No training samples match your filter.</p>
                 ) : (
                   filteredSamples.map((sample) => (
                     <div
                       key={sample.id}
-                      className="p-3 rounded-xl bg-[#1C232B] border border-[#2E363E] flex items-center justify-between text-xs hover:border-cyan-400/40 transition gap-2"
+                      className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] flex items-center justify-between text-xs hover:border-white/20 transition gap-2"
                     >
                       <div className="space-y-1 min-w-0">
                         <p className="text-white font-medium truncate">&ldquo;{sample.text}&rdquo;</p>
-                        <span className="inline-block px-2 py-0.5 rounded-md bg-cyan-400/10 text-cyan-300 font-mono text-[10px] font-bold">
+                        <span className="inline-block px-2 py-0.5 rounded-md bg-white/[0.06] text-neutral-300 border border-white/[0.08] font-mono text-[10px] font-medium">
                           {sample.intent}
                         </span>
                       </div>
@@ -1660,7 +1662,7 @@ export default function AITrainingPage() {
                       <button
                         type="button"
                         onClick={() => handleDeleteSample(sample.id)}
-                        className="p-1.5 rounded-lg text-[#949599] hover:text-red-400 hover:bg-white/5 transition shrink-0 cursor-pointer"
+                        className="p-1.5 rounded-lg text-neutral-500 hover:text-red-400 hover:bg-white/5 transition shrink-0 cursor-pointer"
                         title="Delete sample"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1673,13 +1675,13 @@ export default function AITrainingPage() {
           </div>
 
           {/* ACOUSTIC PROSODY & HYPERPARAMETERS */}
-          <div className="rounded-3xl bg-[#161D22] border border-[#2E363E] p-6 sm:p-7 space-y-6">
+          <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-6 sm:p-7 space-y-6">
             <div>
               <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-amber-400" />
+                <Sliders className="w-4 h-4 text-neutral-300" />
                 <span>Voice Agent Hyperparameters &amp; Speech Prosody</span>
               </h3>
-              <p className="text-xs text-[#949599] mt-0.5">
+              <p className="text-xs text-neutral-400 mt-0.5">
                 Configure minimum classification certainty, response conciseness, and browser Text-To-Speech acoustic cadence.
               </p>
             </div>
@@ -1687,9 +1689,9 @@ export default function AITrainingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Confidence Threshold */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-white">
+                <div className="flex items-center justify-between text-xs font-semibold text-white">
                   <span>Confidence Threshold</span>
-                  <span className="font-mono text-amber-300">{Math.round((voiceMetrics.confidenceThreshold || 0.55) * 100)}%</span>
+                  <span className="font-mono text-neutral-200">{Math.round((voiceMetrics.confidenceThreshold || 0.55) * 100)}%</span>
                 </div>
                 <input
                   type="range"
@@ -1698,18 +1700,18 @@ export default function AITrainingPage() {
                   step="0.05"
                   value={voiceMetrics.confidenceThreshold || 0.55}
                   onChange={(e) => setVoiceMetrics({ ...voiceMetrics, confidenceThreshold: parseFloat(e.target.value) })}
-                  className="w-full accent-amber-400 cursor-pointer"
+                  className="w-full accent-white cursor-pointer"
                 />
-                <p className="text-[11px] text-[#949599]">
+                <p className="text-[11px] text-neutral-500">
                   Speech below this probability triggers conversational clarification or LLM deep fallback.
                 </p>
               </div>
 
               {/* Speech Rate Multiplier */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-white">
+                <div className="flex items-center justify-between text-xs font-semibold text-white">
                   <span>Speech Rate (Speed)</span>
-                  <span className="font-mono text-amber-300">{voiceMetrics.speechRate || 1.05}x</span>
+                  <span className="font-mono text-neutral-200">{voiceMetrics.speechRate || 1.05}x</span>
                 </div>
                 <input
                   type="range"
@@ -1718,18 +1720,18 @@ export default function AITrainingPage() {
                   step="0.05"
                   value={voiceMetrics.speechRate || 1.05}
                   onChange={(e) => setVoiceMetrics({ ...voiceMetrics, speechRate: parseFloat(e.target.value) })}
-                  className="w-full accent-amber-400 cursor-pointer"
+                  className="w-full accent-white cursor-pointer"
                 />
-                <p className="text-[11px] text-[#949599]">
+                <p className="text-[11px] text-neutral-500">
                   1.05x represents the ideal natural cadence for event ticket checkouts and navigation.
                 </p>
               </div>
 
               {/* Pitch */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-white">
+                <div className="flex items-center justify-between text-xs font-semibold text-white">
                   <span>Voice Pitch</span>
-                  <span className="font-mono text-amber-300">{voiceMetrics.pitch || 1.0}</span>
+                  <span className="font-mono text-neutral-200">{voiceMetrics.pitch || 1.0}</span>
                 </div>
                 <input
                   type="range"
@@ -1738,20 +1740,20 @@ export default function AITrainingPage() {
                   step="0.05"
                   value={voiceMetrics.pitch || 1.0}
                   onChange={(e) => setVoiceMetrics({ ...voiceMetrics, pitch: parseFloat(e.target.value) })}
-                  className="w-full accent-amber-400 cursor-pointer"
+                  className="w-full accent-white cursor-pointer"
                 />
-                <p className="text-[11px] text-[#949599]">
+                <p className="text-[11px] text-neutral-500">
                   Acoustic tone modulation for the voice assistant.
                 </p>
               </div>
             </div>
 
-            <div className="flex justify-end pt-3 border-t border-[#2E363E]">
+            <div className="flex justify-end pt-4 border-t border-white/[0.08]">
               <button
                 type="button"
                 onClick={handleSaveVoiceSettings}
                 disabled={savingVoiceSettings}
-                className="px-6 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-extrabold transition shadow disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-semibold transition shadow-sm disabled:opacity-50 cursor-pointer"
               >
                 {savingVoiceSettings ? 'Saving Settings...' : 'Save Voice Hyperparameters'}
               </button>
