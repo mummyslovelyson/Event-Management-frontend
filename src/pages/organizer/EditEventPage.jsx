@@ -59,6 +59,7 @@ export default function EditEventPage() {
             price: t.price ?? '',
             quantity: uploaded.length > 0 ? uploaded.length : (t.quantity ?? ''),
             description: t.description || '',
+            image: t.image || '',
             section_type: t.section_type || 'general',
             early_bird_price: t.early_bird_price || '',
             early_bird_deadline: t.early_bird_deadline ? String(t.early_bird_deadline).slice(0, 10) : '',

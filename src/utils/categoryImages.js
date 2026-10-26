@@ -131,6 +131,8 @@ export function getCategoryImage(name, fallbackIndex = 0) {
   return DEFAULT_CATEGORY_IMAGES[fallbackIndex % DEFAULT_CATEGORY_IMAGES.length];
 }
 
+export const getCategoryCoverImage = getCategoryImage;
+
 export const POPULAR_CATEGORY_LIST = [
   { name: 'Concerts', image: '/assets/images/musical-shows/cover.png', slug: 'concerts', countLabel: 'Live Music' },
   { name: 'Festivals', image: '/assets/images/festivals/cover.png', slug: 'festivals', countLabel: 'Culture & Arts' },

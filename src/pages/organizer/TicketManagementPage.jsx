@@ -25,6 +25,7 @@ import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useAuth } from '@/context/AuthContext';
 import { getMediaUrl } from '@/utils/media';
+import { getCategoryCoverImage } from '@/utils/categoryImages';
 
 const TICKET_PRESETS = [
   { name: 'Regular', section: 'general', desc: 'Standard general admission pass with event entry' },
@@ -39,12 +40,14 @@ const TICKET_PRESETS = [
 const inputCls = 'w-full px-3.5 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition';
 
 const saleStatus = (t) => {
-  if (!t.saleEndDate) return 'neutral';
+  const sEnd = t.saleEndDate || t.sale_end;
+  const sStart = t.saleStartDate || t.sale_start;
+  if (!sEnd) return { v: 'neutral', label: 'Open' };
   const now = new Date();
-  const end = new Date(t.saleEndDate);
-  const start = new Date(t.saleStartDate);
+  const end = new Date(sEnd);
+  const start = sStart ? new Date(sStart) : null;
   if (now > end) return { v: 'error', label: 'Ended' };
-  if (now < start) return { v: 'pending', label: 'Upcoming' };
+  if (start && now < start) return { v: 'pending', label: 'Upcoming' };
   return { v: 'success', label: 'On Sale' };
 };
 
@@ -273,9 +276,14 @@ export default function TicketManagementPage() {
     try {
       const payload = {
         ...data,
+        name: data.name?.trim(),
         price: (data.price === '' || data.price === null || data.price === undefined) ? 0 : Number(data.price),
         quantity: uploadedTickets.length > 0 ? uploadedTickets.length : Number(data.quantity || 0),
         image: ticketImage || data.image || null,
+        sale_start: data.saleStartDate || data.sale_start || null,
+        sale_end: data.saleEndDate || data.sale_end || null,
+        saleStartDate: data.saleStartDate || data.sale_start || null,
+        saleEndDate: data.saleEndDate || data.sale_end || null,
         uploadedTickets,
       };
       if (editTarget) {
@@ -533,10 +541,13 @@ export default function TicketManagementPage() {
             <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-4 flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="relative w-full sm:w-28 h-20 rounded-xl overflow-hidden bg-white/[0.03] shrink-0 border border-white/[0.08]">
                 <img
-                  src={currentEvent.banner_image || currentEvent.thumbnail || '/assets/images/Logo.jpeg'}
+                  src={getMediaUrl(currentEvent.banner_image || currentEvent.thumbnail) || getCategoryCoverImage(currentEvent.category) || '/assets/images/musical-shows/cover.png'}
                   alt={currentEvent.title}
                   className="w-full h-full object-cover"
-                  onError={(e) => { e.currentTarget.src = '/assets/images/Logo.jpeg'; }}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getCategoryCoverImage(currentEvent?.category) || '/assets/images/musical-shows/cover.png';
+                  }}
                 />
               </div>
               <div className="flex-1 min-w-0 space-y-1">
@@ -689,24 +700,17 @@ export default function TicketManagementPage() {
                                     if (fallback) fallback.classList.remove('hidden');
                                   }}
                                 />
-                              ) : currentEvent?.banner_image ? (
+                              ) : (
                                 <img
-                                  src={getMediaUrl(currentEvent.banner_image)}
+                                  src={getMediaUrl(currentEvent?.banner_image) || getCategoryCoverImage(currentEvent?.category) || '/assets/images/musical-shows/cover.png'}
                                   alt={t.name}
                                   className="w-full h-full object-cover opacity-80"
                                   onError={(e) => {
                                     e.currentTarget.onerror = null;
-                                    e.currentTarget.style.display = 'none';
-                                    const fallback = e.currentTarget.parentElement?.querySelector('.tier-fallback-badge');
-                                    if (fallback) fallback.classList.remove('hidden');
+                                    e.currentTarget.src = getCategoryCoverImage(currentEvent?.category) || '/assets/images/musical-shows/cover.png';
                                   }}
                                 />
-                              ) : (
-                                <TicketIcon className="w-6 h-6 text-neutral-400" />
                               )}
-                              <div className="tier-fallback-badge hidden w-full h-full flex items-center justify-center bg-white/[0.04]">
-                                <TicketIcon className="w-6 h-6 text-neutral-400" />
-                              </div>
                             </div>
 
                             <div className="flex-1 min-w-0">
@@ -723,7 +727,7 @@ export default function TicketManagementPage() {
                               <div className="mt-2 flex items-center gap-4 text-xs text-neutral-400">
                                 <span className="flex items-center gap-1">
                                   <Calendar className="w-3.5 h-3.5" />
-                                  {t.saleStartDate ? new Date(t.saleStartDate).toLocaleDateString('en-GB') : '—'} → {t.saleEndDate ? new Date(t.saleEndDate).toLocaleDateString('en-GB') : '—'}
+                                  {(t.saleStartDate || t.sale_start) ? new Date(t.saleStartDate || t.sale_start).toLocaleDateString('en-GB') : '—'} → {(t.saleEndDate || t.sale_end) ? new Date(t.saleEndDate || t.sale_end).toLocaleDateString('en-GB') : '—'}
                                 </span>
                               </div>
                             </div>

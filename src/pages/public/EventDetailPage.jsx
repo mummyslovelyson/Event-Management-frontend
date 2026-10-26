@@ -29,6 +29,7 @@ import { getEvent, getTrendingEvents, toggleEventReminder, getEventReminderStatu
 
 import { getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '@/utils/calendar';
 import { getMediaUrl } from '@/utils/media';
+import { getCategoryCoverImage } from '@/utils/categoryImages';
 import { getTicketTypes } from '@/api/tickets';
 import { toggleFavorite, followOrganizer, unfollowOrganizer } from '@/api/users';
 import {
@@ -697,8 +698,12 @@ export default function EventDetailPage() {
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.4, ease: 'easeOut' }}
-          src={event.banner_image || event.bannerImage || event.image || event.banner || '/assets/images/Logo.jpeg'}
+          src={getMediaUrl(event.banner_image || event.bannerImage || event.image || event.banner) || getCategoryCoverImage(event.category) || '/assets/images/musical-shows/cover.png'}
           alt={event.title}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = getCategoryCoverImage(event.category) || '/assets/images/musical-shows/cover.png';
+          }}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1C232B] via-[#1C232B]/50 to-[#1C232B]/30" />

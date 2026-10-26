@@ -6,6 +6,8 @@ import toast from 'react-hot-toast';
 import { toggleFavorite } from '@/api/users';
 import { toggleEventReminder } from '@/api/events';
 import { useCurrency } from '@/context/CurrencyContext';
+import { getMediaUrl } from '@/utils/media';
+import { getCategoryCoverImage } from '@/utils/categoryImages';
 import SocialShareModal from './SocialShareModal';
 
 export default function EventCard({ event, onToggleFavorite, variant = 'default' }) {
@@ -59,7 +61,9 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
 
   // The API returns snake_case columns (banner_image, min_price, start_date)
   // while some pages pass camelCase — accept both shapes.
-  const img = event.image || event.banner_image || event.images?.[0] || '';
+  const fallbackImg = getCategoryCoverImage(event.category) || '/assets/images/musical-shows/cover.png';
+  const rawImg = event.image || event.banner_image || event.bannerImage || event.images?.[0] || '';
+  const img = rawImg ? getMediaUrl(rawImg) : fallbackImg;
   const formattedDate = (event.startDate || event.start_date)
     ? new Date(event.startDate || event.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : 'TBA';
@@ -76,16 +80,14 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
           className="flex gap-3 p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/40 transition group"
         >
           <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-[#1C232B]">
-            {img && (
-              <img
-                src={img}
-                alt={event.title}
-                loading="lazy"
-                decoding="async"
-                onError={(e) => { e.currentTarget.src = '/assets/images/musical-shows/cover.png'; }}
-                className="w-full h-full object-cover"
-              />
-            )}
+            <img
+              src={img}
+              alt={event.title}
+              loading="lazy"
+              decoding="async"
+              onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = fallbackImg; }}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="min-w-0 flex-1">
             <span className="text-[10px] font-semibold uppercase tracking-wide text-white">{event.category}</span>
@@ -109,20 +111,14 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
         >
           <Link to={`/events/${event.id}`} className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
             <div className="relative w-full sm:w-56 h-36 rounded-xl overflow-hidden shrink-0 bg-[#1C232B]">
-              {img ? (
-                <img
-                  src={img}
-                  alt={event.title}
-                  loading="lazy"
-                  decoding="async"
-                  onError={(e) => { e.currentTarget.src = '/assets/images/musical-shows/cover.png'; }}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Ticket className="w-10 h-10 text-[#494F55]" />
-                </div>
-              )}
+              <img
+                src={img}
+                alt={event.title}
+                loading="lazy"
+                decoding="async"
+                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = fallbackImg; }}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
               {event.category && (
                 <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wide bg-[#1C232B]/90 text-white backdrop-blur-sm">
                   {event.category}
@@ -208,20 +204,14 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
       >
         <Link to={`/events/${event.id}`} className="block">
           <div className="relative aspect-[16/10] overflow-hidden bg-[#1C232B]">
-            {img ? (
-              <img
-                src={img}
-                alt={event.title}
-                loading="lazy"
-                decoding="async"
-                onError={(e) => { e.currentTarget.src = '/assets/images/musical-shows/cover.png'; }}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <Ticket className="w-12 h-12 text-[#494F55]" />
-              </div>
-            )}
+            <img
+              src={img}
+              alt={event.title}
+              loading="lazy"
+              decoding="async"
+              onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = fallbackImg; }}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
             <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[70%] z-10">
               {event.category && (
                 <span className="px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wide bg-[#1C232B]/90 text-white backdrop-blur-sm">

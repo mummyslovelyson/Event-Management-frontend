@@ -246,9 +246,14 @@ export default function AdminEventDetailPage() {
     try {
       const payload = {
         ...data,
+        name: data.name?.trim(),
         price: (data.price === '' || data.price === null || data.price === undefined) ? 0 : Number(data.price),
         quantity: ticketUploadedFiles.length > 0 ? ticketUploadedFiles.length : Number(data.quantity || 0),
         image: ticketArtworkImage || data.image || null,
+        sale_start: data.saleStartDate || data.sale_start || null,
+        sale_end: data.saleEndDate || data.sale_end || null,
+        saleStartDate: data.saleStartDate || data.sale_start || null,
+        saleEndDate: data.saleEndDate || data.sale_end || null,
         uploadedTickets: ticketUploadedFiles,
       };
       if (ticketEditTarget) {
