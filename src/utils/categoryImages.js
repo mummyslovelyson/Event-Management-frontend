@@ -90,6 +90,10 @@ const DEFAULT_CATEGORY_IMAGES = [
 /**
  * Returns the verified cover image path for any category name
  */
+export function getCategoryCoverImage(name, fallbackIndex = 0) {
+  return getCategoryImage(name, fallbackIndex);
+}
+
 export function getCategoryImage(name, fallbackIndex = 0) {
   if (!name) {
     return DEFAULT_CATEGORY_IMAGES[fallbackIndex % DEFAULT_CATEGORY_IMAGES.length];
@@ -131,7 +135,6 @@ export function getCategoryImage(name, fallbackIndex = 0) {
   return DEFAULT_CATEGORY_IMAGES[fallbackIndex % DEFAULT_CATEGORY_IMAGES.length];
 }
 
-export const getCategoryCoverImage = getCategoryImage;
 
 export const POPULAR_CATEGORY_LIST = [
   { name: 'Concerts', image: '/assets/images/musical-shows/cover.png', slug: 'concerts', countLabel: 'Live Music' },

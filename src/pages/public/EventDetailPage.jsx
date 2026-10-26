@@ -225,13 +225,15 @@ export default function EventDetailPage() {
   // FAQ accordion
   const [openFaq, setOpenFaq] = useState(null);
 
+  const isValidId = Boolean(id && id !== 'undefined' && id !== 'null' && !isNaN(Number(id)));
+
   useEffect(() => {
-    if (isAuthenticated && id) {
+    if (isAuthenticated && isValidId) {
       getEventReminderStatus(id)
         .then((res) => setIsReminded(!!res.data?.isReminded))
         .catch(() => {});
     }
-  }, [isAuthenticated, id]);
+  }, [isAuthenticated, id, isValidId]);
 
   const handleToggleReminder = async () => {
     if (!isAuthenticated) {
@@ -239,6 +241,7 @@ export default function EventDetailPage() {
       navigate('/login');
       return;
     }
+    if (!isValidId) return;
     setReminderLoading(true);
     try {
       const res = await toggleEventReminder(id);
@@ -252,6 +255,10 @@ export default function EventDetailPage() {
   };
 
   useEffect(() => {
+    if (!isValidId) {
+      setLoading(false);
+      return;
+    }
     let active = true;
     const load = async () => {
       setLoading(true);
@@ -271,9 +278,13 @@ export default function EventDetailPage() {
     };
     load();
     return () => { active = false; };
-  }, [id]);
+  }, [id, isValidId]);
 
   useEffect(() => {
+    if (!isValidId) {
+      setResaleLoading(false);
+      return;
+    }
     let active = true;
     const loadResale = async () => {
       setResaleLoading(true);
@@ -290,9 +301,13 @@ export default function EventDetailPage() {
     };
     loadResale();
     return () => { active = false; };
-  }, [id]);
+  }, [id, isValidId]);
 
   useEffect(() => {
+    if (!isValidId) {
+      setLoadingTickets(false);
+      return;
+    }
     let active = true;
     const loadTickets = async () => {
       setLoadingTickets(true);
@@ -318,15 +333,19 @@ export default function EventDetailPage() {
         // graceful
       }
     };
-    if (id) {
-      loadTickets();
-      loadRelated();
-    }
+    loadTickets();
+    loadRelated();
     return () => { active = false; };
-  }, [id]);
+  }, [id, isValidId]);
 
   // Meet-ups & Community for this event
   useEffect(() => {
+    if (!isValidId) {
+      setMeetupsLoading(false);
+      setAttendeesLoading(false);
+      setDiscussionsLoading(false);
+      return;
+    }
     let active = true;
     const loadCommunityData = async () => {
       setMeetupsLoading(true);

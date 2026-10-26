@@ -72,11 +72,14 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
   const priceLabel =
     minPrice != null ? (minPrice === 0 ? 'Free' : format(minPrice)) : '—';
 
+  const eventId = event?.id || event?.event_id || event?._id;
+  const eventLink = eventId ? `/events/${eventId}` : '#';
+
   if (variant === 'compact') {
     return (
       <>
         <Link
-          to={`/events/${event.id}`}
+          to={eventLink}
           className="flex gap-3 p-3 rounded-xl bg-[#171A1D] border border-[#262B2F] hover:border-white/40 transition group"
         >
           <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-[#1C232B]">
@@ -109,7 +112,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
           whileHover={{ y: -2 }}
           className="group rounded-2xl overflow-hidden bg-[#171A1D] border border-[#262B2F] hover:border-white/40 hover:shadow-xl hover:shadow-black/25 transition-all p-4"
         >
-          <Link to={`/events/${event.id}`} className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
+          <Link to={eventLink} className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
             <div className="relative w-full sm:w-56 h-36 rounded-xl overflow-hidden shrink-0 bg-[#1C232B]">
               <img
                 src={img}
@@ -202,7 +205,7 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
         transition={{ duration: 0.2 }}
         className="group rounded-xl overflow-hidden bg-[#171A1D] border border-[#262B2F] hover:border-white/40 hover:shadow-xl hover:shadow-black/25 transition-all"
       >
-        <Link to={`/events/${event.id}`} className="block">
+        <Link to={eventLink} className="block">
           <div className="relative aspect-[16/10] overflow-hidden bg-[#1C232B]">
             <img
               src={img}
