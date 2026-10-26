@@ -49,8 +49,8 @@ const saleStatus = (t) => {
 };
 
 export default function TicketManagementPage() {
-  const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  const { user, isAdmin: authIsAdmin } = useAuth();
+  const isAdmin = authIsAdmin || user?.role === 'admin' || user?.role === 'system_admin' || user?.role === 'superadmin' || user?.role === 'staff';
   const { format } = useCurrency();
   const [searchParams] = useSearchParams();
   const urlEventId = searchParams.get('event') || searchParams.get('eventId');
@@ -329,8 +329,8 @@ export default function TicketManagementPage() {
           activeTab === 'tiers' ? (
             <button
               onClick={openAdd}
-              disabled={!selectedEvent || !isApproved}
-              title={!selectedEvent ? 'Select an event' : (!isApproved ? 'Event must be approved by admin before creating tickets' : 'Add Ticket Type')}
+              disabled={!selectedEvent || !canManage}
+              title={!selectedEvent ? 'Select an event' : (!canManage ? 'Event must be approved by admin before creating tickets' : 'Add Ticket Type')}
               className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" /> Add Ticket Type

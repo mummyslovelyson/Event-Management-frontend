@@ -111,9 +111,8 @@ export default function AttendeeDashboard() {
   return (
     <motion.div variants={containerStagger} initial="hidden" animate="show" className="space-y-8">
       {/* Welcome banner */}
-      <motion.div variants={itemFade} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#171A1D] via-[#1C232B] to-[#242B32] border border-[#262B2F] p-6 sm:p-8">
-        <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -bottom-16 -left-10 w-40 h-40 rounded-full bg-white/10 blur-3xl" />
+      <motion.div variants={itemFade} className="relative overflow-hidden rounded-2xl bg-[#171A1D] border border-[#262B2F] p-6 sm:p-8">
+        <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/5 blur-3xl" />
         <div className="relative flex flex-col sm:flex-row sm:items-center gap-5">
           <motion.div
             initial={{ scale: 0.7, rotate: -6 }}

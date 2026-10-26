@@ -201,7 +201,7 @@ function AppRoutes() {
         {/* ── Organizer dashboard ── */}
         <Route
           element={
-            <ProtectedRoute roles={['organizer']}>
+            <ProtectedRoute roles={['organizer', 'admin', 'system_admin', 'superadmin']}>
               <OrganizerLayout />
             </ProtectedRoute>
           }
@@ -247,6 +247,7 @@ function AppRoutes() {
           <Route path="/admin/events/create" element={<CreateEventPage />} />
           <Route path="/admin/events/:id" element={<AdminEventDetailPage />} />
           <Route path="/admin/events/:id/edit" element={<EditEventPage />} />
+          <Route path="/admin/tickets" element={<TicketManagementPage />} />
           <Route path="/admin/categories" element={<CategoriesPage />} />
           <Route path="/admin/payments" element={<PaymentManagementPage />} />
           <Route path="/admin/reports" element={<PlatformReportsPage />} />

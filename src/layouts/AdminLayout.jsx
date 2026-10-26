@@ -17,7 +17,7 @@ const mainNav = [
   { to: '/admin/users', label: 'Users', icon: Users },
   { to: '/admin/organizers', label: 'Organizers', icon: UserCheck },
   { to: '/admin/events', label: 'Events', icon: CalendarDays },
-  { to: '/organizer/tickets', label: 'Tickets & Passes', icon: Ticket },
+  { to: '/admin/tickets', label: 'Tickets & Passes', icon: Ticket },
   { to: '/admin/categories', label: 'Categories', icon: Layers },
   { to: '/admin/payments', label: 'Payments', icon: CreditCard },
   { to: '/admin/notifications', label: 'Notifications', icon: Bell, hasBadge: true },

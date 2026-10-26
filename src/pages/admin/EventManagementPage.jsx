@@ -384,7 +384,7 @@ export default function EventManagementPage() {
                         <Link to={`/admin/events/${ev.id}`} className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition" title="View Event in Admin">
                           <Eye className="w-4 h-4" />
                         </Link>
-                        <Link to={`/organizer/tickets?event=${ev.id}`} className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition" title="Manage Event Tickets & Passes">
+                        <Link to={`/admin/tickets?event=${ev.id}`} className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition" title="Manage Event Tickets & Passes">
                           <Ticket className="w-4 h-4" />
                         </Link>
                         <Link to={`/admin/events/${ev.id}/edit`} className="p-2 rounded-lg text-[#949599] hover:text-white hover:bg-[#242B32] transition" title="Edit Event Details">

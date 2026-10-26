@@ -855,7 +855,7 @@ const StepPublish = ({
         {data.bannerImage ? (
           <div className="relative h-44 sm:h-56 w-full">
             <img src={data.bannerImage} alt="Event cover" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#121620] via-[#121620]/60 to-transparent" />
+            <div className="absolute inset-0 bg-black/70" />
           </div>
         ) : (
           <div className="h-28 bg-white/[0.02] border-b border-white/[0.06]" />

@@ -630,7 +630,7 @@ export default function AdminEventDetailPage() {
 
                 <div className="flex items-center gap-2">
                   <Link
-                    to={`/organizer/tickets?event=${id}`}
+                    to={`/admin/tickets?event=${id}`}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-neutral-300 hover:text-white border border-white/[0.08] transition"
                   >
                     <ExternalLink className="w-3.5 h-3.5" /> Full Ticket Suite
