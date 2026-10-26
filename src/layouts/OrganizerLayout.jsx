@@ -111,7 +111,7 @@ export default function OrganizerLayout() {
 
               <div className="relative" ref={profileRef}>
                 <button onClick={() => setProfileOpen((v) => !v)} className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-[#262B2F] transition">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2A2F33] to-[#1D2124] border border-[#3A4045] flex items-center justify-center text-[#C4C9CC] text-xs font-semibold">{initials}</div>
+                  <div className="w-8 h-8 rounded-full bg-[#2A2F33] border border-[#3A4045] flex items-center justify-center text-[#C4C9CC] text-xs font-semibold">{initials}</div>
                   <span className="hidden sm:block text-sm text-[#EFEFF1] max-w-[120px] truncate">{user?.name || 'Organizer'}</span>
                   <ChevronDown className="w-4 h-4 text-[#6B7278]" />
                 </button>
@@ -213,7 +213,7 @@ function SidebarContent({ user, initials, isApproved, onNavigate }) {
 
       <div className="p-3 border-t border-[#262B2F] shrink-0">
         <div className="flex items-center gap-2.5 px-2 py-1.5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2A2F33] to-[#1D2124] border border-[#3A4045] flex items-center justify-center text-[#C4C9CC] text-xs font-semibold shrink-0">{initials}</div>
+           <div className="w-8 h-8 rounded-full bg-[#2A2F33] border border-[#3A4045] flex items-center justify-center text-[#C4C9CC] text-xs font-semibold shrink-0">{initials}</div>
           <div className="min-w-0">
             <p className="text-[13px] font-medium text-[#EFEFF1] truncate">{user?.name || 'Organizer'}</p>
             <p className="text-[11px] text-[#6B7278] truncate">{isApproved ? 'Organizer' : 'Pending Approval'}</p>

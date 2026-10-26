@@ -6,8 +6,10 @@ import toast from 'react-hot-toast';
 import {
   Plus, Edit2, Trash2, Ticket as TicketIcon, Calendar, DollarSign, TrendingUp,
   ShieldCheck, Check, X, User, AlertTriangle, RefreshCw, CheckCircle2, Clock,
+  Image as ImageIcon, Upload, FileText, Eye,
 } from 'lucide-react';
-import { getOrganizerEvents } from '@/api/events';
+import { getOrganizerEvents, uploadImage } from '@/api/events';
+import { getAdminEvents } from '@/api/admin';
 import {
   getTicketTypes, createTicketType, updateTicketType, deleteTicketType, getUploadedTickets,
 } from '@/api/tickets';
@@ -21,6 +23,18 @@ import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import PageHeader from '@/components/common/PageHeader';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useAuth } from '@/context/AuthContext';
+import { getMediaUrl } from '@/utils/media';
+
+const TICKET_PRESETS = [
+  { name: 'Regular', section: 'general', desc: 'Standard general admission pass with event entry' },
+  { name: 'VIP', section: 'vip', desc: 'VIP access with priority entrance and designated lounge area' },
+  { name: 'VVIP', section: 'vvip', desc: 'Exclusive ultra-premium pass with backstage access & table service' },
+  { name: 'Early Bird', section: 'general', desc: 'Limited discounted admission for early birds' },
+  { name: 'Student', section: 'general', desc: 'Discounted admission for students with valid student ID' },
+  { name: 'Table / Booth', section: 'table', desc: 'Reserved table seating for groups including complimentary refreshments' },
+  { name: 'Backstage Pass', section: 'backstage', desc: 'All-access backstage pass to meet artists and organizers' },
+];
 
 const inputCls = 'w-full px-3.5 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition';
 
@@ -35,6 +49,8 @@ const saleStatus = (t) => {
 };
 
 export default function TicketManagementPage() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const { format } = useCurrency();
   const [searchParams] = useSearchParams();
   const urlEventId = searchParams.get('event') || searchParams.get('eventId');
@@ -54,17 +70,49 @@ export default function TicketManagementPage() {
   const [deleting, setDeleting] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [uploadedTickets, setUploadedTickets] = useState([]);
+  const [ticketImage, setTicketImage] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm();
 
   const currentEvent = events.find((e) => String(e.id) === String(selectedEvent));
   const isApproved = currentEvent ? (currentEvent.approval_status === 'approved' || currentEvent.approvalStatus === 'approved') : false;
+  const canManage = isApproved || isAdmin;
+
+  const handleTicketImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    try {
+      const res = await uploadImage(file);
+      const uploadedUrl = res.data?.url || res.data?.file_url;
+      setTicketImage(uploadedUrl);
+      setValue('image', uploadedUrl);
+      toast.success('Ticket artwork uploaded');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to upload ticket image');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   const fetchEvents = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getOrganizerEvents({ limit: 100 });
-      const payload = res.data;
-      const list = Array.isArray(payload) ? payload : payload.events || payload.data || [];
+      let list = [];
+      if (isAdmin) {
+        try {
+          const aRes = await getAdminEvents({ limit: 100 });
+          const aPayload = aRes.data;
+          list = Array.isArray(aPayload) ? aPayload : aPayload.events || aPayload.data || [];
+        } catch (e) {
+          console.warn('Admin events fetch error:', e);
+        }
+      }
+      if (!list.length) {
+        const res = await getOrganizerEvents({ limit: 100 });
+        const payload = res.data;
+        list = Array.isArray(payload) ? payload : payload.events || payload.data || [];
+      }
       setEvents(list);
       if (urlEventId && list.some((e) => String(e.id) === String(urlEventId))) {
         setSelectedEvent(urlEventId);
@@ -76,7 +124,7 @@ export default function TicketManagementPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedEvent, urlEventId]);
+  }, [selectedEvent, urlEventId, isAdmin]);
 
   useEffect(() => {
     if (urlEventId && events.some((e) => String(e.id) === String(urlEventId))) {
@@ -156,13 +204,14 @@ export default function TicketManagementPage() {
       toast.error('Please select an event first');
       return;
     }
-    if (!isApproved) {
+    if (!canManage) {
       toast.error('This event must be approved by an administrator before tickets can be created.');
       return;
     }
     setEditTarget(null);
     setUploadedTickets([]);
-    reset({ name: '', price: '', quantity: '', description: '', saleStartDate: '', saleEndDate: '' });
+    setTicketImage('');
+    reset({ name: '', price: '', quantity: '', description: '', image: '', saleStartDate: '', saleEndDate: '', section_type: 'general' });
     setModalOpen(true);
   };
 
@@ -176,6 +225,7 @@ export default function TicketManagementPage() {
       is_assigned: it.is_assigned,
     }));
     setUploadedTickets(existingUt);
+    setTicketImage(t.image || '');
 
     const sStart = t.saleStartDate || t.sale_start;
     const sEnd = t.saleEndDate || t.sale_end;
@@ -186,8 +236,10 @@ export default function TicketManagementPage() {
       price: t.price ?? '',
       quantity: initialQty,
       description: t.description || '',
+      image: t.image || '',
       saleStartDate: sStart ? String(sStart).slice(0, 10) : '',
       saleEndDate: sEnd ? String(sEnd).slice(0, 10) : '',
+      section_type: t.section_type || 'general',
     });
     setModalOpen(true);
 
@@ -213,7 +265,7 @@ export default function TicketManagementPage() {
   };
 
   const onSubmit = async (data) => {
-    if (!isApproved && !editTarget) {
+    if (!canManage && !editTarget) {
       toast.error('This event must be approved by an administrator before tickets can be created.');
       return;
     }
@@ -223,6 +275,7 @@ export default function TicketManagementPage() {
         ...data,
         price: (data.price === '' || data.price === null || data.price === undefined) ? 0 : Number(data.price),
         quantity: uploadedTickets.length > 0 ? uploadedTickets.length : Number(data.quantity || 0),
+        image: ticketImage || data.image || null,
         uploadedTickets,
       };
       if (editTarget) {
@@ -496,9 +549,9 @@ export default function TicketManagementPage() {
                   </Badge>
                 </div>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-neutral-400">
-                  <span>📍 {currentEvent.venue || currentEvent.city || 'Location TBD'}</span>
-                  <span>📅 {currentEvent.startDate || currentEvent.start_date ? new Date(currentEvent.startDate || currentEvent.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Date TBD'}</span>
-                  <span>👥 Capacity: {currentEvent.capacity || currentEvent.totalCapacity || 'Unlimited'}</span>
+                  <span> {currentEvent.venue || currentEvent.city || 'Location TBD'}</span>
+                  <span> {currentEvent.startDate || currentEvent.start_date ? new Date(currentEvent.startDate || currentEvent.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Date TBD'}</span>
+                  <span> Capacity: {currentEvent.capacity || currentEvent.totalCapacity || 'Unlimited'}</span>
                 </div>
               </div>
             </div>
@@ -508,7 +561,7 @@ export default function TicketManagementPage() {
             <EmptyState icon={TicketIcon} title="No events yet" description="Create an event first to manage tickets." className="py-16" />
           ) : !selectedEvent ? (
             <EmptyState icon={TicketIcon} title="Select an event" description="Choose an event above to view its ticket types." className="py-16" />
-          ) : !isApproved ? (
+          ) : !canManage ? (
             <div className="rounded-2xl bg-[#121620] border border-white/[0.08] p-8 text-center space-y-4 max-w-xl mx-auto my-8">
               <div className="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center mx-auto text-amber-400">
                 <Clock className="w-6 h-6" />
@@ -607,7 +660,9 @@ export default function TicketManagementPage() {
                     const revenue = Number(t.revenue !== undefined ? t.revenue : (sold * (Number(t.price) || 0)));
                     const pct = total > 0 ? Math.min(100, Math.round((sold / total) * 100)) : 0;
                     const ss = saleStatus(t);
-                    const hasUploaded = (t.uploadedTickets && t.uploadedTickets.length > 0) || (t.uploaded_tickets && t.uploaded_tickets.length > 0);
+                    const uploadedList = t.uploadedTickets || t.uploaded_tickets || [];
+                    const hasUploaded = uploadedList.length > 0;
+                    const tierImg = getMediaUrl(t.image || t.ticket_image || uploadedList[0]?.file_url);
 
                     return (
                       <motion.div
@@ -619,32 +674,50 @@ export default function TicketManagementPage() {
                       >
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                           <div className="flex items-start gap-3.5 flex-1 min-w-0">
-                            {/* Ticket Tier Pass Thumbnail or Event Banner */}
-                            <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/[0.03] border border-white/[0.08] shrink-0 flex items-center justify-center relative">
-                              {t.uploadedTickets?.[0]?.file_url || t.uploaded_tickets?.[0]?.file_url ? (
+                            {/* Ticket Tier Pass Artwork or Thumbnail */}
+                            <div className="w-16 h-16 rounded-xl overflow-hidden bg-white/[0.03] border border-white/[0.08] shrink-0 flex items-center justify-center relative">
+                              {tierImg ? (
                                 <img
-                                  src={t.uploadedTickets?.[0]?.file_url || t.uploaded_tickets?.[0]?.file_url}
+                                  src={tierImg}
                                   alt={t.name}
                                   className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
-                                  onClick={() => window.open(t.uploadedTickets?.[0]?.file_url || t.uploaded_tickets?.[0]?.file_url, '_blank')}
-                                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                  onClick={() => window.open(tierImg, '_blank')}
+                                  onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.style.display = 'none';
+                                    const fallback = e.currentTarget.parentElement?.querySelector('.tier-fallback-badge');
+                                    if (fallback) fallback.classList.remove('hidden');
+                                  }}
                                 />
                               ) : currentEvent?.banner_image ? (
                                 <img
-                                  src={currentEvent.banner_image}
+                                  src={getMediaUrl(currentEvent.banner_image)}
                                   alt={t.name}
                                   className="w-full h-full object-cover opacity-80"
-                                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                  onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.style.display = 'none';
+                                    const fallback = e.currentTarget.parentElement?.querySelector('.tier-fallback-badge');
+                                    if (fallback) fallback.classList.remove('hidden');
+                                  }}
                                 />
                               ) : (
                                 <TicketIcon className="w-6 h-6 text-neutral-400" />
                               )}
+                              <div className="tier-fallback-badge hidden w-full h-full flex items-center justify-center bg-white/[0.04]">
+                                <TicketIcon className="w-6 h-6 text-neutral-400" />
+                              </div>
                             </div>
 
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-3">
                                 <h3 className="text-base font-semibold text-white">{t.name}</h3>
                                 <Badge variant={ss.v} size="sm">{ss.label}</Badge>
+                                {t.section_type && t.section_type !== 'general' && (
+                                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/10 text-white border border-white/20">
+                                    {t.section_type}
+                                  </span>
+                                )}
                               </div>
                               {t.description && <p className="mt-1 text-xs text-neutral-400 line-clamp-1">{t.description}</p>}
                               <div className="mt-2 flex items-center gap-4 text-xs text-neutral-400">
@@ -681,9 +754,9 @@ export default function TicketManagementPage() {
                         {/* Uploaded Ticket Pass Images Gallery Strip */}
                         {hasUploaded && (
                           <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center gap-2 overflow-x-auto pb-1">
-                            <span className="text-[11px] text-neutral-400 shrink-0 font-medium">Uploaded Passes:</span>
-                            {(t.uploadedTickets || t.uploaded_tickets || []).slice(0, 6).map((ut, pIdx) => {
-                              const url = ut.file_url || ut.url;
+                            <span className="text-[11px] text-neutral-400 shrink-0 font-medium">Uploaded Passes ({uploadedList.length}):</span>
+                            {uploadedList.slice(0, 8).map((ut, pIdx) => {
+                              const url = getMediaUrl(ut.file_url || ut.url);
                               const isPdf = (ut.file_name || '').toLowerCase().endsWith('.pdf');
                               return (
                                 <a
@@ -695,16 +768,29 @@ export default function TicketManagementPage() {
                                   title={ut.file_name || `Pass #${pIdx + 1}`}
                                 >
                                   {!isPdf && url ? (
-                                    <img src={url} alt="" className="w-full h-full object-cover" />
+                                    <img
+                                      src={url}
+                                      alt=""
+                                      className="w-full h-full object-cover group-hover:scale-110 transition"
+                                      onError={(e) => {
+                                        e.currentTarget.onerror = null;
+                                        e.currentTarget.style.display = 'none';
+                                        const pFallback = e.currentTarget.parentElement?.querySelector('.pass-fallback');
+                                        if (pFallback) pFallback.classList.remove('hidden');
+                                      }}
+                                    />
                                   ) : (
                                     <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-red-400 bg-red-500/10">
                                       PDF
                                     </div>
                                   )}
+                                  <div className="pass-fallback hidden w-full h-full flex items-center justify-center text-[9px] font-bold text-neutral-400 bg-white/[0.04]">
+                                    PASS
+                                  </div>
                                 </a>
                               );
                             })}
-                            {(t.uploadedTickets || t.uploaded_tickets || []).length > 6 && (
+                            {uploadedList.length > 8 && (
                               <span className="text-[11px] text-neutral-400 shrink-0 font-medium pl-1">
                                 +{(t.uploadedTickets || t.uploaded_tickets || []).length - 6} more
                               </span>
@@ -774,11 +860,85 @@ export default function TicketManagementPage() {
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-neutral-400 mb-1.5 uppercase tracking-wider">
-              Ticket Tier Name *
-            </label>
-            <input {...register('name', { required: 'Name is required' })} placeholder="e.g. VIP, Regular, Early Bird, VVIP" className={inputCls} />
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-medium text-neutral-400 uppercase tracking-wider">
+                Ticket Tier Name *
+              </label>
+              <span className="text-[11px] text-neutral-500">Pick preset or enter custom</span>
+            </div>
+
+            {/* Quick Presets Pills */}
+            <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
+              {TICKET_PRESETS.map((preset) => (
+                <button
+                  key={preset.name}
+                  type="button"
+                  onClick={() => {
+                    setValue('name', preset.name, { shouldValidate: true });
+                    setValue('section_type', preset.section);
+                    if (!watch('description')) {
+                      setValue('description', preset.desc);
+                    }
+                  }}
+                  className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-white/[0.04] hover:bg-white/[0.1] text-neutral-300 hover:text-white border border-white/[0.08] transition cursor-pointer"
+                >
+                  + {preset.name}
+                </button>
+              ))}
+            </div>
+
+            <input
+              {...register('name', { required: 'Name is required' })}
+              placeholder="e.g. VIP, Regular, Early Bird, VVIP"
+              className={inputCls}
+            />
             {errors.name && <p className="mt-1 text-xs text-rose-400">{errors.name.message}</p>}
+          </div>
+
+          {/* Ticket Tier Image / Artwork */}
+          <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08]">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-medium text-neutral-300 uppercase tracking-wider flex items-center gap-1.5">
+                <ImageIcon className="w-3.5 h-3.5 text-neutral-400" />
+                <span>Ticket Tier Artwork / Cover Image</span>
+              </label>
+              <span className="text-[10px] text-neutral-500">Optional</span>
+            </div>
+            <div className="flex items-center gap-3">
+              {ticketImage ? (
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-white/20 bg-white/[0.04] shrink-0">
+                  <img src={getMediaUrl(ticketImage)} alt="Ticket Preview" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => { setTicketImage(''); setValue('image', ''); }}
+                    className="absolute top-1 right-1 p-0.5 rounded-full bg-black/80 text-white hover:bg-rose-500 transition cursor-pointer"
+                    title="Remove artwork"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-14 h-14 rounded-xl border border-dashed border-white/20 flex flex-col items-center justify-center text-neutral-500 bg-white/[0.02] shrink-0">
+                  <ImageIcon className="w-5 h-5 text-neutral-400" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold text-white border border-white/[0.08] cursor-pointer transition">
+                  <Upload className="w-3.5 h-3.5 text-neutral-300" />
+                  <span>{uploadingImage ? 'Uploading...' : ticketImage ? 'Replace Artwork' : 'Upload Tier Artwork'}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={uploadingImage}
+                    onChange={handleTicketImageUpload}
+                  />
+                </label>
+                <p className="mt-1 text-[11px] text-neutral-400">
+                  Used as tier badge on checkout and passes (PNG, JPG, WebP)
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

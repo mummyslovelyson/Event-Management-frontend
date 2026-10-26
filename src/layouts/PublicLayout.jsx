@@ -122,7 +122,7 @@ export default function PublicLayout() {
                       aria-label="User account menu"
                       className="flex items-center gap-2 py-1.5 px-2.5 rounded-lg border border-[#3A4045] hover:border-white/40 hover:bg-[#262B2F] transition cursor-pointer"
                     >
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#2A2F33] to-[#1D2124] border border-[#3A4045] flex items-center justify-center text-[#C4C9CC] text-xs font-bold shrink-0">
+                       <div className="w-7 h-7 rounded-full bg-[#2A2F33] border border-[#3A4045] flex items-center justify-center text-[#C4C9CC] text-xs font-bold shrink-0">
                         {initials}
                       </div>
                       <span className="text-xs font-semibold text-[#EFEFF1] max-w-[100px] truncate">{user?.name || 'Account'}</span>

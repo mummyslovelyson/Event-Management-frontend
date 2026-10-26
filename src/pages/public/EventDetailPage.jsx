@@ -28,6 +28,7 @@ import SquadChatModal from '@/components/events/SquadChatModal';
 import { getEvent, getTrendingEvents, toggleEventReminder, getEventReminderStatus } from '@/api/events';
 
 import { getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '@/utils/calendar';
+import { getMediaUrl } from '@/utils/media';
 import { getTicketTypes } from '@/api/tickets';
 import { toggleFavorite, followOrganizer, unfollowOrganizer } from '@/api/users';
 import {
@@ -1051,27 +1052,44 @@ export default function EventDetailPage() {
                               className="rounded-xl bg-[#171A1D] border border-[#262B2F] p-5 hover:border-white/40 transition-colors"
                             >
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <h4 className="text-base font-semibold text-[#EFEFF1]">{ticket.name}</h4>
-                                    {ticket.isVip && <Badge variant="gold" size="sm">VIP</Badge>}
-                                  </div>
-                                  <p className="mt-1 text-sm text-[#949599] line-clamp-2">{ticket.description || ticket.name}</p>
-                                  <div className="mt-2 flex items-center gap-3 text-xs">
-                                    <span className="text-2xl font-bold text-white">
-                                      {Number(ticket.price) > 0 ? (
-                                        format(ticket.price)
-                                      ) : (ticket.uploaded_tickets?.length > 0 || ticket.uploadedTickets?.length > 0) ? (
-                                        <span className="text-sm text-[#CBD5E1] font-semibold bg-[#242B32] px-2.5 py-1 rounded-md border border-[#32383F]">Amount on pass</span>
-                                      ) : (
-                                        'Free'
+                                <div className="flex items-start gap-4 min-w-0">
+                                  {/* Ticket Tier Image or Pass Artwork */}
+                                  {Boolean(ticket.image || ticket.ticket_image || ticket.uploaded_tickets?.[0]?.file_url || ticket.uploadedTickets?.[0]?.file_url) && (
+                                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-[#242B32] border border-white/10 shrink-0 flex items-center justify-center">
+                                      <img
+                                        src={getMediaUrl(ticket.image || ticket.ticket_image || ticket.uploaded_tickets?.[0]?.file_url || ticket.uploadedTickets?.[0]?.file_url)}
+                                        alt={ticket.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                      />
+                                    </div>
+                                  )}
+
+                                  <div className="min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <h4 className="text-base font-semibold text-[#EFEFF1]">{ticket.name}</h4>
+                                      {ticket.isVip && <Badge variant="gold" size="sm">VIP</Badge>}
+                                      {ticket.section_type && ticket.section_type !== 'general' && (
+                                        <Badge variant="neutral" size="sm">{ticket.section_type}</Badge>
                                       )}
-                                    </span>
-                                    {available !== null && (
-                                      <span className={available > 0 ? 'text-emerald-400' : 'text-red-400'}>
-                                        {available > 0 ? `${available} available` : 'Sold out'}
+                                    </div>
+                                    <p className="mt-1 text-sm text-[#949599] line-clamp-2">{ticket.description || ticket.name}</p>
+                                    <div className="mt-2 flex items-center gap-3 text-xs">
+                                      <span className="text-2xl font-bold text-white">
+                                        {Number(ticket.price) > 0 ? (
+                                          format(ticket.price)
+                                        ) : (ticket.uploaded_tickets?.length > 0 || ticket.uploadedTickets?.length > 0) ? (
+                                          <span className="text-sm text-[#CBD5E1] font-semibold bg-[#242B32] px-2.5 py-1 rounded-md border border-[#32383F]">Amount on pass</span>
+                                        ) : (
+                                          'Free'
+                                        )}
                                       </span>
-                                    )}
+                                      {available !== null && (
+                                        <span className={available > 0 ? 'text-emerald-400' : 'text-red-400'}>
+                                          {available > 0 ? `${available} available` : 'Sold out'}
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
 

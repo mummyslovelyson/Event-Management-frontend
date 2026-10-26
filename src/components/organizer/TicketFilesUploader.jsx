@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Upload, FileText, CheckCircle2, X, Loader2, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { uploadTicketFiles } from '@/api/tickets';
+import { getMediaUrl } from '@/utils/media';
 
 /**
  * TicketFilesUploader Component
@@ -201,7 +202,7 @@ export default function TicketFilesUploader({
             {files.map((file, idx) => {
               const name = file.file_name || file.name || `Ticket Pass #${idx + 1}`;
               const isPdf = name.toLowerCase().endsWith('.pdf') || (file.mimetype && file.mimetype.includes('pdf'));
-              const fileUrl = file.file_url || file.url;
+              const fileUrl = getMediaUrl(file.file_url || file.url);
               return (
                 <div
                   key={idx}
@@ -212,13 +213,19 @@ export default function TicketFilesUploader({
                       {idx + 1}
                     </span>
                     {!isPdf && fileUrl ? (
-                      <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-white/[0.02]">
+                      <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-white/[0.04] flex items-center justify-center">
                         <img
                           src={fileUrl}
                           alt={name}
                           className="w-full h-full object-cover"
-                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.style.display = 'none';
+                            const sibling = e.currentTarget.parentElement?.querySelector('.fallback-icon');
+                            if (sibling) sibling.classList.remove('hidden');
+                          }}
                         />
+                        <span className="fallback-icon hidden text-[9px] font-bold text-neutral-400 uppercase">IMG</span>
                       </div>
                     ) : (
                       <span

@@ -765,7 +765,7 @@ export default function MobileAppManagementPage() {
                               <Layers className="w-6 h-6 text-white/40" />
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-2.5 flex flex-col justify-end">
+                          <div className="absolute inset-0 bg-black/60 p-2.5 flex flex-col justify-end">
                             <h6 className="text-[11px] font-bold text-white line-clamp-1">
                               {activeBanners[previewBannerIndex % activeBanners.length]?.title}
                             </h6>

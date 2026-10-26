@@ -12,6 +12,12 @@ export default defineConfig({
     hmr: {
       port: 5173,
     },
+    proxy: {
+      '/uploads': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
   },
   resolve: {
     alias: {
