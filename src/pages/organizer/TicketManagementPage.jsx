@@ -691,6 +691,7 @@ export default function TicketManagementPage() {
                     const pct = total > 0 ? Math.min(100, Math.round((sold / total) * 100)) : 0;
                     const ss = saleStatus(t);
                     const uploadedList = t.uploadedTickets || t.uploaded_tickets || [];
+                    const hasUploaded = uploadedList.length > 0;
                     const isRealImg = (str) => typeof str === 'string' && str.trim() && !str.startsWith('/assets/');
                     const firstUtImg = uploadedList.find((u) => {
                       const f = (u.file_name || u.file_url || u.url || '').toLowerCase();
