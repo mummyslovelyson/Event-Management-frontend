@@ -62,7 +62,18 @@ export default function EventCard({ event, onToggleFavorite, variant = 'default'
   // The API returns snake_case columns (banner_image, min_price, start_date)
   // while some pages pass camelCase — accept both shapes.
   const fallbackImg = getCategoryCoverImage(event.category) || '/assets/images/musical-shows/cover.png';
-  const rawImg = event.image || event.banner_image || event.bannerImage || event.images?.[0] || '';
+  const isRealImage = (str) => typeof str === 'string' && str.trim() && !str.startsWith('/assets/');
+  const rawImg =
+    (isRealImage(event.banner_image) && event.banner_image) ||
+    (isRealImage(event.bannerImage) && event.bannerImage) ||
+    (isRealImage(event.image) && event.image) ||
+    (isRealImage(event.ticket_image) && event.ticket_image) ||
+    (isRealImage(event.uploaded_ticket_image) && event.uploaded_ticket_image) ||
+    (Array.isArray(event.images) && event.images.find(isRealImage)) ||
+    event.banner_image ||
+    event.bannerImage ||
+    event.image ||
+    '';
   const img = rawImg ? getMediaUrl(rawImg) : fallbackImg;
   const formattedDate = (event.startDate || event.start_date)
     ? new Date(event.startDate || event.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })

@@ -228,7 +228,14 @@ export default function TicketManagementPage() {
       is_assigned: it.is_assigned,
     }));
     setUploadedTickets(existingUt);
-    setTicketImage(t.image || '');
+
+    const isRealImg = (str) => typeof str === 'string' && str.trim() && !str.startsWith('/assets/');
+    const firstUtImg = existingUt.find((u) => {
+      const f = (u.file_name || u.file_url || '').toLowerCase();
+      return f.endsWith('.jpg') || f.endsWith('.jpeg') || f.endsWith('.png') || f.endsWith('.webp');
+    })?.file_url;
+    const initialImg = (isRealImg(t.image) && t.image) || firstUtImg || t.image || '';
+    setTicketImage(initialImg);
 
     const sStart = t.saleStartDate || t.sale_start;
     const sEnd = t.saleEndDate || t.sale_end;
@@ -274,12 +281,24 @@ export default function TicketManagementPage() {
     }
     setSubmitting(true);
     try {
+      let resolvedImage = ticketImage || data.image || null;
+      const isRealImg = (str) => typeof str === 'string' && str.trim() && !str.startsWith('/assets/');
+      if (!isRealImg(resolvedImage) && uploadedTickets.length > 0) {
+        const firstImg = uploadedTickets.find((f) => {
+          const name = (f.file_name || f.file_url || f.url || '').toLowerCase();
+          return name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png') || name.endsWith('.webp');
+        });
+        if (firstImg) {
+          resolvedImage = firstImg.file_url || firstImg.url;
+        }
+      }
+
       const payload = {
         ...data,
         name: data.name?.trim(),
         price: (data.price === '' || data.price === null || data.price === undefined) ? 0 : Number(data.price),
         quantity: uploadedTickets.length > 0 ? uploadedTickets.length : Number(data.quantity || 0),
-        image: ticketImage || data.image || null,
+        image: resolvedImage,
         sale_start: data.saleStartDate || data.sale_start || null,
         sale_end: data.saleEndDate || data.sale_end || null,
         saleStartDate: data.saleStartDate || data.sale_start || null,
@@ -672,8 +691,12 @@ export default function TicketManagementPage() {
                     const pct = total > 0 ? Math.min(100, Math.round((sold / total) * 100)) : 0;
                     const ss = saleStatus(t);
                     const uploadedList = t.uploadedTickets || t.uploaded_tickets || [];
-                    const hasUploaded = uploadedList.length > 0;
-                    const tierImg = getMediaUrl(t.image || t.ticket_image || uploadedList[0]?.file_url);
+                    const isRealImg = (str) => typeof str === 'string' && str.trim() && !str.startsWith('/assets/');
+                    const firstUtImg = uploadedList.find((u) => {
+                      const f = (u.file_name || u.file_url || u.url || '').toLowerCase();
+                      return f.endsWith('.jpg') || f.endsWith('.jpeg') || f.endsWith('.png') || f.endsWith('.webp');
+                    })?.file_url;
+                    const tierImg = getMediaUrl((isRealImg(t.image) && t.image) || (isRealImg(t.ticket_image) && t.ticket_image) || firstUtImg || t.image || t.ticket_image || uploadedList[0]?.file_url);
 
                     return (
                       <motion.div
@@ -1007,6 +1030,17 @@ export default function TicketManagementPage() {
                 setUploadedTickets(files);
                 if (files && files.length > 0) {
                   setValue('quantity', files.length, { shouldValidate: true });
+                  if (!ticketImage || ticketImage.startsWith('/assets/')) {
+                    const firstImageFile = files.find((f) => {
+                      const name = (f.file_name || f.file_url || f.url || '').toLowerCase();
+                      return name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png') || name.endsWith('.webp');
+                    });
+                    if (firstImageFile) {
+                      const url = firstImageFile.file_url || firstImageFile.url;
+                      setTicketImage(url);
+                      setValue('image', url);
+                    }
+                  }
                 }
               }}
             />

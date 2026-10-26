@@ -26,6 +26,11 @@ export function getMediaUrl(url, fallback = '') {
     return trimmed;
   }
 
+  // Static frontend assets (e.g. /assets/images/...)
+  if (trimmed.startsWith('/assets/')) {
+    return trimmed;
+  }
+
   // Relative path (e.g. /uploads/xyz.png or uploads/xyz.png)
   const cleanPath = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
   const backendBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');

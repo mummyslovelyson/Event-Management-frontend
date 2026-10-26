@@ -713,18 +713,44 @@ export default function EventDetailPage() {
     <>
       {/* Banner */}
       <div className="relative h-[30vh] sm:h-[42vh] min-h-[200px] sm:min-h-[320px] w-full overflow-hidden">
-        <motion.img
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.4, ease: 'easeOut' }}
-          src={getMediaUrl(event.banner_image || event.bannerImage || event.image || event.banner) || getCategoryCoverImage(event.category) || '/assets/images/musical-shows/cover.png'}
-          alt={event.title}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = getCategoryCoverImage(event.category) || '/assets/images/musical-shows/cover.png';
-          }}
-          className="w-full h-full object-cover"
-        />
+        {(() => {
+          const isRealImage = (str) => typeof str === 'string' && str.trim() && !str.startsWith('/assets/');
+          const firstTicketPass = tickets?.flatMap((t) => t.uploaded_tickets || t.uploadedTickets || [])
+            ?.map((ut) => ut.file_url || ut.url)
+            ?.find((url) => {
+              const u = (url || '').toLowerCase();
+              return u.endsWith('.jpg') || u.endsWith('.jpeg') || u.endsWith('.png') || u.endsWith('.webp');
+            });
+          const rawHero =
+            (isRealImage(event.banner_image) && event.banner_image) ||
+            (isRealImage(event.bannerImage) && event.bannerImage) ||
+            (isRealImage(event.image) && event.image) ||
+            (isRealImage(event.banner) && event.banner) ||
+            (isRealImage(event.ticket_image) && event.ticket_image) ||
+            (isRealImage(event.uploaded_ticket_image) && event.uploaded_ticket_image) ||
+            (Array.isArray(event.images) && event.images.find(isRealImage)) ||
+            (tickets?.map((t) => isRealImage(t.image) && t.image).find(Boolean)) ||
+            firstTicketPass ||
+            event.banner_image ||
+            event.bannerImage ||
+            event.image ||
+            '';
+          const heroSrc = rawHero ? getMediaUrl(rawHero) : (getCategoryCoverImage(event.category) || '/assets/images/musical-shows/cover.png');
+          return (
+            <motion.img
+              initial={{ scale: 1.1 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 1.4, ease: 'easeOut' }}
+              src={heroSrc}
+              alt={event.title}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = getCategoryCoverImage(event.category) || '/assets/images/musical-shows/cover.png';
+              }}
+              className="w-full h-full object-cover"
+            />
+          );
+        })()}
         <div className="absolute inset-0 bg-gradient-to-t from-[#1C232B] via-[#1C232B]/50 to-[#1C232B]/30" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#1C232B]/80 to-transparent" />
 
