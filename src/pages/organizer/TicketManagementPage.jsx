@@ -780,7 +780,7 @@ export default function TicketManagementPage() {
                         </div>
 
                         {/* Uploaded Ticket Pass Images Gallery Strip */}
-                        {hasUploaded && (
+                        {Boolean(uploadedList && uploadedList.length > 0) && (
                           <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center gap-2 overflow-x-auto pb-1">
                             <span className="text-[11px] text-neutral-400 shrink-0 font-medium">Uploaded Passes ({uploadedList.length}):</span>
                             {uploadedList.slice(0, 8).map((ut, pIdx) => {

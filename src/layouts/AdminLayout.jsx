@@ -52,6 +52,9 @@ export default function AdminLayout() {
   const visibleSecondaryNav = filterNav(secondaryNav);
 
   const fetchNotifs = async () => {
+    if (!user || (user.role !== 'admin' && user.role !== 'system_admin' && user.role !== 'superadmin')) {
+      return;
+    }
     try {
       const res = await getAdminNotifications({ limit: 6 });
       const items = res.data?.notifications || (Array.isArray(res.data) ? res.data : []);
