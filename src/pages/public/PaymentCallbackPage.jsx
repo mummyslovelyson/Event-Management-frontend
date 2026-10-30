@@ -3,7 +3,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Loader2, CheckCircle2, XCircle, ArrowLeft, TicketCheck, RefreshCw,
-  Download, Printer, Calendar, Copy, Check, ExternalLink, Ticket, MapPin, Clock, FileText,
+  Download, Printer, Calendar, Copy, Check, ExternalLink, Ticket, MapPin, Clock, FileText, Receipt,
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
@@ -189,10 +189,10 @@ export default function PaymentCallbackPage() {
                     <TicketCheck className="w-4 h-4" /> Go to My Tickets
                   </Link>
                   <Link
-                    to="/attendee/bookings"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#242B32] border border-[#494F55]/60 text-sm font-medium hover:bg-[#2C343D] transition"
+                    to={`/receipt/${orderId || orderData?.reference || reference}`}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#242B32] border border-[#494F55]/60 text-sm font-medium hover:bg-[#2C343D] transition text-[#EFEFF1] hover:text-white"
                   >
-                    View Receipt
+                    <Receipt className="w-4 h-4 text-amber-400" /> View Receipt
                   </Link>
                 </div>
               </div>

@@ -3,6 +3,7 @@ import api from './axios';
 export const createOrder = (data) => api.post('/orders', data);
 export const getOrders = (params) => api.get('/orders', { params });
 export const getOrder = (id) => api.get(`/orders/${id}`);
+export const getReceipt = (idOrRef) => api.get(`/orders/receipt/${encodeURIComponent(idOrRef)}`);
 export const cancelOrder = (id, data) => api.post(`/orders/${id}/cancel`, data);
 export const verifyPayment = (data) => api.post('/orders/verify-payment', data);
 export const initiatePayment = (id, data) => api.post(`/orders/${id}/payment`, data);

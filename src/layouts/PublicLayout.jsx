@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu, X, LogIn, UserPlus, Twitter, Instagram, Facebook, Linkedin,
-  LayoutDashboard, User, LogOut, Ticket as TicketIcon, ChevronDown,
+  LayoutDashboard, User, LogOut, Ticket as TicketIcon, ChevronDown, Plus,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import ScrollProgressBar from '@/components/common/ScrollProgressBar';
@@ -106,6 +106,15 @@ export default function PublicLayout() {
             {/* Desktop CTA */}
             <div className="hidden md:flex items-center gap-2.5">
               <CurrencyToggle />
+              {(user?.role === 'organizer' || user?.role === 'admin') && (
+                <Link
+                  to="/organizer/events/create"
+                  className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.12] bg-white/[0.04] text-xs font-semibold text-[#EFEFF1] hover:bg-white/[0.08] hover:border-white/30 transition"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  Create Event
+                </Link>
+              )}
               {isAuthenticated ? (
                 <>
                   <Link
@@ -229,6 +238,16 @@ export default function PublicLayout() {
               ))}
             </nav>
             <div className="pt-3 border-t border-[#262B2F] space-y-2">
+              {(user?.role === 'organizer' || user?.role === 'admin') && (
+                <Link
+                  to="/organizer/events/create"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white text-[#1C232B] text-xs font-bold transition shadow-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  Create an Event
+                </Link>
+              )}
               <CurrencyToggle className="w-full justify-center" />
               {isAuthenticated ? (
                 <div className="space-y-2 pt-1">

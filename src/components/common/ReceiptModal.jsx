@@ -1,14 +1,17 @@
 import { useRef, useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   Printer, Download, CheckCircle2, Calendar, MapPin, Ticket as TicketIcon,
-  CreditCard, ShieldCheck, Mail, Phone, User, Receipt, X, Loader2, FileText,
+  CreditCard, ShieldCheck, Mail, Phone, User, Receipt, X, Loader2, FileText, ExternalLink,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Modal from '@/components/common/Modal';
 import Badge from '@/components/common/Badge';
+import Logo from '@/components/common/Logo';
 import { useCurrency } from '@/context/CurrencyContext';
 import { getOrder, getOrderInvoice } from '@/api/orders';
+import { generateQrSvgString } from '@/components/tickets/TicketPass';
 
 export default function ReceiptModal({ open, onClose, order, ticket }) {
   const { format } = useCurrency();
@@ -109,6 +112,9 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
     status: activeData.paymentStatus || activeData.status || 'paid',
   });
 
+  const origin = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://tribesandcliqs.com';
+  const verifyUrl = `${origin}/verify/${encodeURIComponent(orderRef)}`;
+
   const handlePrint = () => {
     const printContent = printableRef.current;
     if (!printContent) return;
@@ -119,7 +125,8 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
       return;
     }
 
-    const qrSvg = printableRef.current?.querySelector('svg')?.outerHTML || '';
+    const qrSvg = generateQrSvgString(verifyUrl, 160) || '';
+    const logoUrl = `${origin}/assets/images/Logo.jpeg`;
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -130,10 +137,11 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
           <style>
             @page { size: A4; margin: 20mm; }
             * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-            body { background: #ffffff; color: #111827; margin: 0; padding: 24px; font-size: 13px; line-height: 1.5; }
-            .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #E5E7EB; padding-bottom: 20px; margin-bottom: 24px; }
+            body { background: #ffffff; color: #111827; margin: 0; padding: 24px; font-size: 13px; line-height: 1.5; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #E5E7EB; padding-bottom: 20px; margin-bottom: 24px; }
+            .brand-lockup { display: flex; align-items: center; gap: 14px; }
+            .logo-img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid #E5E7EB; }
             .brand { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: #111827; }
-            .brand span { color: #4F46E5; }
             .badge { display: inline-block; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: #DEF7EC; color: #03543F; }
             .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
             .card { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; }
@@ -151,9 +159,13 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
         </head>
         <body>
           <div class="header">
-            <div>
-              <div class="brand">TRIBES &amp; CLIQS</div>
-              <p style="color: #6B7280; margin: 4px 0 0 0; font-size: 12px;">Official Transaction Receipt &amp; Proof of Purchase</p>
+            <div class="brand-lockup">
+              <img src="${logoUrl}" alt="Tribes & Cliqs Logo" class="logo-img" />
+              <div>
+                <div class="brand">TRIBES &amp; CLIQS</div>
+                <p style="color: #D97706; font-size: 10px; font-weight: 700; letter-spacing: 2px; margin: 2px 0 0 0; text-transform: uppercase;">Living The Moment</p>
+                <p style="color: #6B7280; margin: 2px 0 0 0; font-size: 11px;">Official Transaction Receipt &amp; Proof of Purchase</p>
+              </div>
             </div>
             <div style="text-align: right;">
               <span class="badge">PAID &amp; CONFIRMED</span>
@@ -200,10 +212,11 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
 
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 24px;">
             <div style="display: flex; align-items: center; gap: 14px;">
-              ${qrSvg ? `<div style="padding: 6px; border: 1px solid #E5E7EB; border-radius: 8px; background: #fff; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center;">${qrSvg}</div>` : ''}
+              ${qrSvg ? `<div style="padding: 6px; border: 1px solid #E5E7EB; border-radius: 8px; background: #fff; width: 88px; height: 88px; display: flex; align-items: center; justify-content: center;">${qrSvg}</div>` : ''}
               <div>
                 <p style="font-size: 11px; font-weight: 700; color: #111827; margin: 0 0 2px 0;">Official Verification QR</p>
-                <p style="font-size: 10px; color: #6B7280; margin: 0;">Scan at event gate or verify online</p>
+                <p style="font-size: 10px; color: #6B7280; margin: 0 0 2px 0;">Scan at event gate or verify online:</p>
+                <p style="font-size: 10px; color: #6B7280; font-family: monospace; margin: 0;">${verifyUrl}</p>
                 <p style="font-size: 10px; color: #6B7280; font-family: monospace; margin: 2px 0 0 0;">Ref: #${orderRef}</p>
               </div>
             </div>
@@ -273,15 +286,22 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
             Close
           </button>
           <div className="flex items-center gap-2">
+            <Link
+              to={`/receipt/${orderRef}`}
+              target="_blank"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/50 text-xs font-semibold text-[#EFEFF1] hover:bg-[#2C343D] hover:text-white transition shadow-sm"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-amber-400" /> Open Full Page
+            </Link>
             <button
               onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#242B32] border border-[#494F55]/50 text-sm font-semibold text-[#EFEFF1] hover:bg-[#2C343D] hover:border-white/40 transition shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-lg bg-[#242B32] border border-[#494F55]/50 text-xs font-semibold text-[#EFEFF1] hover:bg-[#2C343D] hover:border-white/40 transition shadow-sm"
             >
               <Printer className="w-4 h-4 text-[#949599]" /> Print Receipt
             </button>
             <button
               onClick={handleDownloadPdf}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-md"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] transition shadow-md"
             >
               <Download className="w-4 h-4" /> Download PDF
             </button>
@@ -293,12 +313,15 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
         {/* Receipt Header Card */}
         <div className="p-5 rounded-xl bg-gradient-to-br from-[#1C232B] to-[#171A1D] border border-[#262B2F]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#262B2F]">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-widest text-white">Tribes &amp; Cliqs</span>
-                <Badge variant="success" size="sm" dot>Payment Completed</Badge>
+            <div className="flex items-center gap-3">
+              <Logo size="sm" showText={false} asLink={false} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold uppercase tracking-widest text-white">Tribes &amp; Cliqs</span>
+                  <Badge variant="success" size="sm" dot>Payment Completed</Badge>
+                </div>
+                <h2 className="text-lg font-bold text-[#EFEFF1] mt-0.5">Payment Receipt</h2>
               </div>
-              <h2 className="text-lg font-bold text-[#EFEFF1] mt-1">Payment Receipt</h2>
             </div>
             <div className="text-left sm:text-right">
               <p className="text-xs text-[#949599]">Order Reference</p>
@@ -391,13 +414,21 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
           {/* Totals Summary Section */}
           <div className="p-4 bg-[#171A1D]/80 border-t border-[#262B2F] flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* QR Code Verification */}
-            <div className="flex items-center gap-3">
-              <div className="w-16 h-16 rounded-lg bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm">
-                <QRCodeSVG value={qrData} size={52} level="M" />
+            <div className="flex items-center gap-3.5">
+              <div className="w-16 h-16 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-md border border-white">
+                <QRCodeSVG value={verifyUrl} size={58} level="M" includeMargin={false} />
               </div>
               <div className="text-[11px] text-[#949599]">
-                <p className="font-semibold text-[#EFEFF1]">Digital Verification QR</p>
-                <p className="text-[#6B7278]">Scan at event entry</p>
+                <p className="font-bold text-[#EFEFF1]">Digital Verification QR</p>
+                <p className="text-[#6B7278]">Scan at gate or verify online</p>
+                <a
+                  href={verifyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[10px] text-amber-400 hover:text-amber-300 font-semibold"
+                >
+                  Verify Online <ExternalLink className="w-2.5 h-2.5" />
+                </a>
               </div>
             </div>
 

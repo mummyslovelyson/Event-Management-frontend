@@ -1,13 +1,16 @@
 import { useRef, useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   Printer, Download, ShieldCheck, CheckCircle2,
-  Calendar, MapPin, Ticket, User, Mail, Phone, QrCode, Loader2,
+  Calendar, MapPin, Ticket, User, Mail, Phone, QrCode, Loader2, ExternalLink,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Modal from '@/components/common/Modal';
+import Logo from '@/components/common/Logo';
 import { useCurrency } from '@/context/CurrencyContext';
 import { getOrder, getOrderInvoice } from '@/api/orders';
+import { generateQrSvgString } from '@/components/tickets/TicketPass';
 
 export default function InvoiceModal({
   open,
@@ -114,7 +117,8 @@ export default function InvoiceModal({
       return;
     }
 
-    const qrSvg = printableRef.current?.querySelector('svg')?.outerHTML || '';
+    const qrSvg = generateQrSvgString(qrUrl, 160) || '';
+    const logoUrl = `${origin}/assets/images/Logo.jpeg`;
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -125,10 +129,11 @@ export default function InvoiceModal({
           <style>
             @page { size: A4; margin: 18mm; }
             * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-            body { background: #ffffff; color: #111827; margin: 0; padding: 24px; font-size: 13px; line-height: 1.5; }
-            .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #E5E7EB; padding-bottom: 20px; margin-bottom: 24px; }
-            .brand { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; color: #111827; }
-            .brand span { color: #6366F1; }
+            body { background: #ffffff; color: #111827; margin: 0; padding: 24px; font-size: 13px; line-height: 1.5; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #E5E7EB; padding-bottom: 20px; margin-bottom: 24px; }
+            .brand-lockup { display: flex; align-items: center; gap: 14px; }
+            .logo-img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid #E5E7EB; }
+            .brand { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; color: #111827; }
             .badge { display: inline-block; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: #DEF7EC; color: #03543F; }
             .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
             .card { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; }
@@ -143,15 +148,19 @@ export default function InvoiceModal({
             .totals-row { display: flex; justify-content: space-between; padding: 6px 0; }
             .totals-row.grand { border-top: 2px solid #111827; font-size: 16px; font-weight: 900; padding-top: 10px; margin-top: 6px; }
             .qr-section { display: flex; align-items: center; gap: 14px; }
-            .qr-box { padding: 6px; border: 1px solid #E5E7EB; border-radius: 8px; background: #fff; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; }
+            .qr-box { padding: 6px; border: 1px solid #E5E7EB; border-radius: 8px; background: #fff; width: 88px; height: 88px; display: flex; align-items: center; justify-content: center; }
             .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #E5E7EB; text-align: center; color: #6B7280; font-size: 11px; }
           </style>
         </head>
         <body>
           <div class="header">
-            <div>
-              <div class="brand">TRIBES &amp; CLIQS</div>
-              <p style="color: #6B7280; margin: 4px 0 0 0; font-size: 12px;">Official Transaction Receipt &amp; Tax Invoice</p>
+            <div class="brand-lockup">
+              <img src="${logoUrl}" alt="Tribes & Cliqs Logo" class="logo-img" />
+              <div>
+                <div class="brand">TRIBES &amp; CLIQS</div>
+                <p style="color: #D97706; font-size: 10px; font-weight: 700; letter-spacing: 2px; margin: 2px 0 0 0; text-transform: uppercase;">Living The Moment</p>
+                <p style="color: #6B7280; margin: 2px 0 0 0; font-size: 11px;">Official Transaction Receipt &amp; Tax Invoice</p>
+              </div>
             </div>
             <div style="text-align: right;">
               <span class="badge">PAID IN FULL &amp; VERIFIED</span>
@@ -293,6 +302,13 @@ export default function InvoiceModal({
             >
               Close
             </button>
+            <Link
+              to={`/receipt/${encodeURIComponent(paymentRef || invoiceNumber)}`}
+              target="_blank"
+              className="px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/50 text-xs font-semibold text-[#EFEFF1] hover:bg-[#2C343D] hover:text-white transition flex items-center gap-1.5 shadow-sm"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-amber-400" /> Open Full Page
+            </Link>
             <button
               type="button"
               onClick={handlePrint}
@@ -315,14 +331,17 @@ export default function InvoiceModal({
       <div ref={printableRef} className="space-y-6 text-[#EFEFF1] p-1 sm:p-2">
         {/* Invoice Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#262B2F]">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-black tracking-tight text-white">TRIBES &amp; CLIQS</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                PAID IN FULL
-              </span>
+          <div className="flex items-center gap-3.5">
+            <Logo size="sm" showText={false} asLink={false} />
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-black tracking-tight text-white">TRIBES &amp; CLIQS</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  PAID IN FULL
+                </span>
+              </div>
+              <p className="text-xs text-[#949599] mt-0.5">Official Event Ticketing &amp; Experience Receipt</p>
             </div>
-            <p className="text-xs text-[#949599] mt-1">Official Event Ticketing &amp; Experience Receipt</p>
           </div>
           <div className="sm:text-right">
             <p className="text-xs uppercase font-bold tracking-wider text-[#949599]">Invoice No.</p>
@@ -404,16 +423,23 @@ export default function InvoiceModal({
         {/* Summary Totals & Digital Verification QR */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2">
           {/* Verification QR section */}
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-[#171C21] border border-[#262B2F] w-full sm:w-auto">
-            <div className="w-16 h-16 rounded-lg bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm">
-              <QRCodeSVG value={qrUrl} size={54} level="M" />
+          <div className="flex items-center gap-3.5 p-3 rounded-xl bg-[#171C21] border border-[#262B2F] w-full sm:w-auto">
+            <div className="w-16 h-16 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-md border border-white">
+              <QRCodeSVG value={qrUrl} size={56} level="M" includeMargin={false} />
             </div>
             <div className="text-xs space-y-0.5">
               <p className="font-bold text-white flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Digital Verification QR
               </p>
               <p className="text-[11px] text-[#949599]">Scan to verify authenticity &amp; entry</p>
-              <p className="text-[10px] text-[#494F55] font-mono">Ref: {paymentRef}</p>
+              <a
+                href={qrUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-[10px] text-amber-400 hover:text-amber-300 font-semibold"
+              >
+                Verify Online <ExternalLink className="w-2.5 h-2.5" />
+              </a>
             </div>
           </div>
 

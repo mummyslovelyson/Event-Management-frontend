@@ -231,7 +231,25 @@ export default function EventsPage() {
                     <td className="px-5 py-3 text-neutral-400">{e.category?.name || e.category || '—'}</td>
                     <td className="px-5 py-3 text-neutral-400">{e.startDate ? new Date(e.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}</td>
                     <td className="px-5 py-3 text-neutral-400 max-w-[140px] truncate">{e.venue || e.city || '—'}</td>
-                    <td className="px-5 py-3 text-center text-neutral-300 tabular-nums">{sold}/{cap}</td>
+                    <td className="px-5 py-3 text-center text-neutral-300 tabular-nums">
+                      {e.approval_status === 'approved' || e.status === 'published' ? (
+                        Number(e.ticket_type_count ?? 0) === 0 ? (
+                          <button
+                            onClick={() => navigate(`/organizer/tickets?event=${e.id}`)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-400/10 text-emerald-300 border border-emerald-400/25 hover:bg-emerald-400/20 transition cursor-pointer"
+                            title="Event approved! Start configuring ticket tiers"
+                          >
+                            <Plus className="w-3 h-3" /> Add Tickets
+                          </button>
+                        ) : (
+                          <span>{sold}/{cap}</span>
+                        )
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[11px] text-amber-400/80 font-medium" title="Tickets locked until event is approved by admin">
+                          <Clock className="w-3 h-3" /> Awaiting Approval
+                        </span>
+                      )}
+                    </td>
                     <td className="px-5 py-3 text-right font-medium text-white tabular-nums">{format(e.revenue)}</td>
                     <td className="px-5 py-3">
                       <div className="flex flex-col gap-1 items-start">
@@ -418,6 +436,22 @@ function EventCard({ event, onEdit, onManageTickets, onView, onTogglePublish, on
           <span className="flex items-center gap-1 text-xs text-white font-medium"><DollarSign className="w-3.5 h-3.5" /> {format(event.revenue)}</span>
           <span className="flex items-center gap-1 text-xs text-neutral-400"><TicketIcon className="w-3.5 h-3.5" /> {event.category?.name || event.category || '—'}</span>
         </div>
+
+        {event.approval_status === 'approved' || event.status === 'published' ? (
+          Number(event.ticket_type_count ?? 0) === 0 && (
+            <button
+              type="button"
+              onClick={(ev) => { ev.stopPropagation(); onManageTickets?.(); }}
+              className="w-full mt-3 py-2 px-3 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/25 text-xs font-semibold flex items-center justify-center gap-1.5 hover:bg-emerald-500/20 transition cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" /> Start Adding Tickets
+            </button>
+          )
+        ) : (
+          <div className="w-full mt-3 py-1.5 px-3 rounded-lg bg-amber-400/5 border border-amber-400/15 text-[11px] text-amber-300/90 flex items-center justify-center gap-1.5">
+            <Clock className="w-3 h-3" /> Tickets locked until admin approval
+          </div>
+        )}
       </div>
     </motion.div>
   );

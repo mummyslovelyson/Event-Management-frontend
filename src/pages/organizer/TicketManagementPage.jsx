@@ -627,14 +627,36 @@ export default function TicketManagementPage() {
           ) : loadingTickets ? (
             <LoadingSpinner label="Loading ticket types..." className="py-16" />
           ) : tickets.length === 0 ? (
-            <EmptyState
-              icon={TicketIcon}
-              title="No tickets created for this event yet"
-              description="Create ticket tiers (e.g. VIP, General Admission, Early Bird) with custom pricing and upload pre-generated barcode passes."
-              action={openAdd}
-              actionLabel="Create First Ticket Tier"
-              className="py-16"
-            />
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold text-white">Event Approved by Administrator</h4>
+                    <p className="text-[11px] text-emerald-300/80">
+                      Your event is approved! You can now start creating and configuring your ticket tiers below.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={openAdd}
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-500 text-black text-xs font-semibold hover:bg-emerald-400 transition cursor-pointer shrink-0"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Create Ticket Tier
+                </button>
+              </div>
+              <EmptyState
+                icon={TicketIcon}
+                title="No tickets created for this event yet"
+                description="Create ticket tiers (e.g. VIP, General Admission, Early Bird) with custom pricing and upload pre-generated barcode passes."
+                action={openAdd}
+                actionLabel="Create First Ticket Tier"
+                className="py-16"
+              />
+            </div>
           ) : (
             <>
               {/* Comprehensive 6-Metric Event Monitor */}

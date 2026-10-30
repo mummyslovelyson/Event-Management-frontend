@@ -41,6 +41,7 @@ const VerifyTicketPage = lazy(() => import('@/pages/public/VerifyTicketPage'));
 const OrganizerProfilePage = lazy(() => import('@/pages/public/OrganizerProfilePage'));
 const ResaleMarketplacePage = lazy(() => import('@/pages/public/ResaleMarketplacePage'));
 const BecomeOrganizerPage = lazy(() => import('@/pages/public/BecomeOrganizerPage'));
+const ReceiptPage = lazy(() => import('@/pages/public/ReceiptPage'));
 
 // ─── Lazy Loaded Auth Pages ───
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
@@ -155,6 +156,10 @@ function AppRoutes() {
           <Route path="/verify/:code" element={<VerifyTicketPage />} />
           <Route path="/verify-ticket" element={<VerifyTicketPage />} />
           <Route path="/verify-ticket/:code" element={<VerifyTicketPage />} />
+          <Route path="/receipt/:id" element={<ReceiptPage />} />
+          <Route path="/receipt" element={<ReceiptPage />} />
+          <Route path="/orders/:id/receipt" element={<ReceiptPage />} />
+          <Route path="/order/:id/receipt" element={<ReceiptPage />} />
           <Route path="/organizers/:id" element={<OrganizerProfilePage />} />
           <Route path="/organizer/:id" element={<OrganizerProfilePage />} />
           <Route path="/become-organizer" element={<BecomeOrganizerPage />} />
