@@ -32,6 +32,7 @@ export default function ReceiptPage() {
   const [copiedLink, setCopiedLink] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [searchCodeInput, setSearchCodeInput] = useState('');
+  const fetchedTargetRef = useRef(null);
 
   const printableRef = useRef(null);
 
@@ -41,7 +42,8 @@ export default function ReceiptPage() {
       return;
     }
 
-    setLoading(true);
+    // Only show full loading spinner if we don't already have order data
+    setLoading((prev) => (order ? false : true));
     setError(null);
 
     try {
@@ -49,6 +51,8 @@ export default function ReceiptPage() {
       const res = await getReceipt(targetId);
       if (res.data?.order) {
         setOrder(res.data.order);
+        setError(null);
+        setLoading(false);
         return;
       }
     } catch {
@@ -57,6 +61,8 @@ export default function ReceiptPage() {
         const orderRes = await getOrder(targetId);
         if (orderRes.data?.order) {
           setOrder(orderRes.data.order);
+          setError(null);
+          setLoading(false);
           return;
         }
       } catch (fallbackErr) {
@@ -66,16 +72,24 @@ export default function ReceiptPage() {
       setLoading(false);
     }
 
-    setError('We could not find an official receipt matching this reference or order number.');
-  }, []);
+    setOrder((current) => {
+      if (!current) {
+        setError('We could not find an official receipt matching this reference or order number.');
+      }
+      return current;
+    });
+  }, [order]);
 
   useEffect(() => {
     if (identifier) {
-      fetchReceipt(identifier);
+      if (fetchedTargetRef.current !== identifier) {
+        fetchedTargetRef.current = identifier;
+        fetchReceipt(identifier);
+      }
     } else if (!order) {
       setLoading(false);
     }
-  }, [identifier, fetchReceipt, order]);
+  }, [identifier, fetchReceipt]);
 
   // Derived order attributes
   const event = order?.event || {};
@@ -90,18 +104,36 @@ export default function ReceiptPage() {
   const buyerEmail = order?.buyer_email || order?.customerEmail || order?.customer_email || order?.user?.email || '—';
   const buyerPhone = order?.buyer_phone || order?.customerPhone || order?.customer_phone || order?.user?.phone || '';
 
-  const orderRef = order?.payment_reference || order?.reference || order?.orderId || (order?.id ? `TC-ORD-${order.id}` : 'RECEIPT');
+  const orderRef = order?.payment_reference || order?.reference || order?.orderId || (order?.id ? `TC-ORD-${order.id}` : (identifier || 'RECEIPT'));
   const invoiceNumber = order?.invoice_number || order?.invoiceNumber || (order?.id ? `INV-${new Date().getFullYear()}-${String(order.id).padStart(6, '0')}` : `#${orderRef}`);
 
-  const orderDateStr = order?.created_at || order?.createdAt || new Date().toISOString();
-  const formattedOrderDate = new Date(orderDateStr).toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const orderDateStr = order?.created_at || order?.createdAt;
+  const formattedOrderDate = (() => {
+    if (!orderDateStr) return 'Recently';
+    try {
+      const d = new Date(orderDateStr);
+      if (isNaN(d.getTime())) return 'Recently';
+      return d.toLocaleDateString('en-US', {
+        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+        hour: '2-digit', minute: '2-digit',
+      });
+    } catch {
+      return 'Recently';
+    }
+  })();
+
+  const formattedEventDate = (() => {
+    if (!eventDate) return 'Date TBA';
+    try {
+      const d = new Date(eventDate);
+      if (isNaN(d.getTime())) return String(eventDate);
+      return d.toLocaleDateString('en-US', {
+        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+      });
+    } catch {
+      return String(eventDate);
+    }
+  })();
 
   const paymentStatus = String(order?.payment_status || order?.status || 'completed').toLowerCase();
   const isPaid = ['completed', 'paid', 'success', 'successful'].includes(paymentStatus);
@@ -109,6 +141,7 @@ export default function ReceiptPage() {
 
   // Items calculation
   const rawItems = Array.isArray(order?.items) && order.items.length > 0 ? order.items : null;
+  const rawTickets = Array.isArray(order?.tickets) && order.tickets.length > 0 ? order.tickets : null;
   const totalAmount = Number(order?.total_amount ?? order?.totalAmount ?? order?.total ?? 0);
   const discountAmount = Number(order?.discount_amount ?? order?.discountAmount ?? order?.discount ?? 0);
   const couponCode = order?.coupon_code || order?.couponCode || null;
@@ -125,7 +158,14 @@ export default function ReceiptPage() {
       ticket_file_url: it.ticket_file_url || null,
       ticket_file_name: it.ticket_file_name || null,
     };
-  }) : [
+  }) : rawTickets ? rawTickets.map((t) => ({
+    name: t.ticket_type_name || t.ticketType || 'Admission Pass',
+    quantity: 1,
+    unitPrice: Number(t.unit_price ?? t.price ?? (totalAmount / rawTickets.length)),
+    subtotal: Number(t.unit_price ?? t.price ?? (totalAmount / rawTickets.length)),
+    ticket_file_url: t.ticket_file_url || t.ticketFileUrl || null,
+    ticket_file_name: t.ticket_file_name || t.ticketFileName || null,
+  })) : [
     {
       name: order?.ticketType || order?.ticket_type_name || 'Admission Pass',
       quantity: order?.quantity || 1,
@@ -258,7 +298,7 @@ export default function ReceiptPage() {
             <div class="info-card">
               <div class="card-title">Event &amp; Admission Info</div>
               <p class="primary-text">${eventTitle}</p>
-              <p class="secondary-text">Date: ${eventDate ? new Date(eventDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Upcoming'}${eventTime ? ` at ${eventTime}` : ''}</p>
+              <p class="secondary-text">Date: ${formattedEventDate}${eventTime ? ` at ${eventTime}` : ''}</p>
               <p class="secondary-text">Venue: ${eventVenue}${eventLocation ? ` • ${eventLocation}` : ''}</p>
               <p class="secondary-text">Host: ${organizerName}</p>
             </div>
@@ -593,9 +633,7 @@ export default function ReceiptPage() {
                     <p className="text-xs text-[#949599] flex items-center gap-1.5 mt-1">
                       <Calendar className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                       <span>
-                        {eventDate ? new Date(eventDate).toLocaleDateString('en-US', {
-                          weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
-                        }) : 'Date TBA'}{eventTime ? ` at ${eventTime}` : ''}
+                        {formattedEventDate}{eventTime ? ` at ${eventTime}` : ''}
                       </span>
                     </p>
                     <p className="text-xs text-[#949599] flex items-center gap-1.5 mt-0.5 line-clamp-1">

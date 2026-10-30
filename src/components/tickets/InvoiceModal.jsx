@@ -304,6 +304,7 @@ export default function InvoiceModal({
             </button>
             <Link
               to={`/receipt/${encodeURIComponent(paymentRef || invoiceNumber)}`}
+              state={{ order: activeOrder || ticket }}
               target="_blank"
               className="px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/50 text-xs font-semibold text-[#EFEFF1] hover:bg-[#2C343D] hover:text-white transition flex items-center gap-1.5 shadow-sm"
             >

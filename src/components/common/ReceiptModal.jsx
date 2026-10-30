@@ -65,7 +65,17 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
     }],
   } : null);
 
-  if (!activeData) return null;
+  if (!activeData) {
+    if (!open) return null;
+    return (
+      <Modal open={open} onClose={onClose} title="Official Receipt" size="md">
+        <div className="py-12 text-center space-y-3">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-amber-400" />
+          <p className="text-sm text-[#949599]">Loading official receipt...</p>
+        </div>
+      </Modal>
+    );
+  }
 
   const event = activeData.event || {};
   const eventTitle = event.title || activeData.eventTitle || activeData.event_title || activeData.eventName || 'Event';
@@ -288,6 +298,7 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
           <div className="flex items-center gap-2">
             <Link
               to={`/receipt/${orderRef}`}
+              state={{ order: activeData }}
               target="_blank"
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/50 text-xs font-semibold text-[#EFEFF1] hover:bg-[#2C343D] hover:text-white transition shadow-sm"
             >

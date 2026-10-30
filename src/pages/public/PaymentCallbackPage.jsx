@@ -190,6 +190,31 @@ export default function PaymentCallbackPage() {
                   </Link>
                   <Link
                     to={`/receipt/${orderId || orderData?.reference || reference}`}
+                    state={{
+                      order: orderData ? {
+                        ...orderData,
+                        id: orderId || orderData?.id,
+                        reference: orderData?.reference || reference,
+                        payment_reference: orderData?.reference || reference,
+                        total: orderData?.total,
+                        total_amount: orderData?.total,
+                        event: eventData,
+                        tickets: tickets,
+                        items: tickets && tickets.length > 0 ? tickets.map((t) => ({
+                          name: t.ticketType || t.ticket_type_name || 'Admission Pass',
+                          quantity: 1,
+                          unitPrice: Number(t.unitPrice ?? t.price ?? 0),
+                          unit_price: Number(t.unitPrice ?? t.price ?? 0),
+                          subtotal: Number(t.unitPrice ?? t.price ?? 0),
+                        })) : [{
+                          name: 'Admission Pass',
+                          quantity: 1,
+                          unitPrice: Number(orderData?.total || 0),
+                          unit_price: Number(orderData?.total || 0),
+                          subtotal: Number(orderData?.total || 0),
+                        }],
+                      } : null,
+                    }}
                     className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#242B32] border border-[#494F55]/60 text-sm font-medium hover:bg-[#2C343D] transition text-[#EFEFF1] hover:text-white"
                   >
                     <Receipt className="w-4 h-4 text-amber-400" /> View Receipt
