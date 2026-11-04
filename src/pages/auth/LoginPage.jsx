@@ -461,25 +461,6 @@ export default function LoginPage() {
           text-decoration: underline;
         }
 
-        .login-page-root .admin-portal-link {
-          text-align: center;
-          margin-top: 4px;
-          font-size: 10.5px;
-          color: #494F55;
-        }
-
-        .login-page-root .admin-portal-link a {
-          color: #949599;
-          text-decoration: none;
-          transition: color .2s ease;
-          margin-left: 3px;
-        }
-
-        .login-page-root .admin-portal-link a:hover {
-          color: #EFEFF1;
-          text-decoration: underline;
-        }
-
         /* Responsive */
         @media (max-width: 640px) {
           .login-page-root {
@@ -724,12 +705,6 @@ export default function LoginPage() {
             <div className="footer-links">
               Don&apos;t have an account?{' '}
               <Link to="/register" className="signup-link">Sign up</Link>
-            </div>
-
-            {/* Admin Portal Link */}
-            <div className="admin-portal-link">
-              Admin?{' '}
-              <Link to="/admin-login">Go to Admin Portal</Link>
             </div>
           </form>
         </div>
