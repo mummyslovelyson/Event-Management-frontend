@@ -18,6 +18,21 @@ export default class ErrorBoundary extends React.Component {
   }
 
   static getDerivedStateFromError(error) {
+    const msg = error?.message || (typeof error === 'string' ? error : '');
+    const isChunkError =
+      msg.includes('Failed to fetch dynamically imported module') ||
+      msg.includes('Importing a module script failed') ||
+      msg.includes('error loading dynamically imported module') ||
+      msg.includes('Expected a JavaScript-or-Wasm module script');
+
+    if (isChunkError && typeof window !== 'undefined') {
+      const retryKey = 'tc_chunk_error_reloaded';
+      if (!sessionStorage.getItem(retryKey)) {
+        sessionStorage.setItem(retryKey, 'true');
+        window.location.reload();
+      }
+    }
+
     return { hasError: true, error };
   }
 
