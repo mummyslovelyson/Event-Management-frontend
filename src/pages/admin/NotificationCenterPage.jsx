@@ -59,10 +59,53 @@ const targetOptions = [
 ];
 
 const channelOptions = [
-  { key: 'in-app', label: 'In-App Alert', icon: Bell },
-  { key: 'email', label: 'Email', icon: Mail },
-  { key: 'sms', label: 'SMS Notice', icon: Smartphone },
-  { key: 'push', label: 'Push Notification', icon: Radio },
+  { key: 'both', label: 'Email & In-App', icon: Layers, desc: 'Deliver to inbox + notification bell' },
+  { key: 'email', label: 'Email Alert', icon: Mail, desc: 'Direct branded email to user inboxes' },
+  { key: 'in-app', label: 'In-App Notice', icon: Bell, desc: 'Visible inside user notification feed' },
+  { key: 'sms', label: 'SMS Notice', icon: Smartphone, desc: 'Direct text via SMS provider' },
+];
+
+const quickAlertPresets = [
+  {
+    name: '🚀 Feature Release',
+    title: 'Exciting New Features Live on Tribes & Cliqs!',
+    badge: 'Platform Announcement',
+    message: 'We have just rolled out exciting updates to make discovering events, downloading passes, and managing tickets faster and smoother.\n\nExplore what is new and check out trending experiences happening in your city this weekend!',
+    actionLabel: 'Explore Events',
+    link: '/events',
+    channel: 'both',
+    target: 'all',
+  },
+  {
+    name: '🛠️ Maintenance Notice',
+    title: 'Notice of Scheduled System Maintenance',
+    badge: 'System Notice',
+    message: 'Tribes & Cliqs will undergo scheduled infrastructure maintenance on Monday from 02:00 AM to 03:30 AM GMT.\n\nDuring this window, event browsing and ticket purchases may be momentarily unavailable. Digital passes in your offline wallet remain fully active.',
+    actionLabel: 'View Support Status',
+    link: '/support',
+    channel: 'both',
+    target: 'all',
+  },
+  {
+    name: '🎟️ Weekend Spotlight',
+    title: 'Top Live Events & Cultural Experiences This Weekend',
+    badge: 'Weekend Spotlight',
+    message: 'Looking for exciting plans? Check out the highest-rated live concerts, cultural festivals, and community meetups happening near you.\n\nReserve your tickets early before tiers sell out!',
+    actionLabel: 'Browse Weekend Events',
+    link: '/events',
+    channel: 'email',
+    target: 'attendees',
+  },
+  {
+    name: '🔒 Security Advisory',
+    title: 'Important Account Security & Gate Verification Notice',
+    badge: 'Security Alert',
+    message: 'To protect your passes and account, always present your QR ticket directly through the official Tribes & Cliqs app or website at gate check-in.\n\nWe will never ask for your password or payment OTP over direct messaging.',
+    actionLabel: 'Security Settings',
+    link: '/profile',
+    channel: 'both',
+    target: 'all',
+  },
 ];
 
 const categoryFilters = [
@@ -143,12 +186,16 @@ export default function NotificationCenterPage() {
   // Send Broadcast modal state
   const [showSend, setShowSend] = useState(false);
   const [sending, setSending] = useState(false);
+  const [previewMode, setPreviewMode] = useState('email'); // 'email' | 'in-app'
   const [form, setForm] = useState({
     title: '',
     message: '',
     target: 'all',
-    channel: 'in-app',
+    channel: 'both',
     userId: '',
+    link: '',
+    actionLabel: 'View Details',
+    badge: 'Platform Announcement',
   });
 
   /* ------------------------------------------------------------------ */
@@ -271,10 +318,26 @@ export default function NotificationCenterPage() {
       title: t.subject || t.name,
       message: t.body || '',
       target: 'all',
-      channel: t.type || 'in-app',
+      channel: (t.type === 'email' || t.type === 'in_app') ? t.type : 'both',
       userId: '',
+      link: '/events',
+      actionLabel: 'View Details',
+      badge: 'Platform Announcement',
     });
     setShowSend(true);
+  };
+
+  const handleApplyPreset = (p) => {
+    setForm({
+      title: p.title,
+      message: p.message,
+      target: p.target || 'all',
+      channel: p.channel || 'both',
+      userId: '',
+      link: p.link || '/events',
+      actionLabel: p.actionLabel || 'View Details',
+      badge: p.badge || 'Platform Announcement',
+    });
   };
 
   const handleSendBroadcast = async () => {
@@ -630,9 +693,19 @@ export default function NotificationCenterPage() {
                             </Badge>
                           </td>
                           <td className="px-5 py-3.5">
-                            <span className="inline-flex items-center gap-1 text-xs text-neutral-300 capitalize">
-                              <Radio className="w-3 h-3 text-neutral-500" />
-                              {b.channel || 'In-App'}
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium border ${
+                              b.channel === 'email' ? 'bg-blue-500/10 text-blue-300 border-blue-500/20' :
+                              b.channel === 'both' ? 'bg-purple-500/10 text-purple-300 border-purple-500/20' :
+                              b.channel === 'sms' ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20' :
+                              'bg-white/5 text-neutral-300 border-white/10'
+                            }`}>
+                              {b.channel === 'email' ? <Mail className="w-3 h-3 text-blue-400" /> :
+                               b.channel === 'both' ? <Layers className="w-3 h-3 text-purple-400" /> :
+                               b.channel === 'sms' ? <Smartphone className="w-3 h-3 text-emerald-400" /> :
+                               <Bell className="w-3 h-3 text-neutral-400" />}
+                              {b.channel === 'both' ? 'Email & In-App' :
+                               b.channel === 'email' ? 'Email Alert' :
+                               b.channel === 'sms' ? 'SMS Notice' : 'In-App'}
                             </span>
                           </td>
                           <td className="px-5 py-3.5 text-center text-xs font-medium text-white">
@@ -703,11 +776,11 @@ export default function NotificationCenterPage() {
         </div>
       )}
 
-      {/* Send Notification Modal */}
+      {/* Send Notification / Email Alert Modal */}
       <Modal
         open={showSend}
         onClose={() => setShowSend(false)}
-        title="Dispatch Broadcast Announcement"
+        title="Dispatch Broadcast & Email Alert"
         size="lg"
         footer={
           <>
@@ -720,59 +793,132 @@ export default function NotificationCenterPage() {
             <button
               onClick={handleSendBroadcast}
               disabled={sending}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition disabled:opacity-50 shadow-md"
             >
               {sending ? (
                 <LoadingSpinner size="sm" />
               ) : (
                 <>
-                  <Send className="w-3.5 h-3.5" /> Send Broadcast
+                  <Send className="w-3.5 h-3.5" /> Dispatch Alert
                 </>
               )}
             </button>
           </>
         }
       >
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
+          {/* Quick Preset Chips */}
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
-              Subject / Title
-            </label>
-            <input
-              type="text"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="Notification subject or title"
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
-            />
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                Quick Preset Templates
+              </label>
+              <span className="text-[10px] text-neutral-500">Click to autofill</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {quickAlertPresets.map((p, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleApplyPreset(p)}
+                  className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-white/[0.03] border border-white/[0.08] text-neutral-300 hover:text-white hover:bg-white/[0.08] transition"
+                >
+                  {p.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="sm:col-span-2">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+                Subject / Title *
+              </label>
+              <input
+                type="text"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                placeholder="e.g. Major Platform Update & Weekend Experience Drop"
+                className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+                Badge / Tag
+              </label>
+              <input
+                type="text"
+                value={form.badge}
+                onChange={(e) => setForm({ ...form, badge: e.target.value })}
+                placeholder="Platform Announcement"
+                className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
+              />
+            </div>
           </div>
 
           <div>
             <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
-              Message Content
+              Message Content *
             </label>
             <textarea
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
-              placeholder="Type your announcement or alert message..."
+              placeholder="Type your announcement or email alert message. Multiple paragraphs are supported..."
               rows={4}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 resize-none transition leading-relaxed"
+              className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 resize-none transition leading-relaxed font-sans"
             />
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+                Action Button Label (Optional)
+              </label>
+              <input
+                type="text"
+                value={form.actionLabel}
+                onChange={(e) => setForm({ ...form, actionLabel: e.target.value })}
+                placeholder="View Details / Explore Events"
+                className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+                Action Button URL (Optional)
+              </label>
+              <input
+                type="text"
+                value={form.link}
+                onChange={(e) => setForm({ ...form, link: e.target.value })}
+                placeholder="/events or https://..."
+                className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition"
+              />
+            </div>
+          </div>
+
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2">
-              Target Audience
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                Target Audience
+              </label>
+              <span className="text-[11px] text-amber-400/90 font-medium">
+                {form.target === 'all' && 'Broadcast to all platform registered accounts'}
+                {form.target === 'attendees' && 'Delivered to all active ticket buyers'}
+                {form.target === 'organizers' && 'Delivered to verified event creators'}
+                {form.target === 'admins' && 'Delivered to system administrators'}
+                {form.target === 'specific' && 'Delivered to single specified user'}
+              </span>
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
               {targetOptions.map((t) => (
                 <button
                   key={t.key}
                   type="button"
                   onClick={() => setForm({ ...form, target: t.key })}
-                  className={`px-3 py-2 rounded-lg text-xs font-medium border transition ${
+                  className={`px-3 py-2 rounded-lg text-xs font-medium border transition text-center ${
                     form.target === t.key
-                      ? 'bg-white text-black font-semibold border-white'
+                      ? 'bg-white text-black font-semibold border-white shadow-sm'
                       : 'bg-white/[0.03] text-neutral-400 border-white/[0.08] hover:text-white hover:bg-white/[0.06]'
                   }`}
                 >
@@ -797,39 +943,108 @@ export default function NotificationCenterPage() {
               Delivery Channel
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {channelOptions.map(({ key, label, icon: Icon }) => (
+              {channelOptions.map(({ key, label, icon: Icon, desc }) => (
                 <button
                   key={key}
                   type="button"
-                  onClick={() => setForm({ ...form, channel: key })}
-                  className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium border transition ${
+                  onClick={() => {
+                    setForm({ ...form, channel: key });
+                    if (key === 'email' || key === 'both') setPreviewMode('email');
+                    else setPreviewMode('in-app');
+                  }}
+                  className={`flex flex-col items-center justify-center p-2.5 rounded-xl text-xs font-medium border transition text-center ${
                     form.channel === key
-                      ? 'bg-white text-black font-semibold border-white'
+                      ? 'bg-white text-black font-semibold border-white shadow-sm'
                       : 'bg-white/[0.03] text-neutral-400 border-white/[0.08] hover:text-white hover:bg-white/[0.06]'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" /> {label}
+                  <Icon className="w-4 h-4 mb-1" />
+                  <span className="font-semibold">{label}</span>
+                  <span className={`text-[10px] mt-0.5 line-clamp-1 ${form.channel === key ? 'text-neutral-700' : 'text-neutral-500'}`}>
+                    {desc}
+                  </span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Live Preview */}
-          <div className="rounded-xl bg-[#0b0e14] border border-white/[0.08] p-3.5">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500 mb-2">
-              Preview (How users will see this)
-            </p>
-            <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.08]">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-white">
-                  {form.title || 'Untitled Notification'}
-                </p>
-                <span className="text-[10px] text-neutral-500">Just now</span>
+          {/* Live Preview Card with Email / In-App toggle */}
+          <div className="rounded-2xl bg-[#0b0e14] border border-white/[0.08] p-4">
+            <div className="flex items-center justify-between mb-3 border-b border-white/[0.06] pb-2.5">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                Live Preview
+              </span>
+              <div className="flex items-center gap-1 bg-white/[0.04] p-1 rounded-lg border border-white/[0.08]">
+                <button
+                  type="button"
+                  onClick={() => setPreviewMode('email')}
+                  className={`px-2.5 py-1 rounded text-[11px] font-medium transition flex items-center gap-1.5 ${
+                    previewMode === 'email' ? 'bg-white text-black font-semibold' : 'text-neutral-400 hover:text-white'
+                  }`}
+                >
+                  <Mail className="w-3 h-3" /> Email Alert
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewMode('in-app')}
+                  className={`px-2.5 py-1 rounded text-[11px] font-medium transition flex items-center gap-1.5 ${
+                    previewMode === 'in-app' ? 'bg-white text-black font-semibold' : 'text-neutral-400 hover:text-white'
+                  }`}
+                >
+                  <Bell className="w-3 h-3" /> In-App Notice
+                </button>
               </div>
-              <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
-                {form.message || 'Notification body will appear here once typed...'}
-              </p>
             </div>
+
+            {previewMode === 'email' ? (
+              /* High-fidelity Email Preview */
+              <div className="rounded-xl bg-[#14191E] border border-[#2B333B] p-5 max-w-md mx-auto text-left shadow-lg">
+                <div className="text-center mb-3">
+                  <span className="inline-block px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 text-[10px] font-bold uppercase tracking-wider">
+                    {form.badge || 'Platform Announcement'}
+                  </span>
+                </div>
+                <h3 className="text-sm font-bold text-white text-center mb-1">
+                  {form.title || 'Notification Subject'}
+                </h3>
+                <p className="text-[11px] text-neutral-400 text-center mb-3">
+                  From: <strong className="text-neutral-200">Tribes &amp; Cliqs Admin</strong>
+                </p>
+
+                <div className="p-3.5 rounded-lg bg-[#1C232B] border border-[#363F48] mb-3">
+                  <p className="text-xs font-semibold text-white mb-2">Hello Tribe Member,</p>
+                  <p className="text-xs text-neutral-300 leading-relaxed whitespace-pre-wrap">
+                    {form.message || 'Your email alert message will be formatted cleanly in paragraphs here for all recipients...'}
+                  </p>
+                </div>
+
+                <div className="text-center my-3">
+                  <span className="inline-block px-4 py-2 rounded-lg bg-[#EFEFF1] text-[#14191E] text-xs font-bold shadow">
+                    {form.actionLabel || 'View Details'}
+                  </span>
+                </div>
+
+                <p className="text-[10px] text-neutral-500 text-center border-t border-[#2B333B] pt-2.5">
+                  You received this broadcast because you have an account on Tribes &amp; Cliqs.
+                </p>
+              </div>
+            ) : (
+              /* In-App Notice Preview */
+              <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-start gap-3 max-w-md mx-auto">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                  <Bell className="w-4 h-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-semibold text-white truncate">{form.title || 'Notification Title'}</p>
+                    <span className="text-[10px] text-neutral-500">Just now</span>
+                  </div>
+                  <p className="text-xs text-neutral-400 mt-1 leading-relaxed line-clamp-2">
+                    {form.message || 'Notification body will appear here once typed...'}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </Modal>

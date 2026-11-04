@@ -71,6 +71,7 @@ export const getNotificationTemplates = () => api.get('/admin/notification-templ
 export const getSupportTickets = (params) => api.get('/admin/support', { params });
 export const getSupportTicket = (id) => api.get(`/admin/support/${id}`);
 export const respondToSupportTicket = (id, data) => api.post(`/admin/support/${id}/respond`, data);
+export const resolveSupportTicket = (id, data) => api.post(`/admin/support/${id}/resolve`, data);
 export const closeSupportTicket = (id) => api.post(`/admin/support/${id}/close`);
 
 export const getSettings = () => api.get('/admin/settings');
