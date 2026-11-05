@@ -20,13 +20,18 @@ export default function VerifyEmailPage() {
   const emailParam = searchParams.get('email') || '';
   const phoneParam = searchParams.get('phone') || '';
   const regIdParam = searchParams.get('regId') || '';
+  const codeParam = searchParams.get('code') || searchParams.get('otp') || '';
+
+  const initialOtp = codeParam && codeParam.replace(/\D/g, '').length === 6
+    ? codeParam.replace(/\D/g, '').slice(0, 6).split('')
+    : ['', '', '', '', '', ''];
 
   const [channel, setChannel] = useState(phoneParam && !emailParam ? 'sms' : 'email'); // 'email' | 'sms'
   const [email, setEmail] = useState(emailParam);
   const [phone, setPhone] = useState(phoneParam);
   const [registrationId, setRegistrationId] = useState(regIdParam);
-  const [isEditingContact, setIsEditingContact] = useState(!emailParam && !phoneParam && !tokenParam);
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [isEditingContact, setIsEditingContact] = useState(!emailParam && !phoneParam && !tokenParam && !codeParam);
+  const [otp, setOtp] = useState(initialOtp);
   const [status, setStatus] = useState(tokenParam ? 'verifying_token' : 'idle'); // 'idle' | 'verifying_token' | 'verifying_otp' | 'success' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
   const [verifiedUser, setVerifiedUser] = useState(null);
@@ -37,12 +42,18 @@ export default function VerifyEmailPage() {
 
   // Auto-verify if a direct link token is provided in the URL
   useEffect(() => {
-    if (!tokenParam) return;
+    if (!tokenParam && !codeParam) return;
     let cancelled = false;
     (async () => {
       setStatus('verifying_token');
       try {
-        const res = await verifyEmail({ token: tokenParam });
+        const payload = {};
+        if (tokenParam) payload.token = tokenParam;
+        if (codeParam) payload.otp = codeParam;
+        if (emailParam) payload.email = emailParam;
+        if (regIdParam) payload.registrationId = regIdParam;
+
+        const res = await verifyEmail(payload);
         if (!cancelled) {
           setStatus('success');
           if (res.data?.user) setVerifiedUser(res.data.user);
@@ -61,7 +72,7 @@ export default function VerifyEmailPage() {
       }
     })();
     return () => { cancelled = true; };
-  }, [tokenParam, persistAuth]);
+  }, [tokenParam, codeParam, emailParam, regIdParam, persistAuth]);
 
   // Resend cooldown countdown
   useEffect(() => {
@@ -344,10 +355,10 @@ export default function VerifyEmailPage() {
                 </div>
                 <p className="text-[#949599] leading-relaxed text-[11px]">
                   {phone && email
-                    ? `A 6-digit verification code was sent via SMS to ${phone} and Email to ${email}. Enter the code below.`
+                    ? `A 6-digit verification code was sent to your email (${email}) and via SMS to (${phone}). Check your email inbox or spam folder and enter the code below.`
                     : phone
                     ? `A 6-digit verification code was sent via SMS to ${phone}. Enter the code below.`
-                    : `A 6-digit verification code was sent to ${email || 'your email'}. Enter the code below.`}
+                    : `A 6-digit verification code was sent to ${email || 'your email'}. Check your inbox or spam folder and enter the code below.`}
                 </p>
               </div>
 
