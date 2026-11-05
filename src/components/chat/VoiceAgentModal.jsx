@@ -24,9 +24,8 @@ export default function VoiceAgentModal({
   const [agentState, setAgentState] = useState('idle'); // 'idle' | 'listening' | 'thinking' | 'speaking' | 'paused'
   const [transcript, setTranscript] = useState('');
   const [lastAgentReply, setLastAgentReply] = useState(
-    "Hello, welcome to Tribes & Cliqs. What event or tickets can I help you find today?"
+    "Hello! Welcome to Tribes & Cliqs. How can I assist you with events, tickets, hosting, or payments today?"
   );
-  const [voiceDiagnostics, setVoiceDiagnostics] = useState(null);
   const [lastEvents, setLastEvents] = useState([]);
   const [lastTickets, setLastTickets] = useState([]);
   const [lastActions, setLastActions] = useState([]);
@@ -245,7 +244,6 @@ export default function VoiceAgentModal({
       if (res) {
         const spoken = res.voiceReply || res.reply || 'Here is what I found for you:';
         setLastAgentReply(res.reply || spoken);
-        setVoiceDiagnostics(res.voiceDiagnostics || null);
         setLastEvents(res.events || []);
         setLastTickets(res.tickets || []);
         setLastActions(res.actions || []);
@@ -488,8 +486,8 @@ export default function VoiceAgentModal({
         hasWelcomedRef.current = true;
         const firstName = activeContext?.user?.name ? activeContext.user.name.split(' ')[0] : '';
         const welcomeText = firstName
-          ? `Hello ${firstName}! Welcome to Tribes and Cliqs. What events or tickets can I help you with today?`
-          : `Hello! Welcome to Tribes and Cliqs. What events or tickets can I help you with today?`;
+          ? `Hi ${firstName}! Welcome to Tribes & Cliqs. How can I assist you with events, tickets, hosting, or payments today?`
+          : `Hello! Welcome to Tribes & Cliqs. How can I assist you with events, tickets, hosting, or payments today?`;
 
         stopListening();
         setLastAgentReply(welcomeText);
@@ -508,7 +506,6 @@ export default function VoiceAgentModal({
       stopSpeaking();
       stopListening();
       setAgentState('idle');
-      setVoiceDiagnostics(null);
     }
   }, [isOpen, activeContext?.user?.name, playChime, speakResponse, startListening, stopSpeaking, stopListening]);
 
@@ -553,12 +550,12 @@ export default function VoiceAgentModal({
 
         ctx.arc(centerX, centerY, Math.max(12, radius), 0, Math.PI * 2);
         ctx.strokeStyle = isSpeaking
-          ? `rgba(212, 175, 55, ${0.6 - i * 0.12})`
+          ? `rgba(255, 255, 255, ${0.7 - i * 0.12})`
           : isThinking
-          ? `rgba(203, 213, 225, ${0.4 - i * 0.08})`
+          ? `rgba(203, 213, 225, ${0.45 - i * 0.08})`
           : isListening
-          ? `rgba(245, 158, 11, ${0.55 - i * 0.1})`
-          : `rgba(73, 79, 85, 0.2)`;
+          ? `rgba(239, 239, 241, ${0.6 - i * 0.1})`
+          : `rgba(73, 79, 85, 0.25)`;
         ctx.lineWidth = isListening && liveAudioBoost > 8 ? 3.5 : 2.5;
         ctx.stroke();
       }
@@ -589,11 +586,11 @@ export default function VoiceAgentModal({
         <div
           className={`absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full blur-3xl opacity-20 pointer-events-none transition-colors duration-700 ${
             agentState === 'speaking'
-              ? 'bg-amber-500/25'
-              : agentState === 'thinking'
               ? 'bg-white/20'
+              : agentState === 'thinking'
+              ? 'bg-[#CBD5E1]/20'
               : agentState === 'listening'
-              ? 'bg-amber-400/20'
+              ? 'bg-white/15'
               : 'bg-white/5'
           }`}
         />
@@ -602,10 +599,10 @@ export default function VoiceAgentModal({
         <div className="w-full flex items-center justify-between z-10 mb-2">
           <div className="flex items-center gap-2">
             <span className="p-1.5 px-2.5 rounded-xl bg-[#1C232B] border border-[#262B2F] text-[#EFEFF1] text-xs font-bold flex items-center gap-1.5">
-              <Mic className="w-3.5 h-3.5 text-amber-400" />
-              <span>Cliqs Voice Agent</span>
+              <Mic className="w-3.5 h-3.5 text-[#EFEFF1]" />
+              <span>Voice Concierge</span>
             </span>
-            <span className="text-[11px] text-[#949599]">Voice ticketing companion</span>
+            <span className="text-[11px] text-[#949599]">Tribes &amp; Cliqs</span>
           </div>
 
           <div className="flex items-center gap-1 text-[#949599]">
@@ -646,26 +643,26 @@ export default function VoiceAgentModal({
             onClick={toggleListening}
           />
 
-          {/* Central Touch Orb styled with project gold & slate branding */}
+          {/* Central Touch Orb styled with project monochromatic/metallic brand tokens */}
           <button
             type="button"
             onClick={toggleListening}
             className={`absolute w-24 h-24 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 cursor-pointer ${
               agentState === 'speaking'
-                ? 'bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 text-black scale-105 shadow-amber-400/30 ring-4 ring-amber-400/20'
+                ? 'bg-white text-[#1C232B] scale-105 shadow-white/30 ring-4 ring-white/20'
                 : agentState === 'thinking'
-                ? 'bg-gradient-to-tr from-[#262B2F] to-[#1C232B] border border-amber-400/40 text-amber-300 scale-100 animate-pulse shadow-black/50'
+                ? 'bg-gradient-to-tr from-[#242B32] to-[#1C232B] border border-[#CBD5E1]/40 text-[#CBD5E1] scale-100 animate-pulse shadow-black/50'
                 : agentState === 'listening'
-                ? 'bg-[#1C232B] border-2 border-amber-400 text-amber-400 scale-105 shadow-amber-400/20'
+                ? 'bg-[#1C232B] border-2 border-white text-white scale-105 shadow-white/20'
                 : 'bg-[#242B32] text-white/80 scale-95 opacity-80'
             }`}
           >
             {agentState === 'thinking' ? (
-              <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
+              <Loader2 className="w-8 h-8 animate-spin text-[#CBD5E1]" />
             ) : agentState === 'speaking' ? (
-              <Volume2 className="w-8 h-8 animate-bounce text-black" />
+              <Volume2 className="w-8 h-8 animate-bounce text-[#1C232B]" />
             ) : agentState === 'listening' ? (
-              <Mic className="w-8 h-8 animate-pulse text-amber-400" />
+              <Mic className="w-8 h-8 animate-pulse text-white" />
             ) : (
               <Play className="w-8 h-8 text-white ml-1" />
             )}
@@ -675,19 +672,10 @@ export default function VoiceAgentModal({
         {/* Dynamic Status Label */}
         <div className="mb-3">
           <p className="text-xs font-bold uppercase tracking-widest text-[#EFEFF1]">
-            {agentState === 'listening' && 'Listening to you...'}
-            {agentState === 'thinking' && 'Checking events & tickets...'}
-            {agentState === 'speaking' && 'Speaking (Tap orb to interrupt)'}
-            {agentState === 'paused' && 'Paused (Tap orb to speak)'}
-          </p>
-          <p className="text-[11px] text-[#949599] mt-0.5">
-            {agentState === 'listening'
-              ? 'Speak naturally — the assistant replies by voice'
-              : agentState === 'thinking'
-              ? 'Searching live catalog and finding recommendations...'
-              : agentState === 'speaking'
-              ? 'Listening paused while agent is answering'
-              : 'Microphone paused. Tap the central orb to resume listening.'}
+            {agentState === 'listening' && 'Listening... Speak naturally'}
+            {agentState === 'thinking' && 'Finding what you need...'}
+            {agentState === 'speaking' && 'Speaking... Tap orb to pause'}
+            {agentState === 'paused' && 'Paused — Tap orb to speak'}
           </p>
         </div>
 
@@ -711,45 +699,14 @@ export default function VoiceAgentModal({
 
         {/* Live speech transcription */}
         {transcript && (
-          <div className="w-full max-w-sm px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/90 italic truncate mb-2">
+          <div className="w-full max-w-sm px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/90 italic truncate mb-3">
             "{transcript}"
-          </div>
-        )}
-
-        {/* Voice ML & Neural Diagnostics Pill */}
-        {voiceDiagnostics && (
-          <div className="w-full max-w-sm mb-2 px-3 py-1.5 rounded-xl bg-amber-400/10 border border-amber-400/20 text-left text-[11px] text-amber-300 flex items-center justify-between gap-1.5 flex-wrap">
-            <div className="flex items-center gap-1.5">
-              <Cpu className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span className="font-semibold">{voiceDiagnostics.predictedIntent || 'INTENT_CLASSIFIED'}</span>
-              {typeof voiceDiagnostics.confidence === 'number' && (
-                <span className="text-[10px] text-amber-200/80">({Math.round(voiceDiagnostics.confidence * 100)}%)</span>
-              )}
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              {voiceDiagnostics.phoneticChanges && voiceDiagnostics.phoneticChanges.length > 0 && (
-                <span
-                  title={voiceDiagnostics.phoneticChanges.map(c => `"${c.original}" ➔ "${c.replacement}"`).join(', ')}
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-400/20 text-[10px] text-amber-200 cursor-help"
-                >
-                  <Sparkles className="w-3 h-3 text-amber-300" />
-                  Phonetic normalized
-                </span>
-              )}
-              {voiceDiagnostics.emotion?.urgency === 'high' && (
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 text-[10px] font-bold">
-                  <Zap className="w-3 h-3 text-red-400" />
-                  Urgent
-                </span>
-              )}
-            </div>
           </div>
         )}
 
         {/* Agent Answer Transcript Box */}
         <div className="w-full overflow-y-auto max-h-40 px-4 py-3 rounded-2xl bg-[#1C232B] border border-[#262B2F] text-left text-xs text-[#EFEFF1] leading-relaxed mb-3">
-          <p className="font-semibold text-amber-400 text-[11px] mb-1">Cliqs Agent</p>
+          <p className="font-semibold text-[#CBD5E1] text-[11px] mb-1">Concierge</p>
           <p>{lastAgentReply}</p>
         </div>
 

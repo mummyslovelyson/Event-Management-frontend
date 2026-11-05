@@ -43,10 +43,17 @@ export default function PaymentCallbackPage() {
         const paymentStatus = res.data?.status;
 
         if (paymentStatus === 'success') {
+          const rawTickets = res.data?.tickets || [];
+          const order = res.data?.order || null;
+          // Deduplicate by unique ticket ID or ticketNumber
+          const uniqueTickets = Array.from(new Map(rawTickets.map((t) => [t.id || t.ticketNumber, t])).values());
+          const targetQty = Number(order?.totalQuantity ?? order?.quantity ?? (uniqueTickets.length || 1));
+          const finalTickets = targetQty === 1 && uniqueTickets.length > 1 ? uniqueTickets.slice(0, 1) : uniqueTickets;
+
           setOrderId(res.data?.orderId || null);
-          setTickets(res.data?.tickets || []);
+          setTickets(finalTickets);
           setEventData(res.data?.event || null);
-          setOrderData(res.data?.order || null);
+          setOrderData(order);
           setStatus('success');
           return true;
         }
@@ -120,8 +127,8 @@ export default function PaymentCallbackPage() {
   return (
     <div className="min-h-screen bg-[#141A1F] text-[#EFEFF1] py-12 px-4 sm:px-6 relative overflow-hidden">
       {/* Background glow effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-amber-500/5 blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-white/5 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-white/5 blur-3xl pointer-events-none" />
 
       <div className="relative max-w-4xl mx-auto">
         {/* Top Header Logo */}
@@ -217,7 +224,7 @@ export default function PaymentCallbackPage() {
                     }}
                     className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#242B32] border border-[#494F55]/60 text-sm font-medium hover:bg-[#2C343D] transition text-[#EFEFF1] hover:text-white"
                   >
-                    <Receipt className="w-4 h-4 text-amber-400" /> View Receipt
+                    <Receipt className="w-4 h-4 text-[#CBD5E1]" /> View Receipt
                   </Link>
                 </div>
               </div>
@@ -226,7 +233,7 @@ export default function PaymentCallbackPage() {
               {eventData && (
                 <div className="mt-6 pt-5 border-t border-[#494F55]/30 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-[#949599]">
                   <div className="flex items-center gap-2">
-                    <Ticket className="w-4 h-4 text-amber-400 shrink-0" />
+                    <Ticket className="w-4 h-4 text-[#CBD5E1] shrink-0" />
                     <span className="truncate font-semibold text-white">{eventData.title}</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -241,157 +248,162 @@ export default function PaymentCallbackPage() {
               )}
             </div>
 
-            {/* Tickets Grid */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between px-1">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <TicketCheck className="w-5 h-5 text-amber-400" />
-                  Your Digital Admission Tickets ({tickets.length})
-                </h3>
-                {eventData && (
-                  <div className="flex items-center gap-2 text-xs">
-                    <a
-                      href={getGoogleCalendarUrl(eventData)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-amber-400 hover:text-amber-300 transition flex items-center gap-1"
-                    >
-                      <Calendar className="w-3.5 h-3.5" /> Add to Google Calendar
-                    </a>
-                  </div>
-                )}
-              </div>
+            {/* Tickets Section */}
+            {(() => {
+              const isSingle = (orderData?.totalQuantity === 1) || (orderData?.quantity === 1) || (tickets.length === 1);
+              const displayTickets = isSingle && tickets.length > 1 ? tickets.slice(0, 1) : tickets;
 
-              {tickets.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {tickets.map((t, idx) => {
-                    const ticketEvent = t.event || eventData || {};
-                    const isDownloading = downloadingId === (t.id || t.ticketNumber);
-
-                    return (
-                      <div
-                        key={t.id || idx}
-                        className="bg-[#1C232B] border border-[#494F55]/50 rounded-2xl p-5 shadow-xl hover:border-amber-400/50 transition duration-200 flex flex-col justify-between"
-                      >
-                        {/* Ticket Header */}
-                        <div>
-                          <div className="flex items-start justify-between gap-3 mb-3">
-                            <div>
-                              <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-400/15 text-amber-300 border border-amber-400/30">
-                                {t.ticketType || 'Standard Entry'}
-                              </span>
-                              <h4 className="text-base font-bold text-white mt-1.5 line-clamp-1">
-                                {ticketEvent.title || 'Event Pass'}
-                              </h4>
-                              <p className="text-xs text-[#949599] flex items-center gap-1.5 mt-0.5">
-                                <MapPin className="w-3 h-3 text-rose-400 shrink-0" />
-                                <span className="truncate">{ticketEvent.venue || 'Venue TBA'}</span>
-                              </p>
-                            </div>
-
-                            {/* Live QR Code with high-contrast scanning card */}
-                            <div className="bg-white p-2 rounded-xl shrink-0 shadow-lg border border-white">
-                              <QRCodeSVG
-                                value={t.qrCode || t.ticketNumber || `TC-${t.id}`}
-                                size={96}
-                                level="M"
-                                includeMargin={false}
-                              />
-                            </div>
-                          </div>
-
-                          {/* Ticket Details & Code */}
-                          <div className="bg-[#161D22] border border-[#494F55]/30 rounded-xl p-3 my-3">
-                            <div className="flex items-center justify-between text-xs mb-1.5">
-                              <span className="text-[#949599]">Ticket Code</span>
-                              <button
-                                onClick={() => copyTicketCode(t.ticketNumber)}
-                                className="text-amber-400 hover:text-amber-300 transition flex items-center gap-1 font-mono font-bold"
-                                title="Click to copy code"
-                              >
-                                {copiedCode === t.ticketNumber ? (
-                                  <>
-                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                    <span className="text-emerald-400">Copied</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <span>#{t.ticketNumber}</span>
-                                    <Copy className="w-3.5 h-3.5" />
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                            <div className="flex items-center justify-between text-xs text-[#949599]">
-                              <span>Attendee</span>
-                              <span className="text-white font-medium">{t.attendeeName || 'Guest Attendee'}</span>
-                            </div>
-                            {t.seat && (
-                              <div className="flex items-center justify-between text-xs text-[#949599] mt-1">
-                                <span>Seat / Section</span>
-                                <span className="text-amber-300 font-semibold">{t.seat}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Ticket Action Buttons */}
-                        <div className="pt-2 border-t border-[#494F55]/30 space-y-2">
-                          {t.ticketFileUrl && (
-                            <a
-                              href={t.ticketFileUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              download={t.ticketFileName || 'Official-Ticket-Pass'}
-                              className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-gradient-to-r from-amber-500/20 to-amber-400/20 hover:from-amber-500/30 hover:to-amber-400/30 text-amber-300 text-xs font-semibold border border-amber-500/40 transition shadow-sm"
-                            >
-                              <FileText className="w-3.5 h-3.5" /> Download Organizer's Pass ({t.ticketFileName?.toLowerCase().endsWith('.pdf') ? 'PDF' : 'File'})
-                            </a>
-                          )}
-                          <div className="grid grid-cols-2 gap-2">
-                            <button
-                              onClick={() => handleDownloadPass(t)}
-                              disabled={isDownloading}
-                              className="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition"
-                            >
-                              {isDownloading ? (
-                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                              ) : (
-                                <Download className="w-3.5 h-3.5 text-amber-400" />
-                              )}
-                              Save Pass Image
-                            </button>
-                            <button
-                              onClick={() => handlePrintTicket(t)}
-                              className="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#242B32] hover:bg-[#2C343D] text-white text-xs font-semibold border border-[#494F55]/50 transition"
-                            >
-                              <Printer className="w-3.5 h-3.5 text-cyan-400" />
-                              Print Pass
-                            </button>
-                          </div>
-                        </div>
+              return (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between px-1">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                      <TicketCheck className="w-5 h-5 text-[#CBD5E1]" />
+                      {isSingle ? 'Your Digital Admission Ticket' : `Your Digital Admission Tickets (${displayTickets.length})`}
+                    </h3>
+                    {eventData && (
+                      <div className="flex items-center gap-2 text-xs">
+                        <a
+                          href={getGoogleCalendarUrl(eventData)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#CBD5E1] hover:text-white transition flex items-center gap-1"
+                        >
+                          <Calendar className="w-3.5 h-3.5" /> Add to Google Calendar
+                        </a>
                       </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="bg-[#1C232B] border border-[#494F55]/40 rounded-2xl p-8 text-center">
-                  <TicketCheck className="w-12 h-12 text-amber-400 mx-auto mb-3" />
-                  <h4 className="text-lg font-bold text-white">Your Tickets are Ready</h4>
-                  <p className="text-sm text-[#949599] mt-1 max-w-md mx-auto">
-                    You can view all your ticket passes, QR codes, and booking receipts anytime in your attendee account.
-                  </p>
-                  <div className="mt-5">
-                    <Link
-                      to="/attendee/tickets"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-md"
-                    >
-                      <TicketCheck className="w-4 h-4" /> Open My Tickets
-                    </Link>
+                    )}
                   </div>
+
+                  {displayTickets.length > 0 ? (
+                    <div className={isSingle ? "max-w-xl mx-auto w-full" : "grid grid-cols-1 md:grid-cols-2 gap-4"}>
+                      {displayTickets.map((t, idx) => {
+                        const ticketEvent = t.event || eventData || {};
+                        const isDownloading = downloadingId === (t.id || t.ticketNumber);
+
+                        return (
+                          <div
+                            key={t.id || idx}
+                            className="bg-[#1C232B] border border-[#494F55]/50 rounded-2xl p-5 shadow-xl hover:border-white/40 transition duration-200 flex flex-col justify-between"
+                          >
+                            {/* Ticket Header */}
+                            <div>
+                              <div className="flex items-start justify-between gap-3 mb-3">
+                                <div>
+                                  <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white/10 text-[#EFEFF1] border border-white/20">
+                                    {t.ticketType || 'Standard Entry'}
+                                  </span>
+                                  <h4 className="text-base font-bold text-white mt-1.5 line-clamp-1">
+                                    {ticketEvent.title || 'Event Pass'}
+                                  </h4>
+                                  <p className="text-xs text-[#949599] flex items-center gap-1.5 mt-0.5">
+                                    <MapPin className="w-3 h-3 text-rose-400 shrink-0" />
+                                    <span className="truncate">{ticketEvent.venue || 'Venue TBA'}</span>
+                                  </p>
+                                </div>
+
+                                {/* Live QR Code with high-contrast scanning card */}
+                                <div className="bg-white p-2 rounded-xl shrink-0 shadow-lg border border-white">
+                                  <QRCodeSVG
+                                    value={t.qrCode || t.ticketNumber || `TC-${t.id}`}
+                                    size={96}
+                                    level="M"
+                                    includeMargin={false}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Ticket Details & Code */}
+                              <div className="bg-[#161D22] border border-[#494F55]/30 rounded-xl p-3 my-3">
+                                <div className="flex items-center justify-between text-xs mb-1.5">
+                                  <span className="text-[#949599]">Ticket Code</span>
+                                  <button
+                                    onClick={() => copyTicketCode(t.ticketNumber)}
+                                    className="text-[#CBD5E1] hover:text-white transition flex items-center gap-1 font-mono font-bold"
+                                    title="Click to copy code"
+                                  >
+                                    {copiedCode === t.ticketNumber ? (
+                                      <>
+                                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                        <span className="text-emerald-400">Copied</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <span>#{t.ticketNumber}</span>
+                                        <Copy className="w-3.5 h-3.5" />
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                                <div className="flex items-center justify-between text-xs text-[#949599]">
+                                  <span>Attendee</span>
+                                  <span className="text-white font-medium">{t.attendeeName || 'Guest Attendee'}</span>
+                                </div>
+                                {t.seat && (
+                                  <div className="flex items-center justify-between text-xs text-[#949599] mt-1">
+                                    <span>Seat / Section</span>
+                                    <span className="text-white font-semibold">{t.seat}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Ticket Action Buttons */}
+                            <div className="pt-2 border-t border-[#494F55]/30 space-y-2">
+                              {t.ticketFileUrl && (
+                                <a
+                                  href={t.ticketFileUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  download={t.ticketFileName || 'Official-Ticket-Pass'}
+                                  className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-[#EFEFF1] text-xs font-semibold border border-white/20 transition shadow-sm"
+                                >
+                                  <FileText className="w-3.5 h-3.5" /> Download Organizer's Pass ({t.ticketFileName?.toLowerCase().endsWith('.pdf') ? 'PDF' : 'File'})
+                                </a>
+                              )}
+                              <div className="grid grid-cols-2 gap-2">
+                                <button
+                                  onClick={() => handleDownloadPass(t)}
+                                  disabled={isDownloading}
+                                  className="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition"
+                                >
+                                  {isDownloading ? (
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  ) : (
+                                    <Download className="w-3.5 h-3.5 text-white" />
+                                  )}
+                                  Save Pass Image
+                                </button>
+                                <button
+                                  onClick={() => handlePrintTicket(t)}
+                                  className="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#242B32] hover:bg-[#2C343D] text-white text-xs font-semibold border border-[#494F55]/50 transition"
+                                >
+                                  <Printer className="w-3.5 h-3.5 text-cyan-400" />
+                                  Print Pass
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="bg-[#1C232B] border border-[#494F55]/40 rounded-2xl p-8 text-center">
+                      <TicketCheck className="w-12 h-12 text-[#CBD5E1] mx-auto mb-3" />
+                      <h4 className="text-lg font-bold text-white">Your Ticket is Ready</h4>
+                      <p className="text-sm text-[#949599] mt-1 max-w-md mx-auto">
+                        Your pass has been securely confirmed. You can access it anytime in your tickets wallet.
+                      </p>
+                      <Link
+                        to="/attendee/tickets"
+                        className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#1C232B] font-semibold text-sm hover:bg-[#CBD5E1] transition"
+                      >
+                        <TicketCheck className="w-4 h-4" /> Open My Tickets
+                      </Link>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              );
+            })()}
 
             {/* Bottom Navigation */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 text-sm text-[#949599]">

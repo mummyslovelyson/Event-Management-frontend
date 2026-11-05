@@ -70,7 +70,7 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
     return (
       <Modal open={open} onClose={onClose} title="Official Receipt" size="md">
         <div className="py-12 text-center space-y-3">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-amber-400" />
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-white" />
           <p className="text-sm text-[#949599]">Loading official receipt...</p>
         </div>
       </Modal>
@@ -302,7 +302,7 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
               target="_blank"
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#242B32] border border-[#494F55]/50 text-xs font-semibold text-[#EFEFF1] hover:bg-[#2C343D] hover:text-white transition shadow-sm"
             >
-              <ExternalLink className="w-3.5 h-3.5 text-amber-400" /> Open Full Page
+              <ExternalLink className="w-3.5 h-3.5 text-[#CBD5E1]" /> Open Full Page
             </Link>
             <button
               onClick={handlePrint}
@@ -403,9 +403,9 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
 
           {/* Attached Ticket Pass File Notification */}
           {(activeData.ticketFileUrl || (activeData.items && activeData.items[0]?.ticket_file_url)) && (
-            <div className="p-3 bg-amber-400/10 border-t border-[#262B2F] flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2 text-amber-300">
-                <FileText className="w-4 h-4 text-amber-400 shrink-0" />
+            <div className="p-3 bg-white/5 border-t border-[#262B2F] flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2 text-[#CBD5E1]">
+                <FileText className="w-4 h-4 text-[#CBD5E1] shrink-0" />
                 <span>
                   Official Attached Ticket: <strong className="text-white">{activeData.ticketFileName || activeData.items?.[0]?.ticket_file_name || 'Ticket Pass'}</strong>
                 </span>
@@ -415,7 +415,7 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 download={activeData.ticketFileName || activeData.items?.[0]?.ticket_file_name || 'Official-Ticket'}
-                className="px-2.5 py-1 rounded bg-amber-400 text-black font-bold hover:bg-amber-300 transition"
+                className="px-2.5 py-1 rounded bg-white text-[#1C232B] font-bold hover:bg-[#CBD5E1] transition"
               >
                 Download File
               </a>
@@ -436,7 +436,7 @@ export default function ReceiptModal({ open, onClose, order, ticket }) {
                   href={verifyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[10px] text-amber-400 hover:text-amber-300 font-semibold"
+                  className="inline-flex items-center gap-1 text-[10px] text-[#CBD5E1] hover:text-white font-semibold"
                 >
                   Verify Online <ExternalLink className="w-2.5 h-2.5" />
                 </a>

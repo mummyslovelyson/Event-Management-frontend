@@ -57,13 +57,13 @@ export default function ChatEventCard({ event, onNavigate, onBookNow }) {
           <div className="mt-1.5 space-y-0.5 text-[11px] text-[#949599]">
             {eventDate && (
               <p className="flex items-center gap-1.5">
-                <Calendar className="w-3 h-3 text-amber-400 shrink-0" />
+                <Calendar className="w-3 h-3 text-[#CBD5E1] shrink-0" />
                 <span className="text-[#CBD5E1] font-medium">{eventDate} {event.time ? `• ${event.time}` : ''}</span>
               </p>
             )}
             {(event.venue || event.city) && (
               <p className="flex items-center gap-1.5 line-clamp-1">
-                <MapPin className="w-3 h-3 text-blue-400 shrink-0" />
+                <MapPin className="w-3 h-3 text-[#949599] shrink-0" />
                 <span>{[event.venue, event.city].filter(Boolean).join(', ')}</span>
               </p>
             )}

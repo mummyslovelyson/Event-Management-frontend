@@ -461,10 +461,10 @@ export default function MyTicketsPage() {
       {pendingInvites.length > 0 && (
         <motion.div
           variants={itemFade}
-          className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-[#1C232B] to-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg"
+          className="p-4 rounded-2xl bg-[#1C232B] border border-[#494F55]/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center shrink-0">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
@@ -478,7 +478,7 @@ export default function MyTicketsPage() {
           </div>
           <Link
             to="/profile?tab=tribes"
-            className="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold transition shadow-sm shrink-0 flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold transition shadow-sm shrink-0 flex items-center gap-1.5"
           >
             <span>Review & RSVP</span>
             <span>→</span>
@@ -581,7 +581,7 @@ export default function MyTicketsPage() {
                     <div className="min-w-0 flex-1 space-y-1.5">
                       <div className="flex items-center gap-2">
                         {ev.category && (
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#EFEFF1] bg-white/10 px-2 py-0.5 rounded border border-white/15">
                             {ev.category}
                           </span>
                         )}
@@ -606,7 +606,7 @@ export default function MyTicketsPage() {
                   {/* Pre-sale & ticket alert info */}
                   <div className="p-3 rounded-xl bg-[#14171A] border border-[#262B2F] flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2 text-[#EFEFF1]">
-                      <Tag className="w-4 h-4 text-amber-400 shrink-0" />
+                      <Tag className="w-4 h-4 text-[#CBD5E1] shrink-0" />
                       <span>{ev.min_price != null ? `Tickets from ${format(ev.min_price)}` : 'Tickets available'}</span>
                     </div>
                     <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
@@ -770,7 +770,7 @@ export default function MyTicketsPage() {
                   type="button"
                   onClick={handleSell}
                   disabled={isInvalid}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-[#1C232B] text-sm font-black hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-lg shadow-amber-500/20"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#1C232B] text-sm font-black hover:bg-[#CBD5E1] disabled:opacity-50 disabled:cursor-not-allowed transition shadow-lg"
                 >
                   <Tag className="w-4 h-4" />
                   {selling ? 'Listing Ticket...' : 'Confirm Resale Listing'}
@@ -794,7 +794,7 @@ export default function MyTicketsPage() {
               <div className="rounded-xl bg-[#1C232B] border border-[#262B2F] p-3.5">
                 <p className="text-sm font-bold text-white line-clamp-1">{sellTarget.event?.title || sellTarget.eventName}</p>
                 <div className="flex items-center gap-2 mt-1 text-xs text-[#949599]">
-                  <span className="font-semibold text-amber-400">{sellTarget.ticketType || sellTarget.type}</span>
+                  <span className="font-semibold text-white">{sellTarget.ticketType || sellTarget.type}</span>
                   <span>•</span>
                   <span className="font-mono text-[#CBD5E1]">#{String(sellTarget.ticketNumber || sellTarget.id).slice(-8).toUpperCase()}</span>
                 </div>
@@ -806,9 +806,9 @@ export default function MyTicketsPage() {
                   <p className="text-[11px] uppercase font-bold text-[#949599]">Original Face Value</p>
                   <p className="text-base font-extrabold text-white mt-0.5">{origPrice > 0 ? format(origPrice) : 'GHS 0.00'}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
-                  <p className="text-[11px] uppercase font-bold text-amber-300">Max Allowed (+25% Cap)</p>
-                  <p className="text-base font-extrabold text-amber-400 mt-0.5">{maxCap > 0 ? format(maxCap) : 'N/A'}</p>
+                <div className="p-3 rounded-xl bg-white/5 border border-white/10">
+                  <p className="text-[11px] uppercase font-bold text-[#CBD5E1]">Max Allowed (+25% Cap)</p>
+                  <p className="text-base font-extrabold text-white mt-0.5">{maxCap > 0 ? format(maxCap) : 'N/A'}</p>
                 </div>
               </div>
 
@@ -822,7 +822,7 @@ export default function MyTicketsPage() {
                     <button
                       type="button"
                       onClick={() => setSellPrice(String(maxCap))}
-                      className="text-[11px] font-bold text-amber-400 hover:underline"
+                      className="text-[11px] font-bold text-[#CBD5E1] hover:underline"
                     >
                       Set Max Cap ({format(maxCap)})
                     </button>
@@ -839,7 +839,7 @@ export default function MyTicketsPage() {
                     onChange={(e) => setSellPrice(e.target.value)}
                     placeholder={origPrice > 0 ? String(origPrice) : 'Enter price'}
                     className={`w-full pl-12 pr-4 py-2.5 rounded-xl bg-[#1C232B] border text-sm text-white placeholder-[#494F55] focus:outline-none transition ${
-                      isOverCap ? 'border-red-500 focus:border-red-500' : 'border-[#494F55]/40 focus:border-amber-400'
+                      isOverCap ? 'border-red-500 focus:border-red-500' : 'border-[#494F55]/40 focus:border-white/50'
                     }`}
                   />
                 </div>
@@ -877,16 +877,16 @@ export default function MyTicketsPage() {
                 <p className="font-bold text-white uppercase tracking-wider text-[10px]">Marketplace Rules</p>
                 <div className="space-y-1">
                   <p className="flex items-center gap-1.5 text-[#CBD5E1]">
-                    <span className="text-amber-400 font-bold">✓</span> Maximum resale price (+25% anti-scalping policy)
+                    <span className="text-white font-bold">✓</span> Maximum resale price (+25% anti-scalping policy)
                   </p>
                   <p className="flex items-center gap-1.5 text-[#CBD5E1]">
-                    <span className="text-amber-400 font-bold">✓</span> Organizer approved secondary market
+                    <span className="text-white font-bold">✓</span> Organizer approved secondary market
                   </p>
                   <p className="flex items-center gap-1.5 text-[#CBD5E1]">
-                    <span className="text-amber-400 font-bold">✓</span> 5% platform service fee on successful sale
+                    <span className="text-white font-bold">✓</span> 5% platform service fee on successful sale
                   </p>
                   <p className="flex items-center gap-1.5 text-[#CBD5E1]">
-                    <span className="text-amber-400 font-bold">✓</span> Automatic ticket ownership transfer & instant wallet credit
+                    <span className="text-white font-bold">✓</span> Automatic ticket ownership transfer & instant wallet credit
                   </p>
                 </div>
               </div>
@@ -932,8 +932,8 @@ export default function MyTicketsPage() {
         {transferTarget && (
           <div className="space-y-4">
             {/* Transfer Context Banner */}
-            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs flex items-start gap-2.5">
-              <Send className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 text-xs flex items-start gap-2.5">
+              <Send className="w-4 h-4 text-[#CBD5E1] shrink-0 mt-0.5" />
               <div>
                 <p className="text-white font-semibold">Direct Ticket Transfer</p>
                 <p className="text-[#949599] mt-0.5">
@@ -944,7 +944,7 @@ export default function MyTicketsPage() {
 
             {/* Target Ticket Card Info */}
             <div className="rounded-xl bg-[#1C232B] border border-[#262B2F] p-3.5 space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">Selected Pass</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#CBD5E1]">Selected Pass</span>
               <p className="text-sm font-bold text-white">{transferTarget.event?.title || transferTarget.eventName}</p>
               <p className="text-xs text-[#949599]">
                 {transferTarget.ticketType || transferTarget.type} • ID: <span className="font-mono text-white">#{transferTarget.ticketNumber || transferTarget.id}</span>
@@ -1179,7 +1179,7 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
           <div className="flex-1 min-w-0 space-y-2.5">
             <div className="flex flex-wrap items-center justify-between gap-1.5">
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300 bg-amber-400/15 px-2.5 py-0.5 rounded-full border border-amber-400/30">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#EFEFF1] bg-white/10 px-2.5 py-0.5 rounded-full border border-white/20">
                   {ticket.ticketType || ticket.type || 'Standard Admission'}
                 </span>
                 {ticket.isTransferredToMe && (
@@ -1190,8 +1190,8 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
                 )}
               </div>
               {resaleListing ? (
-                <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded-full border border-amber-400/50 flex items-center gap-1">
-                  <Store className="w-3 h-3 text-amber-400" />
+                <span className="text-[10px] font-black uppercase tracking-wider text-white bg-white/10 px-2 py-0.5 rounded-full border border-white/20 flex items-center gap-1">
+                  <Store className="w-3 h-3 text-white" />
                   Listed • GHS {Number(resaleListing.price).toFixed(2)}
                 </span>
               ) : (
@@ -1206,7 +1206,7 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
             {/* Event Name */}
             <h3
               onClick={onViewEvent}
-              className="text-lg font-black text-white uppercase tracking-tight line-clamp-2 hover:text-amber-300 cursor-pointer transition flex items-center gap-1.5"
+              className="text-lg font-black text-white uppercase tracking-tight line-clamp-2 hover:text-[#CBD5E1] cursor-pointer transition flex items-center gap-1.5"
               title="Click to view event details"
             >
               <span>{event.title || ticket.eventName || 'Event Pass'}</span>
@@ -1221,7 +1221,7 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
               </div>
               <div className="flex items-center gap-2 text-xs">
                 <span className="text-[#949599]">Ticket ID:</span>
-                <span className="font-mono font-bold text-amber-400 tracking-wider">
+                <span className="font-mono font-bold text-white tracking-wider">
                   {ticket.ticketNumber || ticketNumber}
                 </span>
               </div>
@@ -1241,8 +1241,8 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
                 <span className="truncate">{event.venue || ticket.venue || 'Accra, Ghana'}</span>
               </p>
               {seat && (
-                <p className="text-amber-300 flex items-center gap-1.5">
-                  <Armchair className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <p className="text-white flex items-center gap-1.5">
+                  <Armchair className="w-3.5 h-3.5 text-[#CBD5E1] shrink-0" />
                   <span className="truncate">Seat: {seat}</span>
                 </p>
               )}
@@ -1273,7 +1273,7 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
                   status === 'valid' || status === 'active'
                     ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                     : status === 'used' || status === 'checked_in'
-                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                    ? 'bg-white/10 text-[#CBD5E1] border border-white/20'
                     : status === 'transferred'
                     ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
                     : 'bg-red-500/20 text-red-300 border border-red-500/40'
@@ -1293,7 +1293,7 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
               target="_blank"
               rel="noopener noreferrer"
               download={ticket.ticketFileName || 'Official-Ticket-Pass'}
-              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500/20 via-amber-400/30 to-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold hover:brightness-125 transition-all shadow-sm"
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-[#EFEFF1] text-xs font-bold transition-all shadow-sm"
             >
               <FileText className="w-3.5 h-3.5" />
               Download Attached Pass ({ticket.ticketFileName?.toLowerCase().endsWith('.pdf') ? 'PDF' : 'Pass'})
@@ -1329,10 +1329,10 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
           </button>
           <button
             onClick={onShare}
-            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-amber-400/40 text-amber-300 text-xs font-semibold hover:border-amber-400 hover:bg-amber-400/10 transition-colors"
+            className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-[#1C232B] border border-[#494F55]/40 text-[#EFEFF1] text-xs font-semibold hover:border-white/40 hover:bg-[#242B32] transition-colors"
             title="Invite friends to join you at this event"
           >
-            <Users className="w-3.5 h-3.5 text-amber-400" /> Invite Friends
+            <Users className="w-3.5 h-3.5 text-[#CBD5E1]" /> Invite Friends
           </button>
           <button
             onClick={onTransfer}
@@ -1344,7 +1344,7 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
           {resaleListing ? (
             <button
               onClick={() => onCancelResale(resaleListing)}
-              className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold hover:bg-amber-500/30 transition-colors"
+              className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-bold hover:bg-white/20 transition-colors"
               title="Remove from Resale Marketplace"
             >
               <X className="w-3.5 h-3.5" /> Delist
@@ -1353,7 +1353,7 @@ function TicketCard({ ticket, onDownload, onPrint, onTransfer, onSell, onShare, 
             <button
               onClick={onSell}
               disabled={isCancelled || status === 'transferred'}
-              className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-gradient-to-r from-amber-400/20 to-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold hover:bg-amber-400 hover:text-[#1C232B] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-white hover:bg-[#CBD5E1] text-[#1C232B] text-xs font-bold border border-white transition-all"
               title="Resell ticket on the secondary marketplace"
             >
               <Tag className="w-3.5 h-3.5" /> Resell

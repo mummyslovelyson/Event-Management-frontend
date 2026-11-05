@@ -419,8 +419,8 @@ export default function ReceiptPage() {
   return (
     <div className="min-h-screen bg-[#141A1F] text-[#EFEFF1] py-8 sm:py-12 px-4 sm:px-6 relative overflow-hidden">
       {/* Background ambient lighting */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[650px] h-[650px] rounded-full bg-amber-500/5 blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[650px] h-[650px] rounded-full bg-white/5 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full bg-white/5 blur-3xl pointer-events-none" />
 
       <div className="relative max-w-3xl mx-auto space-y-6">
         {/* Navigation Breadcrumb & Back bar */}
@@ -436,7 +436,7 @@ export default function ReceiptPage() {
               to="/attendee/tickets"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#242B32] border border-[#494F55]/50 text-xs font-semibold text-[#EFEFF1] hover:bg-[#2C343D] transition shadow-sm"
             >
-              <Ticket className="w-3.5 h-3.5 text-amber-400" /> My Tickets
+              <Ticket className="w-3.5 h-3.5 text-[#CBD5E1]" /> My Tickets
             </Link>
           </div>
         </div>
@@ -472,18 +472,18 @@ export default function ReceiptPage() {
                 placeholder="e.g. TC-PAY-XXXX or Order #"
                 value={searchCodeInput}
                 onChange={(e) => setSearchCodeInput(e.target.value)}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-[#141A1F] border border-[#494F55]/60 text-sm text-white placeholder-[#949599] focus:outline-none focus:border-amber-400"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-[#141A1F] border border-[#494F55]/60 text-sm text-white placeholder-[#949599] focus:outline-none focus:border-white/50"
               />
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-xl bg-amber-400 text-black text-sm font-bold hover:bg-amber-300 transition"
+                className="px-5 py-2.5 rounded-xl bg-white text-[#1C232B] text-sm font-bold hover:bg-[#CBD5E1] transition"
               >
                 Search
               </button>
             </form>
 
             <div className="pt-4 border-t border-[#494F55]/30">
-              <Link to="/explore" className="text-sm text-amber-400 hover:underline">
+              <Link to="/explore" className="text-sm text-[#CBD5E1] hover:underline">
                 Explore Upcoming Events &rarr;
               </Link>
             </div>
@@ -524,7 +524,7 @@ export default function ReceiptPage() {
                   onClick={handlePrint}
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#242B32] border border-[#494F55]/60 text-xs font-semibold text-[#EFEFF1] hover:bg-[#2C343D] transition shadow-sm"
                 >
-                  <Printer className="w-3.5 h-3.5 text-amber-400" /> Print
+                  <Printer className="w-3.5 h-3.5 text-[#CBD5E1]" /> Print
                 </button>
 
                 <button
@@ -544,7 +544,7 @@ export default function ReceiptPage() {
               className="bg-[#1C232B] border border-[#494F55]/50 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden space-y-6"
             >
               {/* Top Accent Strip */}
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-emerald-400 to-amber-500" />
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-white via-[#CBD5E1] to-[#949599]" />
 
               {/* Header with Official Logo & Receipt Details */}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-6 border-b border-[#494F55]/40">
@@ -553,13 +553,13 @@ export default function ReceiptPage() {
                   <Logo size="lg" showText={false} asLink={false} />
                   <div>
                     <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-1.5">
-                      TRIBES<span className="text-amber-400">&amp;</span>CLIQS
+                      TRIBES<span className="text-[#CBD5E1]">&amp;</span>CLIQS
                     </h1>
                     <p className="text-[10px] font-bold tracking-[0.25em] text-[#949599] uppercase">
                       LIVING THE MOMENT
                     </p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-xs font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">
+                      <span className="text-xs font-bold text-[#EFEFF1] bg-white/10 px-2 py-0.5 rounded-full border border-white/20">
                         OFFICIAL RECEIPT
                       </span>
                       {isPaid && (
@@ -585,7 +585,7 @@ export default function ReceiptPage() {
                     <span className="text-[#949599]">Ref:</span>
                     <button
                       onClick={handleCopyRef}
-                      className="font-mono text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1"
+                      className="font-mono text-[#CBD5E1] hover:text-white font-bold flex items-center gap-1"
                       title="Click to copy reference"
                     >
                       <span>#{orderRef}</span>
@@ -626,7 +626,7 @@ export default function ReceiptPage() {
                 <div className="bg-[#161D22] border border-[#494F55]/30 rounded-2xl p-4 sm:p-5 space-y-2.5">
                   <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-[#949599]">
                     <span>Event Details</span>
-                    <Ticket className="w-3.5 h-3.5 text-amber-400" />
+                    <Ticket className="w-3.5 h-3.5 text-[#CBD5E1]" />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-white line-clamp-1">{eventTitle}</h3>
@@ -680,14 +680,14 @@ export default function ReceiptPage() {
 
                 {/* Attached File Download notice if organizer supplied custom files */}
                 {Array.isArray(order?.tickets) && order.tickets.some((t) => t.ticket_file_url) && (
-                  <div className="p-3 bg-amber-400/10 border-t border-[#494F55]/30 flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <div className="flex items-center gap-2 text-amber-300">
-                      <FileText className="w-4 h-4 text-amber-400 shrink-0" />
+                  <div className="p-3 bg-white/5 border-t border-[#494F55]/30 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-2 text-[#CBD5E1]">
+                      <FileText className="w-4 h-4 text-[#CBD5E1] shrink-0" />
                       <span>Custom digital admission tickets attached with this booking.</span>
                     </div>
                     <Link
                       to="/attendee/tickets"
-                      className="px-2.5 py-1 rounded-lg bg-amber-400 text-black font-bold hover:bg-amber-300 transition"
+                      className="px-2.5 py-1 rounded-lg bg-white text-[#1C232B] font-bold hover:bg-[#CBD5E1] transition"
                     >
                       View Passes
                     </Link>
@@ -699,7 +699,7 @@ export default function ReceiptPage() {
               <div className="bg-gradient-to-br from-[#161D22] to-[#141A1F] border border-[#494F55]/40 rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6">
                 {/* QR Code Container with sharp contrast */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-                  <div className="bg-white p-3 rounded-2xl shrink-0 shadow-2xl border-2 border-white ring-2 ring-amber-400/30">
+                  <div className="bg-white p-3 rounded-2xl shrink-0 shadow-2xl border-2 border-white ring-2 ring-white/20">
                     <QRCodeSVG
                       value={verifyUrl}
                       size={140}
@@ -709,7 +709,7 @@ export default function ReceiptPage() {
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-center sm:justify-start gap-1.5 text-white font-bold text-sm">
-                      <QrCode className="w-4 h-4 text-amber-400" />
+                      <QrCode className="w-4 h-4 text-[#CBD5E1]" />
                       <span>Official Verification QR</span>
                     </div>
                     <p className="text-xs text-[#949599] max-w-xs">
@@ -719,7 +719,7 @@ export default function ReceiptPage() {
                       href={verifyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 font-semibold transition pt-1"
+                      className="inline-flex items-center gap-1 text-xs text-[#CBD5E1] hover:text-white font-semibold transition pt-1"
                     >
                       Verify Online <ExternalLink className="w-3 h-3" />
                     </a>
@@ -744,7 +744,7 @@ export default function ReceiptPage() {
                   </div>
                   <div className="pt-3 border-t border-[#494F55]/40 flex justify-between items-baseline font-black text-sm text-white">
                     <span>Total Amount Paid</span>
-                    <span className="text-xl text-amber-400 font-mono">{format(totalAmount)}</span>
+                    <span className="text-xl text-white font-mono">{format(totalAmount)}</span>
                   </div>
                 </div>
               </div>
@@ -764,7 +764,7 @@ export default function ReceiptPage() {
             {/* Bottom Actions Card */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl bg-[#1C232B] border border-[#494F55]/40 shadow-xl">
               <div className="flex items-center gap-3 text-sm text-[#949599]">
-                <Sparkles className="w-5 h-5 text-amber-400 shrink-0" />
+                <Sparkles className="w-5 h-5 text-[#CBD5E1] shrink-0" />
                 <span>Need admission passes or barcode badges for your group?</span>
               </div>
               <div className="flex items-center gap-3 w-full sm:w-auto">
