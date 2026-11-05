@@ -78,7 +78,7 @@ export default function TicketManagementPage() {
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm();
 
   const currentEvent = events.find((e) => String(e.id) === String(selectedEvent));
-  const isApproved = currentEvent ? (currentEvent.approval_status === 'approved' || currentEvent.approvalStatus === 'approved') : false;
+  const isApproved = currentEvent ? (currentEvent.approval_status === 'approved' || currentEvent.approvalStatus === 'approved' || currentEvent.status === 'published') : false;
   const canManage = isApproved || isAdmin;
 
   const handleTicketImageUpload = async (e) => {
@@ -208,7 +208,7 @@ export default function TicketManagementPage() {
       return;
     }
     if (!canManage) {
-      toast.error('This event must be approved by an administrator before tickets can be created.');
+      toast.error('This event must be published or approved before tickets can be created.');
       return;
     }
     setEditTarget(null);
@@ -276,7 +276,7 @@ export default function TicketManagementPage() {
 
   const onSubmit = async (data) => {
     if (!canManage && !editTarget) {
-      toast.error('This event must be approved by an administrator before tickets can be created.');
+      toast.error('This event must be published or approved before tickets can be created.');
       return;
     }
     setSubmitting(true);
@@ -357,7 +357,7 @@ export default function TicketManagementPage() {
             <button
               onClick={openAdd}
               disabled={!selectedEvent || !canManage}
-              title={!selectedEvent ? 'Select an event' : (!canManage ? 'Event must be approved by admin before creating tickets' : 'Add Ticket Type')}
+              title={!selectedEvent ? 'Select an event' : (!canManage ? 'Event must be published or approved before creating tickets' : 'Add Ticket Type')}
               className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" /> Add Ticket Type
