@@ -90,6 +90,7 @@ export const updateAIKnowledgeItem = (id, data) => api.put(`/admin/ai/knowledge/
 export const deleteAIKnowledgeItem = (id) => api.delete(`/admin/ai/knowledge/${id}`);
 export const updateAISettings = (data) => api.put('/admin/ai/settings', data);
 export const testAIPrompt = (data) => api.post('/admin/ai/test', data);
+export const seedAdvanceTrainingData = () => api.post('/admin/ai/seed-defaults');
 
 // Voice Agent Deep Learning & ML Model Management
 export const getVoiceModelData = () => api.get('/admin/ai/voice-model');

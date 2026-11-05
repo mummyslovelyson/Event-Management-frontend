@@ -25,6 +25,7 @@ import {
   testVoiceModel,
   getBotConversations,
   deleteBotConversation,
+  seedAdvanceTrainingData,
 } from '@/api/admin';
 import Modal from '@/components/common/Modal';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -47,6 +48,7 @@ export default function AITrainingPage() {
   const [customInstructions, setCustomInstructions] = useState('');
   const [temperature, setTemperature] = useState(0.7);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [syncingAdvance, setSyncingAdvance] = useState(false);
 
   // Filters & Search
   const [search, setSearch] = useState('');
@@ -163,6 +165,31 @@ export default function AITrainingPage() {
     } finally {
       setVoiceTraining(false);
       setVoiceTrainingProgress(null);
+    }
+  };
+
+  const handleSyncAdvanceTraining = async () => {
+    setSyncingAdvance(true);
+    try {
+      const res = await seedAdvanceTrainingData();
+      toast.success(res.data.message || 'System model trained in advance successfully!');
+      if (res.data.knowledge) {
+        setKnowledgeList(res.data.knowledge);
+      }
+      if (res.data.voiceMetrics) {
+        setVoiceMetrics((prev) => ({
+          ...prev,
+          accuracy: res.data.voiceMetrics.accuracy,
+          trainedAt: res.data.voiceMetrics.trainedAt,
+          totalSamples: res.data.voiceMetrics.samplesTrained,
+        }));
+      }
+      loadData();
+      loadVoiceModel();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to sync advance training');
+    } finally {
+      setSyncingAdvance(false);
     }
   };
 
@@ -543,11 +570,20 @@ export default function AITrainingPage() {
         </div>
 
         {/* Global Action Stats */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="px-3.5 py-2 rounded-xl bg-[#1C232B] border border-[#2E363E] flex items-center gap-2 text-xs text-[#949599]">
             <Database className="w-4 h-4 text-[#EFEFF1]" />
             <span><strong className="text-white font-bold">{activeCount}</strong> Active Rules</span>
           </div>
+          <button
+            onClick={handleSyncAdvanceTraining}
+            disabled={syncingAdvance}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#242B32] hover:bg-[#2E363E] border border-white/20 text-[#EFEFF1] text-xs font-bold transition shadow disabled:opacity-50"
+            title="Sync all comprehensive platform knowledge rules and retrain neural intent weights in advance"
+          >
+            <Sparkles className={`w-4 h-4 text-white ${syncingAdvance ? 'animate-spin' : ''}`} />
+            <span>{syncingAdvance ? 'Training Model...' : 'Advance Train Model'}</span>
+          </button>
           <button
             onClick={openCreateModal}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-[#1C232B] hover:bg-[#CBD5E1] text-xs font-bold transition shadow"
