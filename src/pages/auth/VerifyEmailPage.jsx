@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Loader2, CheckCircle2, XCircle, ArrowLeft, Mail,
   Phone, RefreshCw, KeyRound, Edit2, Check, ArrowRight,
-  ShieldCheck, MessageSquare
+  ShieldCheck, MessageSquare, Clock
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { verifyEmail, resendVerification } from '@/api/auth';
@@ -37,6 +37,8 @@ export default function VerifyEmailPage() {
   const [verifiedUser, setVerifiedUser] = useState(null);
   const [resending, setResending] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [validityTime, setValidityTime] = useState(15 * 60); // 15-minute OTP lifespan
+  const [isCodeExpired, setIsCodeExpired] = useState(false);
 
   const inputRefs = useRef([]);
 
@@ -73,6 +75,30 @@ export default function VerifyEmailPage() {
     })();
     return () => { cancelled = true; };
   }, [tokenParam, codeParam, emailParam, regIdParam, persistAuth]);
+
+  // 15-minute validity timer
+  useEffect(() => {
+    if (validityTime <= 0) {
+      setIsCodeExpired(true);
+      return;
+    }
+    const timer = setInterval(() => {
+      setValidityTime((prev) => {
+        if (prev <= 1) {
+          setIsCodeExpired(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [validityTime]);
+
+  const formatCountdown = (totalSeconds) => {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
 
   // Resend cooldown countdown
   useEffect(() => {
@@ -195,7 +221,12 @@ export default function VerifyEmailPage() {
       toast.success(res.data?.message || 'Account verified and created successfully!');
     } catch (err) {
       setStatus('idle');
-      const msg = err.response?.data?.message || 'Invalid or expired verification code';
+      const isExpired = err.response?.data?.isExpired || err.response?.status === 410;
+      if (isExpired) {
+        setIsCodeExpired(true);
+        setValidityTime(0);
+      }
+      const msg = err.response?.data?.message || (isExpired ? 'Your verification code has expired. Please click Resend Code to receive a new one.' : 'Invalid verification code');
       setErrorMessage(msg);
       toast.error(msg);
       setOtp(['', '', '', '', '', '']);
@@ -229,6 +260,8 @@ export default function VerifyEmailPage() {
           ? `Verification code sent via SMS to ${phone}`
           : `Verification code sent to ${email}`
       );
+      setValidityTime(15 * 60);
+      setIsCodeExpired(false);
       setCooldown(60);
       setErrorMessage('');
       setOtp(['', '', '', '', '', '']);
@@ -451,11 +484,36 @@ export default function VerifyEmailPage() {
                 )}
               </div>
 
+              {/* Expiry Warning Banner */}
+              {isCodeExpired && (
+                <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 flex items-start gap-2.5">
+                  <Clock className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-white">Code Expired (15-min limit)</p>
+                    <p className="text-[#CBD5E1] mt-0.5 text-[11px] leading-relaxed">
+                      Verification codes expire after 15 minutes for security. Tap <strong>Get Fresh Code</strong> below to receive a new one.
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* 6-Digit OTP Boxes */}
               <div className="mb-6">
-                <label className="block text-xs font-medium text-[#949599] mb-3 text-center uppercase tracking-wider">
-                  6-Digit Verification Code
-                </label>
+                <div className="flex items-center justify-between text-xs mb-3 px-1">
+                  <span className="font-medium text-[#949599] uppercase tracking-wider text-[11px]">
+                    6-Digit Verification Code
+                  </span>
+                  {isCodeExpired ? (
+                    <span className="inline-flex items-center gap-1 font-semibold text-rose-400 text-xs">
+                      <Clock className="w-3.5 h-3.5" /> Code Expired
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 font-mono text-[#CBD5E1] text-xs">
+                      <Clock className="w-3.5 h-3.5 text-white/60" />
+                      Expires in {formatCountdown(validityTime)}
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-center justify-between gap-2 sm:gap-2.5">
                   {otp.map((digit, idx) => (
                     <input
@@ -483,20 +541,39 @@ export default function VerifyEmailPage() {
               </div>
 
               {/* Submit Button */}
-              <button
-                type="button"
-                onClick={() => submitOtp()}
-                disabled={status === 'verifying_otp' || otp.some((d) => !d)}
-                className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-white/5"
-              >
-                {status === 'verifying_otp' ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Verifying Code…
-                  </>
-                ) : (
-                  'Verify Code'
-                )}
-              </button>
+              {isCodeExpired ? (
+                <button
+                  type="button"
+                  onClick={() => handleResend(channel)}
+                  disabled={resending}
+                  className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition flex items-center justify-center gap-2 shadow-lg shadow-white/5"
+                >
+                  {resending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" /> Dispatching Fresh Code…
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="w-4 h-4" /> Get Fresh Verification Code
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => submitOtp()}
+                  disabled={status === 'verifying_otp' || otp.some((d) => !d)}
+                  className="w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-white/5"
+                >
+                  {status === 'verifying_otp' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" /> Verifying Code…
+                    </>
+                  ) : (
+                    'Verify Code'
+                  )}
+                </button>
+              )}
 
               {/* Resend Options (SMS / Email) */}
               <div className="mt-6 pt-5 border-t border-[#494F55]/20">
