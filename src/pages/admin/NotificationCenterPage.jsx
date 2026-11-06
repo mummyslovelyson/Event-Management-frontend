@@ -59,10 +59,13 @@ const targetOptions = [
 ];
 
 const channelOptions = [
+  { key: 'all', label: 'All Channels', icon: Radio, desc: 'SMS + Email + In-App notification', badge: 'Omnichannel' },
   { key: 'both', label: 'Email & In-App', icon: Layers, desc: 'Deliver to inbox + notification bell' },
+  { key: 'sms_email', label: 'SMS & Email', icon: Send, desc: 'Direct mobile text + email alert' },
+  { key: 'sms_inapp', label: 'SMS & In-App', icon: Smartphone, desc: 'Direct mobile text + notification bell' },
   { key: 'email', label: 'Email Alert', icon: Mail, desc: 'Direct branded email to user inboxes' },
-  { key: 'in-app', label: 'In-App Notice', icon: Bell, desc: 'Visible inside user notification feed' },
-  { key: 'sms', label: 'SMS Notice', icon: Smartphone, desc: 'Direct text via SMS provider' },
+  { key: 'sms', label: 'SMS Notice', icon: Smartphone, desc: 'Direct text via SMSOnlineGH' },
+  { key: 'in-app', label: 'In-App Notice', icon: Bell, desc: 'Visible inside user notification bell feed' },
 ];
 
 const quickAlertPresets = [
@@ -332,7 +335,7 @@ export default function NotificationCenterPage() {
       title: p.title,
       message: p.message,
       target: p.target || 'all',
-      channel: p.channel || 'both',
+      channel: p.channel || 'all',
       userId: '',
       link: p.link || '/events',
       actionLabel: p.actionLabel || 'View Details',
@@ -349,7 +352,7 @@ export default function NotificationCenterPage() {
       const res = await sendNotification(form);
       toast.success(res.data?.message || 'Broadcast sent successfully');
       setShowSend(false);
-      setForm({ title: '', message: '', target: 'all', channel: 'in-app', userId: '' });
+      setForm({ title: '', message: '', target: 'all', channel: 'all', userId: '', link: '/explore', actionLabel: 'View Details', badge: 'Platform Announcement' });
       fetchBroadcasts();
       fetchAlerts();
     } catch (err) {
@@ -694,16 +697,19 @@ export default function NotificationCenterPage() {
                           </td>
                           <td className="px-5 py-3.5">
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium border ${
+                              b.channel === 'all' ? 'bg-amber-500/10 text-amber-300 border-amber-500/20' :
                               b.channel === 'email' ? 'bg-blue-500/10 text-blue-300 border-blue-500/20' :
                               b.channel === 'both' ? 'bg-purple-500/10 text-purple-300 border-purple-500/20' :
                               b.channel === 'sms' ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20' :
                               'bg-white/5 text-neutral-300 border-white/10'
                             }`}>
-                              {b.channel === 'email' ? <Mail className="w-3 h-3 text-blue-400" /> :
+                              {b.channel === 'all' ? <Radio className="w-3 h-3 text-amber-400" /> :
+                               b.channel === 'email' ? <Mail className="w-3 h-3 text-blue-400" /> :
                                b.channel === 'both' ? <Layers className="w-3 h-3 text-purple-400" /> :
                                b.channel === 'sms' ? <Smartphone className="w-3 h-3 text-emerald-400" /> :
                                <Bell className="w-3 h-3 text-neutral-400" />}
-                              {b.channel === 'both' ? 'Email & In-App' :
+                              {b.channel === 'all' ? 'All (SMS + Email + In-App)' :
+                               b.channel === 'both' ? 'Email & In-App' :
                                b.channel === 'email' ? 'Email Alert' :
                                b.channel === 'sms' ? 'SMS Notice' : 'In-App'}
                             </span>
@@ -982,7 +988,7 @@ export default function NotificationCenterPage() {
                     previewMode === 'email' ? 'bg-white text-black font-semibold' : 'text-neutral-400 hover:text-white'
                   }`}
                 >
-                  <Mail className="w-3 h-3" /> Email Alert
+                  <Mail className="w-3 h-3" /> Email
                 </button>
                 <button
                   type="button"
@@ -991,7 +997,16 @@ export default function NotificationCenterPage() {
                     previewMode === 'in-app' ? 'bg-white text-black font-semibold' : 'text-neutral-400 hover:text-white'
                   }`}
                 >
-                  <Bell className="w-3 h-3" /> In-App Notice
+                  <Bell className="w-3 h-3" /> In-App
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewMode('sms')}
+                  className={`px-2.5 py-1 rounded text-[11px] font-medium transition flex items-center gap-1.5 ${
+                    previewMode === 'sms' ? 'bg-white text-black font-semibold' : 'text-neutral-400 hover:text-white'
+                  }`}
+                >
+                  <Smartphone className="w-3 h-3" /> SMS
                 </button>
               </div>
             </div>
@@ -1028,7 +1043,7 @@ export default function NotificationCenterPage() {
                   You received this broadcast because you have an account on Tribes &amp; Cliqs.
                 </p>
               </div>
-            ) : (
+            ) : previewMode === 'in-app' ? (
               /* In-App Notice Preview */
               <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-start gap-3 max-w-md mx-auto">
                 <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
@@ -1042,6 +1057,32 @@ export default function NotificationCenterPage() {
                   <p className="text-xs text-neutral-400 mt-1 leading-relaxed line-clamp-2">
                     {form.message || 'Notification body will appear here once typed...'}
                   </p>
+                </div>
+              </div>
+            ) : (
+              /* Realistic Mobile SMS Preview */
+              <div className="rounded-2xl bg-[#14191E] border border-[#2B333B] p-4 max-w-sm mx-auto text-left shadow-lg">
+                <div className="flex items-center gap-2 pb-2.5 mb-3 border-b border-white/10 text-[11px] text-[#949599]">
+                  <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Sender ID: <strong className="text-white">TribesCliq</strong></span>
+                  <span className="ml-auto text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                    SMS Gateway
+                  </span>
+                </div>
+                <div className="bg-[#242B32] text-[#EFEFF1] rounded-2xl rounded-tl-sm p-3.5 text-xs leading-relaxed border border-[#494F55]/40 shadow-sm">
+                  <p className="font-bold text-white mb-1">[Tribes &amp; Cliqs] {form.title || 'Platform Announcement'}</p>
+                  <p className="text-[#CBD5E1] whitespace-pre-line text-xs leading-relaxed">
+                    {form.message || 'Your announcement message will appear here in the SMS text...'}
+                  </p>
+                  {form.link && (
+                    <p className="mt-2 text-[11px] text-blue-400 truncate">
+                      Link: {form.link.startsWith('http') ? form.link : `https://tribesandcliqsevent.vercel.app${form.link.startsWith('/') ? '' : '/'}${form.link}`}
+                    </p>
+                  )}
+                </div>
+                <div className="flex justify-between items-center text-[10px] text-[#949599] mt-2.5 px-1">
+                  <span>Dispatched via SMSOnlineGH</span>
+                  <span>~{Math.ceil(((form.title?.length || 0) + (form.message?.length || 0) + 20) / 160)} SMS unit(s)</span>
                 </div>
               </div>
             )}
