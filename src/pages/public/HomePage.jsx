@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import EventCard from '@/components/common/EventCard';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import HeroSection from '@/components/home/HeroSection';
+import HomeReviewsSection from '@/components/home/HomeReviewsSection';
 import { getFeaturedEvents, getTrendingEvents, getEvents, getCategories, getFeaturedOrganizers } from '@/api/events';
 import { getCategoryImage, POPULAR_CATEGORY_LIST } from '@/utils/categoryImages';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
@@ -416,6 +417,9 @@ export default function HomePage() {
           </div>
         </section>
       )}
+
+      {/* ─── COMMUNITY REVIEWS & TESTIMONIALS ─── */}
+      <HomeReviewsSection />
 
       {/* ─── NEWSLETTER ─── */}
       <NewsletterSection />

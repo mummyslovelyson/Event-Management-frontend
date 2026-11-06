@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, CalendarDays, Layers, CreditCard, BarChart3,
   FileText, Bell, LifeBuoy, Settings, ScrollText, Menu, X, LogOut,
   Search, ChevronDown, UserCheck, AlertTriangle, Globe, BookOpen, CheckCircle, ExternalLink,
-  Trash2, Check, Smartphone, QrCode, Sparkles, SlidersHorizontal, Moon, Sun, Ticket,
+  Trash2, Check, Smartphone, QrCode, Sparkles, SlidersHorizontal, Moon, Sun, Ticket, Star,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getAdminNotifications, markAdminNotificationsRead, deleteAdminNotification } from '@/api/admin';
@@ -20,6 +20,7 @@ const mainNav = [
   { to: '/admin/tickets', label: 'Tickets & Passes', icon: Ticket },
   { to: '/admin/categories', label: 'Categories', icon: Layers },
   { to: '/admin/payments', label: 'Payments', icon: CreditCard },
+  { to: '/admin/reviews', label: 'Reviews & Feedback', icon: Star },
   { to: '/admin/notifications', label: 'Notifications', icon: Bell, hasBadge: true },
   { to: '/admin/check-in', label: 'Gate Check-In', icon: QrCode },
   { to: '/admin/content', label: 'Content', icon: FileText },

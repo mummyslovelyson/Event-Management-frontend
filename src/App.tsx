@@ -96,6 +96,7 @@ const SupportPage = lazy(() => import('@/pages/admin/SupportPage'));
 const SystemSettingsPage = lazy(() => import('@/pages/admin/SystemSettingsPage'));
 const AuditLogsPage = lazy(() => import('@/pages/admin/AuditLogsPage'));
 const AITrainingPage = lazy(() => import('@/pages/admin/AITrainingPage'));
+const AdminReviewsPage = lazy(() => import('@/pages/admin/ReviewsPage'));
 
 // ─── Lazy Loaded Chatbot / Voice Assistant ───
 const ChatbotWidget = lazy(() => import('@/components/chat/ChatbotWidget'));
@@ -256,6 +257,7 @@ function AppRoutes() {
           <Route path="/admin/categories" element={<CategoriesPage />} />
           <Route path="/admin/payments" element={<PaymentManagementPage />} />
           <Route path="/admin/reports" element={<PlatformReportsPage />} />
+          <Route path="/admin/reviews" element={<AdminReviewsPage />} />
           <Route path="/admin/content" element={<ContentManagementPage />} />
           <Route path="/admin/mobile-app" element={<MobileAppManagementPage />} />
           <Route path="/admin/notifications" element={<NotificationCenterPage />} />

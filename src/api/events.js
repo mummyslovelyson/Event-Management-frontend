@@ -59,4 +59,5 @@ export const updateReminderPreferences = (id, preferences) => api.put(`/events/$
 export const getUserReminders = () => api.get('/events/reminders/mine');
 export const trackEventView = (id) => api.post(`/events/${id}/view`);
 export const logSearchQuery = (data) => api.post('/events/search/log', data);
+export const getPublicReviews = (params) => api.get('/events/reviews/public', { params });
 

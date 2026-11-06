@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
   Star, Pencil, Trash2, Calendar, MapPin, MessageSquare, Award,
+  CheckCircle2, XCircle, Clock, Globe, Plus, MessageSquarePlus,
 } from 'lucide-react';
+import WriteReviewModal from '@/components/reviews/WriteReviewModal';
 import { getReviews, createReview, deleteReview } from '@/api/users';
 import { getUserTickets } from '@/api/tickets';
 import Modal from '@/components/common/Modal';
@@ -30,6 +32,7 @@ export default function ReviewsPage() {
   const [reviewText, setReviewText] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [generalModalOpen, setGeneralModalOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -102,7 +105,7 @@ export default function ReviewsPage() {
       });
       const newReview = res.data?.review ?? res.data;
       setReviews((prev) => [newReview, ...prev]);
-      toast.success('Review submitted successfully!');
+      toast.success('Review submitted! It will appear on the homepage once approved by an administrator.');
       setReviewModal(null);
       setRating(5);
       setReviewText('');
@@ -231,7 +234,15 @@ export default function ReviewsPage() {
 
       {/* Reviews I've written */}
       <motion.div variants={itemFade}>
-        <h2 className="text-lg font-bold text-[#EFEFF1] mb-4">Reviews I've Written</h2>
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <h2 className="text-lg font-bold text-[#EFEFF1]">Reviews I've Written</h2>
+          <button
+            onClick={() => setGeneralModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white text-[#1C232B] text-xs font-bold hover:bg-[#CBD5E1] transition shadow-md"
+          >
+            <MessageSquarePlus className="w-3.5 h-3.5" /> Write Review
+          </button>
+        </div>
         {reviews.length === 0 ? (
           <EmptyState
             icon={Star}
@@ -279,8 +290,30 @@ export default function ReviewsPage() {
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-                  {review.review && (
-                    <p className="mt-3 text-sm text-[#949599] leading-relaxed">{review.review}</p>
+
+                  {/* Status Pill */}
+                  <div className="mt-2.5 flex items-center gap-2">
+                    {review.status === 'approved' || review.is_approved ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                        <CheckCircle2 className="w-3 h-3" /> Live on Homepage
+                      </span>
+                    ) : review.status === 'rejected' ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full border border-red-500/20">
+                        <XCircle className="w-3 h-3" /> Rejected
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-300 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
+                        <Clock className="w-3 h-3" /> Pending Admin Approval
+                      </span>
+                    )}
+                  </div>
+
+                  {review.title && (
+                    <h4 className="mt-2 text-sm font-bold text-white">&ldquo;{review.title}&rdquo;</h4>
+                  )}
+
+                  {(review.comment || review.review) && (
+                    <p className="mt-2 text-sm text-[#949599] leading-relaxed">{review.comment || review.review}</p>
                   )}
                 </motion.div>
               );
@@ -370,6 +403,18 @@ export default function ReviewsPage() {
           </div>
         )}
       </Modal>
+
+      {/* General / Platform Review Modal */}
+      <WriteReviewModal
+        isOpen={generalModalOpen}
+        onClose={() => setGeneralModalOpen(false)}
+        onSuccess={() => {
+          getReviews({ limit: 100 }).then((res) => {
+            const data = res.data?.reviews ?? res.data ?? [];
+            setReviews(Array.isArray(data) ? data : []);
+          });
+        }}
+      />
     </motion.div>
   );
 }

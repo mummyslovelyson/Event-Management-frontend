@@ -113,5 +113,12 @@ export const createMobileAppBanner = (data) => api.post('/admin/mobile-app/banne
 export const updateMobileAppBanner = (id, data) => api.put(`/admin/mobile-app/banners/${id}`, data);
 export const deleteMobileAppBanner = (id) => api.delete(`/admin/mobile-app/banners/${id}`);
 
+// Reviews Moderation & Homepage Publishing
+export const getAdminReviews = (params) => api.get('/admin/reviews', { params });
+export const approveAdminReview = (id, data) => api.put(`/admin/reviews/${id}/approve`, data);
+export const rejectAdminReview = (id, data) => api.put(`/admin/reviews/${id}/reject`, data);
+export const toggleFeatureAdminReview = (id, data) => api.put(`/admin/reviews/${id}/feature`, data);
+export const deleteAdminReview = (id) => api.delete(`/admin/reviews/${id}`);
+
 
 
