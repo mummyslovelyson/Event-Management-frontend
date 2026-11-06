@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Loader2, CheckCircle2, XCircle, ArrowLeft, TicketCheck, RefreshCw,
   Download, Printer, Calendar, Copy, Check, ExternalLink, Ticket, MapPin, Clock, FileText, Receipt,
+  AlertCircle, Info,
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
@@ -22,11 +23,25 @@ export default function PaymentCallbackPage() {
   const [orderData, setOrderData] = useState(null);
   const [copiedCode, setCopiedCode] = useState(null);
   const [downloadingId, setDownloadingId] = useState(null);
+  const [errorDetails, setErrorDetails] = useState({
+    message: '',
+    gatewayStatus: '',
+    orderId: null,
+    eventId: null,
+    eventTitle: '',
+  });
 
   const navigate = useNavigate();
 
   const runVerification = useCallback(async () => {
     if (!reference) {
+      setErrorDetails({
+        message: 'No payment reference was found in the URL.',
+        gatewayStatus: 'missing_ref',
+        orderId: null,
+        eventId: null,
+        eventTitle: '',
+      });
       setStatus('error');
       return;
     }
@@ -58,18 +73,62 @@ export default function PaymentCallbackPage() {
           return true;
         }
 
+        // If Paystack reports abandoned or failed, stop immediately to save user from waiting
+        if (paymentStatus === 'abandoned' || paymentStatus === 'failed') {
+          setErrorDetails({
+            message: res.data?.message || 'Payment was not completed or was cancelled.',
+            gatewayStatus: paymentStatus,
+            orderId: res.data?.orderId || null,
+            eventId: res.data?.eventId || null,
+            eventTitle: res.data?.eventTitle || '',
+          });
+          setStatus('error');
+          return false;
+        }
+
         if (attempts < maxAttempts) {
           await new Promise((resolve) => setTimeout(resolve, 2500));
           return attemptVerify();
         }
 
+        setErrorDetails({
+          message: res.data?.message || 'Payment confirmation timed out.',
+          gatewayStatus: paymentStatus || 'timeout',
+          orderId: res.data?.orderId || null,
+          eventId: res.data?.eventId || null,
+          eventTitle: res.data?.eventTitle || '',
+        });
         setStatus('error');
         return false;
       } catch (err) {
+        const errData = err.response?.data;
+        const gwStatus = errData?.status;
+
+        // If gateway explicitly returned abandoned or failed, fail fast
+        if (gwStatus === 'abandoned' || gwStatus === 'failed') {
+          setErrorDetails({
+            message: errData?.message || 'Payment was not completed on Paystack.',
+            gatewayStatus: gwStatus,
+            orderId: errData?.orderId || null,
+            eventId: errData?.eventId || null,
+            eventTitle: errData?.eventTitle || '',
+          });
+          setStatus('error');
+          return false;
+        }
+
         if (attempts < maxAttempts) {
           await new Promise((resolve) => setTimeout(resolve, 2500));
           return attemptVerify();
         }
+
+        setErrorDetails({
+          message: errData?.message || err.message || 'Payment verification pending',
+          gatewayStatus: gwStatus || 'pending',
+          orderId: errData?.orderId || null,
+          eventId: errData?.eventId || null,
+          eventTitle: errData?.eventTitle || '',
+        });
         setStatus('error');
         return false;
       }
@@ -430,31 +489,78 @@ export default function PaymentCallbackPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="max-w-md mx-auto bg-[#1C232B] border border-[#494F55]/40 rounded-2xl p-8 text-center shadow-2xl"
           >
-            <div className="w-16 h-16 rounded-full bg-red-500/15 text-red-400 flex items-center justify-center mx-auto mb-5">
-              <XCircle className="w-8 h-8" />
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 ${
+              errorDetails.gatewayStatus === 'abandoned'
+                ? 'bg-[#242B32] text-[#CBD5E1] border border-[#494F55]/40'
+                : 'bg-red-500/15 text-red-400'
+            }`}>
+              {errorDetails.gatewayStatus === 'abandoned' ? (
+                <AlertCircle className="w-8 h-8 text-[#CBD5E1]" />
+              ) : (
+                <XCircle className="w-8 h-8" />
+              )}
             </div>
-            <h2 className="text-xl font-bold text-[#EFEFF1]">Payment Verification Pending</h2>
+
+            <h2 className="text-xl font-bold text-[#EFEFF1]">
+              {errorDetails.gatewayStatus === 'abandoned'
+                ? 'Payment Incomplete / Cancelled'
+                : errorDetails.gatewayStatus === 'failed'
+                ? 'Payment Failed'
+                : 'Payment Verification Pending'}
+            </h2>
+
             <p className="mt-2 text-sm text-[#949599]">
-              {reference
-                ? 'We could not confirm your payment yet. If your Mobile Money or Card was debited, your tickets will be available shortly in My Tickets.'
-                : 'No payment reference was found in the URL. Please verify your transaction reference.'}
+              {errorDetails.gatewayStatus === 'abandoned'
+                ? 'The checkout session was closed or not completed on Paystack. No funds were debited from your account.'
+                : errorDetails.message || (
+                    reference
+                      ? 'We could not confirm your payment yet. If your Mobile Money or Card was debited, your tickets will be available shortly in My Tickets.'
+                      : 'No payment reference was found in the URL. Please verify your transaction reference.'
+                  )}
             </p>
 
+            {/* Test Mode / MoMo Helpful Notice */}
+            {errorDetails.gatewayStatus === 'abandoned' && (
+              <div className="mt-4 p-3.5 rounded-xl bg-[#14191E] border border-[#494F55]/40 text-left text-xs text-[#CBD5E1] space-y-1.5">
+                <div className="font-semibold text-white flex items-center gap-1.5">
+                  <Info className="w-3.5 h-3.5 text-[#CBD5E1]" /> Mobile Money & Test Mode
+                </div>
+                <p className="text-[#949599] leading-relaxed">
+                  In Paystack Test Mode, real phone prompts are not pushed to your device. To test checkout, use the on-screen dialog or a test card. Real phone prompts only trigger in Live Mode.
+                </p>
+              </div>
+            )}
+
             <div className="mt-6 space-y-3">
+              {errorDetails.eventId && (
+                <Link
+                  to={`/events/${errorDetails.eventId}`}
+                  className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-md"
+                >
+                  <ArrowLeft className="w-4 h-4" /> Try Booking Again
+                </Link>
+              )}
+
               {reference && (
                 <button
                   onClick={() => runVerification()}
-                  className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-white text-[#1C232B] text-sm font-semibold hover:bg-[#CBD5E1] transition shadow-md"
+                  className={`inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg text-sm font-semibold transition ${
+                    errorDetails.eventId
+                      ? 'bg-[#242B32] border border-[#494F55]/50 text-[#EFEFF1] hover:bg-[#2C343D]'
+                      : 'bg-white text-[#1C232B] hover:bg-[#CBD5E1] shadow-md'
+                  }`}
                 >
-                  <RefreshCw className="w-4 h-4" /> Retry Confirmation
+                  <RefreshCw className="w-4 h-4" /> Re-check Payment Status
                 </button>
               )}
+
               <Link
                 to="/attendee/tickets"
                 className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#242B32] border border-[#494F55]/50 text-[#EFEFF1] text-sm font-semibold hover:bg-[#2C343D] transition"
               >
                 <TicketCheck className="w-4 h-4" /> Check My Tickets
               </Link>
+
               <Link
                 to="/explore"
                 className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-[#494F55]/50 text-[#EFEFF1] text-sm font-medium hover:border-white/40 transition"
